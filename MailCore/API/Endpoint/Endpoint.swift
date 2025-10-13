@@ -123,11 +123,6 @@ public extension Endpoint {
         return .base.appending(path: "/pim/contact")
     }
 
-    static func updateMailboxPassword(mailboxId: Int) -> Endpoint {
-        return .base
-            .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
-    }
-
     static func ai(mailbox: Mailbox? = nil) -> Endpoint {
         var queryItems = [URLQueryItem]()
         if let mailbox {
@@ -145,10 +140,6 @@ public extension Endpoint {
             path: "/\(shortcut)",
             queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid)]
         )
-    }
-
-    static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {
-        return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/ask_password")
     }
 
     static func backups(hostingId: Int, mailboxName: String) -> Endpoint {

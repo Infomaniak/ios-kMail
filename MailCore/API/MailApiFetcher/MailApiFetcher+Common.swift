@@ -30,23 +30,6 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes))
     }
 
-    @discardableResult
-    func updateMailboxPassword(mailbox: Mailbox, password: String) async throws -> Bool {
-        try await perform(request: authenticatedRequest(
-            .updateMailboxPassword(mailboxId: mailbox.mailboxId),
-            method: .put,
-            parameters: ["password": password]
-        ))
-    }
-
-    @discardableResult
-    func askMailboxPassword(mailbox: Mailbox) async throws -> Bool {
-        try await perform(request: authenticatedRequest(
-            .askMailboxPassword(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
-            method: .post
-        ))
-    }
-
     func listBackups(mailbox: Mailbox) async throws -> BackupsList {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
     }

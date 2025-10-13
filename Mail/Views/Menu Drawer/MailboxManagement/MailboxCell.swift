@@ -44,7 +44,6 @@ struct MailboxCell: View {
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @ModalState private var isShowingLockedView = false
-    @ModalState private var isShowingUpdatePasswordView = false
 
     let mailbox: Mailbox
     var isSelected = false
@@ -60,11 +59,7 @@ struct MailboxCell: View {
             isSelected: isSelected
         ) {
             guard !isSelected else { return }
-            guard mailbox.isPasswordValid else {
-                isShowingUpdatePasswordView = true
-                return
-            }
-            guard !mailbox.isConsideredLocked else {
+            guard !mailbox.isConsideredLocked && mailbox.isPasswordValid else {
                 isShowingLockedView = true
                 return
             }
@@ -84,9 +79,6 @@ struct MailboxCell: View {
         }
         .mailFloatingPanel(isPresented: $isShowingLockedView) {
             LockedMailboxView(email: mailbox.email)
-        }
-        .sheet(isPresented: $isShowingUpdatePasswordView) {
-            UpdateMailboxPasswordView(mailbox: mailbox)
         }
     }
 }

@@ -386,27 +386,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func updateMailboxPassword(for userId: Int, mailbox: Mailbox, password: String) async throws {
-        guard let token = tokenStore.tokenFor(userId: userId) else {
-            return
-        }
-
-        let apiFetcher = getApiFetcher(for: userId, token: token)
-
-        try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
-        try await updateUser(for: currentAccount)
-    }
-
-    public func askMailboxPassword(for userId: Int, mailbox: Mailbox) async throws {
-        guard let token = tokenStore.tokenFor(userId: userId) else {
-            return
-        }
-
-        let apiFetcher = getApiFetcher(for: userId, token: token)
-
-        try await apiFetcher.askMailboxPassword(mailbox: mailbox)
-    }
-
     public func setCurrentAccount(account: ApiToken) {
         currentAccount = account
         currentUserId = account.userId
