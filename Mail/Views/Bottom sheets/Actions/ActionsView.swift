@@ -138,8 +138,6 @@ struct QuickActionView: View {
 }
 
 struct MessageActionView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -150,6 +148,7 @@ struct MessageActionView: View {
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             dismiss()
             Task {
                 await tryOrDisplayError {

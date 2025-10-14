@@ -116,7 +116,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
             matomo.trackBulkEvent(
                 eventWithCategory: .threadActions,
                 name: action.matomoName.capitalized,
-                numberOfItems: multipleSelectionViewModel.selectedItems.count
+                numberOfItems: allMessages.count
             )
 
             try await actionsManager.performAction(
