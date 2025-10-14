@@ -295,8 +295,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Add an email address";
 
-/* loco:66a9f94b98b834125d06aa46 */
-"buttonAddExistingAddress" = "Add an existing address";
 
 /* loco:6877a25d3abbe0c0c403fba2 */
 "buttonAllReactions" = "All";
@@ -360,9 +358,6 @@
 
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Custom schedule";
-
-/* loco:64abb7007886284b68017193 */
-"buttonDetachMailbox" = "detach mailbox";
 
 /* loco:6267af44cf90a405c97af322 */
 "buttonDownload" = "Download";
@@ -829,9 +824,6 @@
 /* loco:64aba64bdb705f66d6043b03 */
 "enterPasswordDescription2" = "Please enter the new password for the email address %@";
 
-/* loco:64a8005d6a8d4403460c9c42 */
-"enterPasswordOrDescription" = "or";
-
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Enter password";
 
@@ -1208,7 +1200,7 @@
 "noFolderTitle" = "You don’t have any folder yet…";
 
 /* loco:62cbe0be9251f174a43c5202 */
-"noMailboxDescription" = "You do not have an email address associated with your Infomaniak account. To add an address, tap the button below.";
+"noMailboxDescription" = "You do not have an email address associated with your Infomaniak account.";
 
 /* loco:62cbdde9f492421f63253c52 */
 "noMailboxTitle" = "No email address associated with this account";
@@ -1284,12 +1276,6 @@
 
 /* loco:64ca16484dbf65eb9b0ea862 */
 "pleaseLogInFirst" = "Please login in the Infomaniak Mail app first.";
-
-/* loco:64a695f87730509b39030ae2 */
-"popupDetachMailboxDescription" = "Are you sure you want to detach the %@ address?";
-
-/* loco:64a3d65f003e64f9790f5ed2 */
-"popupDetachMailboxTitle" = "Detach mailbox";
 
 /* loco:68b05985327f49a8eb0936b2 */
 "previewReaction" = "%1$@ reacted with %2$@";

@@ -47,8 +47,6 @@ struct MailboxesManagementView: View {
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
 
-    @ModalState private var isShowingAddMailboxView = false
-
     private var hasOtherMailboxes: Bool {
         return !mailboxes.where {
             $0.userId == currentUser.value.id && $0.mailboxId != mailboxManager.mailbox.mailboxId
@@ -95,27 +93,6 @@ struct MailboxesManagementView: View {
                 }
                 .task {
                     try? await updateAccount()
-                }
-
-                Button {
-                    isShowingAddMailboxView = true
-                } label: {
-                    HStack(spacing: IKPadding.medium) {
-                        MailResourcesAsset.plusCircle.swiftUIImage
-                            .iconSize(.large)
-                            .foregroundStyle(.tint)
-
-                        Text(MailResourcesStrings.Localizable.buttonAddExistingAddress)
-                            .textStyle(.body)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(IKPadding.menuDrawerCell)
-                }
-                .sheet(isPresented: $isShowingAddMailboxView) {
-                    AddMailboxView()
-                        .sheetViewStyle()
                 }
             }
         }

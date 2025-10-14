@@ -295,8 +295,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Eine E-Mail-Adresse hinzufügen";
 
-/* loco:66a9f94b98b834125d06aa46 */
-"buttonAddExistingAddress" = "Eine bestehende Adresse hinzufügen";
 
 /* loco:6877a25d3abbe0c0c403fba2 */
 "buttonAllReactions" = "Alle";
@@ -360,9 +358,6 @@
 
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Benutzerdefinierter Zeitplan";
-
-/* loco:64abb7007886284b68017193 */
-"buttonDetachMailbox" = "adresse abtrennen";
 
 /* loco:6267af44cf90a405c97af322 */
 "buttonDownload" = "Herunterladen";
@@ -829,9 +824,6 @@
 /* loco:64aba64bdb705f66d6043b03 */
 "enterPasswordDescription2" = "Bitte geben Sie das neue Passwort für die E-Mail-Adresse %@ ein";
 
-/* loco:64a8005d6a8d4403460c9c42 */
-"enterPasswordOrDescription" = "oder";
-
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Geben Sie das Passwort ein";
 
@@ -1208,7 +1200,7 @@
 "noFolderTitle" = "Sie haben noch keinen Ordner…";
 
 /* loco:62cbe0be9251f174a43c5202 */
-"noMailboxDescription" = "Sie haben noch keine E-Mail-Adresse, die mit Ihrem Infomaniak-Konto verknüpft ist. Um eine Adresse hinzuzufügen, tippen Sie auf die Schaltfläche unten.";
+"noMailboxDescription" = "Sie haben noch keine E-Mail-Adresse, die mit Ihrem Infomaniak-Konto verknüpft ist.";
 
 /* loco:62cbdde9f492421f63253c52 */
 "noMailboxTitle" = "Keine E-Mail-Adresse mit diesem Konto verbunden";
@@ -1284,12 +1276,6 @@
 
 /* loco:64ca16484dbf65eb9b0ea862 */
 "pleaseLogInFirst" = "Bitte melden Sie sich zuerst in der Infomaniak Mail-App an.";
-
-/* loco:64a695f87730509b39030ae2 */
-"popupDetachMailboxDescription" = "Sind Sie sicher, dass Sie die Adresse %@ lösen möchten?";
-
-/* loco:64a3d65f003e64f9790f5ed2 */
-"popupDetachMailboxTitle" = "Adresse abtrennen";
 
 /* loco:68b05985327f49a8eb0936b2 */
 "previewReaction" = "%1$@ reagierte mit %2$@";

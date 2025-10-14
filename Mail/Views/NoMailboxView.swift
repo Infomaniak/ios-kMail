@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
-    @Environment(\.openURL) private var openURL
-
     @State private var isShowingLoginView = false
 
     private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground3.image,
@@ -38,17 +36,10 @@ struct NoMailboxView: View {
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
-            VStack(spacing: IKPadding.mini) {
-                Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    openURL(URLConstants.ikMe.url)
-                }
-                .buttonStyle(.ikBorderedProminent)
-
-                Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
-                    isShowingLoginView = true
-                }
-                .buttonStyle(.ikBorderless)
+            Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
+                isShowingLoginView = true
             }
+            .buttonStyle(.ikBorderless)
             .controlSize(.large)
             .ikButtonFullWidth(true)
             .padding(.horizontal, value: .large)

@@ -22,7 +22,6 @@ public enum ContextKeys {
     public static let ai = "aiContext"
     public static let aiAlert = "aiAlertContext"
     public static let attachmentDownload = "attachmentDowloadContext"
-    public static let detachMailbox = "detachMailboxContext"
     public static let moveEmail = "moveEmailContext"
     public static let compose = "composeContext"
     public static let externalTagBottom = "externalTagBottomContext"
