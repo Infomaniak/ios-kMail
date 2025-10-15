@@ -449,7 +449,7 @@ public final class DraftManager {
 
         let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
         let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
-            guard let draftFolder = mailboxManager.getFolder(with: .draft) else {
+            guard let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() else {
                 mailboxManager.logError(.missingFolder)
                 return
             }

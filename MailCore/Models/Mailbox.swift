@@ -20,7 +20,7 @@ import Foundation
 import InfomaniakCore
 import RealmSwift
 
-public enum LocalPack {
+public enum LocalPack: Sendable {
     case myKSuiteFree
     case myKSuitePlus
     case kSuiteFree // = kSuite Essential
