@@ -312,7 +312,7 @@ struct ComposeMessageView: View {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
 
-            draftManager.syncDraft(
+            draftManager.startSyncDraft(
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
