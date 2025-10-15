@@ -30,6 +30,8 @@ public final class DraftManager {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
+    private var currentSyncTask: Task<Void, Never>?
+
     /// Used by DI only
     public init() {}
 
@@ -41,7 +43,7 @@ public final class DraftManager {
         case missingIdentity
     }
 
-    private func syncDraft(
+    private func syncDraftJob(
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
         changeFolderAction: ((Folder) -> Void)? = nil,
@@ -97,6 +99,28 @@ public final class DraftManager {
         }
 
         try? await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+    }
+
+    public func syncDraft(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
+    ) async {
+        if currentSyncTask != nil {
+            await currentSyncTask?.value
+        }
+        currentSyncTask = Task {
+            await syncDraftJob(
+                mailboxManager: mailboxManager,
+                showSnackbar: showSnackbar,
+                changeFolderAction: changeFolderAction,
+                kSuiteUpgradeAction: kSuiteUpgradeAction
+            )
+        }
+
+        await currentSyncTask?.value
+        currentSyncTask = nil
     }
 
     public func startSyncDraft(
