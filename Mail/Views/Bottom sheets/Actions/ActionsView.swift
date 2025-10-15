@@ -109,25 +109,14 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
-            @InjectService var matomo: MatomoUtils
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-
-                    matomo.trackAction(
-                        action: action,
-                        origin: origin,
-                        numberOfItems: targetMessages.count,
-                        isMultipleSelection: isMultipleSelection
-                    )
-                }
-            }
+            performActionAndTrack(
+                targetMessages: targetMessages,
+                action: action,
+                origin: origin,
+                isMultipleSelection: isMultipleSelection,
+                completionHandler: completionHandler,
+                actionsManager: actionsManager
+            ) { dismiss() }
         } label: {
             VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
@@ -163,25 +152,14 @@ struct MessageActionView: View {
 
     var body: some View {
         Button {
-            @InjectService var matomo: MatomoUtils
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-
-                    matomo.trackAction(
-                        action: action,
-                        origin: origin,
-                        numberOfItems: targetMessages.count,
-                        isMultipleSelection: isMultipleSelection
-                    )
-                }
-            }
+            performActionAndTrack(
+                targetMessages: targetMessages,
+                action: action,
+                origin: origin,
+                isMultipleSelection: isMultipleSelection,
+                completionHandler: completionHandler,
+                actionsManager: actionsManager
+            ) { dismiss() }
         } label: {
             ActionButtonLabel(action: action)
         }
@@ -225,5 +203,35 @@ struct ActionButtonLabel: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(value: .medium)
+    }
+}
+
+private func performActionAndTrack(
+    targetMessages: [Message],
+    action: Action,
+    origin: ActionOrigin,
+    isMultipleSelection: Bool,
+    completionHandler: ((Action) -> Void)?,
+    actionsManager: ActionsManager,
+    dismiss: @escaping () -> Void
+) {
+    @InjectService var matomo: MatomoUtils
+    dismiss()
+    Task {
+        await tryOrDisplayError {
+            try await actionsManager.performAction(
+                target: targetMessages,
+                action: action,
+                origin: origin
+            )
+            completionHandler?(action)
+
+            matomo.trackAction(
+                action: action,
+                origin: origin,
+                numberOfItems: targetMessages.count,
+                isMultipleSelection: isMultipleSelection
+            )
+        }
     }
 }
