@@ -100,6 +100,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
             messages: $multipleSelectedMessages,
             originFolder: viewModel.frozenFolder,
             panelSource: .threadList,
+            isMultipleSelection: true,
             popoverArrowEdge: .bottom
         ) { action in
             guard action.shouldDisableMultipleSelection else { return }

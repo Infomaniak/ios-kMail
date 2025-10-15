@@ -31,11 +31,13 @@ struct ActionsView: View {
     private let quickActions: [Action]
     private let listActions: [Action]
     private let origin: ActionOrigin
+    private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
 
     init(user: UserProfile,
          target messages: [Message],
          origin: ActionOrigin,
+         isMultipleSelection: Bool = false,
          completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
@@ -43,6 +45,7 @@ struct ActionsView: View {
         listActions = actions.listActions
 
         targetMessages = messages
+        self.isMultipleSelection = isMultipleSelection
         self.origin = origin
         self.completionHandler = completionHandler
     }
@@ -55,6 +58,7 @@ struct ActionsView: View {
                         targetMessages: targetMessages,
                         action: action,
                         origin: origin,
+                        isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
                     .frame(maxWidth: .infinity)
@@ -72,6 +76,7 @@ struct ActionsView: View {
                         targetMessages: targetMessages,
                         action: action,
                         origin: origin,
+                        isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
                 }
@@ -99,10 +104,12 @@ struct QuickActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             dismiss()
             Task {
                 await tryOrDisplayError {
@@ -112,6 +119,13 @@ struct QuickActionView: View {
                         origin: origin
                     )
                     completionHandler?(action)
+
+                    matomo.trackAction(
+                        action: action,
+                        origin: origin,
+                        numberOfItems: targetMessages.count,
+                        isMultipleSelection: isMultipleSelection
+                    )
                 }
             }
         } label: {
@@ -144,6 +158,7 @@ struct MessageActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
@@ -159,11 +174,12 @@ struct MessageActionView: View {
                     )
                     completionHandler?(action)
 
-                    if origin.type == .floatingPanel(source: .message) {
-                        matomo.track(eventWithCategory: .bottomSheetMessageActions, name: action.matomoName)
-                    } else {
-                        matomo.track(eventWithCategory: .bottomSheetThreadActions, name: action.matomoName)
-                    }
+                    matomo.trackAction(
+                        action: action,
+                        origin: origin,
+                        numberOfItems: targetMessages.count,
+                        isMultipleSelection: isMultipleSelection
+                    )
                 }
             }
         } label: {
