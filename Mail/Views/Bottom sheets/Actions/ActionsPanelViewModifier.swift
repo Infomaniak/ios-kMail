@@ -27,6 +27,7 @@ extension View {
         messages: Binding<[Message]?>,
         originFolder: Folder?,
         panelSource: ActionOrigin.FloatingPanelSource,
+        isMultipleSelection: Bool = false,
         popoverArrowEdge: Edge,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
@@ -34,6 +35,7 @@ extension View {
             messages: messages,
             originFolder: originFolder,
             panelSource: panelSource,
+            isMultipleSelection: isMultipleSelection,
             popoverArrowEdge: popoverArrowEdge,
             completionHandler: completionHandler
         ))
@@ -59,6 +61,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @Binding var messages: [Message]?
     let originFolder: Folder?
     let panelSource: ActionOrigin.FloatingPanelSource
+    let isMultipleSelection: Bool
     var popoverArrowEdge: Edge
     var completionHandler: ((Action) -> Void)?
 
@@ -94,6 +97,7 @@ struct ActionsPanelViewModifier: ViewModifier {
                 user: currentUser.value,
                 target: messages,
                 origin: origin,
+                isMultipleSelection: isMultipleSelection,
                 completionHandler: completionHandler
             )
         }
