@@ -18,9 +18,16 @@
 
 import InfomaniakCoreCommonUI
 import InfomaniakDI
+import MailCore
 import SwiftUI
 
-public struct SnackBarAwareModifier: ViewModifier {
+public extension View {
+    func snackBarAware(inset: CGFloat) -> some View {
+        modifier(SnackBarAwareViewModifier(inset: inset))
+    }
+}
+
+public struct SnackBarAwareViewModifier: ViewModifier {
     @LazyInjectService var avoider: IKSnackBarAvoider
 
     public var inset: CGFloat {
