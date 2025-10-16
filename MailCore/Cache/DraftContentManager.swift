@@ -59,8 +59,8 @@ public class DraftContentManager: ObservableObject {
         draftContentObservation = _draftContent
             .projectedValue
             .throttle(for: .milliseconds(1000), scheduler: DispatchQueue.global(qos: .userInitiated), latest: true)
-            .sink { newBody in
-                Task { [weak self] in
+            .sink { [weak self] newBody in
+                Task {
                     await self?.saveDraftBody(newBody: newBody)
                 }
             }
