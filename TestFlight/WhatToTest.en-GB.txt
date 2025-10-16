@@ -1,1 +1,1 @@
-- Fix folder display
+- Fix sending mail from share extension 
