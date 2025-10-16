@@ -109,12 +109,15 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
-            performActionAndTrack(
+            let request = PerformActionRequest(
                 targetMessages: targetMessages,
                 action: action,
                 origin: origin,
                 isMultipleSelection: isMultipleSelection,
-                completionHandler: completionHandler,
+                completionHandler: completionHandler
+            )
+            performActionAndTrack(
+                request: request,
                 actionsManager: actionsManager
             ) { dismiss() }
         } label: {
@@ -152,12 +155,15 @@ struct MessageActionView: View {
 
     var body: some View {
         Button {
-            performActionAndTrack(
+            let request = PerformActionRequest(
                 targetMessages: targetMessages,
                 action: action,
                 origin: origin,
                 isMultipleSelection: isMultipleSelection,
-                completionHandler: completionHandler,
+                completionHandler: completionHandler
+            )
+            performActionAndTrack(
+                request: request,
                 actionsManager: actionsManager
             ) { dismiss() }
         } label: {
@@ -206,12 +212,16 @@ struct ActionButtonLabel: View {
     }
 }
 
+private struct PerformActionRequest {
+    let targetMessages: [Message]
+    let action: Action
+    let origin: ActionOrigin
+    let isMultipleSelection: Bool
+    let completionHandler: ((Action) -> Void)?
+}
+
 private func performActionAndTrack(
-    targetMessages: [Message],
-    action: Action,
-    origin: ActionOrigin,
-    isMultipleSelection: Bool,
-    completionHandler: ((Action) -> Void)?,
+    request: PerformActionRequest,
     actionsManager: ActionsManager,
     dismiss: @escaping () -> Void
 ) {
@@ -220,17 +230,17 @@ private func performActionAndTrack(
     Task {
         await tryOrDisplayError {
             try await actionsManager.performAction(
-                target: targetMessages,
-                action: action,
-                origin: origin
+                target: request.targetMessages,
+                action: request.action,
+                origin: request.origin
             )
-            completionHandler?(action)
+            request.completionHandler?(request.action)
 
             matomo.trackAction(
-                action: action,
-                origin: origin,
-                numberOfItems: targetMessages.count,
-                isMultipleSelection: isMultipleSelection
+                action: request.action,
+                origin: request.origin,
+                numberOfItems: request.targetMessages.count,
+                isMultipleSelection: request.isMultipleSelection
             )
         }
     }
