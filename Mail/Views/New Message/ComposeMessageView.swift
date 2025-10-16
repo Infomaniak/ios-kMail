@@ -80,6 +80,7 @@ struct ComposeMessageView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var isLoadingContent = true
+    @State private var isSyncingDrafts = false
     @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingAlert: NewMessageAlert?
     @State private var autocompletionType: ComposeViewFieldType?
@@ -113,7 +114,7 @@ struct ComposeMessageView: View {
     }
 
     private var isScheduleSendButtonDisabled: Bool {
-        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || isSyncingDrafts
     }
 
     private var isMailboxOverQuota: Bool {
@@ -248,7 +249,7 @@ struct ComposeMessageView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
-            if isLoadingContent {
+            if isLoadingContent || isSyncingDrafts {
                 progressView
             }
         }
@@ -312,14 +313,11 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            guard !platformDetector.isMac else {
+            guard !platformDetector.isMac && !Bundle.main.isExtension else {
                 return
             }
 
-            let shouldShowSnackbar = !Bundle.main.isExtension
-
-            let canShowReview = !Bundle.main.isExtension &&
-                !Bundle.main.isRunningInTestFlight &&
+            let canShowReview = !Bundle.main.isRunningInTestFlight &&
                 !mainViewState.isShowingSetAppAsDefaultDiscovery &&
                 !platformDetector.isRunningUITests
             if canShowReview {
@@ -328,17 +326,10 @@ struct ComposeMessageView: View {
 
             draftManager.startSyncDraft(
                 mailboxManager: mailboxManager,
-                showSnackbar: shouldShowSnackbar,
-                changeFolderAction: changeSelectedFolder
-            ) { currentPack in
-                if currentPack == .kSuiteFree {
-                    mainViewState.isShowingKSuiteProUpgrade = true
-                    matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
-                } else if currentPack == .myKSuiteFree {
-                    mainViewState.isShowingMyKSuiteUpgrade = true
-                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
-                }
-            }
+                showSnackbar: true,
+                changeFolderAction: handleSelectedFolderCallback,
+                kSuiteUpgradeAction: handleKSuiteUpgradeCallback
+            )
         }
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
@@ -389,9 +380,15 @@ struct ComposeMessageView: View {
     }
 
     private var progressView: some View {
-        ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        VStack(spacing: IKPadding.medium) {
+            ProgressView()
+            if isSyncingDrafts {
+                Text(MailResourcesStrings.Localizable.snackbarEmailSending)
+                    .textStyle(.bodySecondary)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     // MARK: - Func
@@ -444,15 +441,20 @@ struct ComposeMessageView: View {
         }
 
         markDraftReadyForSend()
-        dismissMessageView()
 
-        if !Bundle.main.isExtension && !platformDetector.isMac && !platformDetector.isRunningUITests {
-            // We should implement a proper router to avoid doing this
-            DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
-                mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
-            }
-            if !mainViewState.isShowingSetAppAsDefaultDiscovery {
-                mainViewState.isShowingChristmasEasterEgg = true
+        if Bundle.main.isExtension {
+            syncDraftBeforeDismissing()
+        } else {
+            dismissMessageView()
+
+            if !platformDetector.isMac && !platformDetector.isRunningUITests {
+                // We should implement a proper router to avoid doing this
+                DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
+                    mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+                }
+                if !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                    mainViewState.isShowingChristmasEasterEgg = true
+                }
             }
         }
     }
@@ -471,6 +473,20 @@ struct ComposeMessageView: View {
             try? liveDraft.realm?.write {
                 liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
             }
+        }
+    }
+
+    private func syncDraftBeforeDismissing() {
+        Task {
+            isSyncingDrafts = true
+            await draftManager.syncDraft(
+                mailboxManager: mailboxManager,
+                showSnackbar: false,
+                changeFolderAction: handleSelectedFolderCallback,
+                kSuiteUpgradeAction: handleKSuiteUpgradeCallback
+            )
+            dismissMessageView()
+            isSyncingDrafts = false
         }
     }
 
@@ -497,9 +513,23 @@ struct ComposeMessageView: View {
         )
     }
 
-    private func changeSelectedFolder(to folder: Folder) {
-        let freezeFolder = folder.freezeIfNeeded()
-        mainViewState.selectedFolder = freezeFolder
+    private nonisolated func handleSelectedFolderCallback(to folder: Folder) {
+        assert(folder.isFrozen, "Folder should be frozen to be set in MainViewState")
+        Task { @MainActor in
+            mainViewState.selectedFolder = folder
+        }
+    }
+
+    private nonisolated func handleKSuiteUpgradeCallback(currentPack: LocalPack) {
+        Task { @MainActor in
+            if currentPack == .kSuiteFree {
+                mainViewState.isShowingKSuiteProUpgrade = true
+                matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+            } else if currentPack == .myKSuiteFree {
+                mainViewState.isShowingMyKSuiteUpgrade = true
+                matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+            }
+        }
     }
 }
 
