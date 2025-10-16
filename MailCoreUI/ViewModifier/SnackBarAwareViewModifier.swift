@@ -49,7 +49,7 @@ public struct SnackBarAwareViewModifier: ViewModifier {
                 avoider.addAvoider(inset: inset)
             }
             .onDisappear {
-                if avoider.snackBarInset == inset {
+                if avoider.snackBarInset == inset && UserDefaults.shared.autoAdvance != .listOfThread {
                     avoider.removeAvoider()
                 }
             }

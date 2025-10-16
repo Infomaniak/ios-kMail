@@ -42,6 +42,14 @@ public struct BottomSafeAreaKey: PreferenceKey {
     }
 }
 
+public struct BottomToolbarHeightKey: PreferenceKey {
+    public static var defaultValue: CGFloat = .zero
+
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 public struct ViewGeometry<K>: View where K: PreferenceKey {
     public let key: K.Type
     public let property: KeyPath<GeometryProxy, K.Value>
