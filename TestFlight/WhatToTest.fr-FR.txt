@@ -1,1 +1,1 @@
-- Correction affichage des dossiers
+- Correction de l'envoi de mail depuis l'extension de partage
