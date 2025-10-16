@@ -116,7 +116,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
             @InjectService var matomo: MatomoUtils
             matomo.trackBulkEvent(
                 eventWithCategory: .threadActions,
-                name: action.matomoName.capitalized,
+                name: action.matomoName,
                 numberOfItems: allMessages.count
             )
 
