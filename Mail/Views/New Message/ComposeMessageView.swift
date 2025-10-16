@@ -225,7 +225,7 @@ struct ComposeMessageView: View {
 
             ToolbarItem(placement: .confirmationAction) {
                 Button {
-                    didTouchSend()
+                    trySendingMessage(skipSubjectCheck: false)
                 } label: {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
@@ -425,15 +425,15 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
-    private func didTouchSend(shouldBypassSubject: Bool = false) {
+    private func trySendingMessage(skipSubjectCheck: Bool) {
         if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
             isShowingEncryptStatePanel = true
             return
         }
 
-        guard !draft.subject.isEmpty || shouldBypassSubject else {
+        guard !draft.subject.isEmpty || skipSubjectCheck else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
-            isShowingAlert = NewMessageAlert(type: .emptySubject { didTouchSend(shouldBypassSubject: true) })
+            isShowingAlert = NewMessageAlert(type: .emptySubject { trySendingMessage(skipSubjectCheck: true) })
             return
         }
 
