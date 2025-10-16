@@ -116,6 +116,18 @@ struct ComposeMessageView: View {
         return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
     }
 
+    private var isMailboxOverQuota: Bool {
+        let mailbox = mailboxManager.mailbox
+        let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
+        if mailboxIsFull,
+           let pack = mailbox.pack,
+           pack == .myKSuiteFree || pack == .kSuiteFree {
+            return true
+        }
+
+        return false
+    }
+
     // MARK: - Init
 
     init(
@@ -212,7 +224,9 @@ struct ComposeMessageView: View {
             }
 
             ToolbarItem(placement: .confirmationAction) {
-                Button(action: didTouchSend) {
+                Button {
+                    trySendingMessage(skipSubjectCheck: false)
+                } label: {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
                 .disabled(isSendButtonDisabled)
@@ -312,7 +326,7 @@ struct ComposeMessageView: View {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
 
-            draftManager.syncDraft(
+            draftManager.startSyncDraft(
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
@@ -374,7 +388,6 @@ struct ComposeMessageView: View {
         )
     }
 
-    /// Progress view
     private var progressView: some View {
         ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -412,47 +425,26 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
-    private func didTouchSend() {
+    private func trySendingMessage(skipSubjectCheck: Bool) {
         if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
             isShowingEncryptStatePanel = true
             return
         }
 
-        guard !draft.subject.isEmpty else {
+        guard !draft.subject.isEmpty || skipSubjectCheck else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
-            isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
+            isShowingAlert = NewMessageAlert(type: .emptySubject { trySendingMessage(skipSubjectCheck: true) })
             return
         }
 
-        let mailbox = mailboxManager.mailbox
-        let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailboxIsFull,
-           let pack = mailbox.pack,
-           pack == .myKSuiteFree || pack == .kSuiteFree {
-            matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
-            Task {
-                if let liveDraft = draft.thaw() {
-                    try? liveDraft.realm?.write {
-                        liveDraft.action = .save
-                    }
-                }
-            }
-            snackbarPresenter.show(
-                message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
-                action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
-                    if pack == .kSuiteFree {
-                        mainViewState.isShowingKSuiteProUpgrade = true
-                        matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
-                    } else if pack == .myKSuiteFree {
-                        mainViewState.isShowingMyKSuiteUpgrade = true
-                        matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
-                    }
-                }
-            )
+        if isMailboxOverQuota,
+           let pack = mailboxManager.mailbox.pack {
+            handleMailboxFull(pack: pack)
             return
         }
 
-        sendDraft()
+        markDraftReadyForSend()
+        dismissMessageView()
 
         if !Bundle.main.isExtension && !platformDetector.isMac && !platformDetector.isRunningUITests {
             // We should implement a proper router to avoid doing this
@@ -465,7 +457,7 @@ struct ComposeMessageView: View {
         }
     }
 
-    private func sendDraft() {
+    private func markDraftReadyForSend() {
         let sentWithExternals: Bool
         switch draft.displayExternalTag(mailboxManager: mailboxManager) {
         case .one, .many:
@@ -473,14 +465,36 @@ struct ComposeMessageView: View {
         case .none:
             sentWithExternals = false
         }
-
         matomo.trackSendMessage(draft: draft, sentWithExternals: sentWithExternals)
+
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
             }
         }
-        dismissMessageView()
+    }
+
+    private func handleMailboxFull(pack: LocalPack) {
+        matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
+        Task {
+            if let liveDraft = draft.thaw() {
+                try? liveDraft.realm?.write {
+                    liveDraft.action = .save
+                }
+            }
+        }
+        snackbarPresenter.show(
+            message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
+            action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
+                if pack == .kSuiteFree {
+                    mainViewState.isShowingKSuiteProUpgrade = true
+                    matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                } else if pack == .myKSuiteFree {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                }
+            }
+        )
     }
 
     private func changeSelectedFolder(to folder: Folder) {

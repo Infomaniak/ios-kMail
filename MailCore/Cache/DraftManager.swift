@@ -30,6 +30,8 @@ public final class DraftManager {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
+    private var currentSyncTask: Task<Void, Never>?
+
     /// Used by DI only
     public init() {}
 
@@ -41,63 +43,99 @@ public final class DraftManager {
         case missingIdentity
     }
 
+    private func syncDraftJob(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
+    ) async {
+        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+
+        var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+        backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sync") {
+            guard backgroundTaskIdentifier != .invalid else { return }
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            backgroundTaskIdentifier = .invalid
+        }
+
+        let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
+            for draft in drafts {
+                group.addTask {
+                    var sendDate: Date?
+                    switch draft.action {
+                    case .initialSave:
+                        await self.initialSaveRemotely(
+                            draft: draft,
+                            mailboxManager: mailboxManager,
+                            showSnackbar: showSnackbar
+                        )
+                    case .save:
+                        await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
+                    case .send, .sendReaction, .schedule:
+                        sendDate = try? await self.sendOrSchedule(
+                            draft: draft,
+                            mailboxManager: mailboxManager,
+                            showSnackbar: showSnackbar,
+                            changeFolderAction: changeFolderAction,
+                            kSuiteUpgradeAction: kSuiteUpgradeAction
+                        )
+                    default:
+                        break
+                    }
+                    return sendDate
+                }
+            }
+
+            var latestSendDate: Date?
+            for await result in group {
+                latestSendDate = result
+            }
+            return latestSendDate
+        }
+
+        if backgroundTaskIdentifier != .invalid {
+            await UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            backgroundTaskIdentifier = .invalid
+        }
+
+        try? await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+    }
+
     public func syncDraft(
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
         changeFolderAction: ((Folder) -> Void)? = nil,
         kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
+    ) async {
+        if currentSyncTask != nil {
+            await currentSyncTask?.value
+        }
+        currentSyncTask = Task {
+            await syncDraftJob(
+                mailboxManager: mailboxManager,
+                showSnackbar: showSnackbar,
+                changeFolderAction: changeFolderAction,
+                kSuiteUpgradeAction: kSuiteUpgradeAction
+            )
+        }
+
+        await currentSyncTask?.value
+        currentSyncTask = nil
+    }
+
+    public func startSyncDraft(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
     ) {
-        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
-
         Task {
-            var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
-            backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sync") {
-                guard backgroundTaskIdentifier != .invalid else { return }
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                backgroundTaskIdentifier = .invalid
-            }
-
-            let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
-                for draft in drafts {
-                    group.addTask {
-                        var sendDate: Date?
-                        switch draft.action {
-                        case .initialSave:
-                            await self.initialSaveRemotely(
-                                draft: draft,
-                                mailboxManager: mailboxManager,
-                                showSnackbar: showSnackbar
-                            )
-                        case .save:
-                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
-                        case .send, .sendReaction, .schedule:
-                            sendDate = try? await self.sendOrSchedule(
-                                draft: draft,
-                                mailboxManager: mailboxManager,
-                                showSnackbar: showSnackbar,
-                                changeFolderAction: changeFolderAction,
-                                kSuiteUpgradeAction: kSuiteUpgradeAction
-                            )
-                        default:
-                            break
-                        }
-                        return sendDate
-                    }
-                }
-
-                var latestSendDate: Date?
-                for await result in group {
-                    latestSendDate = result
-                }
-                return latestSendDate
-            }
-
-            if backgroundTaskIdentifier != .invalid {
-                await UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                backgroundTaskIdentifier = .invalid
-            }
-
-            try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+            await syncDraft(
+                mailboxManager: mailboxManager,
+                showSnackbar: showSnackbar,
+                changeFolderAction: changeFolderAction,
+                kSuiteUpgradeAction: kSuiteUpgradeAction
+            )
         }
     }
 

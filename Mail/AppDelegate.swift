@@ -79,7 +79,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
               let currentMailboxManager = accountManager.currentMailboxManager else {
             return
         }
-        draftManager.syncDraft(mailboxManager: currentMailboxManager, showSnackbar: true)
+        draftManager.startSyncDraft(mailboxManager: currentMailboxManager, showSnackbar: true)
     }
 
     func application(
