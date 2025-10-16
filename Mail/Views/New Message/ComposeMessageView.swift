@@ -116,6 +116,18 @@ struct ComposeMessageView: View {
         return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
     }
 
+    private var isMailboxOverQuota: Bool {
+        let mailbox = mailboxManager.mailbox
+        let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
+        if mailboxIsFull,
+           let pack = mailbox.pack,
+           pack == .myKSuiteFree || pack == .kSuiteFree {
+            return true
+        }
+
+        return false
+    }
+
     // MARK: - Init
 
     init(
@@ -425,31 +437,9 @@ struct ComposeMessageView: View {
             return
         }
 
-        let mailbox = mailboxManager.mailbox
-        let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailboxIsFull,
-           let pack = mailbox.pack,
-           pack == .myKSuiteFree || pack == .kSuiteFree {
-            matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
-            Task {
-                if let liveDraft = draft.thaw() {
-                    try? liveDraft.realm?.write {
-                        liveDraft.action = .save
-                    }
-                }
-            }
-            snackbarPresenter.show(
-                message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
-                action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
-                    if pack == .kSuiteFree {
-                        mainViewState.isShowingKSuiteProUpgrade = true
-                        matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
-                    } else if pack == .myKSuiteFree {
-                        mainViewState.isShowingMyKSuiteUpgrade = true
-                        matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
-                    }
-                }
-            )
+        if isMailboxOverQuota,
+           let pack = mailboxManager.mailbox.pack {
+            handleMailboxFull(pack: pack)
             return
         }
 
@@ -482,6 +472,29 @@ struct ComposeMessageView: View {
                 liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
             }
         }
+    }
+
+    private func handleMailboxFull(pack: LocalPack) {
+        matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
+        Task {
+            if let liveDraft = draft.thaw() {
+                try? liveDraft.realm?.write {
+                    liveDraft.action = .save
+                }
+            }
+        }
+        snackbarPresenter.show(
+            message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
+            action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
+                if pack == .kSuiteFree {
+                    mainViewState.isShowingKSuiteProUpgrade = true
+                    matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                } else if pack == .myKSuiteFree {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                }
+            }
+        )
     }
 
     private func changeSelectedFolder(to folder: Folder) {
