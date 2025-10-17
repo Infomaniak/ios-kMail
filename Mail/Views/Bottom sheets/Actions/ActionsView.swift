@@ -109,17 +109,25 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
-            let request = PerformActionRequest(
-                targetMessages: targetMessages,
-                action: action,
-                origin: origin,
-                isMultipleSelection: isMultipleSelection,
-                completionHandler: completionHandler
-            )
-            performActionAndTrack(
-                request: request,
-                actionsManager: actionsManager
-            ) { dismiss() }
+            @InjectService var matomo: MatomoUtils
+            dismiss()
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: origin
+                    )
+                    completionHandler?(action)
+
+                    matomo.trackBottomSheetAction(
+                        action: action,
+                        origin: origin,
+                        numberOfItems: targetMessages.count,
+                        isMultipleSelection: isMultipleSelection
+                    )
+                }
+            }
         } label: {
             VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
@@ -155,17 +163,25 @@ struct MessageActionView: View {
 
     var body: some View {
         Button {
-            let request = PerformActionRequest(
-                targetMessages: targetMessages,
-                action: action,
-                origin: origin,
-                isMultipleSelection: isMultipleSelection,
-                completionHandler: completionHandler
-            )
-            performActionAndTrack(
-                request: request,
-                actionsManager: actionsManager
-            ) { dismiss() }
+            @InjectService var matomo: MatomoUtils
+            dismiss()
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: origin
+                    )
+                    completionHandler?(action)
+
+                    matomo.trackBottomSheetAction(
+                        action: action,
+                        origin: origin,
+                        numberOfItems: targetMessages.count,
+                        isMultipleSelection: isMultipleSelection
+                    )
+                }
+            }
         } label: {
             ActionButtonLabel(action: action)
         }
@@ -209,39 +225,5 @@ struct ActionButtonLabel: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(value: .medium)
-    }
-}
-
-private struct PerformActionRequest {
-    let targetMessages: [Message]
-    let action: Action
-    let origin: ActionOrigin
-    let isMultipleSelection: Bool
-    let completionHandler: ((Action) -> Void)?
-}
-
-private func performActionAndTrack(
-    request: PerformActionRequest,
-    actionsManager: ActionsManager,
-    dismiss: @escaping () -> Void
-) {
-    @InjectService var matomo: MatomoUtils
-    dismiss()
-    Task {
-        await tryOrDisplayError {
-            try await actionsManager.performAction(
-                target: request.targetMessages,
-                action: request.action,
-                origin: request.origin
-            )
-            request.completionHandler?(request.action)
-
-            matomo.trackAction(
-                action: request.action,
-                origin: request.origin,
-                numberOfItems: request.targetMessages.count,
-                isMultipleSelection: request.isMultipleSelection
-            )
-        }
     }
 }
