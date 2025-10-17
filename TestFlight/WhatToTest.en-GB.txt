@@ -1,1 +1,1 @@
-- Fix sending mail from share extension 
+- Bug fixes 
