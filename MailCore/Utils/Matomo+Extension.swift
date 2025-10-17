@@ -120,16 +120,12 @@ public extension MatomoUtils {
         }
     }
 
-    func trackAction(action: Action, origin: ActionOrigin, numberOfItems: Int, isMultipleSelection: Bool) {
+    func trackBottomSheetAction(action: Action, origin: ActionOrigin, numberOfItems: Int, isMultipleSelection: Bool) {
         if isMultipleSelection {
-            trackMultipleSelectionAction(action: action, origin: origin, numberOfItems: numberOfItems)
+            trackBulkEvent(eventWithCategory: .threadActions, name: action.matomoName, numberOfItems: numberOfItems)
         } else {
             trackSingleAction(action: action, origin: origin)
         }
-    }
-
-    private func trackMultipleSelectionAction(action: Action, origin: ActionOrigin, numberOfItems: Int) {
-        trackBulkEvent(eventWithCategory: .threadActions, name: action.matomoName, numberOfItems: numberOfItems)
     }
 
     private func trackSingleAction(action: Action, origin: ActionOrigin) {
