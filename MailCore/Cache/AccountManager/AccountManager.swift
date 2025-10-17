@@ -237,7 +237,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return
         }
 
-        await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
+        await notificationService.updateTopicsWithTwoFAIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
         let currentMailboxManager = getMailboxManager(for: mainMailbox)
         try? await currentMailboxManager?.refreshAllFolders()
 
@@ -382,7 +382,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
 
             let updatedTopics = currentTopics + [notificationTopicName]
-            await notificationService.updateTopicsIfNeeded(updatedTopics, userApiFetcher: mailboxManager.apiFetcher)
+            await notificationService.updateTopicsWithTwoFAIfNeeded(updatedTopics, userApiFetcher: mailboxManager.apiFetcher)
         }
     }
 
