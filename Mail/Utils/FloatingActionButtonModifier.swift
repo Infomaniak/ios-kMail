@@ -39,7 +39,7 @@ struct FloatingActionButtonModifier: ViewModifier {
                 ExtendedFAB(title: title, icon: icon, isExtended: isExtended, action: action)
                     .padding(.trailing, value: .large)
                     .padding(.bottom, IKPadding.floatingButtonBottom)
-                    .snackBarAware(inset: snackBarInset)
+                    .snackBarAware(inset: snackBarInset, removeOnDisappear: UserDefaults.shared.autoAdvance != .listOfThread)
                     .accessibilityLabel(title)
                     .overlay {
                         ViewGeometry(key: ViewHeightKey.self, property: \.size.height)

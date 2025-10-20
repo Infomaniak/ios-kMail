@@ -22,13 +22,15 @@ import MailCore
 import SwiftUI
 
 public extension View {
-    func snackBarAware(inset: CGFloat) -> some View {
-        modifier(SnackBarAwareViewModifier(inset: inset))
+    func snackBarAware(inset: CGFloat, removeOnDisappear: Bool = true) -> some View {
+        modifier(SnackBarAwareViewModifier(inset: inset, removeOnDisappear: removeOnDisappear))
     }
 }
 
 public struct SnackBarAwareViewModifier: ViewModifier {
     @LazyInjectService var avoider: IKSnackBarAvoider
+
+    let removeOnDisappear: Bool
 
     public var inset: CGFloat {
         didSet {
@@ -36,8 +38,9 @@ public struct SnackBarAwareViewModifier: ViewModifier {
         }
     }
 
-    public init(inset: CGFloat) {
+    public init(inset: CGFloat, removeOnDisappear: Bool) {
         self.inset = inset
+        self.removeOnDisappear = removeOnDisappear
     }
 
     public func body(content: Content) -> some View {
@@ -49,7 +52,7 @@ public struct SnackBarAwareViewModifier: ViewModifier {
                 avoider.addAvoider(inset: inset)
             }
             .onDisappear {
-                if avoider.snackBarInset == inset && UserDefaults.shared.autoAdvance != .listOfThread {
+                if avoider.snackBarInset == inset && removeOnDisappear {
                     avoider.removeAvoider()
                 }
             }
