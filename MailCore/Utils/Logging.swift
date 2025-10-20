@@ -102,8 +102,10 @@ public enum Logging {
         if ProcessInfo.processInfo.arguments.contains("resetData") {
             UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             UserDefaults.shared.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            @InjectService var keychainHelper: KeychainHelper
-            keychainHelper.deleteAllTokens()
+
+            for identifier in AppIdentifierBuilder.knownAppKeychainIdentifiers {
+                KeychainHelper(accessGroup: identifier).deleteAllTokens()
+            }
 
             @InjectService var appGroupPathProvider: AppGroupPathProvidable
             do {
