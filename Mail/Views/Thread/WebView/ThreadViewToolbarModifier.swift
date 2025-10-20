@@ -122,7 +122,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
                                     .sheetViewStyle()
                             }
-                            .modifier(BottomToolbarSnackbarAvoider())
+                            .modifier(BottomToolbarSnackBarAvoider())
                         }
 
                         if action != toolbarActions.last || showMoreButton {

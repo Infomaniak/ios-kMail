@@ -18,7 +18,6 @@
 
 import InfomaniakCoreCommonUI
 import InfomaniakDI
-import MailCore
 import SwiftUI
 
 public extension View {

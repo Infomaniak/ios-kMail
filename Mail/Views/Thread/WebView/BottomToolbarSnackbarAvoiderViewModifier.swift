@@ -22,7 +22,7 @@ import InfomaniakDI
 import MailCoreUI
 import SwiftUI
 
-struct BottomToolbarSnackbarAvoider: ViewModifier {
+struct BottomToolbarSnackBarAvoider: ViewModifier {
     @LazyInjectService var avoider: IKSnackBarAvoider
 
     func body(content: Content) -> some View {
