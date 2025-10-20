@@ -29,7 +29,7 @@ struct FloatingActionButtonModifier: ViewModifier {
     var isExtended = true
     let action: () -> Void
 
-    @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
+    @State private var snackBarInset: CGFloat = 0
 
     func body(content: Content) -> some View {
         ZStack(alignment: .bottomTrailing) {
@@ -39,13 +39,13 @@ struct FloatingActionButtonModifier: ViewModifier {
                 ExtendedFAB(title: title, icon: icon, isExtended: isExtended, action: action)
                     .padding(.trailing, value: .large)
                     .padding(.bottom, IKPadding.floatingButtonBottom)
-                    .modifier(snackBarAwareModifier)
+                    .snackBarAware(inset: snackBarInset, removeOnDisappear: UserDefaults.shared.autoAdvance != .listOfThread)
                     .accessibilityLabel(title)
                     .overlay {
                         ViewGeometry(key: ViewHeightKey.self, property: \.size.height)
                     }
                     .onPreferenceChange(ViewHeightKey.self) { value in
-                        snackBarAwareModifier.inset = value
+                        snackBarInset = value
                     }
             }
         }
