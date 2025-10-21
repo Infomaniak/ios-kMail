@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakNotifications
 import RealmSwift
 
 public enum LocalPack: Sendable {
@@ -95,8 +96,8 @@ public class Mailbox: Object, Codable, Identifiable {
         return isPasswordValid && !isConsideredLocked
     }
 
-    public var notificationTopicName: String {
-        return "mailbox-\(mailboxId)"
+    public var notificationTopicName: Topic {
+        return Topic(rawValue: "mailbox-\(mailboxId)")
     }
 
     public var pack: LocalPack? {
