@@ -37,7 +37,7 @@ struct ActionsView: View {
     init(user: UserProfile,
          target messages: [Message],
          origin: ActionOrigin,
-         isMultipleSelection: Bool = false,
+         isMultipleSelection: Bool,
          completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
@@ -90,7 +90,8 @@ struct ActionsView: View {
     ActionsView(
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
-        origin: .toolbar(originFolder: nil)
+        origin: .toolbar(originFolder: nil),
+        isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
@@ -120,7 +121,7 @@ struct QuickActionView: View {
                     )
                     completionHandler?(action)
 
-                    matomo.trackBottomSheetAction(
+                    matomo.trackThreadBottomSheetAction(
                         action: action,
                         origin: origin,
                         numberOfItems: targetMessages.count,
@@ -174,7 +175,7 @@ struct MessageActionView: View {
                     )
                     completionHandler?(action)
 
-                    matomo.trackBottomSheetAction(
+                    matomo.trackThreadBottomSheetAction(
                         action: action,
                         origin: origin,
                         numberOfItems: targetMessages.count,
