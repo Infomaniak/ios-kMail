@@ -75,7 +75,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "8.1.1")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.3.0")),
-        .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "14.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "15.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "16.0.0")),
         .package(url: "https://github.com/Infomaniak/Popovers", .upToNextMajor(from: "1.3.3")),
