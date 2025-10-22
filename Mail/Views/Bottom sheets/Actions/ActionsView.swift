@@ -109,27 +109,7 @@ struct QuickActionView: View {
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
-        Button {
-            @InjectService var matomo: MatomoUtils
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-
-                    matomo.trackThreadBottomSheetAction(
-                        action: action,
-                        origin: origin,
-                        numberOfItems: targetMessages.count,
-                        isMultipleSelection: isMultipleSelection
-                    )
-                }
-            }
-        } label: {
+        Button(action: didTapButton) {
             VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(accentColor.secondary.swiftUIColor)
@@ -150,6 +130,29 @@ struct QuickActionView: View {
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
+
+    private func didTapButton() {
+        dismiss()
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: targetMessages,
+                    action: action,
+                    origin: origin
+                )
+                completionHandler?(action)
+
+                @InjectService var matomo: MatomoUtils
+                matomo.trackThreadBottomSheetAction(
+                    action: action,
+                    origin: origin,
+                    numberOfItems: targetMessages.count,
+                    isMultipleSelection: isMultipleSelection
+                )
+            }
+        }
+    }
 }
 
 struct MessageActionView: View {
@@ -163,30 +166,33 @@ struct MessageActionView: View {
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
-        Button {
-            @InjectService var matomo: MatomoUtils
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-
-                    matomo.trackThreadBottomSheetAction(
-                        action: action,
-                        origin: origin,
-                        numberOfItems: targetMessages.count,
-                        isMultipleSelection: isMultipleSelection
-                    )
-                }
-            }
-        } label: {
+        Button(action: didTapButton) {
             ActionButtonLabel(action: action)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
+    }
+
+    private func didTapButton() {
+        dismiss()
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: targetMessages,
+                    action: action,
+                    origin: origin
+                )
+                completionHandler?(action)
+
+                @InjectService var matomo: MatomoUtils
+                matomo.trackThreadBottomSheetAction(
+                    action: action,
+                    origin: origin,
+                    numberOfItems: targetMessages.count,
+                    isMultipleSelection: isMultipleSelection
+                )
+            }
+        }
     }
 }
 
