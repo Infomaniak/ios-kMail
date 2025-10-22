@@ -62,6 +62,7 @@ struct ReportJunkView: View {
                     targetMessages: reportedMessages,
                     action: action,
                     origin: origin,
+                    isMultipleSelection: false,
                     completionHandler: completionHandler
                 )
             }

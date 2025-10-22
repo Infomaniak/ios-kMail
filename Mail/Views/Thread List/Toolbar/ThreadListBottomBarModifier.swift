@@ -100,6 +100,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
             messages: $multipleSelectedMessages,
             originFolder: viewModel.frozenFolder,
             panelSource: .threadList,
+            isMultipleSelection: true,
             popoverArrowEdge: .bottom
         ) { action in
             guard action.shouldDisableMultipleSelection else { return }
@@ -115,8 +116,8 @@ struct ThreadListBottomBarModifier: ViewModifier {
             @InjectService var matomo: MatomoUtils
             matomo.trackBulkEvent(
                 eventWithCategory: .threadActions,
-                name: action.matomoName.capitalized,
-                numberOfItems: multipleSelectionViewModel.selectedItems.count
+                name: action.matomoName,
+                numberOfItems: allMessages.count
             )
 
             try await actionsManager.performAction(

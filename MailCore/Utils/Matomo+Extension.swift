@@ -119,4 +119,16 @@ public extension MatomoUtils {
             track(eventWithCategory: .userInfo, action: .data, name: "multipleMessagesInThread", value: messagesCount)
         }
     }
+
+    func trackThreadBottomSheetAction(action: Action, origin: ActionOrigin, numberOfItems: Int, isMultipleSelection: Bool) {
+        let category: MatomoUtils.EventCategory = origin.type == .floatingPanel(source: .message)
+            ? .bottomSheetMessageActions
+            : .bottomSheetThreadActions
+
+        if isMultipleSelection {
+            trackBulkEvent(eventWithCategory: category, name: action.matomoName, numberOfItems: numberOfItems)
+        } else {
+            track(eventWithCategory: category, name: action.matomoName)
+        }
+    }
 }

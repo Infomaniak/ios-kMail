@@ -132,7 +132,7 @@ struct SearchToolbar: ViewModifier {
                                 Task {
                                     matomo.trackBulkEvent(
                                         eventWithCategory: .threadActions,
-                                        name: action.matomoName.capitalized,
+                                        name: action.matomoName,
                                         numberOfItems: multipleSelectionViewModel.selectedItems.count
                                     )
 

@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -30,11 +31,13 @@ struct ActionsView: View {
     private let quickActions: [Action]
     private let listActions: [Action]
     private let origin: ActionOrigin
+    private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
 
     init(user: UserProfile,
          target messages: [Message],
          origin: ActionOrigin,
+         isMultipleSelection: Bool,
          completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
@@ -42,6 +45,7 @@ struct ActionsView: View {
         listActions = actions.listActions
 
         targetMessages = messages
+        self.isMultipleSelection = isMultipleSelection
         self.origin = origin
         self.completionHandler = completionHandler
     }
@@ -54,6 +58,7 @@ struct ActionsView: View {
                         targetMessages: targetMessages,
                         action: action,
                         origin: origin,
+                        isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
                     .frame(maxWidth: .infinity)
@@ -71,6 +76,7 @@ struct ActionsView: View {
                         targetMessages: targetMessages,
                         action: action,
                         origin: origin,
+                        isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
                 }
@@ -84,7 +90,8 @@ struct ActionsView: View {
     ActionsView(
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
-        origin: .toolbar(originFolder: nil)
+        origin: .toolbar(originFolder: nil),
+        isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
@@ -98,22 +105,11 @@ struct QuickActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
-        Button {
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-                }
-            }
-        } label: {
+        Button(action: didTapButton) {
             VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(accentColor.secondary.swiftUIColor)
@@ -134,6 +130,29 @@ struct QuickActionView: View {
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
+
+    private func didTapButton() {
+        dismiss()
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: targetMessages,
+                    action: action,
+                    origin: origin
+                )
+                completionHandler?(action)
+
+                @InjectService var matomo: MatomoUtils
+                matomo.trackThreadBottomSheetAction(
+                    action: action,
+                    origin: origin,
+                    numberOfItems: targetMessages.count,
+                    isMultipleSelection: isMultipleSelection
+                )
+            }
+        }
+    }
 }
 
 struct MessageActionView: View {
@@ -143,25 +162,37 @@ struct MessageActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
     var body: some View {
-        Button {
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: targetMessages,
-                        action: action,
-                        origin: origin
-                    )
-                    completionHandler?(action)
-                }
-            }
-        } label: {
+        Button(action: didTapButton) {
             ActionButtonLabel(action: action)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
+    }
+
+    private func didTapButton() {
+        dismiss()
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: targetMessages,
+                    action: action,
+                    origin: origin
+                )
+                completionHandler?(action)
+
+                @InjectService var matomo: MatomoUtils
+                matomo.trackThreadBottomSheetAction(
+                    action: action,
+                    origin: origin,
+                    numberOfItems: targetMessages.count,
+                    isMultipleSelection: isMultipleSelection
+                )
+            }
+        }
     }
 }
 
