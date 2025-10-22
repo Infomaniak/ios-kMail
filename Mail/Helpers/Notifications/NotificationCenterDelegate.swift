@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InAppTwoFactorAuthentication
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
@@ -91,6 +92,31 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         Task {
             await handleMailAction(for: response.actionIdentifier, content: response.notification.request.content)
         }
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        await handleTwoFactorAuthenticationNotification(notification)
+        return []
+    }
+
+    func handleTwoFactorAuthenticationNotification(_ notification: UNNotification) async {
+        @InjectService var inAppTwoFactorAuthenticationManager: InAppTwoFactorAuthenticationManagerable
+
+        guard let userId = inAppTwoFactorAuthenticationManager.handleRemoteNotification(notification) else {
+            return
+        }
+
+        guard let account = accountManager.account(for: userId),
+              let user = await accountManager.userProfileStore.getUserProfile(id: userId) else {
+            return
+        }
+
+        let apiFetcher = accountManager.getApiFetcher(for: userId, token: account)
+
+        let session = InAppTwoFactorAuthenticationSession(user: user, apiFetcher: apiFetcher)
+
+        inAppTwoFactorAuthenticationManager.checkConnectionAttempts(using: session)
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
