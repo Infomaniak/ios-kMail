@@ -1,0 +1,11 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: es, Spanish
+ * Tagged: ios-main-target
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 24 Oct 2025 11:37:11 +0200
+ */
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Puede que hayas recibido nuevos mensajes";
