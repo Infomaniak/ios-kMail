@@ -3,9 +3,15 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios-main-target
- * Exported by: Valentin Perignon
- * Exported at: Fri, 24 Oct 2025 11:37:10 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 27 Oct 2025 17:07:57 +0100
  */
+
+/* loco:68ff6af10759e730de0f0f02 */
+"notification2faApproval" = "Confirmer la connexion";
 
 /* loco:641c3d9b723c7f035409c3d2 */
 "notificationNewEmail" = "Vous pourriez avoir de nouveaux messages";
+
+/* loco:68ff6ae1b0ac4a934e0ee4f2 */
+"notificationTitle2faApproval" = "Infomaniak Mail";
