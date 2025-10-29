@@ -287,6 +287,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if currentMailboxManager?.mailbox.isAvailable == false {
             switchToFirstValidMailboxManager()
         }
+
+        Task {
+            let currentTopics = await notificationService.subscriptionForUser(id: account.userId)?.topics ?? []
+            await notificationService.updateTopicsWithTwoFAIfNeeded(currentTopics, userApiFetcher: apiFetcher)
+        }
     }
 
     private func attachDeviceToApiToken(_ token: ApiToken, apiFetcher: ApiFetcher) {
