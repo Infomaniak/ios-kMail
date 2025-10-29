@@ -18,6 +18,7 @@
 
 import DesignSystem
 import InfomaniakConcurrency
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -26,7 +27,6 @@ import MailResources
 import SwiftUI
 
 struct ReportPhishingView: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     let messagesWithDuplicates: [Message]
 
@@ -53,6 +53,7 @@ struct ReportPhishingView: View {
                 try await mailboxManager.apiFetcher.reportPhishing(message: message)
             }
 
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             if latestResponses.allSatisfy({ $0 == true }) {
                 let messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
                 _ = try await mailboxManager.move(messages: messagesFreeze, to: .spam)

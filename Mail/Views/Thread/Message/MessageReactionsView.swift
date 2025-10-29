@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -51,7 +52,7 @@ struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @State private var reactions = [UIReaction]()
     @State private var localReactions = OrderedSet<String>()

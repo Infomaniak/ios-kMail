@@ -17,13 +17,14 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct ContactActionView: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @Environment(\.dismiss) private var dismiss
 

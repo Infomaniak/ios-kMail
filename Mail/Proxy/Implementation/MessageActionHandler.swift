@@ -42,7 +42,7 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     private enum Action {
         case tap

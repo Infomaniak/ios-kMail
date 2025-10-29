@@ -72,7 +72,7 @@ struct ComposeMessageView: View {
     @InjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @Environment(\.dismiss) private var dismiss

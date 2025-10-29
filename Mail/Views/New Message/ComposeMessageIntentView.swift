@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakCoreDB
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -34,9 +35,6 @@ struct ComposeMessageIntentView: View, IntentViewable {
         let messageReply: MessageReply?
         let mainViewState: MainViewState
     }
-
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Environment(\.dismiss) private var dismiss
 
@@ -83,6 +81,9 @@ struct ComposeMessageIntentView: View, IntentViewable {
     }
 
     func initFromIntent() async {
+        @InjectService var accountManager: AccountManager
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
+
         guard let mailboxId = composeMessageIntent.mailboxId, let userId = composeMessageIntent.userId,
               let mailboxManager = accountManager.getMailboxManager(for: mailboxId, userId: userId),
               let currentUser = await accountManager.userProfileStore.getUserProfile(id: userId) else {

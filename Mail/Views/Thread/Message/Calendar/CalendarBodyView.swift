@@ -65,7 +65,8 @@ struct CalendarBodyView: View {
                 guard let messageUid = event.parent?.message?.uid,
                       let storedEvent = try? await mailboxManager.importICSEventToCalendar(messageUid: messageUid) else {
                     isLoadingCalendarButton = false
-                    @InjectService var snackbarPresenter: SnackBarPresentable
+
+                    @InjectService var snackbarPresenter: IKSnackBarPresentable
                     snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorEventCouldNotBeOpenedInMyCalendar)
                     return
                 }

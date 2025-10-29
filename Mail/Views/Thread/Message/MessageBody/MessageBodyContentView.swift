@@ -25,9 +25,6 @@ import SwiftSoup
 import SwiftUI
 
 struct MessageBodyContentView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     @StateObject private var model = WebViewModel()
 
     @Binding var displayContentBlockedActionView: Bool
@@ -81,6 +78,9 @@ struct MessageBodyContentView: View {
         printController.printFormatter = printFormatter
 
         let completionHandler: UIPrintInteractionController.CompletionHandler = { _, completed, error in
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            @InjectService var matomo: MatomoUtils
+
             if completed {
                 matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
             } else if let error {

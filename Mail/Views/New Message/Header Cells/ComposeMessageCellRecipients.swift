@@ -61,9 +61,6 @@ struct ComposeMessageCellRecipients: View {
 
     @FocusState var focusedField: ComposeViewFieldType?
 
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var matomo: MatomoUtils
-
     let type: ComposeViewFieldType
     var areCCAndBCCEmpty = false
 
@@ -137,8 +134,10 @@ struct ComposeMessageCellRecipients: View {
     }
 
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
         if isRecipientLimitExceeded {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
             return
@@ -188,6 +187,7 @@ struct ComposeMessageCellRecipients: View {
 
         let remainingCapacity = 100 - recipients.count
         if newUniqueContacts.count > remainingCapacity {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
         }
 

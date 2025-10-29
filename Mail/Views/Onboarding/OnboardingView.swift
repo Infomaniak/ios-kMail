@@ -114,7 +114,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @Published var isLoading = false
     @Published var shouldShowEmptyMailboxesView = false

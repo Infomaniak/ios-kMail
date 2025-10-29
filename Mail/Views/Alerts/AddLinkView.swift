@@ -32,9 +32,6 @@ struct AddLinkView: View {
 
     @FocusState private var firstFieldIsFocused: Bool
 
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var matomo: MatomoUtils
-
     var actionHandler: ((URL, String) -> Void)?
 
     private var textPlaceholder: String {
@@ -77,6 +74,7 @@ struct AddLinkView: View {
     }
 
     private func didTapPrimaryButton() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
 
         var correctlyFormattedURL = url
@@ -85,6 +83,7 @@ struct AddLinkView: View {
         }
 
         guard let url = URL(string: correctlyFormattedURL) else {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
             return
         }

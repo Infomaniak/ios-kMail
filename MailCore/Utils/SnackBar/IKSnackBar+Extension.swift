@@ -101,7 +101,7 @@ public extension IKSnackBar {
             message: message,
             duration: duration,
             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
-                @InjectService var snackbarPresenter: SnackBarPresentable
+                @InjectService var snackbarPresenter: IKSnackBarPresentable
                 Task {
                     do {
                         @InjectService var matomo: MatomoUtils

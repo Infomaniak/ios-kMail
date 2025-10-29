@@ -26,8 +26,6 @@ import MailResources
 import SwiftUI
 
 struct CalendarChoiceButton: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var selectedChoice: AttendeeState?
@@ -65,6 +63,7 @@ struct CalendarChoiceButton: View {
         let oldChoice = selectedChoice
         selectedChoice = choice
         Task {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             do {
                 try await mailboxManager.replyToCalendarEvent(messageUid: messageUid, reply: choice)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarCalendarChoiceSent)

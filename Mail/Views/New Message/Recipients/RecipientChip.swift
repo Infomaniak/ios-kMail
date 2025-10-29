@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -29,8 +30,6 @@ struct RecipientChip: View {
     @Environment(\.draftEncryption) private var draftEncryption: DraftEncryption
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
@@ -63,6 +62,8 @@ struct RecipientChip: View {
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {
                 UIPasteboard.general.string = recipient.email
+
+                @InjectService var snackbarPresenter: IKSnackBarPresentable
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
             }
 

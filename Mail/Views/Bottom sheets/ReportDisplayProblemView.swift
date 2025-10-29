@@ -28,7 +28,6 @@ import Sentry
 import SwiftUI
 
 struct ReportDisplayProblemView: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     let message: Message
 
@@ -59,6 +58,8 @@ struct ReportDisplayProblemView: View {
             _ = SentrySDK.capture(message: "Message display problem reported") { scope in
                 scope.addAttachment(fileAttachment)
             }
+
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
         }
     }
