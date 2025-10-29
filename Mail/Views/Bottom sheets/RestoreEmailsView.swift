@@ -36,9 +36,6 @@ struct RestoreEmailsView: View {
     @State private var availableDates = [String]()
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
 
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
@@ -55,6 +52,7 @@ struct RestoreEmailsView: View {
                         items: availableDates.map(mapDates))
                 .padding(.bottom, value: .large)
                 .onChange(of: selectedDate) { _ in
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .restoreEmailsBottomSheet, action: .input, name: "selectDate")
                 }
 
@@ -81,9 +79,13 @@ struct RestoreEmailsView: View {
     }
 
     private func restoreEmails() async {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .restoreEmailsBottomSheet, name: "restore")
+
         await tryOrDisplayError {
             try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
+
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
         }
     }

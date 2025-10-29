@@ -26,9 +26,6 @@ import MailResources
 import SwiftUI
 
 struct SyncCopyPasswordView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var applicationPassword: String?
@@ -79,6 +76,7 @@ struct SyncCopyPasswordView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
                 }
@@ -108,6 +106,8 @@ struct SyncCopyPasswordView: View {
     func copyPassword() {
         guard let applicationPassword else { return }
         UIPasteboard.general.string = applicationPassword
+
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
         navigationPath.append(.installProfile)
     }

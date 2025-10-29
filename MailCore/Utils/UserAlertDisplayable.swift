@@ -49,7 +49,7 @@ public protocol UserAlertDisplayable {
 public typealias UserAlertAction = (name: String, closure: () -> Void)
 
 public final class UserAlertDisplayer: UserAlertDisplayable {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
     @LazyInjectService private var applicationState: ApplicationStatable
 
     /// Used by DI

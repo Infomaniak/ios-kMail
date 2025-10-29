@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import OSLog
 import Sentry
@@ -38,7 +39,7 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 }
 
 private func displayErrorIfNeeded(error: Error) {
-    @InjectService var snackbarPresenter: SnackBarPresentable
+    @InjectService var snackbarPresenter: IKSnackBarPresentable
     if let error = error as? MailError {
         if error.shouldDisplay, let errorDescription = error.errorDescription {
             snackbarPresenter.show(message: errorDescription)

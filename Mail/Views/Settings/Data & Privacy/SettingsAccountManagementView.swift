@@ -31,7 +31,7 @@ import SwiftUI
 
 final class SettingsAccountManagementViewDelegate: DeleteAccountDelegate {
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @MainActor func didCompleteDeleteAccount() {
         Task {

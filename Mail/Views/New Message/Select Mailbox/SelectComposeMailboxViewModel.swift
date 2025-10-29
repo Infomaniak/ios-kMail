@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -32,7 +33,7 @@ struct SelectableComposeMailbox {
 final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @Published private(set) var selectedMailbox: SelectableComposeMailbox?
     @Published private(set) var defaultSelectableMailbox: SelectableComposeMailbox?

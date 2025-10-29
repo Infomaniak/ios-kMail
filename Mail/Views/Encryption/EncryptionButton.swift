@@ -28,7 +28,7 @@ struct EncryptionButton: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptPasswordPanel = false

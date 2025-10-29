@@ -21,21 +21,9 @@ import InfomaniakCoreCommonUI
 import SnackBar
 import UIKit
 
-// todo use the version in CoreUI
-public protocol SnackBarPresentable {
-    func show(message: String)
-    func show(message: String, action: IKSnackBar.Action?)
-    func show(
-        message: String,
-        duration: SnackBar.Duration,
-        action: IKSnackBar.Action?,
-        contextView: UIView?
-    )
-}
-
-public final class SnackBarPresenter: SnackBarPresentable {
+public struct SnackBarPresenter: IKSnackBarPresentable {
     /// Set to display the snack bar is a specific context, like
-    private var contextView: UIView?
+    private let contextView: UIView?
 
     public init(contextView: UIView? = nil) {
         self.contextView = contextView
@@ -47,6 +35,16 @@ public final class SnackBarPresenter: SnackBarPresentable {
 
     public func show(message: String, action: IKSnackBar.Action?) {
         show(message: message, action: action, contextView: nil)
+    }
+
+    public func show(
+        message: String,
+        duration: SnackBar.Duration,
+        action: IKSnackBar.Action?,
+        anchor: CGFloat,
+        contextView: UIView?
+    ) {
+        show(message: message, duration: duration, action: action, contextView: contextView)
     }
 
     public func show(

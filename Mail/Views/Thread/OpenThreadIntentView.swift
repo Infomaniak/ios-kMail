@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -26,9 +27,6 @@ import SwiftUI
 
 struct OpenThreadIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
-
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Environment(\.dismiss) private var dismiss
 
@@ -71,6 +69,9 @@ struct OpenThreadIntentView: View, IntentViewable {
     }
 
     func initFromIntent() async {
+        @InjectService var accountManager: AccountManager
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
+
         guard let user = await accountManager.userProfileStore.getUserProfile(id: openThreadIntent.userId),
               let mailboxManager = accountManager.getMailboxManager(
                   for: openThreadIntent.mailboxId,

@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import Social
@@ -28,7 +29,7 @@ final class ShareNavigationViewController: UIViewController {
     private let dependencyInjectionHook = MailShareExtensionTargetAssembly()
 
     private func overrideSnackBarPresenter(contextView: UIView) {
-        let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in
+        let snackBarPresenter = Factory(type: IKSnackBarPresentable.self) { _, _ in
             SnackBarPresenter(contextView: contextView)
         }
         SimpleResolver.sharedResolver.store(factory: snackBarPresenter)

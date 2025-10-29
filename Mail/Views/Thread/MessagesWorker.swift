@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 
@@ -30,8 +31,6 @@ extension MessagesWorker {
 
 @MainActor
 final class MessagesWorker: ObservableObject {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     @Published var presentableBodies = [String: PresentableBody]()
 
     private var replacedAllAttachments = [String: Bool]()
@@ -69,6 +68,7 @@ extension MessagesWorker {
         do {
             try await mailboxManager.message(message: message)
         } catch let error as MailApiError where error == .apiMessageNotFound {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: error.errorDescription ?? "")
             try? await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)
         } catch {
