@@ -1,2 +1,1 @@
-- Correction de bugs
-- Améliorations mineures
+- Correction de bugs et améliorations mineures
