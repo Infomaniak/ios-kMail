@@ -1,1 +1,2 @@
-- Bug fixes and minor improvements
+- Bug fixes
+- Minor improvements
