@@ -91,6 +91,6 @@ let package = Package(
         .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.41.0")),
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
         .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "26.0.0")),
-        .package(url: "https://github.com/SVGKit/SVGKit", branch: "3.x")
+        .package(url: "https://github.com/exyte/SVGView", .upToNextMajor(from: "1.0.6"))
     ]
 )

@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "cocoalumberjack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
-      "state" : {
-        "revision" : "a9ed4b6f9bdedce7d77046f43adfb8ce1fd54114",
-        "version" : "3.9.0"
-      }
-    },
-    {
       "identity" : "elegant-emoji-picker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/Elegant-Emoji-Picker",
@@ -244,12 +235,12 @@
       }
     },
     {
-      "identity" : "svgkit",
+      "identity" : "svgview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SVGKit/SVGKit",
+      "location" : "https://github.com/exyte/SVGView",
       "state" : {
-        "branch" : "3.x",
-        "revision" : "771fd1e9d8b33bc8f5c74ca7d4868131944cb6b8"
+        "revision" : "6465962facdd25cb96eaebc35603afa2f15d2c0d",
+        "version" : "1.0.6"
       }
     },
     {
@@ -277,15 +268,6 @@
       "state" : {
         "revision" : "97ae7c9b998a43812d3f57ae106cb447a853bf3b",
         "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log",
-      "state" : {
-        "revision" : "ce592ae52f982c847a4efc0dd881cc9eb32d29f2",
-        "version" : "1.6.4"
       }
     },
     {

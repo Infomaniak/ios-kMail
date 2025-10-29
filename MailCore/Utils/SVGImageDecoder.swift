@@ -18,7 +18,8 @@
 
 import Foundation
 import Nuke
-import SVGKit
+import SVGView
+import SwiftUI
 
 final class SVGImageDecoder: ImageDecoding {
     static func register() {
@@ -29,13 +30,32 @@ final class SVGImageDecoder: ImageDecoding {
     }
 
     func decode(_ data: Data) throws -> ImageContainer {
-        guard let svgImage = SVGKImage(data: data) else {
-            throw ImageDecodingError.unknown
+        let parsedSVG = SVGParser.parse(data: data)
+        let svgView = parsedSVG?.toSwiftUI()
+            .frame(width: 512, height: 512)
+            .ignoresSafeArea()
+
+        let uiImage = DispatchQueue.main.sync {
+            if #available(iOS 16.0, *) {
+                let renderer = ImageRenderer(content: svgView)
+                return renderer.uiImage
+            } else {
+                let controller = UIHostingController(rootView: svgView)
+                let view = controller.view
+
+                let targetSize = controller.view.intrinsicContentSize
+                view?.bounds = CGRect(origin: .zero, size: targetSize)
+                view?.backgroundColor = .clear
+
+                let renderer = UIGraphicsImageRenderer(size: targetSize)
+
+                return renderer.image { _ in
+                    view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+                }
+            }
         }
 
-        svgImage.size = CGSize(width: 512, height: 512)
-
-        guard let uiImage = SVGKExporterUIImage.export(asUIImage: svgImage) else {
+        guard let uiImage else {
             throw ImageDecodingError.unknown
         }
 
