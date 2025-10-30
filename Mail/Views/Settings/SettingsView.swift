@@ -43,6 +43,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.cancelDelay)) private var cancelDelay = DefaultPreferences.cancelDelay
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
@@ -147,6 +148,21 @@ struct SettingsView: View {
                         subtitle: autoAdvance.description
                     ) {
                         SettingsAutoAdvanceView()
+                    }
+
+                    // MARK: Cancel delay
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
+                        subtitle: cancelDelay.title
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
+                            subtitle: MailResourcesStrings.Localizable.settingsCancellationPeriodDescription,
+                            keyPath: \.cancelSendDelay,
+                            matomoCategory: .settingsCancelPeriod,
+                            matomoName: \.title
+                        )
                     }
 
                     // MARK: External Content

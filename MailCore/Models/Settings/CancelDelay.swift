@@ -28,6 +28,15 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
     case seconds25 = 25
     case seconds30 = 30
 
+    public var safeValue: Int {
+        switch self {
+        case .disabled:
+            return rawValue
+        default:
+            return rawValue + 2
+        }
+    }
+
     public var title: String {
         return self == .disabled
             ? MailResourcesStrings.Localizable.settingsDisabled
