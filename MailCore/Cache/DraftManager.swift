@@ -232,7 +232,13 @@ public final class DraftManager {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 let sendDate = sendResponse.scheduledDate
 
-                showDidSendSnackbar(draft: draft, showSnackbar: showSnackbar)
+                let cancelResource = sendResponse.cancelResource
+                showDidSendSnackbar(
+                    draft: draft,
+                    mailboxManager: mailboxManager,
+                    showSnackbar: showSnackbar,
+                    cancelResource: cancelResource
+                )
 
                 return sendDate
             } else if draft.action == .schedule {
@@ -425,14 +431,35 @@ public final class DraftManager {
         }
     }
 
-    private func showDidSendSnackbar(draft: Draft, showSnackbar: Bool) {
+    private func showDidSendSnackbar(
+        draft: Draft,
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        cancelResource: String? = nil
+    ) {
+        var action: UserAlertAction?
+        if let cancelResource {
+            action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
+                Task {
+                    try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+                }
+            }
+        }
         switch draft.action {
         case .send:
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+            alertDisplayable.showWithDelay(
+                message: MailResourcesStrings.Localizable.snackbarEmailSent,
+                action: action,
+                shouldShow: showSnackbar
+            )
         case .sendReaction:
             guard showSnackbar, let reaction = draft.emojiReaction else { return }
             alertDisplayable
-                .show(message: MailResourcesStrings.Localizable.snackbarReactionSent(reaction), shouldShow: showSnackbar)
+                .show(
+                    message: MailResourcesStrings.Localizable.snackbarReactionSent(reaction),
+                    action: action,
+                    shouldShow: showSnackbar
+                )
         default:
             break
         }
