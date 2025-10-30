@@ -185,6 +185,10 @@ public extension MailApiFetcher {
         ))
     }
 
+    func cancelSend(resource: String) async throws -> Bool {
+        return try await perform(request: authenticatedRequest(.resource(resource), method: .put))
+    }
+
     @discardableResult
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
