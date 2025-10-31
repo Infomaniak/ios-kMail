@@ -29,7 +29,7 @@ public protocol AttachmentsContentUpdatable: AnyObject {
     @MainActor func contentWillChange()
 
     /// Error handling
-    @MainActor func handleGlobalError(_ error: MailError)
+    @MainActor func handleGlobalError(_ error: LocalError)
 }
 
 /// Public interface of the worker
@@ -286,10 +286,10 @@ public final class AttachmentsManagerWorker {
     }
 
     @MainActor private func updateAttachmentUploadError(_ attachment: Attachment, error: Error?) {
-        if let error = error as? MailError {
+        if let error = error as? LocalError {
             attachmentUploadTasks[attachment.uuid]?.error = error
         } else {
-            attachmentUploadTasks[attachment.uuid]?.error = .unknownError
+            attachmentUploadTasks[attachment.uuid]?.error = MailError.unknownError
         }
     }
 }

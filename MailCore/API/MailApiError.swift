@@ -18,11 +18,13 @@
 
 import Foundation
 import MailResources
+import InfomaniakCore
+import InfomaniakDI
 
 /// Static definitions of Mail API error codes
-enum MailApiErrorCode {
+public enum MailApiErrorCode {
     /// The email is not found
-    static let mailMessageNotFound = "mail__message_not_found"
+    public static let mailMessageNotFound = "mail__message_not_found"
 
     /// Invalid credentials
     static let invalidCredentials = "invalid_credentials"
@@ -266,9 +268,5 @@ public class MailApiError: MailError {
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {
         return allErrors.first { $0.code == code }
-    }
-
-    static func mailApiErrorWithFallback(apiErrorCode: String) -> MailError {
-        return mailApiErrorFromCode(apiErrorCode) ?? MailError.unknownError
     }
 }

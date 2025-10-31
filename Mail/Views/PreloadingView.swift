@@ -112,7 +112,7 @@ struct PreloadingView: View {
             }
 
             await rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
-        } catch let error as MailError where error == MailError.noMailbox {
+        } catch let error as LocalError where error == MailError.noMailbox {
             rootViewState.transitionToRootViewState(.noMailboxes)
         } catch {
             rootViewState.transitionToRootViewState(.onboarding)

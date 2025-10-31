@@ -62,6 +62,9 @@ open class TargetAssembly {
 
     open class func getCommonServices() -> [Factory] {
         return [
+            Factory(type: IKErrorRegistry.self) { _, _ in
+                IKErrorRegistry.instantiateForMail()
+            },
             Factory(type: MailboxInfosManager.self) { _, _ in
                 MailboxInfosManager()
             },

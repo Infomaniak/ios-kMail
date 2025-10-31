@@ -33,7 +33,7 @@ import SwiftUI
     var allAttachmentsUploaded: Bool { get }
 
     /// First error encountered
-    var globalError: MailError? { get }
+    var globalError: LocalError? { get }
 
     /// Init a concrete manager type
     /// - Parameters:
@@ -77,7 +77,7 @@ import SwiftUI
         worker.allAttachmentsUploaded
     }
 
-    var globalError: MailError?
+    var globalError: LocalError?
 
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
         // Debouncing objectWillChange helps a lot scaling with numerous attachments
@@ -122,7 +122,7 @@ extension AttachmentsManager: AttachmentsContentUpdatable {
         contentWillChangeSubject.send()
     }
 
-    func handleGlobalError(_ error: MailError) {
+    func handleGlobalError(_ error: LocalError) {
         globalError = error
     }
 }

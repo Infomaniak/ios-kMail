@@ -19,6 +19,7 @@
 import Alamofire
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import MailResources
 
 extension ApiError: @retroactive CustomStringConvertible {}
@@ -38,7 +39,7 @@ public class AFErrorWithContext: MailError, CustomStringConvertible {
     }
 }
 
-public class MailError: LocalizedError, Encodable, ErrorWithCode {
+public class MailError: LocalizedError, Encodable {
     public let code: String
     public let errorDescription: String?
     public let shouldDisplay: Bool
@@ -50,48 +51,6 @@ public class MailError: LocalizedError, Encodable, ErrorWithCode {
         errorDescription = localizedDescription
         self.shouldDisplay = shouldDisplay
     }
-
-    public static let unknownError = MailError(code: "unknownError", shouldDisplay: true)
-    public static let noToken = MailError(
-        code: "noToken",
-        localizedDescription: MailResourcesStrings.Localizable.refreshTokenError,
-        shouldDisplay: true
-    )
-    public static let keychainUnavailable = MailError(code: "keychainUnavailable", shouldDisplay: false)
-    public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
-    public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
-    public static let noMailbox = MailError(code: "noMailbox")
-    public static let folderNotFound = MailError(code: "folderNotFound",
-                                                 localizedDescription: MailResourcesStrings.Localizable.errorFolderNotFound,
-                                                 shouldDisplay: true)
-    public static let addressBookNotFound = MailError(code: "addressBookNotFound", shouldDisplay: true)
-    public static let contactNotFound = MailError(code: "contactNotFound", shouldDisplay: true)
-    public static let localMessageNotFound = MailError(code: "messageNotFound",
-                                                       localizedDescription: MailResourcesStrings.Localizable
-                                                           .errorMessageNotFound,
-                                                       shouldDisplay: true)
-    public static let attachmentsSizeLimitReached = MailError(code: "attachmentsSizeLimitReached",
-                                                              localizedDescription: MailResourcesStrings.Localizable
-                                                                  .attachmentFileLimitReached,
-                                                              shouldDisplay: true)
-    public static let threadHasNoMessageInFolder = MailError(code: "threadHasNoMessageInFolder")
-
-    public static let noConnection = MailError(code: "noConnection",
-                                               localizedDescription: MailResourcesStrings.Localizable.noConnection,
-                                               shouldDisplay: true)
-
-    /// After an update from the server we are still without a default signature
-    public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")
-
-    public static let noCalendarAttachmentFound = MailError(code: "noCalendarAttachmentFound")
-
-    public static let tooShortScheduleDelay = MailError(code: "tooShortScheduleDelay")
-
-    public static let missingSnoozeUUID = MailError(
-        code: "missingSnoozeUUID",
-        localizedDescription: MailResourcesStrings.Localizable.errorMessageNotSnoozed,
-        shouldDisplay: true
-    )
 }
 
 extension MailError: Identifiable {
@@ -112,4 +71,61 @@ public class MailServerError: MailError {
         self.httpStatus = httpStatus
         super.init(code: "serverError")
     }
+}
+
+public extension MailError {
+    static let unknownError: LocalError = {
+        @InjectService var errorRegistry: IKErrorRegistry
+        return errorRegistry.unknownError(underlyingError: nil, shouldDisplay: true)
+    }()
+
+    static let noToken = LocalError(
+        code: "noToken",
+        localizedMessage: MailResourcesStrings.Localizable.refreshTokenError,
+        shouldDisplay: true
+    )
+    static let keychainUnavailable = LocalError(code: "keychainUnavailable")
+    static let resourceError = LocalError(
+        code: "resourceError",
+        localizedMessage: MailResourcesStrings.Localizable.errorUnknown,
+        shouldDisplay: true
+    )
+    static let unknownToken = LocalError(
+        code: "unknownToken",
+        localizedMessage: MailResourcesStrings.Localizable.errorUnknown,
+        shouldDisplay: true
+    )
+    static let noMailbox = LocalError(code: "noMailbox")
+    static let folderNotFound = LocalError(code: "folderNotFound",
+                                           localizedMessage: MailResourcesStrings.Localizable.errorUnknown,
+                                           shouldDisplay: true)
+    static let addressBookNotFound = LocalError(code: "addressBookNotFound",
+                                                localizedMessage: MailResourcesStrings.Localizable.errorUnknown,
+                                                shouldDisplay: true)
+    static let contactNotFound = LocalError(
+        code: "contactNotFound",
+        localizedMessage: MailResourcesStrings.Localizable.errorUnknown,
+        shouldDisplay: true
+    )
+    static let localMessageNotFound = LocalError(code: "messageNotFound",
+                                                 localizedMessage: MailResourcesStrings.Localizable.errorMessageNotFound,
+                                                 shouldDisplay: true)
+    static let attachmentsSizeLimitReached = LocalError(code: "attachmentsSizeLimitReached",
+                                                        localizedMessage: MailResourcesStrings.Localizable
+                                                            .attachmentFileLimitReached,
+                                                        shouldDisplay: true)
+    static let threadHasNoMessageInFolder = LocalError(code: "threadHasNoMessageInFolder")
+
+    /// After an update from the server we are still without a default signature
+    static let defaultSignatureMissing = LocalError(code: "defaultSignatureMissing")
+
+    static let noCalendarAttachmentFound = LocalError(code: "noCalendarAttachmentFound")
+
+    static let tooShortScheduleDelay = LocalError(code: "tooShortScheduleDelay")
+
+    static let missingSnoozeUUID = LocalError(
+        code: "missingSnoozeUUID",
+        localizedMessage: MailResourcesStrings.Localizable.errorMessageNotSnoozed,
+        shouldDisplay: true
+    )
 }

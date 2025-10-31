@@ -17,11 +17,13 @@
  */
 
 import Foundation
+import InfomaniakCore
 
-@MainActor public final class AttachmentTask: ObservableObject {
+@MainActor
+public final class AttachmentTask: ObservableObject {
     @Published public var progress: Double = 0
     var task: Task<String?, Never>?
-    @Published public var error: MailError?
+    @Published public var error: LocalError?
     public var isAttachmentComplete: Bool {
         return progress >= 1
     }

@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "aae8dd0f3722c75d526f09fbb709bd1081d402db",
-        "version" : "1.30.1"
+        "revision" : "a9fb8f7f5fe161ad56dc5169615f1870fcc4cd1b",
+        "version" : "1.31.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "0b7573c3ff0bedf57181a94196cc91973467accb",
-        "version" : "18.3.0"
+        "branch" : "feat/shared-errors",
+        "revision" : "78802627acbf182c7c6abde22949689ec05b6e7e"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "599642c3b5f79bdf75fe26970e54249434575855",
-        "version" : "15.0.0"
+        "revision" : "bf0722c1392a783ac3e1fe2a69b10ae3e45350ff",
+        "version" : "15.1.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "c58033f0b72cb80c918cc30419fd474cc5f60c6a",
-        "version" : "1.4.1"
+        "revision" : "9abb167e652678ce56aba00deedb10a6d48b40cd",
+        "version" : "1.4.2"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "e9bcb13a491c00da6c9d100fe73954aea9e9d8a6",
-        "version" : "8.57.0"
+        "revision" : "bcd8bfb3eea22ac5d3fdd001751bbe19f25e892b",
+        "version" : "8.57.2"
       }
     },
     {
@@ -282,7 +282,7 @@
     {
       "identity" : "swift-rich-html-editor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
       "state" : {
         "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
         "version" : "2.1.0"

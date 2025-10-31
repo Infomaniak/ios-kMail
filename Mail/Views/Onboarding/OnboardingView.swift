@@ -200,7 +200,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         }
 
         for error in errors {
-            if (error as? MailError) == MailError.noMailbox {
+            if (error as? LocalError) == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
             } else {
                 snackbarPresenter.show(message: error.localizedDescription)
@@ -216,7 +216,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
             do {
                 _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 remoteNotificationRegistrer.register()
-            } catch let error as MailError where error == MailError.noMailbox {
+            } catch let error as LocalError where error == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
             } catch {
                 if let previousAccount {

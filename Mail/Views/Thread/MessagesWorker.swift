@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -67,7 +68,7 @@ extension MessagesWorker {
 
         do {
             try await mailboxManager.message(message: message)
-        } catch let error as MailApiError where error == .apiMessageNotFound {
+        } catch let error as ApiError where error.code == MailApiErrorCode.mailMessageNotFound  {
             @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: error.errorDescription ?? "")
             try? await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)

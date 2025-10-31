@@ -61,49 +61,10 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
 
     override public func perform<T: Decodable>(request: DataRequest,
                                                overrideDecoder: JSONDecoder? = nil) async throws -> ValidServerResponse<T> {
-        do {
-            return try await super.perform(
-                request: request.validate(statusCode: handledHttpStatus),
-                overrideDecoder: overrideDecoder
-            )
-        } catch InfomaniakError.apiError(let apiError) {
-            logError(apiError)
-            throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
-        } catch InfomaniakError.serverError(statusCode: let statusCode) {
-            logError(InfomaniakError.serverError(statusCode: statusCode))
-            throw MailServerError(httpStatus: statusCode)
-        } catch {
-            logError(error)
-            if let afError = error.asAFError {
-                if case .responseSerializationFailed(let reason) = afError, case .decodingFailed(let error) = reason,
-                   let statusCode = request.response?.statusCode, (200 ... 299).contains(statusCode) {
-                    var rawJson = "No data"
-                    if let data = request.data {
-                        rawJson = String(decoding: data, as: UTF8.self)
-                    }
-
-                    let requestId = request.response?.value(forHTTPHeaderField: "x-request-id") ?? "No request Id"
-                    SentrySDK.capture(error: error) { scope in
-                        scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
-                                         "Request Id": requestId,
-                                         "Decoded type": String(describing: T.self),
-                                         "Raw JSON": rawJson])
-                    }
-                } else if case .sessionTaskFailed(let error) = afError,
-                          (error as NSError).code == NSURLErrorNotConnectedToInternet {
-                    throw MailError.noConnection
-
-                } else if case .requestAdaptationFailed(let error) = afError,
-                          (error as NSError).code == NSURLErrorNotConnectedToInternet {
-                    throw MailError.noConnection
-                }
-
-                throw AFErrorWithContext(request: request, afError: afError)
-            } else {
-                logError(error)
-                throw error
-            }
-        }
+        return try await super.perform(
+            request: request.validate(statusCode: handledHttpStatus),
+            overrideDecoder: overrideDecoder
+        )
     }
 
     /// Create batches of the given values to perform the given request

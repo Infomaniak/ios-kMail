@@ -68,7 +68,7 @@ let package = Package(
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "17.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "18.1.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core", branch: "feat/shared-errors"),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "24.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "23.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.5")),
