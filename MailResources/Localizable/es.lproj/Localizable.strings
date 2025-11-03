@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Wed, 17 Sep 2025 10:49:36 +0200
+ * Exported by: Jordan Chapelle
+ * Exported at: Thu, 30 Oct 2025 16:45:16 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1096,6 +1096,9 @@
 /* loco:62b2f6bcdfa4fa28ad7bb122 */
 "menuDrawerMailboxStorage" = "%1$@ / %2$@ usado";
 
+/* loco:6903874c026e3f7b78066ba2 */
+"messageComesFromDiscussionList" = "Este mensaje proviene de una lista de discusión.";
+
 /* loco:62df8c27cc288916217bd964 */
 "messageDetailsDateAt" = "%1$@ a las %2$@";
 
@@ -1839,6 +1842,9 @@
 
 /* loco:62b95774aee47c626b773693 */
 "unknownRecipientTitle" = "(desconocido)";
+
+/* loco:690387a073a26a6c7a0ca602 */
+"unsubscribeButtonTitle" = "Cancelar suscripción";
 
 /* loco:64257388057ce0235d2c5222 */
 "updateAvailableDescription" = "Para disfrutar de una experiencia óptima de Infomaniak Mail, te aconsejamos que actualices tu aplicación.";
