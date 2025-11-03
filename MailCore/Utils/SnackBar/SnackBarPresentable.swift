@@ -39,16 +39,6 @@ public struct SnackBarPresenter: IKSnackBarPresentable {
 
     public func show(
         message: String,
-        duration: SnackBar.Duration,
-        action: IKSnackBar.Action?,
-        anchor: CGFloat,
-        contextView: UIView?
-    ) {
-        show(message: message, duration: duration, action: action, contextView: contextView)
-    }
-
-    public func show(
-        message: String,
         duration: SnackBar.Duration = .lengthLong,
         action: IKSnackBar.Action? = nil,
         contextView: UIView? = nil
