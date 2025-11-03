@@ -30,6 +30,16 @@ import SwiftUI
 import SwiftUIIntrospect
 import VersionChecker
 
+private extension View {
+    func removeTopContentMargin() -> some View {
+        if #available(iOS 17.0, *) {
+            return contentMargins(.top, 0)
+        } else {
+            return self
+        }
+    }
+}
+
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
@@ -168,6 +178,7 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .listStyle(.plain)
+                .removeTopContentMargin()
                 .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.frozenFolder.role {
