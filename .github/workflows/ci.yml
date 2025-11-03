@@ -40,4 +40,14 @@ jobs:
       - name: Build
         run: tuist build --clean "Infomaniak Mail"
       - name: Unit and Integration Tests
-        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests --no-selective-testing
+        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests --no-selective-testing -- -enableCodeCoverage YES -resultBundlePath ResultBundle.xcresult
+      - name: Produce the coverage report
+        id: coverage
+        uses: infomaniak/ios-xcode-coverage-report-action@1.1.1
+        with:
+          result-bundle: ResultBundle.xcresult
+          included-targets: "Infomaniak Mail.app,MailCore.framework"
+      - name: Publish coverage report
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: ${{ steps.coverage.outputs.report }}
