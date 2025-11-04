@@ -110,7 +110,7 @@ struct ThreadListHeader: View {
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
-    @ObservedObject private var apiStatusManager = APIStatusManager.shared
+    @ObservedObject private var serverStatusManager = ServerStatusManager.shared
 
     @Binding var unreadFilterOn: Bool
 
@@ -133,7 +133,7 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
-                } else if !apiStatusManager.status.serverAvailable {
+                } else if !serverStatusManager.serverAvailable {
                     ServerUnavailableView()
                 }
 

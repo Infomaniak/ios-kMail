@@ -83,11 +83,21 @@ public actor RefreshActor {
 
     public func refreshFolderContent(_ folder: Folder) async {
         await cancelRefresh()
-        await ensureAPIWorks()
 
         refreshTask = Task {
             await tryOrDisplayError {
-                try await mailboxManager?.threads(folder: folder)
+                do {
+                    let serverAvailable = await ServerStatusManager.shared.updateStatusIfNeeded(using: mailboxManager)
+                    guard serverAvailable else {
+                        refreshTask = nil
+                        return
+                    }
+
+                    try await mailboxManager?.threads(folder: folder)
+                } catch {
+                    await ServerStatusManager.shared.updateStatus(using: mailboxManager)
+                    throw error
+                }
                 refreshTask = nil
             }
         }
@@ -147,29 +157,6 @@ public actor RefreshActor {
             writableRealm.add(signaturesToUpdate, update: .modified)
             writableRealm.delete(signaturesToDelete)
             writableRealm.add(signaturesToAdd, update: .modified)
-        }
-    }
-
-    private func ensureAPIWorks() async {
-        guard let mailboxManager else { return }
-
-        let currentStatus = await APIStatusManager.shared.status
-
-        guard currentStatus.isLastCheckClose(to: Date.now) else {
-            return
-        }
-
-        do {
-            try await mailboxManager.apiFetcher.checkAPIStatus()
-
-            Task { @MainActor in
-                APIStatusManager.shared.status = APIStatus(isOnWorking: true, lastCheck: Date.now)
-            }
-        } catch {
-            Task { @MainActor in
-                APIStatusManager.shared.status = APIStatus(isOnWorking: false, lastCheck: Date.now)
-            }
-            await cancelRefresh()
         }
     }
 }
