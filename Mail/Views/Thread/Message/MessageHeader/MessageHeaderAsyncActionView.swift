@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2025 Infomaniak Network SA
@@ -38,7 +37,6 @@ struct MessageHeaderAsyncActionView: View {
                 isButtonLoading = true
                 Task {
                     await asyncAction()
-                    sleep(3)
                     isButtonLoading = false
                 }
             }

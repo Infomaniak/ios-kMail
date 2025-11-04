@@ -325,7 +325,7 @@ public extension Endpoint {
         return .resource(messageResource).appending(path: "/share")
     }
 
-    static func lastSyncDate() -> Endpoint {
+    static var lastSyncDate: Endpoint {
         return Endpoint(
             hostKeypath: \.calendarHost,
             path: "/api/sync-connection",
