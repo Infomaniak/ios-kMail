@@ -295,6 +295,8 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Añadir una dirección de correo electrónico";
 
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Añadir una reacción";
 
 /* loco:6877a25d3abbe0c0c403fba2 */
 "buttonAllReactions" = "Todas";
@@ -434,9 +436,6 @@
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Desechos";
 
-/* loco:64a2b7a35386a9ec49013e42 */
-"buttonRequestPassword" = "Solicitar contraseña";
-
 /* loco:6723a9568fe8ffe07203af72 */
 "buttonReschedule" = "Reprogramar";
 
@@ -492,7 +491,7 @@
 "buttonUpdate" = "Actualizar";
 
 /* loco:67b2f0bc599c9faeb6006952 */
-"buttonUpgrade" = "Actualizar";
+"buttonUpgrade" = "Mejorar";
 
 /* loco:62b42d5d2b411f48ef2eb982 */
 "buttonValid" = "Validar";
@@ -550,9 +549,6 @@
 
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contactos";
-
-/* loco:683ed907ce58d366270b42a3 */
-"contentDescriptionAddReaction" = "Añadir una reacción";
 
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Volver";
@@ -818,12 +814,6 @@
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Cifrado";
 
-/* loco:64a2b619946ed6ede60a85e2 */
-"enterPasswordDescription1" = "Su contraseña ha sido modificada. Si no es culpa suya, póngase en contacto con su administrador.";
-
-/* loco:64aba64bdb705f66d6043b03 */
-"enterPasswordDescription2" = "Por favor, introduzca la nueva contraseña para la dirección de correo electrónico %@";
-
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Introduzca la contraseña";
 
@@ -899,9 +889,6 @@
 /* loco:64aea2c18a9e9776080ee393 */
 "errorInvalidEmailAddress" = "Dirección de correo electrónico no válida";
 
-/* loco:64a3bb083ee4236af806d393 */
-"errorInvalidMailboxPassword" = "Contraseña incorrecta para la dirección de correo electrónico";
-
 /* loco:6502bdf0d8ec8382d70de1c7 */
 "errorLoadingMessage" = "Este mensaje no se ha podido descargar del servidor.";
 
@@ -913,9 +900,6 @@
 
 /* loco:6450d3f93e5fcf13c9037b02 */
 "errorMailboxLocked" = "Esta dirección de correo electrónico está bloqueada";
-
-/* loco:64a3c705a13a2645f80da972 */
-"errorMailboxPasswordLength" = "La contraseña debe tener entre 6 y 80 caracteres";
 
 /* loco:65d4ae8ef9b6570a070b3e92 */
 "errorMailboxUnavailable" = "Esta dirección de correo electrónico no está disponible";
@@ -1054,11 +1038,9 @@
 
 /* loco:68b81c7e6d7071739307e662 */
 "kSuiteProQuotasAlertFullTitle" = "Tu espacio de almacenamiento de Mail está lleno";
+
 /* loco:686f61f2208a37e573055822 */
 "lastEventOccurrence" = "Evento recurrente, última ocurrencia el";
-
-/* loco:687503336839bcc4f60e4612 */
-"lastNearEventOccurrence" = "Evento recurrente, última ocurrencia";
 
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Último horario seleccionado";
@@ -1086,6 +1068,24 @@
 
 /* loco:67e26d1c96ffb194f70925b2 */
 "macUsageDisclaimerTitle" = "Esta aplicación funciona en macOS, pero está optimizada para su uso en móviles y tabletas.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Consigue más almacenamiento y nuevas funciones con tu dirección de correo electrónico.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "Para beneficiarte de mi Premium, modifica tu oferta desde tu interfaz web.";
+
+/* loco:6909f851a525cafdec030943 */
+"mailPremiumUpgradeLabel" = "Y aún más";
+
+/* loco:6909f802c28364a30d087932 */
+"mailPremiumUpgradeRedirectLabel" = "Redirecciones, recordatorios personalizados..";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Pase al siguiente nivel con el plan Premium";
+
+/* loco:6909f7e949c7e5abcc0df6b3 */
+"mailPremiumUpgradeUnlimitedMailLabel" = "Almacenamiento y envío ilimitados de correo electrónico";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Gestionar mis firmas";
@@ -1222,9 +1222,6 @@
 /* loco:62baab4c017b586c23177d62 */
 "notificationGeneralChannelName" = "Notificaciones generales";
 
-/* loco:641c3d9b723c7f035409c3d2 */
-"notificationNewEmail" = "Puede que hayas recibido nuevos mensajes";
-
 /* loco:64ba47ab214bcfcf4c056014 */
 "notificationTitleArchive" = "Archivado";
 
@@ -1283,7 +1280,7 @@
 "pleaseLogInFirst" = "Inicia sesión primero en la aplicación Infomaniak Mail.";
 
 /* loco:68b05985327f49a8eb0936b2 */
-"previewReaction" = "%1$@ reaccionó con %2$@";
+"previewReaction" = "%2$@ %1$@ reaccionó";
 
 /* loco:68834dbb822d3b0955074bd2 */
 "reactionsAll" = "Todas";
@@ -1668,9 +1665,6 @@
 
 /* loco:62b42e39dbeac92077145712 */
 "snackbarInvalidUrl" = "URL no válida";
-
-/* loco:64df3c1f3e0659f4670b7093 */
-"snackbarMailboxPasswordRequested" = "Solicitud enviada al administrador";
 
 /* loco:638f5f9440687b206c230e64 */
 "snackbarMessageDeletedPermanently" = "Mensaje eliminado";

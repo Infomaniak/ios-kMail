@@ -59,7 +59,7 @@ public struct ReactionsListView: View {
 
             Button(action: openEmojiPicker) {
                 Label {
-                    Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
+                    Text(MailResourcesStrings.Localizable.buttonAddReaction)
                 } icon: {
                     MailResourcesAsset.faceSlightlySmilingCirclePlus
                         .iconSize(.large)

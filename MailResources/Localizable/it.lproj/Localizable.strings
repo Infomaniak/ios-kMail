@@ -295,6 +295,8 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Aggiungi un indirizzo e-mail";
 
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Aggiungi una reazione";
 
 /* loco:6877a25d3abbe0c0c403fba2 */
 "buttonAllReactions" = "Tutte";
@@ -434,9 +436,6 @@
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Rifiuta";
 
-/* loco:64a2b7a35386a9ec49013e42 */
-"buttonRequestPassword" = "Richiesta password";
-
 /* loco:6723a9568fe8ffe07203af72 */
 "buttonReschedule" = "Riprogrammare";
 
@@ -550,9 +549,6 @@
 
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contatti";
-
-/* loco:683ed907ce58d366270b42a3 */
-"contentDescriptionAddReaction" = "Aggiungi una reazione";
 
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Indietro";
@@ -818,12 +814,6 @@
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Crittografia";
 
-/* loco:64a2b619946ed6ede60a85e2 */
-"enterPasswordDescription1" = "La password è stata modificata. Se non sei responsabile, contatta l’amministratore.";
-
-/* loco:64aba64bdb705f66d6043b03 */
-"enterPasswordDescription2" = "Inserisci la nuova password per l’indirizzo e-mail %@";
-
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Inserisci la password";
 
@@ -899,9 +889,6 @@
 /* loco:64aea2c18a9e9776080ee393 */
 "errorInvalidEmailAddress" = "Indirizzo e-mail non valido";
 
-/* loco:64a3bb083ee4236af806d393 */
-"errorInvalidMailboxPassword" = "Password errata per l’indirizzo e-mail";
-
 /* loco:6502bdf0d8ec8382d70de1c7 */
 "errorLoadingMessage" = "Non è stato possibile scaricare questo messaggio dal server.";
 
@@ -913,9 +900,6 @@
 
 /* loco:6450d3f93e5fcf13c9037b02 */
 "errorMailboxLocked" = "Questo indirizzo e-mail è bloccato";
-
-/* loco:64a3c705a13a2645f80da972 */
-"errorMailboxPasswordLength" = "La password deve essere compresa tra 6 e 80 caratteri";
 
 /* loco:65d4ae8ef9b6570a070b3e92 */
 "errorMailboxUnavailable" = "Questo indirizzo e-mail non è disponibile";
@@ -1084,6 +1068,24 @@
 
 /* loco:67e26d1c96ffb194f70925b2 */
 "macUsageDisclaimerTitle" = "Questa applicazione funziona su macOS, ma è ottimizzata per l’uso su cellulari e tablet.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Ottenete più spazio di archiviazione e nuove funzionalità con il vostro indirizzo e-mail.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "Per beneficiare del mio Premium, modificate la vostra offerta dalla vostra interfaccia web.";
+
+/* loco:6909f851a525cafdec030943 */
+"mailPremiumUpgradeLabel" = "E anche di più!";
+
+/* loco:6909f802c28364a30d087932 */
+"mailPremiumUpgradeRedirectLabel" = "Reindirizzamenti, promemoria personalizzati..";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Passare al livello successivo con il piano Premium";
+
+/* loco:6909f7e949c7e5abcc0df6b3 */
+"mailPremiumUpgradeUnlimitedMailLabel" = "Archiviazione e invio illimitato di e-mail";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Gestisci le mie firme";
@@ -1281,7 +1283,7 @@
 "pleaseLogInFirst" = "Effettua prima il login nell’app Infomaniak Mail.";
 
 /* loco:68b05985327f49a8eb0936b2 */
-"previewReaction" = "%1$@ ha reagito con %2$@";
+"previewReaction" = "%2$@ %1$@ ha reagito";
 
 /* loco:68834dbb822d3b0955074bd2 */
 "reactionsAll" = "Tutte";
@@ -1666,9 +1668,6 @@
 
 /* loco:62b42e39dbeac92077145712 */
 "snackbarInvalidUrl" = "URL non valido";
-
-/* loco:64df3c1f3e0659f4670b7093 */
-"snackbarMailboxPasswordRequested" = "Richiesta inviata all’amministratore";
 
 /* loco:638f5f9440687b206c230e64 */
 "snackbarMessageDeletedPermanently" = "Messaggio cancellato";
