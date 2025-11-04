@@ -33,7 +33,6 @@ struct MenuDrawerItemsAdvancedListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @InjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) private var openURL
 
@@ -48,6 +47,7 @@ struct MenuDrawerItemsAdvancedListView: View {
                 MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
                                    label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
                                    matomoName: "syncProfile") {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
                     mainViewState.isShowingSyncProfile = true
                 }
@@ -129,8 +129,6 @@ struct MenuDrawerItemsHelpListView: View {
 }
 
 struct MenuDrawerItemsListView<Content: View>: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isExpanded = false
 
     var title: String?
@@ -145,6 +143,7 @@ struct MenuDrawerItemsListView<Content: View>: View {
                     withAnimation {
                         isExpanded.toggle()
                         if let matomoName {
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .menuDrawer, name: matomoName, value: isExpanded)
                         }
                     }

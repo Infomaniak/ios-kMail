@@ -25,9 +25,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AccountActionsView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var orientationManager: OrientationManageable
-
     @Environment(\.currentUser) private var currentUser
 
     @State private var isShowingNewAccountView = false
@@ -48,6 +45,7 @@ struct AccountActionsView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
+            @InjectService var orientationManager: OrientationManageable
             orientationManager.setOrientationLock(.all)
         }, content: {
             SingleOnboardingView()
@@ -60,6 +58,7 @@ struct AccountActionsView: View {
     // MARK: - Actions
 
     private func handleAction(_ action: Action) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .account, name: action.matomoName)
 
         switch action {

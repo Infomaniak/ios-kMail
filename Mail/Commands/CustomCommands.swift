@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct CustomCommands: Commands {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ObservedObject var rootViewState: RootViewState
 
     var mainViewState: MainViewState? {
@@ -76,6 +74,7 @@ struct CustomCommands: Commands {
     }
 
     func refresh(mailboxManager: MailboxManager, currentFolder: Folder) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: "refresh")
         Task {
             await mailboxManager.refreshFolderContent(currentFolder)

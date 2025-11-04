@@ -84,8 +84,6 @@ extension DestructiveActionAlertState {
 }
 
 struct DestructiveActionAlertView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     let destructiveAlert: DestructiveActionAlertState
 
     var body: some View {
@@ -99,6 +97,7 @@ struct DestructiveActionAlertView: View {
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
                 if case .flushFolder(let frozenFolder) = destructiveAlert.type, let frozenFolder {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
                 }
                 await destructiveAlert.completion()

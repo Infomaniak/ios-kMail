@@ -39,8 +39,6 @@ extension ScheduleType {
 }
 
 struct CustomScheduleAlertView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isShowingError = false
     @State private var selectedDate: Date
 
@@ -111,6 +109,7 @@ struct CustomScheduleAlertView: View {
 
         confirmAction(selectedDate)
         UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath] = selectedDate
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: type.matomoCategory, name: "customScheduleConfirm")
     }
 }

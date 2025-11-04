@@ -23,8 +23,6 @@ import MailResources
 import SwiftUI
 
 struct SettingsAutoAdvanceView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
     var body: some View {
@@ -39,6 +37,7 @@ struct SettingsAutoAdvanceView: View {
                         isSelected: option == autoAdvance,
                         isLast: option == AutoAdvance.allCases.last
                     ) {
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .settingsAutoAdvance, name: option.rawValue)
                         autoAdvance = option
                     }

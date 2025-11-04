@@ -131,8 +131,6 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
-    @LazyInjectService var matomo: MatomoUtils
-
     private static let maximumSubFolderLevel = 2
 
     @Environment(\.folderCellType) private var cellType
@@ -203,6 +201,7 @@ struct FolderCellContent: View {
         .contextMenu {
             if frozenFolder.role == nil && cellType != .move {
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .manageFolder, name: "rename")
                     currentFolder = frozenFolder
                 } label: {
@@ -213,6 +212,7 @@ struct FolderCellContent: View {
                     }
                 }
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .manageFolder, name: "delete")
 
                     destructiveAlert = DestructiveActionAlertState(type: .deleteFolder(frozenFolder)) {
@@ -264,6 +264,7 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
         guard let liveFolder = frozenFolder.thaw() else { return }

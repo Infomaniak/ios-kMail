@@ -27,8 +27,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct BlockSenderView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.dismiss) private var dismiss
     @Environment(\.currentUser) private var currentUser
 
@@ -45,6 +43,8 @@ struct BlockSenderView: View {
             ForEach(recipients) { recipient in
                 Button {
                     selectedRecipient = recipient
+
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .blockUserAction, name: "selectUser")
                 } label: {
                     RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)

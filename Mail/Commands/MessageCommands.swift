@@ -25,8 +25,6 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 struct MessageCommands: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.openWindow) private var openWindow
 
     @ObservedObject var mainViewState: MainViewState
@@ -57,6 +55,8 @@ struct MessageCommands: View {
 
     func replyToMessage(message: Message?, replyMode: ReplyMode, mailboxManager: MailboxManager) {
         guard let message else { return }
+
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: replyMode.rawValue)
         openWindow(
             id: DesktopWindowIdentifier.composeWindowIdentifier,

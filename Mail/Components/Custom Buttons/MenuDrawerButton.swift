@@ -24,12 +24,11 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
             navigationDrawerState.open()
         } label: {

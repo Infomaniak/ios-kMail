@@ -28,8 +28,6 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Environment(\.dismiss) private var dismiss
@@ -120,6 +118,7 @@ struct CreateFolderView: View {
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
                 await tryOrDisplayError {
+                    @InjectService var matomo: MatomoUtils
                     switch mode {
                     case .create:
                         matomo.track(eventWithCategory: .createFolder, name: "confirm")

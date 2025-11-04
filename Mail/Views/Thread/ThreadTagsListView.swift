@@ -27,8 +27,6 @@ import SwiftUI
 import WrappingHStack
 
 struct ThreadTagsListView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ModalState private var isShowingExternalTagAlert = false
 
     let externalTag: DisplayExternalRecipientStatus.State
@@ -38,6 +36,7 @@ struct ThreadTagsListView: View {
         WrappingHStack(lineSpacing: IKPadding.mini) {
             if externalTag.shouldDisplay {
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .externals, name: "threadTag")
                     isShowingExternalTagAlert = true
                 } label: {

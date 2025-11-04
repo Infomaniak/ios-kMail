@@ -24,8 +24,6 @@ import MailCoreUI
 import SwiftUI
 
 struct OnboardingThemePickerView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let title: String
@@ -47,6 +45,7 @@ struct OnboardingThemePickerView: View {
             .padding(.top, value: .huge)
             .frame(maxWidth: 256)
             .onChange(of: accentColor) { newValue in
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .onboarding, name: "switchColor\(newValue.rawValue.capitalized)")
             }
         }

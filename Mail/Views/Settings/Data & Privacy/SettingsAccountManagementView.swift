@@ -51,9 +51,6 @@ final class SettingsAccountManagementViewDelegate: DeleteAccountDelegate {
 }
 
 struct SettingsAccountManagementView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var tokenStore: TokenStore
-
     @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = SettingsAccountManagementViewDelegate()
 
@@ -84,6 +81,9 @@ struct SettingsAccountManagementView: View {
                 IKDivider()
 
                 Button {
+                    @InjectService var matomo: MatomoUtils
+                    @InjectService var tokenStore: TokenStore
+
                     matomo.track(eventWithCategory: .account, name: Action.deleteAccount.matomoName)
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
                 } label: {

@@ -34,8 +34,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let matomoValue: Float?
     private let matomoName: KeyPath<OptionEnum, String>?
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
         didSet {
@@ -86,6 +84,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                 ForEach(values, id: \.rawValue) { value in
                     SettingsOptionCell(value: value, isSelected: value == selectedValue, isLast: value == values.last) {
                         if let matomoCategory, let matomoName {
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: matomoCategory, name: value[keyPath: matomoName], value: matomoValue)
                         }
                         selectedValue = value

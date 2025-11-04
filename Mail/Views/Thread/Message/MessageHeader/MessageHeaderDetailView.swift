@@ -89,8 +89,6 @@ struct RecipientLabel: View {
 
     @State private var contactViewRecipient: Recipient?
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     var body: some View {
         HStack(alignment: .top) {
             Text(title)
@@ -101,6 +99,7 @@ struct RecipientLabel: View {
                 ForEach(recipients, id: \.self) { recipient in
                     WrappingHStack(lineSpacing: 2) {
                         Button {
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .message, name: "selectRecipient")
                             contactViewRecipient = recipient
                         } label: {

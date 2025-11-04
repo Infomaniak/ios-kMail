@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct AIDismissibleErrorView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isShowingError = false
 
     let error: AIError?
@@ -38,6 +36,7 @@ struct AIDismissibleErrorView: View {
                     message: error?.localizedDescription ?? "",
                     iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
                     dismissHandler: { // swiftlint:disable:this trailing_closure
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
 
                         withAnimation {

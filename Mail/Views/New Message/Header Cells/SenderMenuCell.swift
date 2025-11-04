@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct SenderMenuCell: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var draftContentManager: DraftContentManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -40,6 +38,7 @@ struct SenderMenuCell: View {
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .newMessage, name: "switchIdentity")
 
             withAnimation {

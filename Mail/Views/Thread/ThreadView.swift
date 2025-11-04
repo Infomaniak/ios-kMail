@@ -28,8 +28,6 @@ import RealmSwift
 import SwiftUI
 
 struct ThreadView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -73,6 +71,7 @@ struct ThreadView: View {
             displayNavigationTitle = titlePosition.isFullyBellowNavigationBar
         }
         .onAppear {
+            @InjectService var matomo: MatomoUtils
             matomo.trackThreadInfo(of: thread)
         }
         .task {

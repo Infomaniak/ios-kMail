@@ -37,9 +37,6 @@ extension View {
 }
 
 struct MailboxCell: View {
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.mailboxCellStyle) private var style: Style
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
@@ -63,6 +60,9 @@ struct MailboxCell: View {
                 isShowingLockedView = true
                 return
             }
+
+            @InjectService var accountManager: AccountManager
+            @InjectService var matomo: MatomoUtils
 
             switch style {
             case .blockedPassword:

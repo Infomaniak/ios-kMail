@@ -26,8 +26,6 @@ import RealmSwift
 import SwiftUI
 
 struct FullRecipientsList: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -51,6 +49,7 @@ struct FullRecipientsList: View {
     }
 
     @MainActor private func remove(recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
 
         if recipient.isExternal(mailboxManager: mailboxManager) {

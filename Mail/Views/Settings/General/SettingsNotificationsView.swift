@@ -30,7 +30,6 @@ import SwiftUI
 
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
-    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.currentUser) private var currentUser
 
@@ -85,6 +84,7 @@ struct SettingsNotificationsView: View {
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
                         }, set: { on in
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .settingsNotifications, name: "mailboxNotifications", value: on)
                             if on && subscribedTopics?.contains(mailbox.notificationTopicName) == false {
                                 subscribedTopics?.append(mailbox.notificationTopicName)

@@ -24,8 +24,6 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 struct OpenSettingsCommand: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -36,6 +34,7 @@ struct OpenSettingsCommand: View {
     }
 
     func openSettings() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: "settings")
         openWindow(
             id: DesktopWindowIdentifier.settingsWindowIdentifier,

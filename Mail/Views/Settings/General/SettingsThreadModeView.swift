@@ -31,7 +31,6 @@ struct ThreadModeSettingUpdate: Identifiable {
 }
 
 struct SettingsThreadModeView: View {
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
     @State private var selectedValue: ThreadMode
@@ -54,6 +53,7 @@ struct SettingsThreadModeView: View {
                         isLast: value == ThreadMode.allCases.last
                     ) {
                         if value != selectedValue {
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .settingsThreadMode, name: value.rawValue)
                             threadModeSettingUpdate = ThreadModeSettingUpdate(newSetting: value)
                         }

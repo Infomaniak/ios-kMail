@@ -26,8 +26,6 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxSignatureSettingsView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isShowingMyKSuiteUpgrade = false
 
     @ObservedResults(Signature.self) private var signatures
@@ -56,6 +54,7 @@ struct MailboxSignatureSettingsView: View {
                 ) {
                     if isKSuiteLimited {
                         isShowingMyKSuiteUpgrade = true
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "emptySignature")
                     } else {
                         setAsDefault(nil)

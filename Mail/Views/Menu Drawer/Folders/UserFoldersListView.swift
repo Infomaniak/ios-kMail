@@ -30,8 +30,6 @@ import SwiftUI
 import UIKit
 
 struct UserFoldersListView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isExpanded = true
     @ModalState private var isShowingCreateFolderAlert = false
 
@@ -43,6 +41,7 @@ struct UserFoldersListView: View {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
                     }
                 } label: {
@@ -58,6 +57,7 @@ struct UserFoldersListView: View {
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandCustomFolders)
 
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                     isShowingCreateFolderAlert.toggle()
                 } label: {

@@ -25,7 +25,6 @@ import SwiftUI
 
 struct SettingsToggleCell: View {
     @LazyInjectService private var appLockHelper: AppLockHelper
-    @LazyInjectService private var matomo: MatomoUtils
 
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
@@ -70,6 +69,7 @@ struct SettingsToggleCell: View {
             lastValue = toggleIsOn
             toggleIsOn = newValue
             if let matomoCategory, let matomoName {
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: matomoCategory, name: matomoName, value: newValue)
             }
         })) {

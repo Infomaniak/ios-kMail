@@ -64,8 +64,6 @@ struct NavigationDrawer: View {
 
     @State private var offsetWidth: CGFloat = 0
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     var body: some View {
         GeometryReader { rootViewSizeProxy in
             ZStack {
@@ -73,7 +71,7 @@ struct NavigationDrawer: View {
                     .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        matomo.track(eventWithCategory: .menuDrawer, name: "closeByTap")
+                        track(eventName: "closeByTap")
                         navigationDrawerState.close()
                     }
 
@@ -88,7 +86,7 @@ struct NavigationDrawer: View {
                 }
             }
             .accessibilityAction(.escape) {
-                matomo.track(eventWithCategory: .menuDrawer, name: "closeByAccessibility")
+                track(eventName: "closeByAccessibility")
                 navigationDrawerState.close()
             }
             .gesture(dragGestureForRootViewSize(rootViewSizeProxy.size))
@@ -120,7 +118,7 @@ struct NavigationDrawer: View {
             }
             .onEnded { value in
                 if navigationDrawerState.isOpen && value.translation.width < -(size.width / 2) {
-                    matomo.track(eventWithCategory: .menuDrawer, name: "closeByGesture")
+                    track(eventName: "closeByGesture")
                     navigationDrawerState.close()
                 } else {
                     // Reset drawer to fully open position
@@ -129,6 +127,11 @@ struct NavigationDrawer: View {
                     }
                 }
             }
+    }
+
+    private func track(eventName: String) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .menuDrawer, name: eventName)
     }
 }
 

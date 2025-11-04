@@ -35,8 +35,6 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
     private static let scheduleActions: [Action] = [.delete]
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -164,6 +162,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
     }
 
     private func didTap(action: Action) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
         if action == .reply,

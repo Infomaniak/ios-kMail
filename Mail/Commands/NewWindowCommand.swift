@@ -25,8 +25,6 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 struct NewWindowCommand: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -37,6 +35,7 @@ struct NewWindowCommand: View {
     }
 
     func newWindow() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: "newWindow")
         openWindow(id: DesktopWindowIdentifier.mainWindowIdentifier)
     }

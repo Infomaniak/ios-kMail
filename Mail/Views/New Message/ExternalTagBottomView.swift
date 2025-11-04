@@ -27,8 +27,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct ExternalTagBottomView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ModalState(context: ContextKeys.externalTagBottom) private var isShowingExternalTagAlert = false
     @State private var isShowingExternalTag = true
 
@@ -38,7 +36,7 @@ struct ExternalTagBottomView: View {
         if isShowingExternalTag && externalTag.shouldDisplay {
             HStack(spacing: IKPadding.mini) {
                 Button {
-                    matomo.track(eventWithCategory: .externals, name: "bannerInfo")
+                    track(eventName: "bannerInfo")
                     isShowingExternalTagAlert = true
                 } label: {
                     HStack(spacing: IKPadding.mini) {
@@ -55,7 +53,7 @@ struct ExternalTagBottomView: View {
                 }
 
                 Button {
-                    matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
+                    track(eventName: "bannerManuallyClosed")
                     isShowingExternalTag = false
                 } label: {
                     MailResourcesAsset.close
@@ -66,6 +64,11 @@ struct ExternalTagBottomView: View {
             .foregroundStyle(MailResourcesAsset.onTagExternalColor)
             .background(MailResourcesAsset.yellowColor.swiftUIColor)
         }
+    }
+
+    private func track(eventName: String) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .externals, name: eventName)
     }
 }
 
