@@ -56,6 +56,8 @@ public extension [MessageBanner] {
             return !(contains(.displayContent) || contains(.encrypted))
         case .displayContent:
             return !contains(.encrypted)
+        case .unsubscribeLink:
+            return true
         default:
             return false
         }
