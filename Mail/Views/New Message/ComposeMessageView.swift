@@ -89,6 +89,7 @@ struct ComposeMessageView: View {
     @State private var isShowingSchedulePanel = false
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
+    @State private var isShowingMailPremiumPanel = false
 
     @State private var isShowingEncryptStatePanel = false
 
@@ -240,6 +241,7 @@ struct ComposeMessageView: View {
                     isShowingAI: $aiModel.isShowingPrompt,
                     isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
+                    isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
@@ -365,6 +367,7 @@ struct ComposeMessageView: View {
             configuration: .standard,
             isAdmin: mailboxManager.mailbox.ownerOrAdmin
         )
+        // TODO: Add Mail Premium panel
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
