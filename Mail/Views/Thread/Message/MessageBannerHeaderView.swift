@@ -93,7 +93,7 @@ struct MessageBannerHeaderView: View {
     private func unsubscribeAction() async {
         @InjectService var snackbarPresenter: IKSnackBarPresentable
         do {
-            try await mailboxManager.unsubscribe(messageResource: message.resource)
+            try await mailboxManager.apiFetcher.unsubscribe(messageResource: message.resource)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeSuccess)
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeFailure)

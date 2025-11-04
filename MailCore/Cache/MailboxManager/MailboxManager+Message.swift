@@ -159,10 +159,6 @@ public extension MailboxManager {
         }
     }
 
-    func unsubscribe(messageResource: String) async throws {
-        try await apiFetcher.unsubscribe(messageResource: messageResource)
-    }
-
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
