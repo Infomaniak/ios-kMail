@@ -17,8 +17,16 @@
  */
 
 import KSuiteUtils
-import SwiftUI
 import MailResources
+import SwiftUI
+
+public extension View {
+    func mailPremiumPanel(isPresented: Binding<Bool>) -> some View {
+        mailFloatingPanel(isPresented: isPresented, closeButtonHidden: true) {
+            MailPremiumView()
+        }
+    }
+}
 
 public struct MailPremiumView: View {
     private let labels: [KSuiteLabel] = [

@@ -121,6 +121,6 @@ struct ScheduleFloatingPanel: ViewModifier {
                 configuration: .standard,
                 isAdmin: mailboxManager.mailbox.ownerOrAdmin
             )
-        // TODO: Show Mail Premium panel
+            .mailPremiumPanel(isPresented: $isShowingMailPremiumUpgrade)
     }
 }

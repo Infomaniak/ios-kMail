@@ -367,7 +367,7 @@ struct ComposeMessageView: View {
             configuration: .standard,
             isAdmin: mailboxManager.mailbox.ownerOrAdmin
         )
-        // TODO: Add Mail Premium panel
+        .mailPremiumPanel(isPresented: $isShowingMailPremiumPanel)
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
