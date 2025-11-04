@@ -32,6 +32,7 @@ public struct APIStatus {
     }
 }
 
+@MainActor
 public final class APIStatusManager: ObservableObject {
     public static let shared = APIStatusManager()
 

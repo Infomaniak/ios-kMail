@@ -153,14 +153,14 @@ public actor RefreshActor {
     private func ensureAPIWorks() async {
         guard let mailboxManager else { return }
 
-        let currentStatus = APIStatusManager.shared.status
+        let currentStatus = await APIStatusManager.shared.status
 
         guard currentStatus.isLastCheckClose(to: Date.now) else {
             return
         }
 
         do {
-            _ = try await mailboxManager.apiFetcher.checkAPIStatus()
+            try await mailboxManager.apiFetcher.checkAPIStatus()
 
             Task { @MainActor in
                 APIStatusManager.shared.status = APIStatus(isOnWorking: true, lastCheck: Date.now)
