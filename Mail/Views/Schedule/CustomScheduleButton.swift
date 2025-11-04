@@ -33,6 +33,7 @@ struct CustomScheduleButton: View {
     @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
     @Binding var isShowingKSuiteProUpgrade: Bool
+    @Binding var isShowingMailPremiumUpgrade: Bool
 
     let type: ScheduleType
 
@@ -62,17 +63,17 @@ struct CustomScheduleButton: View {
 
     private func showCustomSchedulePicker() {
         @InjectService var matomo: MatomoUtils
+        let eventNameForUpgradeBottomSheet = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
 
         if mailboxManager.mailbox.pack == .myKSuiteFree {
-            let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
-            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)
+            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventNameForUpgradeBottomSheet)
             isShowingMyKSuiteUpgrade = true
         } else if mailboxManager.mailbox.pack == .kSuiteFree {
-            let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
-            matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventName)
+            matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventNameForUpgradeBottomSheet)
             isShowingKSuiteProUpgrade = true
         } else if mailboxManager.mailbox.pack == .starterPack {
-            // TODO: Show StarterPack panel
+            matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: eventNameForUpgradeBottomSheet)
+            isShowingMailPremiumUpgrade = true
         } else {
             matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
             isShowingCustomScheduleAlert = true
@@ -87,6 +88,7 @@ struct CustomScheduleButton: View {
         isShowingCustomScheduleAlert: .constant(true),
         isShowingMyKSuiteUpgrade: .constant(false),
         isShowingKSuiteProUpgrade: .constant(false),
+        isShowingMailPremiumUpgrade: .constant(false),
         type: .scheduledDraft
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)

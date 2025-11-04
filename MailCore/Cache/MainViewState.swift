@@ -36,6 +36,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingUpdateAvailable = false
     @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @ModalPublished public var isShowingMyKSuiteUpgrade = false
+    @ModalPublished public var isShowingMailPremiumUpgrade = false
     @ModalPublished public var isShowingKSuiteProUpgrade = false
     @ModalPublished public var destructiveAlert: DestructiveActionAlertState?
     @ModalPublished public var modifiedScheduleDraftResource: ModifiedScheduleDraftResource?

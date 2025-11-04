@@ -198,6 +198,7 @@ struct SplitView: View {
             configuration: .standard, // Always standard on Mail
             isAdmin: mailboxManager.mailbox.ownerOrAdmin,
         )
+        // TODO: Show Mail Premium panel
         .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }

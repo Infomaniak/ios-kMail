@@ -26,6 +26,7 @@ struct ScheduleFloatingPanelView: View {
     @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
     @Binding var isShowingKSuiteProUpgrade: Bool
+    @Binding var isShowingMailPremiumUpgrade: Bool
 
     let type: ScheduleType
     let initialDate: Date?
@@ -68,6 +69,7 @@ struct ScheduleFloatingPanelView: View {
                 isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                 isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                 isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
+                isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                 type: type
             )
         }
@@ -79,6 +81,7 @@ struct ScheduleFloatingPanelView: View {
         isShowingCustomScheduleAlert: .constant(false),
         isShowingMyKSuiteUpgrade: .constant(false),
         isShowingKSuiteProUpgrade: .constant(false),
+        isShowingMailPremiumUpgrade: .constant(false),
         type: .scheduledDraft,
         initialDate: nil
     ) { _ in }
