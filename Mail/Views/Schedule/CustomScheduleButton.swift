@@ -50,6 +50,8 @@ struct CustomScheduleButton: View {
                     MyKSuitePlusChip()
                 } else if mailboxManager.mailbox.pack == .kSuiteFree {
                     KSuiteProUpgradeChip()
+                } else if mailboxManager.mailbox.pack == .starterPack {
+                    // TODO: Show StarterPack panel
                 }
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
@@ -69,6 +71,8 @@ struct CustomScheduleButton: View {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventName)
             isShowingKSuiteProUpgrade = true
+        } else if mailboxManager.mailbox.pack == .starterPack {
+            // TODO: Show StarterPack panel
         } else {
             matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
             isShowingCustomScheduleAlert = true

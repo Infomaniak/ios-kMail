@@ -112,6 +112,8 @@ struct MobileMainToolbarView: View {
                 isShowingKSuiteProPanel = true
             } else if mailboxManager.mailbox.pack == .myKSuiteFree {
                 isShowingMyKSuitePanel = true
+            } else if mailboxManager.mailbox.pack == .starterPack {
+                // TODO: Show StarterPack panel
             } else {
                 isShowingAI = true
             }

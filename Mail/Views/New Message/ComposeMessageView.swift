@@ -122,7 +122,7 @@ struct ComposeMessageView: View {
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
         if mailboxIsFull,
            let pack = mailbox.pack,
-           pack == .myKSuiteFree || pack == .kSuiteFree {
+           pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack {
             return true
         }
 
@@ -508,6 +508,8 @@ struct ComposeMessageView: View {
                 } else if pack == .myKSuiteFree {
                     mainViewState.isShowingMyKSuiteUpgrade = true
                     matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                } else if pack == .starterPack {
+                    // TODO: Show StarterPack panel
                 }
             }
         )
@@ -528,6 +530,8 @@ struct ComposeMessageView: View {
             } else if currentPack == .myKSuiteFree {
                 mainViewState.isShowingMyKSuiteUpgrade = true
                 matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+            } else if currentPack == .starterPack {
+                // TODO: Show StarterPack panel
             }
         }
     }

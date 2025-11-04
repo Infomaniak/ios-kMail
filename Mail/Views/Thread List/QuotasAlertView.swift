@@ -35,7 +35,7 @@ struct QuotasAlertView: View {
 
     private var type: AlertType? {
         guard let pack = mailbox.pack,
-              pack == .myKSuiteFree || pack == .kSuiteFree,
+              pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack,
               let quotas = mailbox.quotas else {
             return nil
         }
