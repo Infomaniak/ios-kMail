@@ -29,6 +29,8 @@ import SwiftUI
 struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isUnsubscribeSuccessful = false
+
     let banners: [MessageBanner]
 
     @ObservedRealmObject var message: Message
@@ -68,13 +70,15 @@ struct MessageBannerHeaderView: View {
                     await spamAction(spamType: spamType)
                 }
             case .unsubscribeLink:
-                MessageHeaderAsyncActionView(
-                    icon: MailResourcesAsset.socialMedia.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.messageComesFromDiscussionList,
-                    actionTitle: MailResourcesStrings.Localizable.unsubscribeButtonTitle,
-                    showBottomSeparator: showBottomSeparator,
-                    asyncAction: unsubscribeAction
-                )
+                if !isUnsubscribeSuccessful {
+                    MessageHeaderAsyncActionView(
+                        icon: MailResourcesAsset.socialMedia.swiftUIImage,
+                        message: MailResourcesStrings.Localizable.messageComesFromDiscussionList,
+                        actionTitle: MailResourcesStrings.Localizable.unsubscribeButtonTitle,
+                        showBottomSeparator: showBottomSeparator,
+                        asyncAction: unsubscribeAction
+                    )
+                }
             }
         }
     }
@@ -95,6 +99,9 @@ struct MessageBannerHeaderView: View {
         do {
             try await mailboxManager.apiFetcher.unsubscribe(messageResource: message.resource)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeSuccess)
+            withAnimation {
+                isUnsubscribeSuccessful = true
+            }
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeFailure)
         }
