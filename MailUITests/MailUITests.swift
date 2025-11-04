@@ -141,9 +141,21 @@ class MailUITests: XCTestCase {
 
         let folderNameTextField = app.textFields[MailResourcesStrings.Localizable.createFolderName]
         _ = folderNameTextField.waitForExistence(timeout: defaultTimeOut)
+
+        let folderName = "Test-\(Date().timeIntervalSince1970)"
+
         folderNameTextField.tap()
-        folderNameTextField.typeText("Test-\(Date().timeIntervalSince1970)")
+        folderNameTextField.typeText(folderName)
         app.staticTexts[MailResourcesStrings.Localizable.buttonCreate].tap()
+
+        app.scrollViews.firstMatch.swipeUp()
+        app.scrollViews.firstMatch.swipeUp()
+        app.scrollViews.firstMatch.swipeUp()
+
+        app.staticTexts[folderName].firstMatch.press(forDuration: 2.0)
+        app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch.tap()
+        app.buttons[MailResourcesStrings.Localizable.buttonConfirm].firstMatch.tap()
+        wait(delay: 3) // Wait for folder deletion to complete
     }
 
     func testDeleteSwipeAction() {
