@@ -125,6 +125,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isFree
         case isKSuiteEssential = "isKsuiteEssential"
         case isPartOfKSuite = "isPartOfKsuite"
+        case isPartOfStarterPack
         case dailyLimit
         case ownerOrAdmin
         case maxStorage
@@ -192,6 +193,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isFree = try container.decodeIfPresent(Bool.self, forKey: .isFree) ?? false
         isKSuiteEssential = try container.decodeIfPresent(Bool.self, forKey: .isKSuiteEssential) ?? false
         isPartOfKSuite = try container.decodeIfPresent(Bool.self, forKey: .isPartOfKSuite) ?? false
+        isPartOfStarterPack = try container.decodeIfPresent(Bool.self, forKey: .isPartOfStarterPack) ?? false
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
         ownerOrAdmin = try container.decodeIfPresent(Bool.self, forKey: .ownerOrAdmin) ?? false
         let maxStorageValue = try container.decodeIfPresent(Int64.self, forKey: .maxStorage)

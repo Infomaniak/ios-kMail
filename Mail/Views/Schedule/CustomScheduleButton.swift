@@ -49,10 +49,8 @@ struct CustomScheduleButton: View {
 
                 if mailboxManager.mailbox.pack == .myKSuiteFree {
                     MyKSuitePlusChip()
-                } else if mailboxManager.mailbox.pack == .kSuiteFree {
+                } else if mailboxManager.mailbox.pack == .kSuiteFree || mailboxManager.mailbox.pack == .starterPack {
                     KSuiteProUpgradeChip()
-                } else if mailboxManager.mailbox.pack == .starterPack {
-                    // TODO: Show StarterPack panel
                 }
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
