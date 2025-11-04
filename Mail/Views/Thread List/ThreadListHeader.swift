@@ -133,8 +133,8 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
-                } else if !apiStatusManager.status.isOnWorking {
-                    NoMailServersAvailableView()
+                } else if !apiStatusManager.status.serverAvailable {
+                    ServerUnavailableView()
                 }
 
                 if isRefreshing {

@@ -1211,9 +1211,6 @@
 /* loco:641196a69abab039df3a23f2 */
 "noNetwork" = "Nessuna connessione internet";
 
-/* loco:685104677354f872000e5882 */
-"noServersAvailable" = "Server non disponibili";
-
 /* loco:62b9579b3dfaf347e24071f3 */
 "noSubjectTitle" = "(senza soggetto)";
 
@@ -1372,6 +1369,9 @@
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Messaggi inviati";
+
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Server non disponibili";
 
 /* loco:657314ba4d64ddc63f074b42 */
 "setAsDefaultAppDescription" = "Scegli un servizio di posta elettronica sicuro e rispettoso della tua privacy e dell’ambiente.";

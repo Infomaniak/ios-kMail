@@ -16,28 +16,23 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import DesignSystem
+import MailCore
+import MailCoreUI
+import MailResources
+import SwiftUI
 
-public struct APIStatus {
-    public let isOnWorking: Bool
-    public let lastCheck: Date
-
-    public init(isOnWorking: Bool, lastCheck: Date) {
-        self.isOnWorking = isOnWorking
-        self.lastCheck = lastCheck
-    }
-
-    public func isLastCheckClose(to date: Date, interval: TimeInterval = 10) -> Bool {
-        return abs(lastCheck.timeIntervalSince(date)) <= interval
+struct ServerUnavailableView: View {
+    var body: some View {
+        HStack(spacing: IKPadding.mini) {
+            MailResourcesAsset.cloudSlash
+                .iconSize(.medium)
+            Text(MailResourcesStrings.Localizable.serverUnavailable)
+        }
+        .textStyle(.bodySmallWarning)
     }
 }
 
-public final class APIStatusManager: ObservableObject {
-    public static let shared = APIStatusManager()
-
-    @Published public var status: APIStatus
-
-    private init() {
-        status = APIStatus(isOnWorking: true, lastCheck: .now)
-    }
+#Preview {
+    ServerUnavailableView()
 }
