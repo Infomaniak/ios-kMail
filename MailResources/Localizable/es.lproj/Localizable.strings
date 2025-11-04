@@ -1211,7 +1211,7 @@
 "noMailboxTitle" = "No hay dirección de correo electrónico asociada a esta cuenta";
 
 /* loco:641196a69abab039df3a23f2 */
-"noNetwork" = "No hay señal";
+"noNetwork" = "Sin conexión a internet";
 
 /* loco:62b9579b3dfaf347e24071f3 */
 "noSubjectTitle" = "(sin asunto)";

@@ -1209,7 +1209,7 @@
 "noMailboxTitle" = "Nessun indirizzo e-mail associato a questo account";
 
 /* loco:641196a69abab039df3a23f2 */
-"noNetwork" = "Nessun segnale";
+"noNetwork" = "Nessuna connessione internet";
 
 /* loco:62b9579b3dfaf347e24071f3 */
 "noSubjectTitle" = "(senza soggetto)";
