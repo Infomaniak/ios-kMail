@@ -332,4 +332,8 @@ public extension Endpoint {
             queryItems: [URLQueryItem(name: "os", value: "ios")]
         )
     }
+
+    static func unsubscribe(resource: String) -> Endpoint {
+        return .resource(resource).appending(path: "/unsubscribeFromList")
+    }
 }

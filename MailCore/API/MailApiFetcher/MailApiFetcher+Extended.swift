@@ -216,4 +216,8 @@ public extension MailApiFetcher {
     func mailHosted(for recipients: [String]) async throws -> [MailHosted] {
         return try await perform(request: authenticatedRequest(.mailHosted(for: recipients)))
     }
+
+    func unsubscribe(messageResource: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(.unsubscribe(resource: messageResource), method: .post))
+    }
 }

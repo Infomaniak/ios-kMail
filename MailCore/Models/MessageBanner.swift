@@ -27,6 +27,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case spam(spamType: SpamHeaderType)
     case displayContent
     case encrypted
+    case unsubscribeLink
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -37,6 +38,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
         case (.displayContent, .displayContent):
             return true
         case (.encrypted, .encrypted):
+            return true
+        case (.unsubscribeLink, .unsubscribeLink):
             return true
         default:
             return false

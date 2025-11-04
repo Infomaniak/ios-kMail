@@ -1715,6 +1715,12 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
 
+/* loco:6909acad8905a0c64a0747d2 */
+"snackbarUnsubscribeFailure" = "Abmeldung unmöglich";
+
+/* loco:6909abe4583bcfb2d2034ec2 */
+"snackbarUnsubscribeSuccess" = "Abmeldung abgeschlossen";
+
 /* loco:67b32e5c0e4974a86a00c602 */
 "snoozeAlertTitle" = "Ausstehend bis: %@";
 
