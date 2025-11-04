@@ -26,6 +26,7 @@ public enum LocalPack: Sendable {
     case myKSuitePlus
     case kSuiteFree // = kSuite Essential
     case kSuitePaid // = kSuite Standard | Business | Enterprise
+    case starterPack
 
     init?(mailbox: Mailbox) {
         if mailbox.isFree {
@@ -40,6 +41,8 @@ public enum LocalPack: Sendable {
             } else {
                 self = .kSuitePaid
             }
+        } else if mailbox.isPartOfStarterPack {
+            self = .starterPack
         } else {
             return nil
         }
@@ -67,6 +70,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isFree: Bool
     @Persisted public var isPartOfKSuite: Bool
     @Persisted public var isKSuiteEssential: Bool
+    @Persisted public var isPartOfStarterPack: Bool
     @Persisted public var dailyLimit: Int
     @Persisted public var ownerOrAdmin: Bool
     @Persisted public var maxStorage: Int64?
