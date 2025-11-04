@@ -16,6 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -26,7 +29,7 @@ import SwiftUI
 struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isButtonLoading = false
+    @State private var isUnsubscribeSuccessful = false
 
     let banners: [MessageBanner]
 
@@ -58,36 +61,49 @@ struct MessageBannerHeaderView: View {
                     showBottomSeparator: showBottomSeparator
                 )
             case .spam(let spamType):
-                MessageHeaderActionView(
+                MessageHeaderAsyncActionView(
                     icon: spamType.icon,
                     message: spamType.message,
+                    actionTitle: spamType.buttonTitle,
                     showBottomSeparator: showBottomSeparator
                 ) {
-                    Button {
-                        action(spamType: spamType)
-                    } label: {
-                        Text(spamType.buttonTitle)
-                    }
-                    .disabled(isButtonLoading)
-                    .ikButtonLoading(isButtonLoading)
+                    await spamAction(spamType: spamType)
+                }
+            case .unsubscribeLink:
+                if !isUnsubscribeSuccessful {
+                    MessageHeaderAsyncActionView(
+                        icon: MailResourcesAsset.socialMedia.swiftUIImage,
+                        message: MailResourcesStrings.Localizable.messageComesFromDiscussionList,
+                        actionTitle: MailResourcesStrings.Localizable.unsubscribeButtonTitle,
+                        showBottomSeparator: showBottomSeparator,
+                        asyncAction: unsubscribeAction
+                    )
                 }
             }
         }
     }
 
-    private func action(spamType: SpamHeaderType) {
-        isButtonLoading = true
-        Task {
-            switch spamType {
-            case .moveInSpam:
-                _ = try? await mailboxManager.move(messages: [message], to: .spam)
-            case .enableSpamFilter:
-                _ = try? await mailboxManager.activateSpamFilter()
-            case .unblockRecipient(let sender):
-                try await mailboxManager.unblockSender(sender: sender)
-            }
+    private func spamAction(spamType: SpamHeaderType) async {
+        switch spamType {
+        case .moveInSpam:
+            _ = try? await mailboxManager.move(messages: [message], to: .spam)
+        case .enableSpamFilter:
+            _ = try? await mailboxManager.activateSpamFilter()
+        case .unblockRecipient(let sender):
+            try? await mailboxManager.unblockSender(sender: sender)
+        }
+    }
 
-            isButtonLoading = false
+    private func unsubscribeAction() async {
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
+        do {
+            try await mailboxManager.apiFetcher.unsubscribe(messageResource: message.resource)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeSuccess)
+            withAnimation {
+                isUnsubscribeSuccessful = true
+            }
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeFailure)
         }
     }
 }

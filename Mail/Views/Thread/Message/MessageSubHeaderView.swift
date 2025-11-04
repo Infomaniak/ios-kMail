@@ -46,6 +46,10 @@ struct MessageSubHeaderView: View {
             result.append(.spam(spamType: spamType))
         }
 
+        if message.hasUnsubscribeLink == true {
+            result.append(.unsubscribeLink)
+        }
+
         if isRemoteContentBlocked && displayContentBlockedActionView {
             result.append(.displayContent)
         }

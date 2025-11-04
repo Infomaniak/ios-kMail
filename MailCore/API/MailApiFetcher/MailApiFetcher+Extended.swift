@@ -210,10 +210,14 @@ public extension MailApiFetcher {
     }
 
     func lastSyncDate() async throws -> String? {
-        return try await perform(request: authenticatedRequest(.lastSyncDate()))
+        return try await perform(request: authenticatedRequest(.lastSyncDate))
     }
 
     func mailHosted(for recipients: [String]) async throws -> [MailHosted] {
         return try await perform(request: authenticatedRequest(.mailHosted(for: recipients)))
+    }
+
+    func unsubscribe(messageResource: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(.unsubscribe(resource: messageResource), method: .post))
     }
 }
