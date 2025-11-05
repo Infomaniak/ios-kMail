@@ -26,8 +26,6 @@ import MailResources
 import SwiftUI
 
 struct SyncWelcomeView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Binding var navigationPath: [SyncProfileStep]
 
     private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground4.image,
@@ -41,6 +39,7 @@ struct SyncWelcomeView: View {
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0), headerImage: nil) { _ in
             Button(MailResourcesStrings.Localizable.buttonStart) {
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
                 navigationPath.append(.downloadProfile)
             }

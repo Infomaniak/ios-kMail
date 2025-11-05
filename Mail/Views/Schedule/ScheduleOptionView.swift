@@ -24,8 +24,6 @@ import MailCoreUI
 import SwiftUI
 
 struct ScheduleOptionView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.dismiss) private var dismiss
 
     let type: ScheduleType
@@ -54,6 +52,7 @@ struct ScheduleOptionView: View {
     private func didTapOption() {
         guard let scheduleDate = option.date else { return }
 
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: type.matomoCategory, name: option.matomoName)
         completionHandler(scheduleDate)
         dismiss()

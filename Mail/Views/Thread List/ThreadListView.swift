@@ -41,8 +41,6 @@ private extension View {
 }
 
 struct ThreadListView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var userActivityController: UserActivityController
     @InjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
@@ -221,12 +219,14 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,
                               isExtended: scrollObserver.scrollDirection != .bottom) {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
         }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
+            @InjectService var userActivityController: UserActivityController
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
                                                       folder: mainViewState.selectedFolder)
         }

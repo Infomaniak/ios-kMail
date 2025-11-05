@@ -48,9 +48,6 @@ struct AccountCellPlaceholderView: View {
 }
 
 struct AccountCellView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
-
     @Environment(\.dismissModal) private var dismissModal
 
     @Binding var selectedUserId: Int?
@@ -65,6 +62,9 @@ struct AccountCellView: View {
     var body: some View {
         Button {
             guard !isSelected else { return }
+
+            @InjectService var matomo: MatomoUtils
+            @InjectService var accountManager: AccountManager
 
             matomo.track(eventWithCategory: .account, name: "switch")
             dismissModal()

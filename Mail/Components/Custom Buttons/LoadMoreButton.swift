@@ -24,8 +24,6 @@ import RealmSwift
 import SwiftUI
 
 struct LoadMoreButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isLoadingMore = false
@@ -61,6 +59,7 @@ struct LoadMoreButton: View {
 
         Task {
             await tryOrDisplayError {
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .threadList, name: "loadMore")
 
                 var threadsCreated = 0

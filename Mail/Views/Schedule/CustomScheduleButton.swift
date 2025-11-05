@@ -27,8 +27,6 @@ import MyKSuite
 import SwiftUI
 
 struct CustomScheduleButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -61,6 +59,8 @@ struct CustomScheduleButton: View {
     }
 
     private func showCustomSchedulePicker() {
+        @InjectService var matomo: MatomoUtils
+
         if mailboxManager.mailbox.pack == .myKSuiteFree {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)

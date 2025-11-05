@@ -27,7 +27,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct SyncDownloadProfileView: View {
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var server: ConfigWebServer
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -62,6 +61,7 @@ struct SyncDownloadProfileView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonDownload) {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()
                 }

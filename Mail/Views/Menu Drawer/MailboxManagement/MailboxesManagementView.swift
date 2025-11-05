@@ -29,14 +29,10 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct MailboxesManagementView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @Environment(\.currentUser) private var currentUser
-
-    @LazyInjectService private var accountManager: AccountManager
 
     @ObservedResults(
         Mailbox.self,
@@ -58,6 +54,7 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
@@ -104,6 +101,7 @@ struct MailboxesManagementView: View {
     }
 
     private func updateAccount() async throws {
+        @InjectService var accountManager: AccountManager
         guard let account = accountManager.account(for: mailboxManager.mailbox.userId) else { return }
         try await accountManager.updateUser(for: account)
     }

@@ -25,8 +25,6 @@ import MailCoreUI
 import SwiftUI
 
 struct MessageHeaderRecipientsButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -50,6 +48,7 @@ struct MessageHeaderRecipientsButton: View {
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .message, name: "openDetails", value: isHeaderExpanded)
             withAnimation {
                 isHeaderExpanded.toggle()

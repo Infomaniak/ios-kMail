@@ -26,8 +26,6 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     private static let labels: [FolderRole: String] = [
         .spam: MailResourcesStrings.Localizable.threadListSpamHint,
         .trash: MailResourcesStrings.Localizable.threadListTrashHint
@@ -57,6 +55,7 @@ struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)")
 
                     let frozenFolder = folder.freezeIfNeeded()

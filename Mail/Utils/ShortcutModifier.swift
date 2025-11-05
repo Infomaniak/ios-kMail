@@ -29,8 +29,6 @@ struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
@@ -65,6 +63,7 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutDelete() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "delete")
 
         let messages: [Message]
@@ -85,6 +84,7 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutReply() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "reply")
 
         guard !multipleSelectionViewModel.isEnabled,
@@ -100,12 +100,14 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutNewMessage() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
 
         mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
     }
 
     private func shortcutRefresh() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "refresh")
 
         Task {

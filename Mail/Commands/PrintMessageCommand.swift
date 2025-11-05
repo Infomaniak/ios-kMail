@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct PrintMessageCommand: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ObservedObject var mainViewState: MainViewState
 
     var body: some View {
@@ -37,6 +35,7 @@ struct PrintMessageCommand: View {
     }
 
     func printCurrentMessage(mainViewState: MainViewState) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: "print")
 
         guard let message = mainViewState.selectedThread?.lastMessageFromFolder else { return }

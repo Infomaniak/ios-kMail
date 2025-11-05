@@ -27,8 +27,6 @@ import MailResources
 import SwiftUI
 
 struct ConfirmationBlockRecipientView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -75,6 +73,7 @@ struct ConfirmationBlockRecipientView: View {
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonBlockAnExpeditor) {
                 Task {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .blockUserAction, name: "confirmSelectedUser")
                     try await actionsManager.performAction(
                         target: reportedMessages,

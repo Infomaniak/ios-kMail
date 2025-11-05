@@ -25,8 +25,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 private struct SwipeActionView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
@@ -47,6 +45,7 @@ private struct SwipeActionView: View {
 
     var body: some View {
         Button(role: isDestructive ? .destructive : nil) {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .swipeActions, action: .drag, name: action.matomoName)
             Task {
                 await tryOrDisplayError {

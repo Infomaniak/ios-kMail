@@ -25,8 +25,6 @@ import SwiftUI
 import UIKit
 
 struct SettingsThreadDensityOptionView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var selectedValue = UserDefaults.shared.threadDensity
 
     var body: some View {
@@ -42,6 +40,7 @@ struct SettingsThreadDensityOptionView: View {
             .pickerStyle(.segmented)
             .ikSegmentedControl()
             .onChange(of: selectedValue) { newValue in
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .settingsDensity, name: newValue.rawValue)
             }
             .padding([.horizontal, .top], value: .medium)

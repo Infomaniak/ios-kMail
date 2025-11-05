@@ -25,8 +25,6 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 struct NewMessageCommand: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.openWindow) private var openWindow
 
     let mailboxManager: MailboxManager?
@@ -41,6 +39,7 @@ struct NewMessageCommand: View {
     }
 
     func newMessage(mailboxManager: MailboxManager) {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuAction, name: "newMessage")
         openWindow(
             id: DesktopWindowIdentifier.composeWindowIdentifier,

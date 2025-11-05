@@ -29,8 +29,6 @@ import SwiftUI
 struct MoveEmailView: View {
     typealias MoveHandler = (Folder) -> Void
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.dismissModal) private var dismissModal
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -66,6 +64,7 @@ struct MoveEmailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .createFolder, name: "fromMove")
                     isShowingCreateFolderAlert.toggle()
                 } label: {
