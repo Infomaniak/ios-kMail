@@ -18,6 +18,7 @@
 
 import KSuiteUtils
 import MailResources
+import MyKSuite
 import SwiftUI
 
 public extension View {
@@ -28,19 +29,23 @@ public extension View {
     }
 }
 
+/**
+ * This offer is available In Mail only. It’s shown to users coming from a Starter Pack plan.
+ * The available options are identical to those in My kSuite, so we use the same resources.
+ */
 public struct MailPremiumView: View {
     private let labels: [KSuiteLabel] = [
         KSuiteLabel(
-            icon: MailResourcesAsset.plane.swiftUIImage,
-            text: MailResourcesStrings.Localizable.mailPremiumUpgradeUnlimitedMailLabel
+            icon: MyKSuiteResources.plane.swiftUIImage,
+            text: MyKSuiteLocalizable.myKSuiteUpgradeUnlimitedMailLabel
         ),
         KSuiteLabel(
-            icon: MailResourcesAsset.envelopeItalic.swiftUIImage,
-            text: MailResourcesStrings.Localizable.mailPremiumUpgradeRedirectLabel
+            icon: MyKSuiteResources.envelope.swiftUIImage,
+            text: MyKSuiteLocalizable.myKSuiteUpgradeRedirectLabel
         ),
         KSuiteLabel(
-            icon: MailResourcesAsset.gift.swiftUIImage,
-            text: MailResourcesStrings.Localizable.mailPremiumUpgradeLabel
+            icon: MyKSuiteResources.gift.swiftUIImage,
+            text: MyKSuiteLocalizable.myKSuiteUpgradeLabel
         )
     ]
 

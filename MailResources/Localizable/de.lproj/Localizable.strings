@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Thu, 30 Oct 2025 16:45:16 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 05 Nov 2025 08:51:40 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1073,19 +1073,10 @@
 "mailPremiumUpgradeDescription" = "Erhalten Sie mehr Speicherplatz und neue Funktionen mit Ihrer E-Mail-Adresse.";
 
 /* loco:6909f71a6b8c07fca9051053 */
-"mailPremiumUpgradeDetails" = "Um von Mail Premium zu profitieren, ändern Sie Ihr Angebot über Ihr Webinterface.";
-
-/* loco:6909f851a525cafdec030943 */
-"mailPremiumUpgradeLabel" = "Und noch mehr!";
-
-/* loco:6909f802c28364a30d087932 */
-"mailPremiumUpgradeRedirectLabel" = "Umleitungen, personalisierte Erinnerungen..";
+"mailPremiumUpgradeDetails" = "Um Premium zu erhalten, ändern Sie Ihr Angebot von Ihrem Webinterface aus.";
 
 /* loco:6909f62d86fa5c10e80515e2 */
 "mailPremiumUpgradeTitle" = "Gehen Sie mit dem Premium-Tarif auf die nächste Stufe";
-
-/* loco:6909f7e949c7e5abcc0df6b3 */
-"mailPremiumUpgradeUnlimitedMailLabel" = "Unbegrenzte Speicherung und Versendung von E-Mails";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Meine Signaturen verwalten";
