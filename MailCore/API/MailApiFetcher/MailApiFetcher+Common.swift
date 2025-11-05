@@ -35,6 +35,11 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
+    func checkAPIStatus() async throws -> Empty {
+        try await perform(request: authenticatedRequest(.ping))
+    }
+
+    @discardableResult
     func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
                                                         method: .put,

@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2024 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct NoNetworkView: View {
+struct ServerUnavailableView: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            MailResourcesAsset.noSignal
+            MailResourcesAsset.cloudSlash
                 .iconSize(.medium)
-            Text(MailResourcesStrings.Localizable.noNetwork)
+            Text(MailResourcesStrings.Localizable.serverUnavailable)
         }
         .textStyle(.bodySmallWarning)
     }
 }
 
 #Preview {
-    NoNetworkView()
+    ServerUnavailableView()
 }

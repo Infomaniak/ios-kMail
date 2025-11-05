@@ -152,6 +152,9 @@ open class TargetAssembly {
             },
             Factory(type: MainViewStateStore.self) { _, _ in
                 MainViewStateStore()
+            },
+            Factory(type: ServerStatusManager.self) { _, _ in
+                ServerStatusManager()
             }
         ]
     }

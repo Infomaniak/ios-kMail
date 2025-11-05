@@ -1370,6 +1370,9 @@
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Gesendete Nachrichten";
 
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Server nicht verfügbar";
+
 /* loco:657314ba4d64ddc63f074b42 */
 "setAsDefaultAppDescription" = "Wählen Sie standardmässig einen Messenger, der sicher ist und Ihre Privatsphäre und die Umwelt respektiert.";
 

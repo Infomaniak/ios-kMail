@@ -1372,6 +1372,9 @@
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Mensajes enviados";
 
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Servidores no disponibles";
+
 /* loco:657314ba4d64ddc63f074b42 */
 "setAsDefaultAppDescription" = "Por defecto, elige un servicio de correo electrónico que sea seguro y respete tu intimidad y el medio ambiente.";
 
