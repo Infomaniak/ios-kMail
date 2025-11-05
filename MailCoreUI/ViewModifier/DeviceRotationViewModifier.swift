@@ -16,20 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import SwiftUI
-
-/// Something that can manage rotation state
-public protocol OrientationManageable {
-    /// Access the orientation lock mask
-    var orientationLock: UIInterfaceOrientationMask { get }
-
-    /// Set the orientation lock mask
-    func setOrientationLock(_ orientation: UIInterfaceOrientationMask)
-
-    /// Read the interface orientation
-    var interfaceOrientation: UIInterfaceOrientation? { get }
-}
 
 public struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIInterfaceOrientation?) -> Void

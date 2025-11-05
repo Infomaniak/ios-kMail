@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "deff1ccfd90c632f513719a7582964d0285bab09",
-        "version" : "24.1.2"
+        "revision" : "503033452d0a03a76c0d55e4a0896eb02b1301dd",
+        "version" : "24.2.0"
       }
     },
     {
@@ -282,7 +282,7 @@
     {
       "identity" : "swift-rich-html-editor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
         "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
         "version" : "2.1.0"
