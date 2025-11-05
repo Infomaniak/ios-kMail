@@ -20,13 +20,9 @@ import Foundation
 
 @MainActor
 public final class ServerStatusManager: ObservableObject {
-    public static let shared = ServerStatusManager()
+    @Published public private(set) var serverAvailable = true
 
-    @Published public private(set) var serverAvailable: Bool
-
-    private init() {
-        serverAvailable = true
-    }
+    public nonisolated init() {}
 
     private func setServerAvailable(_ serverAvailable: Bool) {
         self.serverAvailable = serverAvailable

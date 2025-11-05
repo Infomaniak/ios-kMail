@@ -20,6 +20,7 @@ import Collections
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakDI
 
 class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
     let cancelClosure: () -> Void
@@ -34,6 +35,8 @@ class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
 }
 
 public actor RefreshActor {
+    @InjectService private var serverStatusManager: ServerStatusManager
+
     weak var mailboxManager: MailboxManager?
 
     private var refreshTask: Task<Void, Never>?
@@ -87,7 +90,7 @@ public actor RefreshActor {
         refreshTask = Task {
             await tryOrDisplayError {
                 do {
-                    let serverAvailable = await ServerStatusManager.shared.updateStatusIfNeeded(using: mailboxManager)
+                    let serverAvailable = await serverStatusManager.updateStatusIfNeeded(using: mailboxManager)
                     guard serverAvailable else {
                         refreshTask = nil
                         return
@@ -95,7 +98,7 @@ public actor RefreshActor {
 
                     try await mailboxManager?.threads(folder: folder)
                 } catch {
-                    await ServerStatusManager.shared.updateStatus(using: mailboxManager)
+                    await serverStatusManager.updateStatus(using: mailboxManager)
                     throw error
                 }
                 refreshTask = nil

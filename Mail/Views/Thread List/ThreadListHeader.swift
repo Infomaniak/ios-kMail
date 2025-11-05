@@ -110,7 +110,7 @@ struct ThreadListHeader: View {
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
-    @ObservedObject private var serverStatusManager = ServerStatusManager.shared
+    @ObservedObject private var serverStatusManager: ServerStatusManager
 
     @Binding var unreadFilterOn: Bool
 
@@ -126,6 +126,7 @@ struct ThreadListHeader: View {
         _unreadFilterOn = unreadFilterOn
         self.isRefreshing = isRefreshing
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
+        _serverStatusManager = ObservedObject(wrappedValue: InjectService<ServerStatusManager>().wrappedValue)
     }
 
     var body: some View {
