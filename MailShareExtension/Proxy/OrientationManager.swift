@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import MailCoreUI
+import InfomaniakCoreCommonUI
 import UIKit
 
 /// An OrientationManager that works in Extension mode
