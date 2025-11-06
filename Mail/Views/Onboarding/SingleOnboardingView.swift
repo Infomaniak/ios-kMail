@@ -20,7 +20,6 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakOnboarding
 import MailCore
-import MailCoreUI
 import SwiftUI
 
 struct SingleOnboardingView: View {
