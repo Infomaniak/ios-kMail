@@ -1,2 +1,4 @@
-- Bug fixes
+- Unsubscribe from mailing list
+- Display unavailable servers 
+- Handle starter pack offer
 - Minor improvements
