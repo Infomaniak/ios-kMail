@@ -232,12 +232,22 @@ public final class DraftManager {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 let sendDate = sendResponse.scheduledDate
 
-                let cancelResource = sendResponse.cancelResource
+                var action: UserAlertAction?
+                if let cancelResource = sendResponse.cancelResource {
+                    action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
+                        Task {
+                            try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+
+                            self.removeReactionIfNeeded(mailboxManager: mailboxManager, draft: draft)
+                        }
+                    }
+                }
+
                 showDidSendSnackbar(
                     draft: draft,
                     mailboxManager: mailboxManager,
                     showSnackbar: showSnackbar,
-                    cancelResource: cancelResource
+                    action: action
                 )
 
                 return sendDate
@@ -279,6 +289,33 @@ public final class DraftManager {
         }
 
         return nil
+    }
+
+    // TODO: - Delete local reaction and draft if necessary
+    private func removeReactionIfNeeded(mailboxManager: MailboxManager, draft: Draft) {
+        guard draft.action == .sendReaction, let reaction = draft.emojiReaction,
+              let messageUid = draft.inReplyToUid else { return }
+
+        try? mailboxManager.writeTransaction { writableRealm in
+            guard let message = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
+                return
+            }
+
+            guard let reactionIndex = message.reactions.firstIndex(where: { $0.reaction == reaction }) else { return }
+            guard let index = message.reactions[reactionIndex].authors
+                .firstIndex(where: { $0.recipient?.email == mailboxManager.mailbox.email })
+            else { return }
+            message.reactions[reactionIndex].authors.remove(at: index)
+            if message.reactions[reactionIndex].authors.isEmpty {
+                message.reactions.remove(at: reactionIndex)
+            }
+        }
+
+        if let realm = draft.realm?.thaw(), let liveDraft = draft.fresh(using: realm) {
+            try? realm.write {
+                realm.delete(liveDraft)
+            }
+        }
     }
 
     private func handleSentQuotaError(failingDraft draft: Draft,
@@ -435,16 +472,16 @@ public final class DraftManager {
         draft: Draft,
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
-        cancelResource: String? = nil
+        action: UserAlertAction? = nil
     ) {
-        var action: UserAlertAction?
-        if let cancelResource {
-            action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
-                Task {
-                    try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
-                }
-            }
-        }
+//        var action: UserAlertAction?
+//        if let action {
+//            action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
+//                Task {
+//                    try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+//                }
+//            }
+//        }
         switch draft.action {
         case .send:
             alertDisplayable.showWithDelay(

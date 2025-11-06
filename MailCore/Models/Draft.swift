@@ -300,6 +300,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
 
         replyingDraft.action = .sendReaction
         replyingDraft.emojiReaction = reaction
+        replyingDraft.delay = 5
 
         return replyingDraft
     }
