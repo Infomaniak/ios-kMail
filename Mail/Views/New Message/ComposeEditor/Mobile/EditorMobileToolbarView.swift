@@ -43,6 +43,7 @@ struct EditorMobileToolbarView: View {
     @Binding var isShowingAI: Bool
     @Binding var isShowingKSuiteProPanel: Bool
     @Binding var isShowingMyKSuitePanel: Bool
+    @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
@@ -59,6 +60,7 @@ struct EditorMobileToolbarView: View {
                     isShowingAI: $isShowingAI,
                     isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
+                    isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: isEditorFocused
@@ -92,6 +94,7 @@ struct EditorMobileToolbarView: View {
         isShowingAI: .constant(false),
         isShowingKSuiteProPanel: .constant(false),
         isShowingMyKSuitePanel: .constant(false),
+        isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true

@@ -5,27 +5,11 @@
  Project: kMail
  Locale: es, Spanish
  Tagged: ios-stringsdict
- Exported by: Ambroise Decouttere
- Exported at: Wed, 23 Jul 2025 10:34:22 +0200
+ Exported by: Valentin Perignon
+ Exported at: Tue, 04 Nov 2025 14:17:22 +0100
 -->
 <plist version="1.0">
   <dict>
-    <key> threadListDeletionConfirmationAlertTitle</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@value@</string>
-      <key>value</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>Borrar %d conversación</string>
-        <key>other</key>
-        <string>Borrar %d conversaciones</string>
-      </dict>
-    </dict>
     <key>attachmentQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -272,6 +256,22 @@ Las denuncias serán remitidas a nuestro equipo de seguridad, que las analizará
         <string>¿Estás seguro de que quieres borrar este conversación permanentemente?</string>
         <key>other</key>
         <string>¿Estás seguro de que quieres borrar estos conversaciones permanentemente?</string>
+      </dict>
+    </dict>
+    <key>threadListDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Borrar %d conversación</string>
+        <key>other</key>
+        <string>Borrar %d conversaciones</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>

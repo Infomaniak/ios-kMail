@@ -5,29 +5,11 @@
  Project: kMail
  Locale: fr, French
  Tagged: ios-stringsdict
- Exported by: Ambroise Decouttere
- Exported at: Wed, 23 Jul 2025 10:34:22 +0200
+ Exported by: Valentin Perignon
+ Exported at: Tue, 04 Nov 2025 14:17:22 +0100
 -->
 <plist version="1.0">
   <dict>
-    <key> threadListDeletionConfirmationAlertTitle</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@value@</string>
-      <key>value</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>Supprimer %d conversation</string>
-        <key>other</key>
-        <string>Supprimer %d conversations</string>
-        <key>many</key>
-        <string>Supprimer %d de conversations</string>
-      </dict>
-    </dict>
     <key>attachmentQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -300,6 +282,24 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <string>Êtes-vous sûr de vouloir supprimer ces conversations définitivement ?</string>
         <key>many</key>
         <string>Êtes-vous sûr de vouloir supprimer ces conversations définitivement ?</string>
+      </dict>
+    </dict>
+    <key>threadListDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Supprimer %d conversation</string>
+        <key>other</key>
+        <string>Supprimer %d conversations</string>
+        <key>many</key>
+        <string>Supprimer %d de conversations</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>

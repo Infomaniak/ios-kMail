@@ -137,12 +137,14 @@ public extension View {
     func mailFloatingPanel<Content: View>(
         isPresented: Binding<Bool>,
         title: String? = nil,
+        closeButtonHidden: Bool = false,
         bottomPadding: CGFloat = IKPadding.medium,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
         floatingPanel(
             isPresented: isPresented,
             title: title,
+            closeButtonHidden: closeButtonHidden,
             backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
             bottomPadding: bottomPadding,
             content: content

@@ -89,6 +89,7 @@ struct ComposeMessageView: View {
     @State private var isShowingSchedulePanel = false
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
+    @State private var isShowingMailPremiumPanel = false
 
     @State private var isShowingEncryptStatePanel = false
 
@@ -122,7 +123,7 @@ struct ComposeMessageView: View {
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
         if mailboxIsFull,
            let pack = mailbox.pack,
-           pack == .myKSuiteFree || pack == .kSuiteFree {
+           pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack {
             return true
         }
 
@@ -240,6 +241,7 @@ struct ComposeMessageView: View {
                     isShowingAI: $aiModel.isShowingPrompt,
                     isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
+                    isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
@@ -365,6 +367,7 @@ struct ComposeMessageView: View {
             configuration: .standard,
             isAdmin: mailboxManager.mailbox.ownerOrAdmin
         )
+        .mailPremiumPanel(isPresented: $isShowingMailPremiumPanel)
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
@@ -508,6 +511,9 @@ struct ComposeMessageView: View {
                 } else if pack == .myKSuiteFree {
                     mainViewState.isShowingMyKSuiteUpgrade = true
                     matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                } else if pack == .starterPack {
+                    mainViewState.isShowingMailPremiumUpgrade = true
+                    matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
                 }
             }
         )
@@ -528,6 +534,9 @@ struct ComposeMessageView: View {
             } else if currentPack == .myKSuiteFree {
                 mainViewState.isShowingMyKSuiteUpgrade = true
                 matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+            } else if currentPack == .starterPack {
+                mainViewState.isShowingMailPremiumUpgrade = true
+                matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
             }
         }
     }

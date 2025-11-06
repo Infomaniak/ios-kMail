@@ -26,6 +26,7 @@ public enum LocalPack: Sendable {
     case myKSuitePlus
     case kSuiteFree // = kSuite Essential
     case kSuitePaid // = kSuite Standard | Business | Enterprise
+    case starterPack
 
     init?(mailbox: Mailbox) {
         if mailbox.isFree {
@@ -40,6 +41,8 @@ public enum LocalPack: Sendable {
             } else {
                 self = .kSuitePaid
             }
+        } else if mailbox.isPartOfStarterPack {
+            self = .starterPack
         } else {
             return nil
         }
@@ -67,6 +70,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isFree: Bool
     @Persisted public var isPartOfKSuite: Bool
     @Persisted public var isKSuiteEssential: Bool
+    @Persisted public var isPartOfStarterPack: Bool
     @Persisted public var dailyLimit: Int
     @Persisted public var ownerOrAdmin: Bool
     @Persisted public var maxStorage: Int64?
@@ -121,6 +125,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isFree
         case isKSuiteEssential = "isKsuiteEssential"
         case isPartOfKSuite = "isPartOfKsuite"
+        case isPartOfStarterPack
         case dailyLimit
         case ownerOrAdmin
         case maxStorage
@@ -188,6 +193,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isFree = try container.decodeIfPresent(Bool.self, forKey: .isFree) ?? false
         isKSuiteEssential = try container.decodeIfPresent(Bool.self, forKey: .isKSuiteEssential) ?? false
         isPartOfKSuite = try container.decodeIfPresent(Bool.self, forKey: .isPartOfKSuite) ?? false
+        isPartOfStarterPack = try container.decodeIfPresent(Bool.self, forKey: .isPartOfStarterPack) ?? false
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
         ownerOrAdmin = try container.decodeIfPresent(Bool.self, forKey: .ownerOrAdmin) ?? false
         let maxStorageValue = try container.decodeIfPresent(Int64.self, forKey: .maxStorage)

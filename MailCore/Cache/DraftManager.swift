@@ -280,7 +280,7 @@ public final class DraftManager {
                                       showSnackbar: Bool,
                                       kSuiteUpgradeAction: ((LocalPack) -> Void)?) async {
         if let pack = mailboxManager.mailbox.pack,
-           pack == .myKSuiteFree || pack == .kSuiteFree {
+           pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack {
             alertDisplayable.show(
                 message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
                 action: (MailResourcesStrings.Localizable.buttonUpgrade, {

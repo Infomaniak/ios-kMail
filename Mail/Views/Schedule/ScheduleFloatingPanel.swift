@@ -66,6 +66,7 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     @State private var isShowingMyKSuiteUpgrade = false
     @State private var isShowingKSuiteProUpgrade = false
+    @State private var isShowingMailPremiumUpgrade = false
     @State private var panelShouldBeShown = false
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isShowingCustomScheduleAlert: Bool
 
@@ -88,6 +89,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                     isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
+                    isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                     type: type,
                     initialDate: initialDate,
                     completionHandler: completionHandler
@@ -119,5 +121,6 @@ struct ScheduleFloatingPanel: ViewModifier {
                 configuration: .standard,
                 isAdmin: mailboxManager.mailbox.ownerOrAdmin
             )
+            .mailPremiumPanel(isPresented: $isShowingMailPremiumUpgrade)
     }
 }
