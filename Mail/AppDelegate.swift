@@ -17,10 +17,10 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
-import MailCoreUI
 import OSLog
 import UIKit
 
