@@ -1,4 +1,1 @@
-- Désinscription des mailing-list
-- Affichage statut serveur indisponible
-- Prise en charge de l'offre starter pack
-- Améliorations mineures
+- Correction d'un crash à la création d'un dossier

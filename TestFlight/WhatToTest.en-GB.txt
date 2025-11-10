@@ -1,4 +1,1 @@
-- Unsubscribe from mailing list
-- Display unavailable servers 
-- Handle starter pack offer
-- Minor improvements
+- Fix crash on folder creation
