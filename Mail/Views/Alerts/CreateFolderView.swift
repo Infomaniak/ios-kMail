@@ -31,8 +31,6 @@ struct CreateFolderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Environment(\.dismiss) private var dismiss
-    // swiftlint:disable:next empty_count
-    @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
     @State private var folderName = ""
     @State private var error: FolderError?
@@ -160,12 +158,21 @@ struct CreateFolderView: View {
         withAnimation {
             if trimmedName.count >= Constants.maxFolderNameLength {
                 error = .nameTooLong
-            } else if trimmedName.lowercased() == "inbox" || !folders.where({ $0.name == trimmedName }).isEmpty {
+            } else if trimmedName.lowercased() == "inbox" || folderAlreadyExistsWith(name: trimmedName) {
                 error = .nameAlreadyExists
             } else {
                 error = nil
             }
         }
+    }
+
+    private func folderAlreadyExistsWith(name: String) -> Bool {
+        let foldersWithSameName = mailboxManager.transactionExecutor.fetchResults(ofType: Folder.self) { elements in
+            // swiftlint:disable:next empty_count
+            elements.where { $0.parents.count == 0 && $0.name == name }
+        }
+
+        return !foldersWithSameName.isEmpty
     }
 }
 
