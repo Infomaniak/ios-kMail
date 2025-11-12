@@ -82,19 +82,33 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
 
         let coordinator = context.coordinator
 
-        if coordinator.currentAccentColor != accentColor || coordinator.currentColorScheme != context.environment.colorScheme {
-            coordinator.invalidateColors()
+        guard coordinator.currentAccentColor != accentColor
+            || coordinator.currentColorScheme != context.environment.colorScheme
+        else { return }
+        coordinator.invalidateColors()
 
-            let newColorScheme = context.environment.colorScheme
-            uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = newColorScheme == .dark ? MailResourcesAsset
-                .backgroundSecondaryColor.color : accentColor.secondary.color
-            uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
-            if case .animation(let configuration) = slides[selectedSlide].content {
-                uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: configuration)
-            }
+        let newColorScheme = context.environment.colorScheme
+        coordinator.currentAccentColor = accentColor
+        coordinator.currentColorScheme = newColorScheme
 
-            coordinator.currentAccentColor = accentColor
-            coordinator.currentColorScheme = newColorScheme
+        uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = newColorScheme == .dark ? MailResourcesAsset
+            .backgroundSecondaryColor.color : accentColor.secondary.color
+        uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
+
+        guard let illustrationAnimationViewContent = uiViewController.currentSlideViewCell?.illustrationAnimationViewContent
+        else {
+            return
+        }
+
+        switch illustrationAnimationViewContent {
+        case .airbnbLottieAnimationView(_, let ikLottieConfiguration):
+            uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: ikLottieConfiguration)
+        case .dotLottieAnimationView(let dotLottieAnimationView, _):
+            uiViewController.currentSlideViewCell?.setThemeFor(
+                colorScheme: newColorScheme,
+                accentColor: accentColor,
+                dotLottieViewModel: dotLottieAnimationView.dotLottieViewModel
+            )
         }
     }
 
