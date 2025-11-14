@@ -27,14 +27,38 @@ import Sentry
 import SwiftModalPresentation
 import SwiftUI
 
+final class DropHandler: DropDelegate {
+    static let handledUTTypes: [UTType] = [.image]
+
+    private let attachmentManager: AttachmentsManager
+    private let draft: Draft
+
+    init(draft: Draft, attachmentManager: AttachmentsManager) {
+        self.draft = draft
+        self.attachmentManager = attachmentManager
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard info.hasItemsConforming(to: DropHandler.handledUTTypes) else {
+            return false
+        }
+
+        let itemProviders = info.itemProviders(for: DropHandler.handledUTTypes)
+        attachmentManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
+
+        return true
+    }
+}
+
 struct ComposeMessageBodyView: View {
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
-
-    @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
 
+    @State private var dropHandler: DropHandler
+
+    @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var textAttributes: TextAttributes
 
     @FocusState var focusedField: ComposeViewFieldType?
@@ -46,6 +70,26 @@ struct ComposeMessageBodyView: View {
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
+    init(
+        attachmentsManager: AttachmentsManager,
+        textAttributes: TextAttributes,
+        focusedField: FocusState<ComposeViewFieldType?>,
+        draftBody: Binding<String>,
+        draft: Draft,
+        isShowingAI: Binding<Bool>,
+        messageReply: MessageReply?
+    ) {
+        _attachmentsManager = ObservedObject(wrappedValue: attachmentsManager)
+        _textAttributes = ObservedObject(wrappedValue: textAttributes)
+        _focusedField = focusedField
+        _draftBody = draftBody
+        self.draft = draft
+        _isShowingAI = isShowingAI
+        self.messageReply = messageReply
+
+        _dropHandler = State(wrappedValue: DropHandler(draft: draft, attachmentManager: attachmentsManager))
     }
 
     var body: some View {
@@ -72,6 +116,7 @@ struct ComposeMessageBodyView: View {
                         .ignoresSafeArea()
                 }
         }
+        .onDrop(of: DropHandler.handledUTTypes, delegate: dropHandler)
     }
 
     private func setupEditor(_ editor: RichHTMLEditorView) {
@@ -104,7 +149,12 @@ struct ComposeMessageBodyView: View {
 
 #Preview {
     let draft = Draft()
+
     return ComposeMessageBodyView(
+        attachmentsManager: AttachmentsManager(
+            draftLocalUUID: draft.localUUID,
+            mailboxManager: PreviewHelper.sampleMailboxManager
+        ),
         textAttributes: TextAttributes(),
         focusedField: .init(),
         draftBody: .constant(""),

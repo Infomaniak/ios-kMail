@@ -179,6 +179,7 @@ struct ComposeMessageView: View {
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
+                        attachmentsManager: attachmentsManager,
                         textAttributes: textAttributes,
                         focusedField: _focusedField,
                         draftBody: $draftContentManager.draftContent,
