@@ -69,10 +69,9 @@ do
 
     retries=$((retries+1))
     echo "Retry $retries/$max_retries for kChat notification failed."
-    sleep 2
+    sleep 5
 done
 
 if [ "$retries" -eq "$max_retries" ]; then
     echo "kChat notification failed after $max_retries attempts."
-    exit 1
 fi
