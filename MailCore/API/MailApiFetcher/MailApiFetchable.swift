@@ -106,7 +106,8 @@ public protocol MailApiExtendedFetchable {
     func messagesDelta<Flags: DeltaFlags>(
         mailboxUuid: String,
         folderId: String,
-        signature: String
+        signature: String,
+        uids: String?
     ) async throws -> MessagesDelta<Flags>
 
     func message(message: Message) async throws -> Message

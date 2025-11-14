@@ -141,12 +141,15 @@ public extension MailApiFetcher {
     }
 
     func messagesDelta<Flags: DeltaFlags>(mailboxUuid: String, folderId: String,
-                                          signature: String) async throws -> MessagesDelta<Flags> {
-        try await perform(request: authenticatedRequest(.messagesDelta(
-            mailboxUuid: mailboxUuid,
-            folderId: folderId,
-            signature: signature
-        )))
+                                          signature: String, uids: String? = nil) async throws -> MessagesDelta<Flags> {
+        let method = uids == nil ? HTTPMethod.get : HTTPMethod.post
+        return try await perform(request: authenticatedRequest(.messagesDelta(
+                mailboxUuid: mailboxUuid,
+                folderId: folderId,
+                signature: signature
+            ),
+            method: method,
+            parameters: uids))
     }
 
     func message(message: Message) async throws -> Message {
