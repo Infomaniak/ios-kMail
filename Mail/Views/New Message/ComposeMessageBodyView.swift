@@ -28,6 +28,7 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    static let handledUTTypes: [UTType] = [.image, .video]
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
 
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
@@ -72,6 +73,7 @@ struct ComposeMessageBodyView: View {
                         .ignoresSafeArea()
                 }
         }
+        .onDrop(of: Self.handledUTTypes, isTargeted: nil, perform: handleDrop(of:))
     }
 
     private func setupEditor(_ editor: RichHTMLEditorView) {
@@ -99,6 +101,11 @@ struct ComposeMessageBodyView: View {
                 "Executed JS Function": function
             ])
         }
+    }
+
+    private func handleDrop(of itemProviders: [NSItemProvider]) -> Bool {
+        attachmentsManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
+        return true
     }
 }
 
