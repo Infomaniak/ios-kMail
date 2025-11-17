@@ -157,11 +157,26 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
                 MailResourcesAsset.backgroundSecondaryColor.color :
                 UserDefaults.shared.accentColor.secondary.color
 
-            if case .animation(let configuration) = slides[index].content,
-               colorUpdateNeededAtIndex.contains(index) {
-                slideViewCell.updateAnimationColors(configuration: configuration)
-                colorUpdateNeededAtIndex.remove(index)
+            guard let illustrationAnimationViewContent = slideViewCell.illustrationAnimationViewContent,
+                  colorUpdateNeededAtIndex.contains(index) else {
+                return
             }
+
+            switch illustrationAnimationViewContent {
+            case .airbnbLottieAnimationView(_, let ikLottieConfiguration):
+                slideViewCell.updateAnimationColors(configuration: ikLottieConfiguration)
+            case .dotLottieAnimationView(let dotLottieAnimationView, _):
+                if let currentColorScheme,
+                   let currentAccentColor {
+                    slideViewCell.setThemeFor(
+                        colorScheme: currentColorScheme,
+                        accentColor: currentAccentColor,
+                        dotLottieViewModel: dotLottieAnimationView.dotLottieViewModel
+                    )
+                }
+            }
+
+            colorUpdateNeededAtIndex.remove(index)
         }
 
         func invalidateColors() {
