@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "aae8dd0f3722c75d526f09fbb709bd1081d402db",
-        "version" : "1.30.1"
+        "revision" : "a9fb8f7f5fe161ad56dc5169615f1870fcc4cd1b",
+        "version" : "1.31.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "0b7573c3ff0bedf57181a94196cc91973467accb",
-        "version" : "18.3.0"
+        "revision" : "bdee3a4a56b26046a1e5a7ff5cc93a707fcfbb65",
+        "version" : "18.3.1"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "503033452d0a03a76c0d55e4a0896eb02b1301dd",
-        "version" : "24.2.0"
+        "revision" : "ed566a67e898d8dd4dd4c0a6402d1c03baa1f0a9",
+        "version" : "24.2.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "599642c3b5f79bdf75fe26970e54249434575855",
-        "version" : "15.0.0"
+        "revision" : "bf0722c1392a783ac3e1fe2a69b10ae3e45350ff",
+        "version" : "15.1.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "c58033f0b72cb80c918cc30419fd474cc5f60c6a",
-        "version" : "1.4.1"
+        "revision" : "a4591b91d977c33a5e2dd361dca2799a8815ce82",
+        "version" : "1.4.3"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "e9bcb13a491c00da6c9d100fe73954aea9e9d8a6",
-        "version" : "8.57.0"
+        "revision" : "8627bbc0e663238d516b541d8fc7edd62a627fde",
+        "version" : "8.57.3"
       }
     },
     {
