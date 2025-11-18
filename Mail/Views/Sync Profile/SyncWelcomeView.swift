@@ -49,6 +49,7 @@ struct SyncWelcomeView: View {
             .padding(.horizontal, value: .large)
             .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
+        .background(Color(uiColor: .systemBackground))
         .ignoresSafeArea(edges: .top)
     }
 }
