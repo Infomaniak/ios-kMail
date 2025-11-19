@@ -57,7 +57,6 @@ struct SyncProfileNavigationView: View {
                     }
                     .backButtonDisplayMode(.minimal)
             }
-            .nbUseNavigationStack(.whenAvailable)
         } else {
             NBNavigationStack(path: $navigationPath) {
                 SyncWelcomeView(navigationPath: $navigationPath)
