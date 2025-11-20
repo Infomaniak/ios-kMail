@@ -28,7 +28,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    static let handledUTTypes: [UTType] = [.image, .video]
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
 
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
@@ -73,14 +72,31 @@ struct ComposeMessageBodyView: View {
                         .ignoresSafeArea()
                 }
         }
-        .onDrop(of: Self.handledUTTypes, isTargeted: nil, perform: handleDrop(of:))
     }
 
     private func setupEditor(_ editor: RichHTMLEditorView) {
         Task {
             let contentBlocker = ContentBlocker(webView: editor.webView)
             try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
+            disableDragAndDrop(editor: editor)
         }
+    }
+
+    private func disableDragAndDrop(editor: RichHTMLEditorView) {
+        guard let wkScrollView = editor.webView.subviews.compactMap({ $0 as? UIScrollView }).first else {
+            return
+        }
+
+        guard let contentView = wkScrollView.subviews.first(where: { !$0.interactions.isEmpty }) else {
+            return
+        }
+
+        guard let dropInteraction = contentView.interactions.compactMap({ $0 as? UIDropInteraction }).first else {
+            return
+        }
+
+        contentView.pasteConfiguration = nil
+        contentView.removeInteraction(dropInteraction)
     }
 
     private func didCreateLink(url: URL, text: String) {
@@ -101,11 +117,6 @@ struct ComposeMessageBodyView: View {
                 "Executed JS Function": function
             ])
         }
-    }
-
-    private func handleDrop(of itemProviders: [NSItemProvider]) -> Bool {
-        attachmentsManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
-        return true
     }
 }
 

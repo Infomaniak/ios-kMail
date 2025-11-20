@@ -30,6 +30,7 @@ import Popovers
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+import UniformTypeIdentifiers
 @_spi(Advanced) import SwiftUIIntrospect
 
 enum ComposeViewFieldType: Hashable {
@@ -255,6 +256,7 @@ struct ComposeMessageView: View {
                 progressView
             }
         }
+        .onDrop(of: [.data], isTargeted: nil, perform: handleDrop(of:))
         .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
@@ -539,6 +541,11 @@ struct ComposeMessageView: View {
                 matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
             }
         }
+    }
+
+    private func handleDrop(of itemProviders: [NSItemProvider]) -> Bool {
+        attachmentsManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
+        return true
     }
 }
 
