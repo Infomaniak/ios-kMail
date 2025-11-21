@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -41,12 +42,44 @@ struct AccountButton: View {
                        contactConfiguration: .user(user: currentUser.value))
                 .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
         }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 5.0, coordinateSpace: .local)
+                .onEnded { value in
+                    switch (value.translation.width, value.translation.height) {
+                    case (-100 ... 100, ...0):
+                        switchToNextAccount(goingUp: true)
+                    case (-100 ... 100, 0...):
+                        switchToNextAccount(goingUp: false)
+                    default:
+                        break
+                    }
+                }
+        )
         .mailFloatingPanel(
             isPresented: $isShowingNewAccountListView,
             title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
         ) {
             AccountListView(mailboxManager: mailboxManager)
         }
+    }
+
+    private func switchToNextAccount(goingUp: Bool) {
+        guard accountManager.accounts.count > 1 else {
+            return
+        }
+
+        guard let currentAccountIndex = accountManager.accounts.firstIndex(where: { $0.userId == currentUser.value.id }) else {
+            return
+        }
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .account, name: "switchSwipe")
+
+        let addOrRemove = goingUp ? 1 : -1
+        let nextIndex = (currentAccountIndex + addOrRemove + accountManager.accounts.count) % accountManager.accounts.count
+        let nextAccount = accountManager.accounts[nextIndex]
+
+        accountManager.switchAccount(newUserId: nextAccount.userId)
     }
 }
 
