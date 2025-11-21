@@ -78,7 +78,25 @@ struct ComposeMessageBodyView: View {
         Task {
             let contentBlocker = ContentBlocker(webView: editor.webView)
             try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
+            disableDragAndDrop(editor: editor)
         }
+    }
+
+    private func disableDragAndDrop(editor: RichHTMLEditorView) {
+        guard let wkScrollView = editor.webView.subviews.compactMap({ $0 as? UIScrollView }).first else {
+            return
+        }
+
+        guard let contentView = wkScrollView.subviews.first(where: { !$0.interactions.isEmpty }) else {
+            return
+        }
+
+        guard let dropInteraction = contentView.interactions.compactMap({ $0 as? UIDropInteraction }).first else {
+            return
+        }
+
+        contentView.pasteConfiguration = nil
+        contentView.removeInteraction(dropInteraction)
     }
 
     private func didCreateLink(url: URL, text: String) {
