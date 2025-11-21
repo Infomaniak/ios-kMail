@@ -1,1 +1,2 @@
-- Correction d'un crash à la création d'un dossier
+- Glisser pour changer de compte rapidement
+- Amélioration d'une drag and drop dans la vue de composition
