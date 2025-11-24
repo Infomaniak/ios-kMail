@@ -18,6 +18,7 @@
 
 import Contacts
 import DesignSystem
+import DotLottie
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -26,18 +27,45 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension SlideCollectionViewCell {
+    func setThemeFor(colorScheme: ColorScheme, accentColor: AccentColor, dotLottieViewModel: DotLottieAnimation) {
+        switch (colorScheme, accentColor) {
+        case (.light, .pink):
+            dotLottieViewModel.resetTheme()
+        case (.light, .blue):
+            dotLottieViewModel.setTheme("Blue-Light")
+        case (.dark, .pink):
+            dotLottieViewModel.setTheme("Pink-Dark")
+        case (.dark, .blue):
+            dotLottieViewModel.setTheme("Blue-Dark")
+        case (_, _):
+            dotLottieViewModel.resetTheme()
+        }
+    }
+}
+
 extension Slide {
     static let authorizationSlides = [
         Slide(backgroundImage: MailResourcesAsset.onboardingBackground1.image,
               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
-              content: .illustration(MailResourcesAsset.authorizationContact.image),
+              content: .dotLottieAnimation(IKDotLottieConfiguration(
+                  filename: "addressBookPermission",
+                  bundle: MailResourcesResources.bundle,
+                  isLooping: true,
+                  mode: .bounce
+              )),
               bottomView: OnboardingTextView(
                   title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
                   description: MailResourcesStrings.Localizable.onBoardingContactsDescription
               )),
         Slide(backgroundImage: MailResourcesAsset.onboardingBackground2.image,
               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
-              content: .illustration(MailResourcesAsset.authorizationNotification.image),
+              content: .dotLottieAnimation(IKDotLottieConfiguration(
+                  filename: "notificationPermission",
+                  bundle: MailResourcesResources.bundle,
+                  isLooping: true,
+                  mode: .bounce
+              )),
               bottomView: OnboardingTextView(
                   title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
                   description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription
