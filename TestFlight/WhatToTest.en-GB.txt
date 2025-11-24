@@ -1,2 +1,1 @@
-- Swipe to quickly switch between accounts
-- Improved drag and drop compose view
+- Fix snooze panel display
