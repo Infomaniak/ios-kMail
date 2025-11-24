@@ -1,2 +1,1 @@
-- Glisser pour changer de compte rapidement
-- Amélioration d'une drag and drop dans la vue de composition
+- Correction affichage panneau de mise en attente
