@@ -29,6 +29,8 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -37,35 +39,31 @@ struct ThreadListCellContextMenu: ViewModifier {
     let thread: Thread
     let toggleMultipleSelection: (Bool) -> Void
 
-    private var actions: [Action] {
-        return Action.rightClickActions
+    private var actions: (quickActions: [Action], listActions: [Action]) {
+        return Action.actionsForMessages(
+            messagesToMove ?? [],
+            origin: .floatingPanel(source: .threadList),
+            userIsStaff: currentUser.value.isStaff ?? false,
+            userEmail: currentUser.value.email
+        )
     }
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: isDestructiveAction(action)) {
-                        guard action != .activeMultiselect else {
-                            toggleMultipleSelection(false)
-                            return
-                        }
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Label {
-                            Text(action.title)
-                        } icon: {
-                            action.icon
-                                .resizable()
-                                .scaledToFit()
+                if #available(iOS 16.4, *) {
+                    ControlGroup {
+                        ForEach(actions.quickActions) { action in
+                            actionButton(for: action)
                         }
                     }
+                    .controlGroupStyle(.compactMenu)
+                }
+
+                actionButton(for: .activeMultiselect)
+
+                ForEach(actions.listActions) { action in
+                    actionButton(for: action)
                 }
             }
             .sheet(item: $messagesToMove) { messages in
@@ -79,5 +77,29 @@ struct ThreadListCellContextMenu: ViewModifier {
             return nil
         }
         return action.isDestructive(for: thread) ? .destructive : nil
+    }
+
+    private func actionButton(for action: Action) -> some View {
+        Button(role: isDestructiveAction(action)) {
+            guard action != .activeMultiselect else {
+                toggleMultipleSelection(false)
+                return
+            }
+            Task {
+                try await actionsManager.performAction(
+                    target: thread.messages.toArray(),
+                    action: action,
+                    origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+                )
+            }
+        } label: {
+            Label {
+                Text(action.title)
+            } icon: {
+                action.icon
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
     }
 }
