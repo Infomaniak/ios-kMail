@@ -103,7 +103,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
     /// Token to observe the fetched search results changes
     var observationSearchResultsChangesToken: NotificationToken?
 
-    let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
+    var filters: [SearchFilter] = [.folder, .read, .unread, .favorite, .attachment]
 
     var searchValueType: SearchFieldValueType = .threadsAndContacts
 
