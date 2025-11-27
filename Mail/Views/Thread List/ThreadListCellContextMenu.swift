@@ -54,16 +54,18 @@ struct ThreadListCellContextMenu: ViewModifier {
                 if #available(iOS 16.4, *) {
                     ControlGroup {
                         ForEach(actions.quickActions) { action in
-                            actionButton(for: action)
+                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: doAction)
                         }
                     }
                     .controlGroupStyle(.compactMenu)
                 }
 
-                actionButton(for: .activeMultiselect)
+                ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
+                    toggleMultipleSelection(false)
+                }
 
                 ForEach(actions.listActions) { action in
-                    actionButton(for: action)
+                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: doAction)
                 }
             }
             .sheet(item: $messagesToMove) { messages in
@@ -72,34 +74,20 @@ struct ThreadListCellContextMenu: ViewModifier {
             }
     }
 
+    private func doAction(for action: Action) {
+        Task {
+            try await actionsManager.performAction(
+                target: thread.messages.toArray(),
+                action: action,
+                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+            )
+        }
+    }
+
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
         guard action != .archive else {
             return nil
         }
         return action.isDestructive(for: thread) ? .destructive : nil
-    }
-
-    private func actionButton(for action: Action) -> some View {
-        Button(role: isDestructiveAction(action)) {
-            guard action != .activeMultiselect else {
-                toggleMultipleSelection(false)
-                return
-            }
-            Task {
-                try await actionsManager.performAction(
-                    target: thread.messages.toArray(),
-                    action: action,
-                    origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                )
-            }
-        } label: {
-            Label {
-                Text(action.title)
-            } icon: {
-                action.icon
-                    .resizable()
-                    .scaledToFit()
-            }
-        }
     }
 }
