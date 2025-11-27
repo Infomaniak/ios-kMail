@@ -40,12 +40,17 @@ struct ThreadListCellContextMenu: ViewModifier {
     let toggleMultipleSelection: (Bool) -> Void
 
     private var actions: (quickActions: [Action], listActions: [Action]) {
-        return Action.actionsForMessages(
+        let actions = Action.actionsForMessages(
             messagesToMove ?? [],
             origin: .floatingPanel(source: .threadList),
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email
         )
+
+        guard #available(iOS 16.4, *) else {
+            return ([], actions.quickActions + actions.listActions)
+        }
+        return actions
     }
 
     func body(content: Content) -> some View {
