@@ -59,7 +59,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 if #available(iOS 16.4, *) {
                     ControlGroup {
                         ForEach(actions.quickActions) { action in
-                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: doAction)
+                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                         }
                     }
                     .controlGroupStyle(.compactMenu)
@@ -70,7 +70,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
 
                 ForEach(actions.listActions) { action in
-                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: doAction)
+                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                 }
             }
             .sheet(item: $messagesToMove) { messages in
@@ -79,7 +79,7 @@ struct ThreadListCellContextMenu: ViewModifier {
             }
     }
 
-    private func doAction(for action: Action) {
+    private func performAction(for action: Action) {
         Task {
             try await actionsManager.performAction(
                 target: thread.messages.toArray(),
