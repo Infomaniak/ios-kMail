@@ -29,6 +29,8 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -37,41 +39,54 @@ struct ThreadListCellContextMenu: ViewModifier {
     let thread: Thread
     let toggleMultipleSelection: (Bool) -> Void
 
-    private var actions: [Action] {
-        return Action.rightClickActions
+    private var actions: (quickActions: [Action], listActions: [Action]) {
+        let actions = Action.actionsForMessages(
+            messagesToMove ?? [],
+            origin: .floatingPanel(source: .threadList),
+            userIsStaff: currentUser.value.isStaff ?? false,
+            userEmail: currentUser.value.email
+        )
+
+        guard #available(iOS 16.4, *) else {
+            return ([], actions.quickActions + actions.listActions)
+        }
+        return actions
     }
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: isDestructiveAction(action)) {
-                        guard action != .activeMultiselect else {
-                            toggleMultipleSelection(false)
-                            return
-                        }
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Label {
-                            Text(action.title)
-                        } icon: {
-                            action.icon
-                                .resizable()
-                                .scaledToFit()
+                if #available(iOS 16.4, *) {
+                    ControlGroup {
+                        ForEach(actions.quickActions) { action in
+                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                         }
                     }
+                    .controlGroupStyle(.compactMenu)
+                }
+
+                ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
+                    toggleMultipleSelection(false)
+                }
+
+                ForEach(actions.listActions) { action in
+                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                 }
             }
             .sheet(item: $messagesToMove) { messages in
                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
+    }
+
+    private func performAction(for action: Action) {
+        Task {
+            try await actionsManager.performAction(
+                target: thread.messages.toArray(),
+                action: action,
+                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+            )
+        }
     }
 
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
