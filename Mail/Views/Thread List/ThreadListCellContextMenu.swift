@@ -35,13 +35,14 @@ struct ThreadListCellContextMenu: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState private var messagesToMove: [Message]?
+    @ModalState private var messagesToDownload: [Message]?
 
     let thread: Thread
     let toggleMultipleSelection: (Bool) -> Void
 
     private var actions: (quickActions: [Action], listActions: [Action]) {
         let actions = Action.actionsForMessages(
-            messagesToMove ?? [],
+            thread.messages.toArray(),
             origin: .floatingPanel(source: .threadList),
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email
@@ -77,6 +78,9 @@ struct ThreadListCellContextMenu: ViewModifier {
                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
+            .mailCustomAlert(item: $messagesToDownload) { messages in
+                ConfirmationSaveThreadInKdrive(targetMessages: messages)
+            }
     }
 
     private func performAction(for action: Action) {
@@ -84,7 +88,12 @@ struct ThreadListCellContextMenu: ViewModifier {
             try await actionsManager.performAction(
                 target: thread.messages.toArray(),
                 action: action,
-                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+                origin: .floatingPanel(
+                    source: .threadList,
+                    originFolder: thread.folder,
+                    nearestMessagesToMoveSheet: $messagesToMove,
+                    messagesToDownload: $messagesToDownload
+                )
             )
         }
     }
