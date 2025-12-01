@@ -75,14 +75,27 @@ struct SearchFilterFolderCell: View {
                 viewModel: viewModel,
                 originFolderId: selectedFolderId
             ) { folder in
-                selectedFolderId = folder.remoteId
-                isShowingFolderList.toggle()
+                changeSelectedFolderId(folderId: folder.remoteId)
             }
             .navigationTitle(MailResourcesStrings.Localizable.searchFolderName)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        changeSelectedFolderId()
+                    } label: {
+                        Label { Text(allFoldersItem.name) } icon: { allFoldersItem.icon }
+                    }
+                }
+            }
             .matomoView(view: ["SearchFolderCellView"])
             .sheetViewStyle()
         }
+    }
+
+    private func changeSelectedFolderId(folderId: String = "") {
+        selectedFolderId = folderId
+        isShowingFolderList.toggle()
     }
 }
 

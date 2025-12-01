@@ -24,7 +24,6 @@ struct SearchableFolderListView: View {
     @ObservedObject var viewModel: FolderListViewModel
 
     let originFolderId: String?
-
     let customCompletion: (Folder) -> Void
 
     var body: some View {
