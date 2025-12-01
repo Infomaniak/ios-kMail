@@ -170,16 +170,6 @@ struct FolderCellContent: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            if canHaveChevron {
-                Button(action: collapseFolder) {
-                    ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
-                        .padding(value: .medium)
-                }
-                .accessibilityLabel(MailResourcesStrings.Localizable
-                    .contentDescriptionButtonExpandFolder(frozenFolder.name))
-                .opacity(shouldHaveChevron ? 1 : 0)
-            }
-
             HStack(spacing: IKPadding.menuDrawerCellSpacing) {
                 frozenFolder.icon
                     .resizable()
@@ -192,6 +182,16 @@ struct FolderCellContent: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
+            }
+
+            if canHaveChevron {
+                Button(action: collapseFolder) {
+                    ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
+                        .padding(value: .medium)
+                }
+                .accessibilityLabel(MailResourcesStrings.Localizable
+                    .contentDescriptionButtonExpandFolder(frozenFolder.name))
+                .opacity(shouldHaveChevron ? 1 : 0)
             }
         }
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))

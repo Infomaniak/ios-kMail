@@ -30,6 +30,7 @@ struct FoldersListView: View {
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
+
     init(folders: [NestableFolder]) {
         self.folders = folders
         hasSubFolders = folders.contains { $0.frozenContent.hasSubFolders }
