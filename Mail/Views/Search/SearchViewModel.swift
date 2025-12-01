@@ -128,10 +128,8 @@ final class SearchViewModel: ObservableObject, ThreadListable {
         frozenRealFolder = folder.freezeIfNeeded()
         frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
         frozenFolderList = mailboxManager.getFrozenFolders()
-        defer {
-            if folder.role != .inbox {
-                selectedSearchFolderId = folder.remoteId
-            }
+        if folder.role != .inbox {
+            selectedSearchFolderId = folder.remoteId
         }
 
         searchFieldObservation = $searchValue
