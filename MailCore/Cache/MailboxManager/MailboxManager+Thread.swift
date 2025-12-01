@@ -154,7 +154,8 @@ public extension MailboxManager {
             let messagesDelta: MessagesDelta<SnoozedFlags> = try await apiFetcher.messagesDelta(
                 mailboxUuid: mailbox.uuid,
                 folderId: folder.remoteId,
-                signature: signature
+                signature: signature,
+                uids: getMessagesUidsRanges(folder: folder)
             )
 
             try messagesDelta.ensureValidDelta()
@@ -179,34 +180,7 @@ public extension MailboxManager {
     }
 
     private func getMessagesUidsRanges(folder: Folder) -> String? {
-        let messages = folder.messages.sorted {
-            guard let firstUid = $0.shortUid, let secondUid = $1.shortUid else { return false }
-            return firstUid < secondUid
-        }
-        guard !messages.isEmpty else { return nil }
-
-        var uids = ""
-        var prevUid = -1
-        var wasInRange = false
-        for (index, message) in messages.enumerated() {
-            guard let shortUid = message.shortUid else { continue }
-            let nextUid = shortUid
-            if index == 0 {
-                uids += String(nextUid)
-                prevUid = nextUid
-            } else {
-                let isInRange = nextUid == prevUid + 1
-                if !isInRange {
-                    uids += wasInRange ? ":\(prevUid),\(nextUid)" : ",\(nextUid)"
-                }
-                prevUid = nextUid
-                wasInRange = isInRange
-            }
-        }
-        if wasInRange {
-            uids += ":\(prevUid)"
-        }
-        return uids
+        return UIDRangeHelper().getCompleteRange(messages: folder.messages)
     }
 
     /// This function get all the messages uids from the chosen folder
