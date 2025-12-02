@@ -41,16 +41,16 @@ struct SearchFilterFolderCell: View {
 
     private var selectedFolderName: String {
         guard let folder = (folders.first { $0.remoteId == selectedFolderId }) else {
-            return allFoldersItem.name
+            return Self.allFoldersItem.name
         }
         return folder.localizedName
     }
 
     private var isSelected: Bool {
-        return selectedFolderId != allFoldersItem.id
+        return selectedFolderId != Self.allFoldersItem.id
     }
 
-    private var allFoldersItem = (
+    static let allFoldersItem = (
         id: "",
         name: MailResourcesStrings.Localizable.searchFilterFolder,
         icon: MailResourcesAsset.allFolders.swiftUIImage

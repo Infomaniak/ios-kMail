@@ -16,20 +16,14 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailResources
+import SwiftUI
 
 struct SearchFilterFolderCellSheetView: View {
     @ObservedObject var viewModel: FolderListViewModel
 
     @Binding var isPresented: Bool
     @Binding var selectedFolderId: String
-
-    let allFoldersItem = (
-        id: "",
-        name: MailResourcesStrings.Localizable.searchFilterFolder,
-        icon: MailResourcesAsset.allFolders.swiftUIImage
-    )
 
     var body: some View {
         SearchableFolderListView(
@@ -43,9 +37,14 @@ struct SearchFilterFolderCellSheetView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    changeSelectedFolderId()
+                    changeSelectedFolderId(folderId: SearchFilterFolderCell.allFoldersItem.id)
                 } label: {
-                    Label { Text(allFoldersItem.name) } icon: { allFoldersItem.icon }
+                    Label {
+                        Text(SearchFilterFolderCell.allFoldersItem.name)
+                    } icon: {
+                        SearchFilterFolderCell.allFoldersItem.icon
+                    }
+                    .labelStyle(.titleOnly)
                 }
             }
         }
@@ -53,7 +52,7 @@ struct SearchFilterFolderCellSheetView: View {
         .sheetViewStyle()
     }
 
-    private func changeSelectedFolderId(folderId: String = "") {
+    private func changeSelectedFolderId(folderId: String) {
         selectedFolderId = folderId
         isPresented = false
     }
