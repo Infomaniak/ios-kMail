@@ -28,19 +28,13 @@ import SwiftUI
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
-    private let folders: [NestableFolder]
-    private let hasSubFolders: Bool
-    init(folders: [NestableFolder]) {
-        self.folders = folders
-        hasSubFolders = folders.contains { $0.frozenContent.hasSubFolders }
-    }
+    let folders: [NestableFolder]
 
     var body: some View {
         LazyVStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
                            currentFolderId: mainViewState.selectedFolder.remoteId,
-                           canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
                     .background(RoundedRectangle(cornerRadius: IKRadius.medium)
                         .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))

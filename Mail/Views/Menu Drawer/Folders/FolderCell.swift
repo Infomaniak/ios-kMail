@@ -45,7 +45,6 @@ struct FolderCell: View {
     let folder: NestableFolder
     var level = 0
     var currentFolderId: String?
-    var canCollapseSubFolders = false
     var matomoCategory: MatomoUtils.EventCategory?
     var customCompletion: ((Folder) -> Void)?
 
@@ -63,7 +62,7 @@ struct FolderCell: View {
                         frozenFolder: folder.frozenContent,
                         level: level,
                         isCurrentFolder: isCurrentFolder,
-                        canCollapseSubFolders: canCollapseSubFolders
+                        canCollapseSubFolders: !folder.children.isEmpty
                     )
                 }
                 .accessibilityAction(.default) {
@@ -85,8 +84,7 @@ struct FolderCell: View {
                         FolderCellContent(
                             frozenFolder: folder.frozenContent,
                             level: level,
-                            isCurrentFolder: isCurrentFolder,
-                            canCollapseSubFolders: canCollapseSubFolders
+                            isCurrentFolder: isCurrentFolder
                         )
                     }
                 }
@@ -102,7 +100,6 @@ struct FolderCell: View {
                             folder: child,
                             level: level + 1,
                             currentFolderId: currentFolderId,
-                            canCollapseSubFolders: canCollapseSubFolders,
                             customCompletion: customCompletion
                         )
                     }
