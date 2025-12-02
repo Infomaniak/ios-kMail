@@ -28,7 +28,7 @@ public extension IKPadding {
     // MARK: Menu
 
     static let menuDrawerCell = EdgeInsets(top: small, leading: medium, bottom: small, trailing: medium)
-    static let menuDrawerCellWithChevron = EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: medium)
+    static let menuDrawerCellWithChevron = EdgeInsets(top: 2, leading: medium, bottom: 2, trailing: 0)
     static let menuDrawerCellSpacing = medium
     static let menuDrawerCellChevronSpacing = small
     static let menuDrawerSubFolder = medium
