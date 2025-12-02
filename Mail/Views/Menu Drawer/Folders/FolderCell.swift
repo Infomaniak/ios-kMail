@@ -274,26 +274,6 @@ struct FolderCellContent: View {
     }
 }
 
-struct FolderCellBackground: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @Environment(\.isHovered) private var isHovered
-    @Environment(\.folderCellType) private var cellType
-
-    let isCurrentFolder: Bool
-
-    var body: some View {
-        if cellType == .menuDrawer {
-            SelectionBackground(
-                selectionType: (isCurrentFolder || isHovered) ? .folder : .none,
-                paddingLeading: 0,
-                accentColor: accentColor
-            )
-            .background(RoundedRectangle(cornerRadius: IKRadius.medium)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
-        }
-    }
-}
-
 #Preview {
     FolderCell(folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []), currentFolderId: nil)
         .environmentObject(PreviewHelper.sampleMailboxManager)
