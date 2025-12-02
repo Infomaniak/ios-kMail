@@ -61,8 +61,7 @@ struct FolderCell: View {
                     FolderCellContent(
                         frozenFolder: folder.frozenContent,
                         level: level,
-                        isCurrentFolder: isCurrentFolder,
-                        canCollapseSubFolders: !folder.children.isEmpty
+                        isCurrentFolder: isCurrentFolder
                     )
                 }
                 .accessibilityAction(.default) {
