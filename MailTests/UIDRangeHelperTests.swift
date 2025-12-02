@@ -26,41 +26,55 @@ struct UIDRangeHelperTests {
 
     @Test("Empty array returns nil")
     func emptyArrayReturnsNil() async throws {
-        let result = helper.getCompleteRange(sortedUids: [])
+        let result = helper.getCompleteRange(uids: [])
         #expect(result == nil)
     }
 
     @Test("Single UID returns that UID as a string")
     func singleUID() async throws {
-        let result = helper.getCompleteRange(sortedUids: [42])
+        let result = helper.getCompleteRange(uids: [42])
         let value = try #require(result)
         #expect(value == "42")
     }
 
     @Test("Two consecutive UIDs collapse to a range")
     func twoConsecutiveUids() async throws {
-        let result = helper.getCompleteRange(sortedUids: [3, 4])
+        let result = helper.getCompleteRange(uids: [3, 4])
         let value = try #require(result)
         #expect(value == "3:4")
     }
 
     @Test("Non-consecutive UIDs are comma-separated")
     func nonConsecutiveUids() async throws {
-        let result = helper.getCompleteRange(sortedUids: [1, 3, 5])
+        let result = helper.getCompleteRange(uids: [1, 3, 5])
         let value = try #require(result)
         #expect(value == "1,3,5")
     }
 
     @Test("Mixed contiguous and single UIDs are formatted correctly")
     func mixedRanges() async throws {
-        let result = helper.getCompleteRange(sortedUids: [1, 2, 3, 5, 7, 8, 9, 10, 11, 13])
+        let result = helper.getCompleteRange(uids: [1, 2, 3, 5, 7, 8, 9, 10, 11, 13])
+        let value = try #require(result)
+        #expect(value == "1:3,5,7:11,13")
+    }
+
+    @Test("Mixed unordered contiguous and single UIDs are formatted correctly")
+    func mixedUnorderedRanges() async throws {
+        let result = helper.getCompleteRange(uids: [1, 2, 3, 5, 7, 8, 9, 10, 11, 13].shuffled())
+        let value = try #require(result)
+        #expect(value == "1:3,5,7:11,13")
+    }
+
+    @Test("Mixed unordered contiguous and single UIDs with duplicates are formatted correctly")
+    func mixedUnorderedDuplicatesRanges() async throws {
+        let result = helper.getCompleteRange(uids: [1, 2, 2, 3, 5, 7, 8, 8, 9, 10, 11, 13].shuffled())
         let value = try #require(result)
         #expect(value == "1:3,5,7:11,13")
     }
 
     @Test("Large values and trailing single UID")
     func largeValues() async throws {
-        let result = helper.getCompleteRange(sortedUids: [1_000_000, 1_000_001, 1_000_003])
+        let result = helper.getCompleteRange(uids: [1_000_000, 1_000_001, 1_000_003])
         let value = try #require(result)
         #expect(value == "1000000:1000001,1000003")
     }

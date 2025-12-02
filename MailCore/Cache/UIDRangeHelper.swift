@@ -21,21 +21,26 @@ import RealmSwift
 
 extension UIDRangeHelper {
     func getCompleteRange(messages: MutableSet<Message>) -> String? {
-        let sortedUids = messages.lazy.compactMap(\.shortUid).sorted()
-        return getCompleteRange(sortedUids: sortedUids)
+        let sortedUniqueUids = messages.lazy.compactMap(\.shortUid).sorted()
+        return getCompleteRange(sortedUniqueUids: sortedUniqueUids)
     }
 }
 
 struct UIDRangeHelper {
-    func getCompleteRange(sortedUids: [Int]) -> String? {
-        guard let firstUid = sortedUids.first else { return nil }
+    func getCompleteRange(uids: [Int]) -> String? {
+        let sortedUniqueUids = Set(uids).sorted()
+        return getCompleteRange(sortedUniqueUids: sortedUniqueUids)
+    }
+
+    private func getCompleteRange(sortedUniqueUids: [Int]) -> String? {
+        guard let firstUid = sortedUniqueUids.first else { return nil }
 
         var components: [String] = []
 
         var rangeStart = firstUid
         var previousUid = firstUid
 
-        for uid in sortedUids.dropFirst() {
+        for uid in sortedUniqueUids.dropFirst() {
             if uid == previousUid + 1 {
                 previousUid = uid
                 continue
