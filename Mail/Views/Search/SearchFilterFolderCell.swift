@@ -71,31 +71,12 @@ struct SearchFilterFolderCell: View {
             isShowingFolderList = true
         }
         .sheet(isPresented: $isShowingFolderList) {
-            SearchableFolderListView(
+            SearchFilterFolderCellSheetView(
                 viewModel: viewModel,
-                originFolderId: selectedFolderId
-            ) { folder in
-                changeSelectedFolderId(folderId: folder.remoteId)
-            }
-            .navigationTitle(MailResourcesStrings.Localizable.searchFolderName)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        changeSelectedFolderId()
-                    } label: {
-                        Label { Text(allFoldersItem.name) } icon: { allFoldersItem.icon }
-                    }
-                }
-            }
-            .matomoView(view: ["SearchFolderCellView"])
-            .sheetViewStyle()
+                isPresented: $isShowingFolderList,
+                selectedFolderId: $selectedFolderId
+            )
         }
-    }
-
-    private func changeSelectedFolderId(folderId: String = "") {
-        selectedFolderId = folderId
-        isShowingFolderList = false
     }
 }
 
