@@ -68,7 +68,7 @@ struct SearchFilterFolderCell: View {
         }
         .filterCellStyle(isSelected: isSelected)
         .onTapGesture {
-            isShowingFolderList.toggle()
+            isShowingFolderList = true
         }
         .sheet(isPresented: $isShowingFolderList) {
             SearchableFolderListView(
@@ -95,7 +95,7 @@ struct SearchFilterFolderCell: View {
 
     private func changeSelectedFolderId(folderId: String = "") {
         selectedFolderId = folderId
-        isShowingFolderList.toggle()
+        isShowingFolderList = false
     }
 }
 
