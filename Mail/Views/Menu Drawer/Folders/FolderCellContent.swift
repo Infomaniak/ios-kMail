@@ -28,6 +28,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct FolderCellContent: View {
+    private static let maximumSubFolderLevel = 5
+
     @Environment(\.folderCellType) private var cellType
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -40,7 +42,6 @@ struct FolderCellContent: View {
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
-    private let maximumSubFolderLevel = 5
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
@@ -58,7 +59,7 @@ struct FolderCellContent: View {
     init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         assert(frozenFolder.isFrozen, "expecting frozenFolder to be frozen")
         self.frozenFolder = frozenFolder
-        self.level = min(level, maximumSubFolderLevel)
+        self.level = min(level, Self.maximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
         shouldHaveChevron = frozenFolder.hasSubFolders && level == 0
