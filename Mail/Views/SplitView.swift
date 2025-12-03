@@ -135,7 +135,8 @@ struct SplitView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            if EasterEgg.christmas.shouldTrigger() && mainViewState.isShowingChristmasEasterEgg {
+            if EasterEgg.christmas.shouldTrigger(mailboxManager.mailbox.pack, currentUser.value.isStaff ?? false)
+                && mainViewState.isShowingChristmasEasterEgg {
                 LottieView(animation: LottieAnimation.named("easter_egg_xmas", bundle: MailResourcesResources.bundle))
                     .animationDidFinish { _ in
                         mainViewState.isShowingChristmasEasterEgg = false
