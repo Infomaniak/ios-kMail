@@ -21,17 +21,29 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 
 public struct EasterEgg {
-    public let shouldTrigger: () -> Bool
+    public let shouldTrigger: (LocalPack?, Bool) -> Bool
     public let onTrigger: () -> Void
 
-    public static let christmas = EasterEgg {
+    public static let christmas = EasterEgg { localPack, isStaff in
         let calendar = Calendar(identifier: .gregorian)
         let components = calendar.dateComponents([.day, .month], from: Date())
         guard let month = components.month, let day = components.day else {
             return false
         }
 
-        return month == 12 && day <= 25
+        let isCorrectPeriod = month == 12 && day <= 25
+        guard isCorrectPeriod else {
+            return false
+        }
+
+        // We only display for individual users not the business ones
+        let allowedPacks: Set<LocalPack> = [.myKSuiteFree, .myKSuitePlus, .starterPack]
+        guard allowedPacks.contains(localPack ?? .kSuitePaid) || isStaff else {
+            return false
+        }
+
+        let probability = Double(day) / 25.0
+        return Double.random(in: 0 ... 1) < probability
     } onTrigger: {
         let year = Calendar(identifier: .gregorian).component(.year, from: Date())
         @InjectService var matomoUtils: MatomoUtils
