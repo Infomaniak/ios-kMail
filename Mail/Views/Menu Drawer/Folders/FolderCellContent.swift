@@ -50,7 +50,7 @@ struct FolderCellContent: View {
     }
 
     private var canCollapse: Bool {
-        cellType == .menuDrawer && frozenFolder.hasSubFolders && !frozenFolder.children.allSatisfy { $0.role != nil }
+        cellType == .menuDrawer && frozenFolder.hasSubFolders
     }
 
     var body: some View {
