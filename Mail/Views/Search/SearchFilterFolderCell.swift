@@ -64,7 +64,6 @@ struct SearchFilterFolderCell: View {
             }
             Text(selectedFolderName)
                 .font(MailTextStyle.bodyMedium.font)
-            ChevronIcon(direction: .down, shapeStyle: HierarchicalShapeStyle.primary)
         }
         .filterCellStyle(isSelected: isSelected)
         .onTapGesture {
