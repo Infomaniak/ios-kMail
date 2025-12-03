@@ -38,10 +38,9 @@ struct FolderCellContent: View {
 
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
-    private let frozenFolder: Folder
-    private let level: Int
-    private let isCurrentFolder: Bool
-    private let canCollapseSubFolders: Bool
+    let frozenFolder: Folder
+    let level: Int
+    let isCurrentFolder: Bool
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
@@ -50,19 +49,8 @@ struct FolderCellContent: View {
         return .body
     }
 
-    private var canHaveChevron: Bool {
-        canCollapseSubFolders && cellType == .menuDrawer
-    }
-
-    private var shouldHaveChevron: Bool
-
-    init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
-        assert(frozenFolder.isFrozen, "expecting frozenFolder to be frozen")
-        self.frozenFolder = frozenFolder
-        self.level = min(level, Self.maximumSubFolderLevel)
-        self.isCurrentFolder = isCurrentFolder
-        self.canCollapseSubFolders = canCollapseSubFolders
-        shouldHaveChevron = frozenFolder.hasSubFolders && level == 0
+    private var canCollapse: Bool {
+        cellType == .menuDrawer && frozenFolder.hasSubFolders
     }
 
     var body: some View {
@@ -81,18 +69,17 @@ struct FolderCellContent: View {
                 accessory
             }
 
-            if canHaveChevron {
+            if canCollapse {
                 Button(action: collapseFolder) {
                     ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
                         .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable
                     .contentDescriptionButtonExpandFolder(frozenFolder.name))
-                .opacity(shouldHaveChevron ? 1 : 0)
             }
         }
-        .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
-        .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
+        .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(min(level, Self.maximumSubFolderLevel)))
+        .padding(canCollapse ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder, enabled: frozenFolder.isAcceptingMove)
         .contextMenu {
