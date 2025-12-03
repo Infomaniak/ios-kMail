@@ -98,9 +98,11 @@ struct ThreadListCellContextMenu: ViewModifier {
     func body(content: Content) -> some View {
         content
             .contextMenu {
+                let computedActions = actions // Capture actions to avoid re-computation
+
                 if #available(iOS 16.4, *) {
                     ControlGroup {
-                        ForEach(actions.quickActions) { action in
+                        ForEach(computedActions.quickActions) { action in
                             ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                         }
                     }
@@ -111,7 +113,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                     toggleMultipleSelection(false)
                 }
 
-                ForEach(actions.listActions) { action in
+                ForEach(computedActions.listActions) { action in
                     ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                 }
             }
