@@ -46,7 +46,7 @@ struct SearchView: View {
             folder: folder,
             selectedThreadOwner: selectedThreadOwner
         ))
-        _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel())
+        _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel(fromSearch: true))
     }
 
     var body: some View {

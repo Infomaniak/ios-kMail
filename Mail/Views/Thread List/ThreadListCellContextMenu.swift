@@ -19,59 +19,174 @@
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread, toggleMultipleSelection: @escaping (Bool) -> Void) -> some View {
-        modifier(ThreadListCellContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection))
+    func actionsContextMenu(thread: Thread,
+                            originFolder: Folder,
+                            multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
+        modifier(ThreadListCellContextMenu(
+            thread: thread,
+            originFolder: originFolder,
+            multipleSelectionViewModel: multipleSelectionViewModel
+        ))
     }
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @ModalState private var reportForJunkMessages: [Message]?
+    @ModalState private var reportedForDisplayProblemMessage: Message?
+    @ModalState private var reportedForPhishingMessages: [Message]?
+    @ModalState private var blockSenderAlert: BlockRecipientAlertState?
+    @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
+    @ModalState private var shareMailLink: ShareMailLinkResult?
+    @ModalState private var messagesToSnooze: [Message]?
+    @ModalState private var messagesToDownload: [Message]?
 
     let thread: Thread
-    let toggleMultipleSelection: (Bool) -> Void
+    let originFolder: Folder?
+    let multipleSelectionViewModel: MultipleSelectionViewModel
 
-    private var actions: [Action] {
-        return Action.rightClickActions
+    private var origin: ActionOrigin {
+        .floatingPanel(
+            source: .threadList,
+            originFolder: originFolder?.freezeIfNeeded(),
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload
+        )
+    }
+
+    private var actions: (quickActions: [Action], listActions: [Action]) {
+        let actions = Action.actionsForMessages(
+            thread.messages.toArray(),
+            origin: origin,
+            userIsStaff: currentUser.value.isStaff ?? false,
+            userEmail: currentUser.value.email
+        )
+
+        guard #available(iOS 16.4, *) else {
+            return ([], actions.quickActions + actions.listActions)
+        }
+        return actions
+    }
+
+    private var initialSnoozedDate: Date? {
+        guard let messagesToSnooze,
+              let initialDate = messagesToSnooze.first?.snoozeEndDate,
+              messagesToSnooze.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
+        else { return nil }
+
+        return initialDate
     }
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: isDestructiveAction(action)) {
-                        guard action != .activeMultiselect else {
-                            toggleMultipleSelection(false)
-                            return
-                        }
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Label {
-                            Text(action.title)
-                        } icon: {
-                            action.icon
-                                .resizable()
-                                .scaledToFit()
+                let computedActions = actions // Capture actions to avoid re-computation
+
+                if #available(iOS 16.4, *) {
+                    ControlGroup {
+                        ForEach(computedActions.quickActions) { action in
+                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                         }
                     }
+                    .controlGroupStyle(.compactMenu)
+                }
+
+                ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
+                    multipleSelectionViewModel.toggleMultipleSelection(of: thread, withImpact: false)
+                }
+
+                ForEach(computedActions.listActions) { action in
+                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                 }
             }
             .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
-                    .sheetViewStyle()
+                MoveEmailView(
+                    mailboxManager: mailboxManager,
+                    movedMessages: messages,
+                    originFolder: originFolder
+                )
+                .sheetViewStyle()
             }
+            .mailFloatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
+                ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
+            }
+            .mailFloatingPanel(item: $blockSendersList,
+                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+            }
+            .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
+                ConfirmationBlockRecipientView(
+                    recipients: blockSenderState.recipients,
+                    reportedMessages: blockSenderState.messages,
+                    origin: origin
+                )
+            }
+            .mailCustomAlert(
+                item: $reportedForDisplayProblemMessage
+            ) { message in
+                ReportDisplayProblemView(message: message)
+            }
+            .mailCustomAlert(
+                item: $reportedForPhishingMessages
+            ) { messages in
+                ReportPhishingView(
+                    messagesWithDuplicates: messages,
+                    distinctMessageCount: messages.count
+                )
+            }
+            .mailCustomAlert(item: $destructiveAlert) { item in
+                DestructiveActionAlertView(destructiveAlert: item)
+            }
+            .mailCustomAlert(item: $messagesToDownload) { messages in
+                ConfirmationSaveThreadInKdrive(targetMessages: messages)
+            }
+            .sheet(item: $shareMailLink) { shareMailLinkResult in
+                if #available(iOS 16.0, *) {
+                    ActivityView(activityItems: [shareMailLinkResult.url])
+                        .ignoresSafeArea(edges: [.bottom])
+                        .presentationDetents([.medium, .large])
+                } else {
+                    ActivityView(activityItems: [shareMailLinkResult.url])
+                        .ignoresSafeArea(edges: [.bottom])
+                        .backport.presentationDetents([.medium, .large])
+                }
+            }
+            .snoozedFloatingPanel(
+                messages: messagesToSnooze,
+                initialDate: initialSnoozedDate,
+                folder: originFolder?.freezeIfNeeded()
+            )
+    }
+
+    private func performAction(for action: Action) {
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: thread.messages.toArray(),
+                    action: action,
+                    origin: origin
+                )
+            }
+        }
     }
 
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
