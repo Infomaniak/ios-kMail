@@ -25,75 +25,64 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterFolderCell: View {
-    var folders: [Folder]
+    @StateObject private var viewModel: FolderListViewModel
+
+    @State private var isShowingFolderList = false
+
     @Binding var selectedFolderId: String
 
-    init(selection: Binding<String>, folders: [Folder]) {
+    let folders: [Folder]
+
+    init(mailboxManager: MailboxManager, selection: Binding<String>, folders: [Folder]) {
         self.folders = folders
         _selectedFolderId = selection
+        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
     }
 
     private var selectedFolderName: String {
         guard let folder = (folders.first { $0.remoteId == selectedFolderId }) else {
-            return allFoldersItem.name
+            return Self.allFoldersItem.name
         }
         return folder.localizedName
     }
 
     private var isSelected: Bool {
-        return selectedFolderId != allFoldersItem.id
+        return selectedFolderId != Self.allFoldersItem.id
     }
 
-    private var allFoldersItem = (
+    static let allFoldersItem = (
         id: "",
         name: MailResourcesStrings.Localizable.searchFilterFolder,
         icon: MailResourcesAsset.allFolders.swiftUIImage
     )
 
-    private var sortedFolders: [Folder] {
-        return folders.filter(\.shouldBeDisplayed).sorted()
-    }
-
     var body: some View {
-        Menu {
-            Button {
-                withAnimation {
-                    selectedFolderId = allFoldersItem.id
-                }
-            } label: {
-                HStack {
-                    allFoldersItem.icon
-                    Text(allFoldersItem.name)
-                }
+        HStack(spacing: IKPadding.searchFolderCellSpacing) {
+            if isSelected {
+                MailResourcesAsset.check
+                    .iconSize(.small)
             }
-
-            ForEach(sortedFolders) { folder in
-                Button {
-                    withAnimation {
-                        selectedFolderId = folder.remoteId
-                    }
-                } label: {
-                    HStack {
-                        folder.icon
-                        Text(folder.localizedName)
-                    }
-                }
-            }
-        } label: {
-            HStack(spacing: IKPadding.searchFolderCellSpacing) {
-                if isSelected {
-                    MailResourcesAsset.check
-                        .iconSize(.small)
-                }
-                Text(selectedFolderName)
-                    .font(MailTextStyle.bodyMedium.font)
-                ChevronIcon(direction: .down, shapeStyle: HierarchicalShapeStyle.primary)
-            }
+            Text(selectedFolderName)
+                .font(MailTextStyle.bodyMedium.font)
         }
         .filterCellStyle(isSelected: isSelected)
+        .onTapGesture {
+            isShowingFolderList = true
+        }
+        .sheet(isPresented: $isShowingFolderList) {
+            SearchFilterFolderCellSheetView(
+                viewModel: viewModel,
+                isPresented: $isShowingFolderList,
+                selectedFolderId: $selectedFolderId
+            )
+        }
     }
 }
 
 #Preview {
-    SearchFilterFolderCell(selection: .constant("folder"), folders: [PreviewHelper.sampleFolder])
+    SearchFilterFolderCell(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        selection: .constant("folder"),
+        folders: [PreviewHelper.sampleFolder]
+    )
 }

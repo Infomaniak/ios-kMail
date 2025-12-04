@@ -38,6 +38,7 @@ struct SearchFilterHeaderView: View {
                 ForEach(viewModel.filters) { filter in
                     if filter == .folder {
                         SearchFilterFolderCell(
+                            mailboxManager: viewModel.mailboxManager,
                             selection: $viewModel.selectedSearchFolderId,
                             folders: viewModel.frozenFolderList
                         )

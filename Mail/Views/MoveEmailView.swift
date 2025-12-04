@@ -49,16 +49,11 @@ struct MoveEmailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: viewModel.roleFolders)
-                if !viewModel.isSearching && !viewModel.userFolders.isEmpty {
-                    IKDivider()
-                }
-                listOfFolders(nestableFolders: viewModel.userFolders)
-            }
-            .searchable(text: $viewModel.searchQuery)
-        }
+        SearchableFolderListView(
+            viewModel: viewModel,
+            originFolderId: originFolder?.remoteId,
+            customCompletion: move
+        )
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -72,20 +67,11 @@ struct MoveEmailView: View {
                 }
             }
         }
-        .environment(\.folderCellType, .move)
         .matomoView(view: ["MoveEmailView"])
         .mailCustomAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
                 move(to: newFolder)
             })
-        }
-    }
-
-    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
-        ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.remoteId) { folder in
-                move(to: folder)
-            }
         }
     }
 
