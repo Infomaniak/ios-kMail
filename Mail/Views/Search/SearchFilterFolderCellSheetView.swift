@@ -36,15 +36,17 @@ struct SearchFilterFolderCellSheetView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    changeSelectedFolderId(folderId: SearchFilterFolderCell.allFoldersItem.id)
-                } label: {
-                    Label {
-                        Text(SearchFilterFolderCell.allFoldersItem.name)
-                    } icon: {
-                        SearchFilterFolderCell.allFoldersItem.icon
+                if !selectedFolderId.isEmpty {
+                    Button {
+                        changeSelectedFolderId(folderId: SearchFilterFolderCell.allFoldersItem.id)
+                    } label: {
+                        Label {
+                            Text(SearchFilterFolderCell.allFoldersItem.name)
+                        } icon: {
+                            SearchFilterFolderCell.allFoldersItem.icon
+                        }
+                        .labelStyle(.titleOnly)
                     }
-                    .labelStyle(.titleOnly)
                 }
             }
         }
@@ -53,7 +55,9 @@ struct SearchFilterFolderCellSheetView: View {
     }
 
     private func changeSelectedFolderId(folderId: String) {
-        selectedFolderId = folderId
-        isPresented = false
+        withAnimation {
+            selectedFolderId = folderId
+            isPresented = false
+        }
     }
 }
