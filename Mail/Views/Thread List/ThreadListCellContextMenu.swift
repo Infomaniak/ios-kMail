@@ -24,12 +24,13 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread, originFolder: Folder,
-                            toggleMultipleSelection: @escaping (Bool) -> Void) -> some View {
+    func actionsContextMenu(thread: Thread,
+                            originFolder: Folder,
+                            multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         modifier(ThreadListCellContextMenu(
             thread: thread,
             originFolder: originFolder,
-            toggleMultipleSelection: toggleMultipleSelection
+            multipleSelectionViewModel: multipleSelectionViewModel
         ))
     }
 }
@@ -53,7 +54,7 @@ struct ThreadListCellContextMenu: ViewModifier {
 
     let thread: Thread
     let originFolder: Folder?
-    let toggleMultipleSelection: (Bool) -> Void
+    let multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var origin: ActionOrigin {
         .floatingPanel(
@@ -110,7 +111,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
 
                 ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
-                    toggleMultipleSelection(false)
+                    multipleSelectionViewModel.toggleMultipleSelection(of: thread, withImpact: false)
                 }
 
                 ForEach(computedActions.listActions) { action in

@@ -68,7 +68,7 @@ struct ThreadListCell: View {
                 if multipleSelectionViewModel.isEnabled {
                     didTapCell()
                 } else {
-                    toggleMultipleSelection(withImpact: true)
+                    multipleSelectionViewModel.toggleMultipleSelection(of: thread, withImpact: true)
                 }
             }
             .background(SelectionBackground(
@@ -97,7 +97,7 @@ struct ThreadListCell: View {
         .actionsContextMenu(
             thread: thread,
             originFolder: viewModel.frozenFolder,
-            toggleMultipleSelection: toggleMultipleSelection
+            multipleSelectionViewModel: multipleSelectionViewModel
         )
     }
 
@@ -119,17 +119,6 @@ struct ThreadListCell: View {
                 mainViewState.selectedThread = thread
             }
         }
-    }
-
-    private func toggleMultipleSelection(withImpact: Bool = false) {
-        @InjectService var matomo: MatomoUtils
-        let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
-        matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
-        if withImpact {
-            multipleSelectionViewModel.feedbackGenerator.prepare()
-            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
-        }
-        multipleSelectionViewModel.toggleSelection(of: thread)
     }
 }
 

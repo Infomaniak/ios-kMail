@@ -31,10 +31,12 @@ class MultipleSelectionViewModel: ObservableObject {
     @Published var toolbarActions = [Action]()
 
     let fromArchiveFolder: Bool
+    let fromSearch: Bool
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(fromArchiveFolder: Bool = false) {
+    init(fromArchiveFolder: Bool = false, fromSearch: Bool = false) {
         self.fromArchiveFolder = fromArchiveFolder
+        self.fromSearch = fromSearch
         setActions()
     }
 
@@ -43,6 +45,16 @@ class MultipleSelectionViewModel: ObservableObject {
             selectedItems.removeAll()
             isEnabled = false
         }
+    }
+
+    func toggleMultipleSelection(of thread: Thread, withImpact: Bool = false) {
+        let eventCategory: MatomoUtils.EventCategory = fromSearch ? .searchMultiSelection : .multiSelection
+        matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
+        if withImpact {
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
+        }
+        toggleSelection(of: thread)
     }
 
     func toggleSelection(of thread: Thread) {
