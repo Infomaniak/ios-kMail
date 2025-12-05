@@ -1,1 +1,4 @@
-- Fix snooze panel display
+- Improved folder display
+- Optimized email retrieval
+- Improved folder search
+- Bug fixes and improvements

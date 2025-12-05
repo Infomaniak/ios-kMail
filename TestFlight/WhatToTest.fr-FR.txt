@@ -1,1 +1,4 @@
-- Correction affichage panneau de mise en attente
+- Amélioration de l'affichage des dossiers
+- Optimisation de la récupération des mails
+- Amélioration de la recherche par dossier
+- Corrections de bugs et améliorations

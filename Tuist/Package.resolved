@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "bdee3a4a56b26046a1e5a7ff5cc93a707fcfbb65",
-        "version" : "18.3.1"
+        "revision" : "c6b1f897cce83bde2fdb03edbac33a6922284498",
+        "version" : "18.4.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "b0f16b93d2c7027685324bc9ddfa47fee61905fe",
-        "version" : "23.0.1"
+        "revision" : "81050853a4576ddbb02138d5994cb25c85337b9c",
+        "version" : "23.1.2"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "a4591b91d977c33a5e2dd361dca2799a8815ce82",
-        "version" : "1.4.3"
+        "revision" : "ca793dc5613ae4fd67b209e3f5f0222e00a6da4d",
+        "version" : "1.4.4"
       }
     },
     {
