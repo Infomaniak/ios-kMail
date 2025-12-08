@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Wed, 05 Nov 2025 08:51:40 +0100
+ * Exported by: Baptiste Griva
+ * Exported at: Mon, 08 Dec 2025 16:04:15 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1538,7 +1538,10 @@
 "settingsSelectDisplayModeDescription" = "Wählen Sie einen Anzeigemodus";
 
 /* loco:627a54238311502e273bbd62 */
-"settingsSendAcknowledgement" = "Verlangen Sie eine Empfangsbestätigung für jede gesendete E-Mail";
+"settingsSendAcknowledgementSubtitle" = "Anforderung einer Lesebestätigung für jede gesendete Nachricht";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Empfangsbestätigungen";
 
 /* loco:627a5401ba58a853294d57a2 */
 "settingsSendIncludeOriginalMessage" = "Fügen Sie die ursprüngliche Nachricht in die Antwort ein";

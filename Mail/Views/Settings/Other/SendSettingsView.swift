@@ -60,7 +60,7 @@ struct SendSettingsView: View {
 
             // Acknowledgement
             SettingsToggleCell(
-                title: MailResourcesStrings.Localizable.settingsSendAcknowledgement,
+                title: MailResourcesStrings.Localizable.settingsSendAcknowledgementTitle,
                 userDefaults: \.acknowledgement,
                 matomoCategory: .settingsSend,
                 matomoName: "acknowledgement"
