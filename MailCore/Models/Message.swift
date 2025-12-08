@@ -163,6 +163,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
     @Persisted public var cryptPasswordValidity: Date?
+    @Persisted public var acknowledge: String?
     @Persisted private var headers: MessageHeaders?
     /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
@@ -289,6 +290,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !reactionMessages.where { $0.seen == false }.isEmpty
     }
 
+    public var hasPendingAcknowledgment: Bool {
+        return acknowledge == "pending"
+    }
+
     public func fromMe(currentMailboxEmail: String) -> Bool {
         return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
@@ -379,6 +384,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case emojiReaction
         case emojiReactionNotAllowedReason
         case headers
+        case acknowledge
     }
 
     override init() {
@@ -459,6 +465,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         )
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
+        acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
     }
 
     public convenience init(
@@ -498,7 +505,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeUuid: String? = nil,
         snoozeEndDate: Date? = nil,
         emojiReaction: String? = nil,
-        emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil
+        emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
+        acknowledge: String? = nil
     ) {
         self.init()
 
@@ -540,6 +548,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.snoozeEndDate = snoozeEndDate
         self.emojiReaction = emojiReaction
         self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
+        self.acknowledge = acknowledge
     }
 
     public func toThread() -> Thread {
