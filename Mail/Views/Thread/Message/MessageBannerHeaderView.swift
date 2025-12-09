@@ -84,7 +84,7 @@ struct MessageBannerHeaderView: View {
                 if !isAcknowledgeSuccessful && message.hasPendingAcknowledgement {
                     MessageHeaderAsyncActionView(
                         icon: MailResourcesAsset.envelope.swiftUIImage,
-                        message: MailResourcesStrings.Localizable.acknowledgmentMessage,
+                        message: MailResourcesStrings.Localizable.acknowledgementMessage,
                         actionTitle: MailResourcesStrings.Localizable.sendConfirmationAction,
                         showBottomSeparator: showBottomSeparator,
                         asyncAction: acknowledgeAction
@@ -92,7 +92,7 @@ struct MessageBannerHeaderView: View {
                 } else {
                     MessageHeaderActionView(
                         icon: MailResourcesAsset.check.swiftUIImage,
-                        message: MailResourcesStrings.Localizable.acknowledgmentMessageSent,
+                        message: MailResourcesStrings.Localizable.acknowledgementMessageSent,
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }

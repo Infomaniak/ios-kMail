@@ -17,10 +17,10 @@
 "accentColorSystemTitle" = "Couleur du système";
 
 /* loco:6936f775de93800154038b75 */
-"acknowledgmentMessage" = "L’expéditeur a demandé une confirmation de lecture.";
+"acknowledgementMessage" = "L’expéditeur a demandé une confirmation de lecture.";
 
 /* loco:6936f7e6835ef86e27063eb6 */
-"acknowledgmentMessageSent" = "Une confirmation de lecture a été envoyée à l’expéditeur.";
+"acknowledgementMessageSent" = "Une confirmation de lecture a été envoyée à l’expéditeur.";
 
 /* loco:629f0e2244ac887a51141312 */
 "actionArchive" = "Archiver";

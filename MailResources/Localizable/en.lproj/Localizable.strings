@@ -17,10 +17,10 @@
 "accentColorSystemTitle" = "System color";
 
 /* loco:6936f775de93800154038b75 */
-"acknowledgmentMessage" = "The sender requested a read receipt.";
+"acknowledgementMessage" = "The sender requested a read receipt.";
 
 /* loco:6936f7e6835ef86e27063eb6 */
-"acknowledgmentMessageSent" = "A read receipt has been sent to the sender.";
+"acknowledgementMessageSent" = "A read receipt has been sent to the sender.";
 
 /* loco:629f0e2244ac887a51141312 */
 "actionArchive" = "Archive";

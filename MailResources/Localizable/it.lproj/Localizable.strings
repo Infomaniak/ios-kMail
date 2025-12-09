@@ -17,10 +17,10 @@
 "accentColorSystemTitle" = "Colore del sistema";
 
 /* loco:6936f775de93800154038b75 */
-"acknowledgmentMessage" = "Il mittente ha richiesto una ricevuta di lettura.";
+"acknowledgementMessage" = "Il mittente ha richiesto una ricevuta di lettura.";
 
 /* loco:6936f7e6835ef86e27063eb6 */
-"acknowledgmentMessageSent" = "È stata inviata una ricevuta di lettura al mittente.";
+"acknowledgementMessageSent" = "È stata inviata una ricevuta di lettura al mittente.";
 
 /* loco:629f0e2244ac887a51141312 */
 "actionArchive" = "Archivia";
