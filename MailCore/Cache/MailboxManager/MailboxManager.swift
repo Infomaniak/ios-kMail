@@ -186,8 +186,16 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         static let attachments = MessagePropertiesOptions(rawValue: 1 << 2)
         static let localSafeDisplay = MessagePropertiesOptions(rawValue: 1 << 3)
         static let reactions = MessagePropertiesOptions(rawValue: 1 << 4)
+        static let calendarEventResponse = MessagePropertiesOptions(rawValue: 1 << 5)
 
-        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments, .localSafeDisplay, .reactions]
+        static let standard: MessagePropertiesOptions = [
+            .fullyDownloaded,
+            .body,
+            .attachments,
+            .localSafeDisplay,
+            .reactions,
+            .calendarEventResponse
+        ]
     }
 
     func keepCacheAttributes(
@@ -216,6 +224,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
         if keepProperties.contains(.reactions) {
             message.reactions = savedMessage.reactions.detached()
+        }
+        if keepProperties.contains(.calendarEventResponse), let calendarEventResponse = savedMessage.calendarEventResponse {
+            message.calendarEventResponse = calendarEventResponse.detached()
         }
     }
 
