@@ -79,6 +79,14 @@ struct MessageBannerHeaderView: View {
                         asyncAction: unsubscribeAction
                     )
                 }
+            case .acknowledge:
+                MessageHeaderAsyncActionView(
+                    icon: MailResourcesAsset.envelope.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.acknowledgmentMessage,
+                    actionTitle: MailResourcesStrings.Localizable.sendConfirmationAction,
+                    showBottomSeparator: showBottomSeparator,
+                    asyncAction: acknowledgeAction
+                )
             }
         }
     }
@@ -104,6 +112,16 @@ struct MessageBannerHeaderView: View {
             }
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeFailure)
+        }
+    }
+
+    private func acknowledgeAction() async {
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
+        do {
+            try await mailboxManager.apiFetcher.acknowledgeMessage(messageResource: message.resource)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementSuccess)
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementFailure)
         }
     }
 }
