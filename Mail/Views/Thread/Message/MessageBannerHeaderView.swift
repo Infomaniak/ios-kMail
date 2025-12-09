@@ -72,7 +72,7 @@ struct MessageBannerHeaderView: View {
             case .unsubscribeLink:
                 if !isUnsubscribeSuccessful {
                     MessageHeaderAsyncActionView(
-                        icon: MailResourcesAsset.socialMedia.swiftUIImage,
+                        icon: MailResourcesAsset.socialMediaFilled.swiftUIImage,
                         message: MailResourcesStrings.Localizable.messageComesFromDiscussionList,
                         actionTitle: MailResourcesStrings.Localizable.unsubscribeButtonTitle,
                         showBottomSeparator: showBottomSeparator,
