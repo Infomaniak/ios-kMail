@@ -58,7 +58,7 @@ struct MessageSubHeaderView: View {
             result.append(.encrypted)
         }
 
-        if message.hasPendingAcknowledgment {
+        if message.hasAcknowledgement {
             result.append(.acknowledge)
         }
 

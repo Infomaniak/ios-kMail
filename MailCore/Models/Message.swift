@@ -290,7 +290,11 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !reactionMessages.where { $0.seen == false }.isEmpty
     }
 
-    public var hasPendingAcknowledgment: Bool {
+    public var hasAcknowledgement: Bool {
+        return hasPendingAcknowledgement || acknowledge == "acknowledged"
+    }
+
+    public var hasPendingAcknowledgement: Bool {
         return acknowledge == "pending"
     }
 
