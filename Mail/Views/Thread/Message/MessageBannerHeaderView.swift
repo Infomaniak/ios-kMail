@@ -128,6 +128,11 @@ struct MessageBannerHeaderView: View {
         @InjectService var snackbarPresenter: IKSnackBarPresentable
         do {
             try await mailboxManager.apiFetcher.acknowledgeMessage(messageResource: message.resource)
+            try mailboxManager.transactionExecutor.writeTransaction { realm in
+                if let live = realm.object(ofType: Message.self, forPrimaryKey: message.uid) {
+                    live.acknowledge = "acknowledged"
+                }
+            }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementSuccess)
             withAnimation {
                 isAcknowledgeSuccessful = true

@@ -187,6 +187,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         static let localSafeDisplay = MessagePropertiesOptions(rawValue: 1 << 3)
         static let reactions = MessagePropertiesOptions(rawValue: 1 << 4)
         static let calendarEventResponse = MessagePropertiesOptions(rawValue: 1 << 5)
+        static let acknowledge = MessagePropertiesOptions(rawValue: 1 << 6)
 
         static let standard: MessagePropertiesOptions = [
             .fullyDownloaded,
@@ -227,6 +228,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
         if keepProperties.contains(.calendarEventResponse), let calendarEventResponse = savedMessage.calendarEventResponse {
             message.calendarEventResponse = calendarEventResponse.detached()
+        }
+        if keepProperties.contains(.acknowledge),
+           message.acknowledge == nil {
+            message.acknowledge = savedMessage.acknowledge
         }
     }
 

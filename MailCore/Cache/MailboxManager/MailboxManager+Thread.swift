@@ -528,7 +528,7 @@ public extension MailboxManager {
     }
 
     private func upsertMessage(_ message: Message, oldMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
-        keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+        keepCacheAttributes(for: message, keepProperties: [.standard, .acknowledge], using: realm)
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
