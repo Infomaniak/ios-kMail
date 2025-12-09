@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Mon, 08 Dec 2025 16:04:15 +0100
+ * Exported at: Tue, 09 Dec 2025 15:20:46 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1541,7 +1541,7 @@
 "settingsSendAcknowledgementSubtitle" = "Demander un accusé de lecture pour chaque message envoyé";
 
 /* loco:6936e8442c69152d9b0657b2 */
-"settingsSendAcknowledgementTitle" = "Accusés de réception";
+"settingsSendAcknowledgementTitle" = "Accusés de lecture";
 
 /* loco:627a5401ba58a853294d57a2 */
 "settingsSendIncludeOriginalMessage" = "Inclure le message original dans la réponse";
