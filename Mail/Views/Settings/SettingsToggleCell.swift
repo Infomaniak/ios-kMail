@@ -27,6 +27,7 @@ struct SettingsToggleCell: View {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
     let title: String
+    let subtitle: String?
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
 
     let matomoCategory: MatomoUtils.EventCategory?
@@ -50,11 +51,13 @@ struct SettingsToggleCell: View {
 
     init(
         title: String,
+        subtitle: String? = nil,
         userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>,
         matomoCategory: MatomoUtils.EventCategory? = nil,
         matomoName: String? = nil
     ) {
         self.title = title
+        self.subtitle = subtitle
         self.userDefaults = userDefaults
         _toggleIsOn = State(wrappedValue: UserDefaults.shared[keyPath: userDefaults])
         _lastValue = _toggleIsOn
@@ -75,6 +78,10 @@ struct SettingsToggleCell: View {
         })) {
             Text(title)
                 .textStyle(.body)
+            if let subtitle {
+                Text(subtitle)
+                    .textStyle(.bodySmallTertiary)
+            }
         }
         .tint(.accentColor)
         .onChange(of: toggleIsOn) { newValue in

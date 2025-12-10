@@ -33,6 +33,14 @@ struct MailboxSettingsView: View {
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature) {
                     MailboxSignatureSettingsView(mailboxManager: mailboxManager)
                 }
+
+                SettingsToggleCell(
+                    title: MailResourcesStrings.Localizable.settingsSendAcknowledgementTitle,
+                    subtitle: MailResourcesStrings.Localizable.settingsSendAcknowledgementSubtitle,
+                    userDefaults: \.acknowledgement,
+                    matomoCategory: .settingsSend,
+                    matomoName: "acknowledgement"
+                )
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)

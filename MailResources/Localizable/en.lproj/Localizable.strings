@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Wed, 05 Nov 2025 08:51:40 +0100
+ * Exported by: Baptiste Griva
+ * Exported at: Tue, 09 Dec 2025 15:20:46 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1538,7 +1538,10 @@
 "settingsSelectDisplayModeDescription" = "Select a display mode";
 
 /* loco:627a54238311502e273bbd62 */
-"settingsSendAcknowledgement" = "Request an acknowledgement of receipt for every email sent";
+"settingsSendAcknowledgementSubtitle" = "Request a read receipt for each message sent";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Read receipts";
 
 /* loco:627a5401ba58a853294d57a2 */
 "settingsSendIncludeOriginalMessage" = "Include the original message in the reply";
