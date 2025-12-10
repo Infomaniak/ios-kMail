@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "81050853a4576ddbb02138d5994cb25c85337b9c",
-        "version" : "23.1.2"
+        "revision" : "433480fee3ccf22a766078bf288efb6e85d2d881",
+        "version" : "23.2.0"
       }
     },
     {
