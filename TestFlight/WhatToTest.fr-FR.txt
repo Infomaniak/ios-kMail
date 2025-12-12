@@ -1,4 +1,4 @@
-- Amélioration de l'affichage des dossiers
-- Optimisation de la récupération des mails
-- Amélioration de la recherche par dossier
+- Correction d'un problème empêchant l'affichage des invitations aux événements
+- Réglage pour demander un accusé de lecture à l'envoi
+- Ajout de l’accusé de lecture pour les messages 
 - Corrections de bugs et améliorations

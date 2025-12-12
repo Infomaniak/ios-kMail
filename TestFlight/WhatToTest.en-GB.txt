@@ -1,4 +1,4 @@
-- Improved folder display
-- Optimized email retrieval
-- Improved folder search
+- Fixed an issue preventing the display of invitations to events 
+- Setting to request a read receipt when sending message
+- Added message read receipts
 - Bug fixes and improvements
