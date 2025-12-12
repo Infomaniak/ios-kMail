@@ -28,6 +28,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case displayContent
     case encrypted
     case unsubscribeLink
+    case acknowledge
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -40,6 +41,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
         case (.encrypted, .encrypted):
             return true
         case (.unsubscribeLink, .unsubscribeLink):
+            return true
+        case (.acknowledge, .acknowledge):
             return true
         default:
             return false
@@ -57,6 +60,8 @@ public extension [MessageBanner] {
         case .displayContent:
             return !contains(.encrypted)
         case .unsubscribeLink:
+            return true
+        case .acknowledge:
             return true
         default:
             return false

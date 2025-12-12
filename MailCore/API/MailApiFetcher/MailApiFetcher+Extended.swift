@@ -223,4 +223,8 @@ public extension MailApiFetcher {
     func unsubscribe(messageResource: String) async throws {
         let _: Empty = try await perform(request: authenticatedRequest(.unsubscribe(resource: messageResource), method: .post))
     }
+
+    func acknowledgeMessage(messageResource: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(.acknowledge(resource: messageResource), method: .get))
+    }
 }

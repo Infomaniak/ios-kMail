@@ -30,6 +30,7 @@ struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isUnsubscribeSuccessful = false
+    @State private var isAcknowledgeSuccessful = false
 
     let banners: [MessageBanner]
 
@@ -79,6 +80,22 @@ struct MessageBannerHeaderView: View {
                         asyncAction: unsubscribeAction
                     )
                 }
+            case .acknowledge:
+                if !isAcknowledgeSuccessful && message.hasPendingAcknowledgement {
+                    MessageHeaderAsyncActionView(
+                        icon: MailResourcesAsset.envelope.swiftUIImage,
+                        message: MailResourcesStrings.Localizable.acknowledgementMessage,
+                        actionTitle: MailResourcesStrings.Localizable.sendConfirmationAction,
+                        showBottomSeparator: showBottomSeparator,
+                        asyncAction: acknowledgeAction
+                    )
+                } else {
+                    MessageHeaderActionView(
+                        icon: MailResourcesAsset.check.swiftUIImage,
+                        message: MailResourcesStrings.Localizable.acknowledgementMessageSent,
+                        showBottomSeparator: showBottomSeparator
+                    ) {}
+                }
             }
         }
     }
@@ -104,6 +121,24 @@ struct MessageBannerHeaderView: View {
             }
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeFailure)
+        }
+    }
+
+    private func acknowledgeAction() async {
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
+        do {
+            try await mailboxManager.apiFetcher.acknowledgeMessage(messageResource: message.resource)
+            try mailboxManager.transactionExecutor.writeTransaction { realm in
+                if let live = realm.object(ofType: Message.self, forPrimaryKey: message.uid) {
+                    live.acknowledgeStatus = .acknowledged
+                }
+            }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementSuccess)
+            withAnimation {
+                isAcknowledgeSuccessful = true
+            }
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementFailure)
         }
     }
 }

@@ -75,7 +75,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 47,
+            schemaVersion: 48,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -187,6 +187,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         static let localSafeDisplay = MessagePropertiesOptions(rawValue: 1 << 3)
         static let reactions = MessagePropertiesOptions(rawValue: 1 << 4)
         static let calendarEventResponse = MessagePropertiesOptions(rawValue: 1 << 5)
+        static let acknowledge = MessagePropertiesOptions(rawValue: 1 << 6)
 
         static let standard: MessagePropertiesOptions = [
             .fullyDownloaded,
@@ -227,6 +228,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
         if keepProperties.contains(.calendarEventResponse), let calendarEventResponse = savedMessage.calendarEventResponse {
             message.calendarEventResponse = calendarEventResponse.detached()
+        }
+        if keepProperties.contains(.acknowledge),
+           message.acknowledge == nil {
+            message.acknowledge = savedMessage.acknowledge
         }
     }
 

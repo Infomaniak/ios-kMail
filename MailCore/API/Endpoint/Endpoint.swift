@@ -340,4 +340,8 @@ public extension Endpoint {
     static func unsubscribe(resource: String) -> Endpoint {
         return .resource(resource).appending(path: "/unsubscribeFromList")
     }
+
+    static func acknowledge(resource: String) -> Endpoint {
+        return .resource(resource).appending(path: "/acknowledge")
+    }
 }

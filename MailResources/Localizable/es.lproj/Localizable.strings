@@ -16,6 +16,12 @@
 /* loco:642179d9733cd4523d03dcf2 */
 "accentColorSystemTitle" = "Color del sistema";
 
+/* loco:6936f775de93800154038b75 */
+"acknowledgementMessage" = "El remitente ha solicitado una confirmación de lectura.";
+
+/* loco:6936f7e6835ef86e27063eb6 */
+"acknowledgementMessageSent" = "Se ha enviado una confirmación de lectura al remitente.";
+
 /* loco:629f0e2244ac887a51141312 */
 "actionArchive" = "Archivo";
 
@@ -1357,6 +1363,9 @@
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Enviar";
 
+/* loco:6936f6d2c3bd045a2001d752 */
+"sendConfirmationAction" = "Enviar la confirmación";
+
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Mensajes enviados";
 
@@ -1623,6 +1632,12 @@
 
 /* loco:652fd443ec75b05b000d43f2 */
 "snackBarAccountDeleted" = "Cuenta eliminada";
+
+/* loco:6937d843b9fb15c2510859d2 */
+"snackbarAcknowledgementFailure" = "Error al enviar";
+
+/* loco:6937d715da67a52ff201eed2 */
+"snackbarAcknowledgementSuccess" = "Recibo de lectura enviado";
 
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "El remitente está bloqueado";
