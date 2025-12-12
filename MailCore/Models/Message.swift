@@ -83,6 +83,11 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
+public enum AcknowledgeStatus: String {
+    case pending
+    case acknowledged
+}
+
 public struct MessageActionResult: Codable {
     public var flagged: Int
 }
@@ -163,7 +168,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
     @Persisted public var cryptPasswordValidity: Date?
-    @Persisted public var acknowledge: String?
+    @Persisted var acknowledge: String?
     @Persisted private var headers: MessageHeaders?
     /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
@@ -290,12 +295,20 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !reactionMessages.where { $0.seen == false }.isEmpty
     }
 
+    public var acknowledgeStatus: AcknowledgeStatus? {
+        get {
+            return AcknowledgeStatus(rawValue: acknowledge ?? "")
+        } set {
+            acknowledge = newValue?.rawValue
+        }
+    }
+
     public var hasAcknowledgement: Bool {
-        return hasPendingAcknowledgement || acknowledge == "acknowledged"
+        return hasPendingAcknowledgement || acknowledgeStatus == .acknowledged
     }
 
     public var hasPendingAcknowledgement: Bool {
-        return acknowledge == "pending"
+        return acknowledgeStatus == .pending
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
