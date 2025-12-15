@@ -63,6 +63,7 @@ public extension MatomoUtils.EventCategory {
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let updateVersion = MatomoUtils.EventCategory(displayName: "updateVersion")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
+    static let messageBanner = MatomoUtils.EventCategory(displayName: "messageBanner")
 
     // Actions
 
