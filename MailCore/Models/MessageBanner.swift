@@ -28,15 +28,15 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
         case .schedule:
             return "modifySchedule"
         case .spam:
-            return "spamBanner"
+            return "spam"
         case .displayContent:
-            return "displayContentBanner"
+            return "displayContent"
         case .encrypted:
-            return "encryptionBanner"
+            return "encryption"
         case .unsubscribeLink:
-            return "unsubscribeLinkBanner"
+            return "unsubscribeLink"
         case .acknowledge:
-            return "acknowledgeBanner"
+            return "acknowledge"
         }
     }
 

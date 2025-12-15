@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -59,6 +60,8 @@ struct MessageEncryptionHeaderView: View {
         ) {
             if !message.autoEncryptDisabledRecipients.isEmpty {
                 Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .messageBanner, name: MessageBanner.encrypted.matomoName)
                     isShowingRecipients = true
                 }
                 .tint(MailResourcesAsset.iconSovereignBlueColor.swiftUIColor)

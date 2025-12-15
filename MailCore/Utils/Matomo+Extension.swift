@@ -45,6 +45,7 @@ public extension MatomoUtils.EventCategory {
     static let mailPremiumUpgradeBottomSheet = MatomoUtils.EventCategory(displayName: "mailPremiumUpgradeBottomSheet")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
     static let message = MatomoUtils.EventCategory(displayName: "message")
+    static let messageBanner = MatomoUtils.EventCategory(displayName: "messageBanner")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let myKSuite = MatomoUtils.EventCategory(displayName: "myKSuite")
     static let myKSuiteUpgradeBottomSheet = MatomoUtils.EventCategory(displayName: "myKSuiteUpgradeBottomSheet")
@@ -63,7 +64,6 @@ public extension MatomoUtils.EventCategory {
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let updateVersion = MatomoUtils.EventCategory(displayName: "updateVersion")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
-    static let messageBanner = MatomoUtils.EventCategory(displayName: "messageBanner")
 
     // Actions
 
