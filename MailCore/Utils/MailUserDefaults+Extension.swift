@@ -180,6 +180,9 @@ public extension UserDefaults {
 
     var cancelSendDelay: CancelDelay {
         get {
+            if object(forKey: key(.cancelDelay)) == nil {
+                set(DefaultPreferences.cancelDelay.rawValue, forKey: key(.cancelDelay))
+            }
             return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? DefaultPreferences.cancelDelay
         }
         set {
