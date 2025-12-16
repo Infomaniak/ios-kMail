@@ -66,7 +66,6 @@ public enum PreviewHelper {
                                               hostingId: 0,
                                               isPrimary: true,
                                               isPasswordValid: true,
-                                              isValidInLDAP: true,
                                               isLocked: false,
                                               isSpamFilter: false,
                                               isLimited: false,

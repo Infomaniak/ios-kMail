@@ -79,19 +79,15 @@ struct UnavailableMailboxListView: View {
     private static func filterPasswordBlockedMailboxes(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
         return isCurrentUserMailbox(mailbox, for: currentUserId)
             && mailbox.isPasswordValid == false
-            && !isMailboxConsideredLocked(mailbox)
+            && mailbox.isLocked == false
     }
 
     private static func filterLockedMailboxes(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
-        return isCurrentUserMailbox(mailbox, for: currentUserId) && isMailboxConsideredLocked(mailbox)
+        return isCurrentUserMailbox(mailbox, for: currentUserId) && mailbox.isLocked == true
     }
 
     private static func isCurrentUserMailbox(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
         return mailbox.userId == currentUserId
-    }
-
-    private static func isMailboxConsideredLocked(_ mailbox: Query<Mailbox>) -> Query<Bool> {
-        return mailbox.isLocked == true || mailbox.isValidInLDAP == false
     }
 }
 

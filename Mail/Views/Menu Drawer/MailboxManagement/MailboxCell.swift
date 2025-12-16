@@ -56,7 +56,7 @@ struct MailboxCell: View {
             isSelected: isSelected
         ) {
             guard !isSelected else { return }
-            guard !mailbox.isConsideredLocked && mailbox.isPasswordValid else {
+            guard !mailbox.isLocked && mailbox.isPasswordValid else {
                 isShowingLockedView = true
                 return
             }
