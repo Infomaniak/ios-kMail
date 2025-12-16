@@ -23,6 +23,23 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
         return hashValue
     }
 
+    public var matomoName: String {
+        switch self {
+        case .schedule:
+            return "modifySchedule"
+        case .spam:
+            return "spam"
+        case .displayContent:
+            return "displayContent"
+        case .encrypted:
+            return "encryption"
+        case .unsubscribeLink:
+            return "unsubscribeLink"
+        case .acknowledge:
+            return "acknowledge"
+        }
+    }
+
     case schedule(scheduleDate: Date, draftResource: String)
     case spam(spamType: SpamHeaderType)
     case displayContent

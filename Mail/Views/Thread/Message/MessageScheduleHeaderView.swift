@@ -16,7 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftModalPresentation
@@ -65,6 +67,12 @@ struct MessageScheduleHeaderView: View {
 
     private func changeScheduleDate(_ selectedDate: Date?) {
         guard let selectedDate else { return }
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(
+            eventWithCategory: .messageBanner,
+            name: MessageBanner.schedule(scheduleDate: scheduleDate, draftResource: draftResource).matomoName
+        )
 
         Task {
             await tryOrDisplayError {

@@ -48,6 +48,7 @@ struct MessageBannerHeaderView: View {
                     showBottomSeparator: showBottomSeparator
                 ) {
                     Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                        trackBannerEvent(for: banner)
                         withAnimation {
                             $message.localSafeDisplay.wrappedValue = true
                         }
@@ -68,6 +69,7 @@ struct MessageBannerHeaderView: View {
                     actionTitle: spamType.buttonTitle,
                     showBottomSeparator: showBottomSeparator
                 ) {
+                    trackBannerEvent(for: banner)
                     await spamAction(spamType: spamType)
                 }
             case .unsubscribeLink:
@@ -113,6 +115,7 @@ struct MessageBannerHeaderView: View {
 
     private func unsubscribeAction() async {
         @InjectService var snackbarPresenter: IKSnackBarPresentable
+        trackBannerEvent(for: .unsubscribeLink)
         do {
             try await mailboxManager.apiFetcher.unsubscribe(messageResource: message.resource)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarUnsubscribeSuccess)
@@ -126,6 +129,7 @@ struct MessageBannerHeaderView: View {
 
     private func acknowledgeAction() async {
         @InjectService var snackbarPresenter: IKSnackBarPresentable
+        trackBannerEvent(for: .acknowledge)
         do {
             try await mailboxManager.apiFetcher.acknowledgeMessage(messageResource: message.resource)
             try mailboxManager.transactionExecutor.writeTransaction { realm in
@@ -140,6 +144,11 @@ struct MessageBannerHeaderView: View {
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAcknowledgementFailure)
         }
+    }
+
+    private func trackBannerEvent(for banner: MessageBanner) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .messageBanner, name: banner.matomoName)
     }
 }
 
