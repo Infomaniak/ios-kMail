@@ -40,7 +40,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingKSuiteProUpgrade = false
     @ModalPublished public var destructiveAlert: DestructiveActionAlertState?
     @ModalPublished public var modifiedScheduleDraftResource: ModifiedScheduleDraftResource?
-    @Published public var isShowingChristmasEasterEgg = false
+    @Published public var easterEgg: EasterEgg?
 
     /// Represents the state of navigation
     ///

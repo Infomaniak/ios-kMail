@@ -23,7 +23,6 @@ import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import KSuite
-import Lottie
 import MailCore
 import MailCoreUI
 import MailResources
@@ -134,24 +133,7 @@ struct SplitView: View {
                 }
             }
         }
-        .overlay(alignment: .bottom) {
-            if EasterEgg.christmas.shouldTrigger(mailboxManager.mailbox.pack, currentUser.value.isStaff ?? false)
-                && mainViewState.isShowingChristmasEasterEgg {
-                LottieView(animation: LottieAnimation.named("easter_egg_xmas", bundle: MailResourcesResources.bundle))
-                    .animationDidFinish { _ in
-                        mainViewState.isShowingChristmasEasterEgg = false
-                    }
-                    .playing(loopMode: .playOnce)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 200)
-                    .padding(.bottom, 96)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                    .onAppear {
-                        EasterEgg.christmas.onTrigger()
-                    }
-            }
-        }
+        .easterEggOverlay($mainViewState.easterEgg)
         .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
                 if willUpdate {
