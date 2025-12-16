@@ -132,7 +132,6 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
             message: message,
             duration: delay != nil ? .custom(CGFloat(delay!)) : .lengthLong,
             action: snackBarAction,
-            anchor: 0, // TODO: - Remove anchor
             contextView: nil
         )
     }
