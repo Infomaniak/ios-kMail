@@ -90,10 +90,6 @@ public class Mailbox: Object, Codable, Identifiable {
         return uuid
     }
 
-    public var isAvailable: Bool {
-        return !isLocked
-    }
-
     public var notificationTopicName: Topic {
         return Topic(rawValue: "mailbox-\(mailboxId)")
     }

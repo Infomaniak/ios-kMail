@@ -123,7 +123,7 @@ public class RootViewState: ObservableObject {
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 
-            if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
+            if !mailboxes.isEmpty && mailboxes.allSatisfy({ $0.isLocked }) {
                 transitionToRootViewState(.unavailableMailboxes(currentAccount))
             } else {
                 transitionToRootViewState(.preloading)
