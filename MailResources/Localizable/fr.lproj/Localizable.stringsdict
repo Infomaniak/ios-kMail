@@ -5,8 +5,8 @@
  Project: kMail
  Locale: fr, French
  Tagged: ios-stringsdict
- Exported by: Valentin Perignon
- Exported at: Tue, 04 Nov 2025 14:17:22 +0100
+ Exported by: Ambroise Decouttere
+ Exported at: Tue, 16 Dec 2025 15:09:51 +0100
 -->
 <plist version="1.0">
   <dict>
@@ -26,24 +26,6 @@
         <string>%d pièces jointes</string>
         <key>many</key>
         <string>%d de pièces jointes</string>
-      </dict>
-    </dict>
-    <key>blockedPasswordTitle</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@value@</string>
-      <key>value</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>Mot de passe bloqué</string>
-        <key>other</key>
-        <string>Mots de passe bloqués</string>
-        <key>many</key>
-        <string>Mots de passe bloqués</string>
       </dict>
     </dict>
     <key>encryptedMessageIncompleteUser</key>

@@ -62,7 +62,6 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var mailboxId: Int
     @Persisted public var hostingId: Int
     @Persisted public var isPrimary: Bool
-    @Persisted public var isPasswordValid: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var isSpamFilter: Bool
     @Persisted public var isLimited: Bool
@@ -92,7 +91,7 @@ public class Mailbox: Object, Codable, Identifiable {
     }
 
     public var isAvailable: Bool {
-        return isPasswordValid && !isLocked
+        return !isLocked
     }
 
     public var notificationTopicName: Topic {
@@ -112,7 +111,6 @@ public class Mailbox: Object, Codable, Identifiable {
         case mailboxId
         case hostingId
         case isPrimary
-        case isPasswordValid
         case isLocked
         case isSpamFilter
         case isLimited
@@ -140,7 +138,6 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId: Int,
         hostingId: Int,
         isPrimary: Bool,
-        isPasswordValid: Bool,
         isLocked: Bool,
         isSpamFilter: Bool,
         isLimited: Bool,
@@ -158,7 +155,6 @@ public class Mailbox: Object, Codable, Identifiable {
         self.mailboxId = mailboxId
         self.hostingId = hostingId
         self.isPrimary = isPrimary
-        self.isPasswordValid = isPasswordValid
         self.isLocked = isLocked
         self.isSpamFilter = isSpamFilter
         self.isLimited = isLimited
@@ -177,7 +173,6 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId = try container.decode(Int.self, forKey: .mailboxId)
         hostingId = try container.decode(Int.self, forKey: .hostingId)
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
-        isPasswordValid = try container.decode(Bool.self, forKey: .isPasswordValid)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
         isLimited = try container.decodeIfPresent(Bool.self, forKey: .isLimited) ?? false
