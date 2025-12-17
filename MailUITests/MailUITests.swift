@@ -68,10 +68,10 @@ class MailUITests: XCTestCase {
             .firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
+        wait(delay: 20)
         refreshThreadList()
 
         let newEmail = app.collectionViews.staticTexts[MailUITests.testSubject].firstMatch
-        wait(delay: 20)
         XCTAssertTrue(newEmail.waitForExistence(timeout: defaultTimeOut))
 
         swipeFirstCell()
