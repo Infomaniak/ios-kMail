@@ -68,7 +68,7 @@ class MailUITests: XCTestCase {
             .firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
-        wait(delay: 20)
+        wait(delay: 15)
         refreshThreadList()
 
         let newEmail = app.collectionViews.staticTexts[MailUITests.testSubject].firstMatch
@@ -301,7 +301,9 @@ class MailUITests: XCTestCase {
     func refreshThreadList() {
         let threadList = app.collectionViews.firstMatch
         _ = threadList.waitForExistence(timeout: defaultTimeOut)
-        threadList.swipeDown()
+        let start = threadList.coordinate(withNormalizedOffset: .zero)
+        let finish = threadList.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 10))
+        start.press(forDuration: 0, thenDragTo: finish)
         wait(delay: 15)
     }
 
