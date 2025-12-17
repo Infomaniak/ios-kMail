@@ -46,7 +46,7 @@ struct MailboxCell: View {
     var isSelected = false
 
     enum Style {
-        case menuDrawer, account, blockedPassword, locked
+        case menuDrawer, account, locked
     }
 
     var body: some View {
@@ -56,7 +56,7 @@ struct MailboxCell: View {
             isSelected: isSelected
         ) {
             guard !isSelected else { return }
-            guard !mailbox.isConsideredLocked && mailbox.isPasswordValid else {
+            guard !mailbox.isLocked else {
                 isShowingLockedView = true
                 return
             }
@@ -65,8 +65,6 @@ struct MailboxCell: View {
             @InjectService var matomo: MatomoUtils
 
             switch style {
-            case .blockedPassword:
-                break
             case .locked:
                 return
             case .menuDrawer:

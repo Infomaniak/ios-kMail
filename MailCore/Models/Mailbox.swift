@@ -62,8 +62,6 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var mailboxId: Int
     @Persisted public var hostingId: Int
     @Persisted public var isPrimary: Bool
-    @Persisted public var isPasswordValid: Bool
-    @Persisted public var isValidInLDAP: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var isSpamFilter: Bool
     @Persisted public var isLimited: Bool
@@ -92,14 +90,6 @@ public class Mailbox: Object, Codable, Identifiable {
         return uuid
     }
 
-    public var isConsideredLocked: Bool {
-        return isLocked || !isValidInLDAP
-    }
-
-    public var isAvailable: Bool {
-        return isPasswordValid && !isConsideredLocked
-    }
-
     public var notificationTopicName: Topic {
         return Topic(rawValue: "mailbox-\(mailboxId)")
     }
@@ -117,8 +107,6 @@ public class Mailbox: Object, Codable, Identifiable {
         case mailboxId
         case hostingId
         case isPrimary
-        case isPasswordValid
-        case isValidInLDAP = "isValid"
         case isLocked
         case isSpamFilter
         case isLimited
@@ -146,8 +134,6 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId: Int,
         hostingId: Int,
         isPrimary: Bool,
-        isPasswordValid: Bool,
-        isValidInLDAP: Bool,
         isLocked: Bool,
         isSpamFilter: Bool,
         isLimited: Bool,
@@ -165,8 +151,6 @@ public class Mailbox: Object, Codable, Identifiable {
         self.mailboxId = mailboxId
         self.hostingId = hostingId
         self.isPrimary = isPrimary
-        self.isPasswordValid = isPasswordValid
-        self.isValidInLDAP = isValidInLDAP
         self.isLocked = isLocked
         self.isSpamFilter = isSpamFilter
         self.isLimited = isLimited
@@ -185,8 +169,6 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId = try container.decode(Int.self, forKey: .mailboxId)
         hostingId = try container.decode(Int.self, forKey: .hostingId)
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
-        isPasswordValid = try container.decode(Bool.self, forKey: .isPasswordValid)
-        isValidInLDAP = try container.decode(Bool.self, forKey: .isValidInLDAP)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
         isLimited = try container.decodeIfPresent(Bool.self, forKey: .isLimited) ?? false

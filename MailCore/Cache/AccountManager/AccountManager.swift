@@ -72,7 +72,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return currentMailboxManager
         } else if let newCurrentMailbox = mailboxInfosManager.getMailboxes(for: currentUserId)
             .sorted(by: { lhs, _ in lhs.isPrimary })
-            .first(where: \.isAvailable) {
+            .first(where: { !$0.isLocked }) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
         } else {
@@ -231,7 +231,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async {
-        let availableMailboxes = mailboxes.filter { $0.isAvailable }
+        let availableMailboxes = mailboxes.filter { !$0.isLocked }
         guard let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded()
         else {
             return
@@ -284,7 +284,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
         }
 
-        if currentMailboxManager?.mailbox.isAvailable == false {
+        if currentMailboxManager?.mailbox.isLocked == true {
             switchToFirstValidMailboxManager()
         }
 
@@ -318,7 +318,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async {
         await withTaskGroup(of: Void.self) { group in
-            for mailbox in mailboxes where mailbox.isAvailable {
+            for mailbox in mailboxes where !mailbox.isLocked {
                 group.addTask {
                     async let permissions = apiFetcher.permissions(mailbox: mailbox)
                     async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
@@ -342,13 +342,13 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func switchToFirstValidMailboxManager() {
         // Current mailbox is valid
-        if let firstValidMailboxManager = currentMailboxManager, firstValidMailboxManager.mailbox.isAvailable {
+        if let firstValidMailboxManager = currentMailboxManager, !firstValidMailboxManager.mailbox.isLocked {
             return
         }
 
         // At least one mailbox is valid
         let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
-        if let firstValidMailbox = mailboxes.first(where: { $0.isAvailable && $0.userId == currentUserId }) {
+        if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.userId == currentUserId }) {
             switchMailbox(newMailbox: firstValidMailbox)
             return
         }

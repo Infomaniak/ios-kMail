@@ -82,7 +82,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     }
 
     func selectMailbox(_ mailbox: Mailbox) {
-        guard mailbox.isAvailable,
+        guard !mailbox.isLocked,
               let user = userProfiles.first(where: { $0.id == mailbox.userId }),
               let mailboxManager = accountManager.getMailboxManager(for: mailbox.mailboxId, userId: mailbox.userId) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorMailboxUnavailable)

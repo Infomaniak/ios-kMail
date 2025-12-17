@@ -63,13 +63,11 @@ struct MailboxesManagementButtonView: View {
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                if !mailbox.isAvailable && style != .blockedPassword && style != .locked {
+                if mailbox.isLocked && style != .locked {
                     MailResourcesAsset.warningFill.swiftUIImage
                         .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
                 } else {
                     switch style {
-                    case .blockedPassword:
-                        ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
                     case .menuDrawer:
                         if let detailNumber {
                             Text(detailNumber, format: .indicatorCappedCount)
