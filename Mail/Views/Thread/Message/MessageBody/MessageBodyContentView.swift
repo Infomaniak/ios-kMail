@@ -28,6 +28,7 @@ struct MessageBodyContentView: View {
     @StateObject private var model = WebViewModel()
 
     @Binding var displayContentBlockedActionView: Bool
+    @Binding var initialContentLoading: Bool
 
     let presentableBody: PresentableBody?
     let blockRemoteContent: Bool
@@ -70,6 +71,9 @@ struct MessageBodyContentView: View {
         .onReceive(printNotificationPublisher) { _ in
             printMessage()
         }
+        .onChange(of: model.initialContentLoading) { _ in
+            initialContentLoading = model.initialContentLoading
+        }
     }
 
     private func printMessage() {
@@ -108,6 +112,7 @@ struct MessageBodyContentView: View {
 #Preview {
     MessageBodyContentView(
         displayContentBlockedActionView: .constant(false),
+        initialContentLoading: .constant(false),
         presentableBody: PreviewHelper.samplePresentableBody,
         blockRemoteContent: false,
         messageUid: "message_uid"
