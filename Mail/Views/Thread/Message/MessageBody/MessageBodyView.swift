@@ -27,6 +27,7 @@ struct MessageBodyView: View {
     @State private var isShowingLoadingError = false
 
     @Binding var displayContentBlockedActionView: Bool
+    @Binding var initialContentLoading: Bool
 
     let isRemoteContentBlocked: Bool
     let messageUid: String
@@ -41,6 +42,7 @@ struct MessageBodyView: View {
             } else {
                 MessageBodyContentView(
                     displayContentBlockedActionView: $displayContentBlockedActionView,
+                    initialContentLoading: $initialContentLoading,
                     presentableBody: messagesWorker.presentableBodies[messageUid],
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid
@@ -62,6 +64,7 @@ struct MessageBodyView: View {
 #Preview {
     MessageBodyView(
         displayContentBlockedActionView: .constant(false),
+        initialContentLoading: .constant(false),
         isRemoteContentBlocked: false,
         messageUid: PreviewHelper.sampleMessage.uid
     )

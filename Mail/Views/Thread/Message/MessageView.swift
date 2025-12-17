@@ -38,6 +38,7 @@ struct MessageView: View {
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
     @State private var displayContentBlockedActionView = false
+    @State private var initialContentLoading = true
 
     @Binding var threadForcedExpansion: [String: MessageExpansionType]
 
@@ -74,11 +75,12 @@ struct MessageView: View {
                     VStack(alignment: .leading, spacing: IKPadding.small) {
                         MessageBodyView(
                             displayContentBlockedActionView: $displayContentBlockedActionView,
+                            initialContentLoading: $initialContentLoading,
                             isRemoteContentBlocked: isRemoteContentBlocked,
                             messageUid: message.uid
                         )
 
-                        if featureAvailableProvider.isAvailable(.emojiReaction) {
+                        if featureAvailableProvider.isAvailable(.emojiReaction) && !initialContentLoading {
                             MessageReactionsView(
                                 messageUid: message.uid,
                                 emojiReactionNotAllowedReason: message.emojiReactionNotAllowedReason,
