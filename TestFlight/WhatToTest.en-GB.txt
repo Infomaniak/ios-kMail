@@ -1,4 +1,2 @@
-- Fixed an issue preventing the display of invitations to events 
-- Setting to request a read receipt when sending message
-- Added message read receipts
+- Prevent crash when reporting junk on macOS
 - Bug fixes and improvements

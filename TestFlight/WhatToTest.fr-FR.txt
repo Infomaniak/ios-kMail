@@ -1,4 +1,2 @@
-- Correction d'un problème empêchant l'affichage des invitations aux événements
-- Réglage pour demander un accusé de lecture à l'envoi
-- Ajout de l’accusé de lecture pour les messages 
+- Correction d'un crash sur l'action "signaler comme indésirable" sur macOS 
 - Corrections de bugs et améliorations
