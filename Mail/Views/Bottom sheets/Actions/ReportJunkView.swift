@@ -25,10 +25,7 @@ import MailResources
 import SwiftUI
 
 struct ReportJunkView: View {
-    @InjectService private var platformDetector: PlatformDetectable
-
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @Environment(\.dismiss) private var dismiss
 
     let reportedMessages: [Message]
     let origin: ActionOrigin
@@ -47,13 +44,6 @@ struct ReportJunkView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if platformDetector.isMac {
-                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk) {
-                    dismiss()
-                }
-                .padding(.horizontal, value: .medium)
-            }
-
             ForEach(filteredActions) { action in
                 if action != filteredActions.first {
                     IKDivider()
