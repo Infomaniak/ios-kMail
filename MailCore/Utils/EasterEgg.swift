@@ -21,10 +21,19 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 
 public struct EasterEgg {
+    public let lottieName: String
     public let shouldTrigger: (LocalPack?, Bool) -> Bool
     public let onTrigger: () -> Void
 
-    public static let christmas = EasterEgg { localPack, isStaff in
+    public static let allCases: [EasterEgg] = [
+        .christmas,
+        .newYear
+    ]
+
+    // We only display for individual users not the business ones
+    private static let allowedPacks: Set<LocalPack> = [.myKSuiteFree, .myKSuitePlus, .starterPack]
+
+    public static let christmas = EasterEgg(lottieName: "easter_egg_xmas") { localPack, isStaff in
         let calendar = Calendar(identifier: .gregorian)
         let components = calendar.dateComponents([.day, .month], from: Date())
         guard let month = components.month, let day = components.day else {
@@ -36,8 +45,6 @@ public struct EasterEgg {
             return false
         }
 
-        // We only display for individual users not the business ones
-        let allowedPacks: Set<LocalPack> = [.myKSuiteFree, .myKSuitePlus, .starterPack]
         guard allowedPacks.contains(localPack ?? .kSuitePaid) || isStaff else {
             return false
         }
@@ -48,5 +55,37 @@ public struct EasterEgg {
         let year = Calendar(identifier: .gregorian).component(.year, from: Date())
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .easterEgg, name: "XMas\(year)")
+    }
+
+    public static let newYear = EasterEgg(lottieName: "easter_egg_newyear") { localPack, isStaff in
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.day, .month], from: Date())
+        guard let month = components.month, let day = components.day else {
+            return false
+        }
+
+        let isCorrectPeriod = (month == 12 && day == 31) || (month == 1 && day == 1)
+        guard isCorrectPeriod else {
+            return false
+        }
+
+        guard allowedPacks.contains(localPack ?? .kSuitePaid) || isStaff else {
+            return false
+        }
+
+        return true
+    } onTrigger: {
+        let year = Calendar(identifier: .gregorian).component(.year, from: Date())
+        @InjectService var matomoUtils: MatomoUtils
+        matomoUtils.track(eventWithCategory: .easterEgg, name: "newYear\(year)")
+    }
+
+    public static func determineEasterEgg(localPack: LocalPack?, isStaff: Bool) -> EasterEgg? {
+        for easterEgg in EasterEgg.allCases {
+            if easterEgg.shouldTrigger(localPack, isStaff) {
+                return easterEgg
+            }
+        }
+        return nil
     }
 }

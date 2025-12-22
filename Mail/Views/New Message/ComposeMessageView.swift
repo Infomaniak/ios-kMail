@@ -77,6 +77,7 @@ struct ComposeMessageView: View {
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.currentUser) private var currentUser
     @Environment(\.dismissModal) private var dismissModal
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -458,7 +459,10 @@ struct ComposeMessageView: View {
                     mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
                 }
                 if !mainViewState.isShowingSetAppAsDefaultDiscovery {
-                    mainViewState.isShowingChristmasEasterEgg = true
+                    mainViewState.easterEgg = EasterEgg.determineEasterEgg(
+                        localPack: mailboxManager.mailbox.pack,
+                        isStaff: currentUser.value.isStaff ?? false
+                    )
                 }
             }
         }
