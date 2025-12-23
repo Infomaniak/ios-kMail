@@ -419,6 +419,7 @@ public extension MailboxManager {
         for message in messageByUids.messages {
             SentryDebug.captureIncorrectSnoozedMessageIfNecessary(message)
 
+            message.subject = message.formattedSubject
             if let existingMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
                 if folder.shouldOverrideMessage {
                     upsertMessage(message, oldMessage: existingMessage, threadsToUpdate: &threadsToUpdate, using: writableRealm)

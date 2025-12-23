@@ -250,7 +250,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public var formattedSubject: String {
-        return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
+        return subject?.formatted(.cleanSubject) ?? MailResourcesStrings.Localizable.noSubjectTitle
     }
 
     public var displayDate: DisplayDate {
