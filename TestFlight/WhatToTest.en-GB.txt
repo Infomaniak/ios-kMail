@@ -1,2 +1,1 @@
-- Prevent crash when reporting junk on macOS
 - Bug fixes and improvements
