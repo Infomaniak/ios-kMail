@@ -1,2 +1,1 @@
-- Correction d'un crash sur l'action "signaler comme indésirable" sur macOS 
 - Corrections de bugs et améliorations
