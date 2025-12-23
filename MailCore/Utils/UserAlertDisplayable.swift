@@ -44,6 +44,20 @@ public protocol UserAlertDisplayable {
     ///   - message: The message to display
     ///   - shouldShow: The boolean to show or not the snackbar
     func show(message: String, shouldShow: Bool)
+
+    /// Will present a snackbar while main app is opened, a local notification in Extension or Background
+    /// - Parameters:
+    ///   - message: The message to display
+    ///   - action: Title and closure associated with the action
+    ///   - shouldShow: The boolean to show or not the snackbar
+    func show(message: String, action: UserAlertAction?, shouldShow: Bool)
+
+    /// Will present a snackbar while main app is opened, a local notification in Extension or Background
+    /// - Parameters:
+    ///   - message: The message to display
+    ///   - action: Title and closure associated with the action
+    ///   - shouldShow: The boolean to show or not the snackbar
+    func showWithDelay(message: String, action: UserAlertAction?, shouldShow: Bool)
 }
 
 public typealias UserAlertAction = (name: String, closure: () -> Void)
@@ -70,9 +84,24 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
         show(message: message)
     }
 
+    public func show(message: String, action: UserAlertAction?, shouldShow: Bool) {
+        guard shouldShow else { return }
+        guard let action else {
+            show(message: message)
+            return
+        }
+        show(message: message, action: action)
+    }
+
+    public func showWithDelay(message: String, action: UserAlertAction?, shouldShow: Bool) {
+        guard shouldShow else { return }
+        let durationValue = UserDefaults.shared.cancelSendDelay.rawValue
+        showInContext(message: message, action: action, delay: durationValue)
+    }
+
     // MARK: - private
 
-    private func showInContext(message: String, action: UserAlertAction?) {
+    private func showInContext(message: String, action: UserAlertAction?, delay: Int? = nil) {
         Task { @MainActor in
             // check not in extension mode
             guard !Bundle.main.isExtension else {
@@ -87,20 +116,24 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
             }
 
             // Present the message as we are in foreground app context
-            presentInSnackbar(message: message, action: action)
+            presentInSnackbar(message: message, action: action, delay: delay)
         }
     }
 
     // MARK: Private
 
-    private func presentInSnackbar(message: String, action: UserAlertAction?) {
+    private func presentInSnackbar(message: String, action: UserAlertAction?, delay: Int? = nil) {
         guard let action else {
             snackbarPresenter.show(message: message)
             return
         }
-
         let snackBarAction = IKSnackBar.Action(title: action.name, action: action.closure)
-        snackbarPresenter.show(message: message, action: snackBarAction)
+        snackbarPresenter.show(
+            message: message,
+            duration: delay != nil ? .custom(CGFloat(delay!)) : .lengthLong,
+            action: snackBarAction,
+            contextView: nil
+        )
     }
 
     private func presentInLocalNotification(message: String, action: UserAlertAction?) {

@@ -162,7 +162,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
     func writeDraftToRealm(_ transactionable: Transactionable, draft: Draft) {
         try? transactionable.writeTransaction { realm in
             draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
-            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+            draft.delay = UserDefaults.shared.cancelSendDelay.safeValue
 
             realm.add(draft, update: .modified)
         }

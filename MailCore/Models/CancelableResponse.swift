@@ -24,9 +24,11 @@ public protocol CancelableResponse {
 
 public struct SendResponse: Decodable {
     public let scheduledDate: Date
+    public let cancelResource: String?
 
     enum CodingKeys: String, CodingKey {
         case scheduledDate = "etop"
+        case cancelResource
     }
 }
 
