@@ -128,7 +128,7 @@ public class Thread: Object, Decodable, Identifiable {
         guard let subject, !subject.isEmpty else {
             return MailResourcesStrings.Localizable.noSubjectTitle
         }
-        return subject
+        return subject.formatted(.cleanSubject)
     }
 
     public var shouldPresentAsDraft: Bool {
