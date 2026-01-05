@@ -52,12 +52,10 @@ extension MailCoreRealmAccessible {
 
             #if DEBUG
             Logger.general.error("Realm files will be deleted, you can resume the app with the debugger")
-            // This will force the execution to breakpoint, to give a chance to the dev for debugging
             raise(SIGINT)
             #endif
             
             guard canRetry else {
-                // Unable to recover after cleaning realm a first time
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
 
@@ -66,11 +64,9 @@ extension MailCoreRealmAccessible {
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
             guard canRetry else {
-                // Unable to recover after cleaning realm a first time
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
 
-            // Retry without recursion
             return getRealm(canRetry: false)
         }
     }
