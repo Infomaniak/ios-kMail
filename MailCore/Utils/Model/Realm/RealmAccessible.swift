@@ -52,6 +52,7 @@ extension MailCoreRealmAccessible {
 
             #if DEBUG
             Logger.general.error("Realm files will be deleted, you can resume the app with the debugger")
+            // This will force the execution to breakpoint, to give a chance to the dev for debugging
             raise(SIGINT)
             #endif
 
