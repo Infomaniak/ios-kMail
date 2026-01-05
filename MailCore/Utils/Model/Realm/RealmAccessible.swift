@@ -54,7 +54,7 @@ extension MailCoreRealmAccessible {
             Logger.general.error("Realm files will be deleted, you can resume the app with the debugger")
             raise(SIGINT)
             #endif
-            
+
             guard canRetry else {
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
