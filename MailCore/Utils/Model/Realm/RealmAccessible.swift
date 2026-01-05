@@ -55,6 +55,11 @@ extension MailCoreRealmAccessible {
             // This will force the execution to breakpoint, to give a chance to the dev for debugging
             raise(SIGINT)
             #endif
+            
+            guard canRetry else {
+                // Unable to recover after cleaning realm a first time
+                fatalError("Failed creating realm after a retry \(error.localizedDescription)")
+            }
 
             return getRealm(canRetry: false)
         } catch {
