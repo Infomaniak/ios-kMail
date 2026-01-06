@@ -49,7 +49,9 @@ public final class MailboxInfosManager {
                 // Renamed `isValid` to `isValidInLDAP`
                 if oldSchemaVersion < 8 {
                     migration.enumerateObjects(ofType: Mailbox.className()) { oldObject, newObject in
-                        newObject!["isValidInLDAP"] = oldObject!["isValid"]
+                        if newObject?.objectSchema["isValidInLDAP"] != nil {
+                            newObject!["isValidInLDAP"] = oldObject!["isValid"]
+                        }
                     }
                 }
             },
