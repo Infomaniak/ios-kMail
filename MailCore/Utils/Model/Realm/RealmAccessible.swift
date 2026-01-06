@@ -56,16 +56,18 @@ extension MailCoreRealmAccessible {
             raise(SIGINT)
             #endif
 
+            guard canRetry else {
+                fatalError("Failed creating realm after a retry \(error.localizedDescription)")
+            }
+
             return getRealm(canRetry: false)
         } catch {
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
             guard canRetry else {
-                // Unable to recover after cleaning realm a first time
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
 
-            // Retry without recursion
             return getRealm(canRetry: false)
         }
     }
