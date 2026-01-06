@@ -17,9 +17,10 @@
  */
 
 import Foundation
+import MailResources
 
 public struct SubjectFormatter: FormatStyle {
-    public func format(_ value: String) -> String {
+    private func clean(_ value: String) -> String {
         let normalizedSubject = value.precomposedStringWithCompatibilityMapping
 
         let cleanedSubject = String(normalizedSubject.unicodeScalars.map { scalar -> Character in
@@ -32,10 +33,22 @@ public struct SubjectFormatter: FormatStyle {
 
         return cleanedSubject
     }
+
+    private func cleanNotNullOrEmpty(_ value: String?) -> String {
+        guard let value, !value.isEmpty else {
+            return MailResourcesStrings.Localizable.noSubjectTitle
+        }
+
+        return clean(value)
+    }
+
+    public func format(_ value: String?) -> String {
+        return cleanNotNullOrEmpty(value)
+    }
 }
 
 public extension FormatStyle where Self == SubjectFormatter {
-    static var cleanSubject: SubjectFormatter {
+    static var cleanNotNullOrEmptySubject: SubjectFormatter {
         return SubjectFormatter()
     }
 }
