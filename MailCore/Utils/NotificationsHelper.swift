@@ -326,7 +326,6 @@ public enum NotificationsHelper {
                 return
             }
 
-            liveMessage.subject = liveMessage.formattedSubject
             liveMessage.preview = String(preview.prefix(512))
         }
     }

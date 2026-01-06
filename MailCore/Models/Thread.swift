@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakDI
-import MailResources
 import OrderedCollections
 import RealmSwift
 
