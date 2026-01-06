@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakDI
-import MailResources
 import OrderedCollections
 import RealmSwift
 
@@ -125,10 +124,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedSubject: String {
-        guard let subject, !subject.isEmpty else {
-            return MailResourcesStrings.Localizable.noSubjectTitle
-        }
-        return subject
+        return SubjectFormatter.cleanNotNullOrEmptySubject.format(subject)
     }
 
     public var shouldPresentAsDraft: Bool {

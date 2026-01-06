@@ -325,6 +325,7 @@ public enum NotificationsHelper {
             guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
                 return
             }
+
             liveMessage.preview = String(preview.prefix(512))
         }
     }
