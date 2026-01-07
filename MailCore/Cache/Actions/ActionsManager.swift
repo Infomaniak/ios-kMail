@@ -179,10 +179,6 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
             }
-        case .reportJunk:
-            Task { @MainActor in
-                origin.nearestReportJunkMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
-            }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
 
