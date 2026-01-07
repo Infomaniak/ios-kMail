@@ -45,7 +45,6 @@ extension Action: CaseIterable {
         .star,
         .star,
         .unstar,
-        .reportJunk,
         .spam,
         .nonSpam,
         .block,
@@ -77,7 +76,6 @@ extension Action: CaseIterable {
             .openMovePanel,
             .saveThreadInkDrive,
             .shareMailLink,
-            .reportJunk,
             .phishing,
             .block,
             .blockList,
@@ -350,12 +348,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.actionPrint,
         iconResource: MailResourcesAsset.printText,
         matomoName: "print"
-    )
-    static let reportJunk = Action(
-        id: "reportJunk",
-        title: MailResourcesStrings.Localizable.actionReportJunk,
-        iconResource: MailResourcesAsset.report,
-        matomoName: "reportJunk"
     )
     static let spam = Action(
         id: "spam",

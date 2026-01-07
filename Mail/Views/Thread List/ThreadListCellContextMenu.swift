@@ -64,7 +64,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
-            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
@@ -125,9 +124,6 @@ struct ThreadListCellContextMenu: ViewModifier {
                     originFolder: originFolder
                 )
                 .sheetViewStyle()
-            }
-            .mailFloatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
-                ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
             }
             .mailFloatingPanel(item: $blockSendersList,
                                title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
