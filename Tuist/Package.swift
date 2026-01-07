@@ -12,6 +12,7 @@ let packageSettings = PackageSettings(
         "Atlantis": .staticFramework,
         "DesignSystem": .framework,
         "DeviceAssociation": .framework,
+        "DotLottie": .framework,
         "ElegantEmojiPicker": .framework,
         "InAppTwoFactorAuthentication": .framework,
         "InfomaniakBugTracker": .framework,
@@ -64,6 +65,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4")),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/exyte/SVGView", .upToNextMajor(from: "1.0.6")),
         .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", .upToNextMajor(from: "1.1.0")),
@@ -85,12 +87,12 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
         .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
+        .package(url: "https://github.com/LottieFiles/dotlottie-ios", .upToNextMajor(from: "0.11.1")),
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
         .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
         .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
         .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.41.0")),
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-        .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "26.0.0")),
-        .package(url: "https://github.com/exyte/SVGView", .upToNextMajor(from: "1.0.6"))
+        .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "26.0.0"))
     ]
 )
