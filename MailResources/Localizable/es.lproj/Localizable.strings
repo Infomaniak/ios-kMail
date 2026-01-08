@@ -470,7 +470,7 @@
 "buttonStart" = "Empezar";
 
 /* loco:62b2dd31865d4941c92777d3 */
-"buttonStrikeThrough" = "Huelga a través de";
+"buttonStrikeThrough" = "Tachar";
 
 /* loco:62b2d26c5fd79a7b69199b92 */
 "buttonTextOptionsClose" = "Cerrar formato de texto";
@@ -644,7 +644,7 @@
 "datePickerTitle" = "Elige una fecha y hora";
 
 /* loco:6294648c19755a1ae9494462 */
-"dateTitle" = "Date:";
+"dateTitle" = "Fecha:";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "La eliminación de su cuenta será definitiva. No podrá reactivar su cuenta.";
@@ -1448,7 +1448,7 @@
 "settingsDensityOptionNormal" = "Normal";
 
 /* loco:6295d75d0ac5a369d16b45c5 */
-"settingsDisabled" = "Discapacitados";
+"settingsDisabled" = "Desactivado";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Activar las notificaciones";
@@ -1598,7 +1598,7 @@
 "settingsThemeTitle" = "Tema";
 
 /* loco:627a317093c0713ccc6df012 */
-"settingsThreadListDensityTitle" = "Densidad de la lista de hilos";
+"settingsThreadListDensityTitle" = "Densidad de la lista de conversación";
 
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Modo de visualización de mensajes";
@@ -1682,7 +1682,7 @@
 "snackbarMessageMoved" = "Mensaje trasladado a %@";
 
 /* loco:62ab22a33a9b9314d8557222 */
-"snackbarMoveCancelled" = "Mudanza cancelada";
+"snackbarMoveCancelled" = "Desplazamiento cancelado";
 
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "Contraseña copiada";
@@ -1802,7 +1802,7 @@
 "threadListEmptySpamButton" = "Spam vacío";
 
 /* loco:63ebad842446f5106c0058b2 */
-"threadListEmptyTrashButton" = "Vaciar la basura";
+"threadListEmptyTrashButton" = "Vaciar la papelera";
 
 /* loco:62bc355b27ec7c112e166eb2 */
 "threadListHeaderLastUpdate" = "Actualizado %@";
@@ -1847,7 +1847,7 @@
 "tooManyRecipients" = "No puede añadir esta dirección porque ha alcanzado el límite de destinatarios";
 
 /* loco:627e40419151de052d2d3962 */
-"trashFolder" = "Basura";
+"trashFolder" = "Papelera";
 
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Desbloquear";
