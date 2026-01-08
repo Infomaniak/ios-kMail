@@ -41,7 +41,6 @@ struct ThreadListCellContextMenu: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
