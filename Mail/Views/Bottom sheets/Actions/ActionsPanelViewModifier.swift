@@ -47,7 +47,6 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
@@ -73,7 +72,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
-            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
@@ -109,10 +107,6 @@ struct ActionsPanelViewModifier: ViewModifier {
                 completion: completionHandler
             )
             .sheetViewStyle()
-        }
-        .mailFloatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
-            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin, completionHandler: completionHandler)
-                .environmentObject(mailboxManager) // Force environment object to prevent crash on macOS
         }
         .mailFloatingPanel(item: $blockSendersList,
                            title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
