@@ -76,9 +76,6 @@
 /* loco:629f0fd21c251254874665a2 */
 "actionReportDisplayProblem" = "Signaler un problème d’affichage";
 
-/* loco:63c94bcfbaa59733423c0a83 */
-"actionReportJunk" = "Signaler comme indésirable";
-
 /* loco:62e13281cd9a910e235d06d2 */
 "actionShortMarkAsRead" = "Lu";
 
