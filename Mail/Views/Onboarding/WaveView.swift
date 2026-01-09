@@ -82,33 +82,19 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
 
         let coordinator = context.coordinator
 
-        guard coordinator.currentAccentColor != accentColor
-            || coordinator.currentColorScheme != context.environment.colorScheme
-        else { return }
-        coordinator.invalidateColors()
+        if coordinator.currentAccentColor != accentColor || coordinator.currentColorScheme != context.environment.colorScheme {
+            coordinator.invalidateColors()
 
-        let newColorScheme = context.environment.colorScheme
-        coordinator.currentAccentColor = accentColor
-        coordinator.currentColorScheme = newColorScheme
+            let newColorScheme = context.environment.colorScheme
+            uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = newColorScheme == .dark ? MailResourcesAsset
+                .backgroundSecondaryColor.color : accentColor.secondary.color
+            uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
+            if case .animation(let configuration) = slides[selectedSlide].content {
+                uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: configuration)
+            }
 
-        uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = newColorScheme == .dark ? MailResourcesAsset
-            .backgroundSecondaryColor.color : accentColor.secondary.color
-        uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
-
-        guard let illustrationAnimationViewContent = uiViewController.currentSlideViewCell?.illustrationAnimationViewContent
-        else {
-            return
-        }
-
-        switch illustrationAnimationViewContent {
-        case .airbnbLottieAnimationView(_, let ikLottieConfiguration):
-            uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: ikLottieConfiguration)
-        case .dotLottieAnimationView(let dotLottieAnimationView, _):
-            uiViewController.currentSlideViewCell?.setThemeFor(
-                colorScheme: newColorScheme,
-                accentColor: accentColor,
-                dotLottieViewModel: dotLottieAnimationView.dotLottieViewModel
-            )
+            coordinator.currentAccentColor = accentColor
+            coordinator.currentColorScheme = newColorScheme
         }
     }
 
@@ -157,26 +143,11 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
                 MailResourcesAsset.backgroundSecondaryColor.color :
                 UserDefaults.shared.accentColor.secondary.color
 
-            guard let illustrationAnimationViewContent = slideViewCell.illustrationAnimationViewContent,
-                  colorUpdateNeededAtIndex.contains(index) else {
-                return
+            if case .animation(let configuration) = slides[index].content,
+               colorUpdateNeededAtIndex.contains(index) {
+                slideViewCell.updateAnimationColors(configuration: configuration)
+                colorUpdateNeededAtIndex.remove(index)
             }
-
-            switch illustrationAnimationViewContent {
-            case .airbnbLottieAnimationView(_, let ikLottieConfiguration):
-                slideViewCell.updateAnimationColors(configuration: ikLottieConfiguration)
-            case .dotLottieAnimationView(let dotLottieAnimationView, _):
-                if let currentColorScheme,
-                   let currentAccentColor {
-                    slideViewCell.setThemeFor(
-                        colorScheme: currentColorScheme,
-                        accentColor: currentAccentColor,
-                        dotLottieViewModel: dotLottieAnimationView.dotLottieViewModel
-                    )
-                }
-            }
-
-            colorUpdateNeededAtIndex.remove(index)
         }
 
         func invalidateColors() {

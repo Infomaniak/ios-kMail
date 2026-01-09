@@ -17,7 +17,6 @@
  */
 
 import DesignSystem
-import DotLottie
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -34,31 +33,10 @@ struct CreateAccountView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     @ModalState(context: ContextKeys.createAccount) private var isPresentingCreateAccount = false
 
     @ObservedObject var loginHandler: LoginHandler
-
-    private var animation: DotLottieAnimation {
-        let defaultAnimation = DotLottieAnimation(
-            fileName: "createAccount",
-            bundle: MailResourcesResources.bundle,
-            config: AnimationConfig(autoplay: true, loop: true)
-        )
-
-        if colorScheme == .dark {
-            if accentColor == .blue {
-                defaultAnimation.setTheme("Blue-Dark")
-            } else {
-                defaultAnimation.setTheme("Pink-Dark")
-            }
-        } else if accentColor == .blue {
-            defaultAnimation.setTheme("Blue-Light")
-        }
-
-        return defaultAnimation
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -67,7 +45,11 @@ struct CreateAccountView: View {
                 .padding(.top, value: .micro)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            animation.view()
+            accentColor.createAccountImage.swiftUIImage
+                .resizable()
+                .scaledToFit()
+                .padding(.top, value: .large)
+                .padding(.bottom, value: .giant)
 
             Text(MailResourcesStrings.Localizable.newAccountTitle)
                 .textStyle(.header1)
