@@ -1,1 +1,3 @@
+- Cancel delay for sending message
+- Time sensitive notification for 2FA
 - Bug fixes and improvements

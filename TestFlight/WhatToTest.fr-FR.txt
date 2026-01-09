@@ -1,1 +1,3 @@
+- Délai d'envoi de mail
+- Notification urgente de 2FA
 - Corrections de bugs et améliorations
