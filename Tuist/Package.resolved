@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "dotlottie-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LottieFiles/dotlottie-ios",
-      "state" : {
-        "revision" : "4213e7298eb94b81ce08c226302759c34ce59366",
-        "version" : "0.11.1"
-      }
-    },
-    {
       "identity" : "elegant-emoji-picker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/Elegant-Emoji-Picker",
@@ -122,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "df57bb493c01f7ab2753e3c6a14f947897f16e46",
-        "version" : "1.5.0"
+        "revision" : "ca793dc5613ae4fd67b209e3f5f0222e00a6da4d",
+        "version" : "1.4.4"
       }
     },
     {

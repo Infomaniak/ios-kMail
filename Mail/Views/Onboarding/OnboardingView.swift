@@ -239,7 +239,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
 extension SlideCollectionViewCell {
     func updateAnimationColors(configuration: IKLottieConfiguration) {
-        guard case .airbnbLottieAnimationView(let animation, _) = illustrationAnimationViewContent else { return }
+        guard let animation = illustrationAnimationView else { return }
         IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
 
         if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
