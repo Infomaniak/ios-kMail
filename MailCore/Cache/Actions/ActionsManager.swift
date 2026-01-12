@@ -113,7 +113,7 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
-        let messagesWithDuplicates = messages.addingDuplicates()
+        let messagesWithDuplicates = Set(messages.addingDuplicates()).toArray()
 
         switch action {
         case .delete:
