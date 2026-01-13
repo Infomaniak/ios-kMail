@@ -41,18 +41,30 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
 
     func body(content: Content) -> some View {
         content
-            .popover(item: $item, arrowEdge: popoverArrowEdge) { item in
-                if isCompactWindow {
-                    if #available(iOS 16.0, *) {
-                        panelContent(item).modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large,
-                                                                                bottomPadding: IKPadding.medium))
-                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-                    } else {
-                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
-                                                                                        bottomPadding: IKPadding.medium))
-                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-                    }
+            .sheet(item: Binding(get: {
+                isCompactWindow ? item : nil
+            }, set: { newValue in
+                item = newValue
+            })) { item in
+                if #available(iOS 16.0, *) {
+                    panelContent(item)
+                        .modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large,
+                                                              bottomPadding: IKPadding.medium))
+                        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 } else {
+                    panelContent(item)
+                        .modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
+                                                                      bottomPadding: IKPadding.medium))
+                        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                }
+            }
+            .popover(item:
+                Binding(get: {
+                    isCompactWindow ? nil : item
+                }, set: { newValue in
+                    item = newValue
+                }),
+                arrowEdge: popoverArrowEdge) { item in
                     ScrollView {
                         panelContent(item)
                     }
@@ -60,7 +72,6 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
                     .frame(idealWidth: 400)
                     // DO NOT SUPPRESS the scaleEffect it's required for the contrast for macOS
                     .background(MailResourcesAsset.backgroundColor.swiftUIColor.scaleEffect(1.5))
-                }
             }
     }
 }
