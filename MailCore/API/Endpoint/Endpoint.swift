@@ -23,7 +23,16 @@ import InfomaniakCore
 
 public extension ApiEnvironment {
     var mailHost: String {
-        return "mail.\(host)"
+        switch self {
+        case .prod, .preprod:
+            return "mail.\(host)"
+        case .customHost(let host):
+            if host.contains("mail-mr") {
+                return host
+            }
+
+            return "mail.\(host)"
+        }
     }
 
     var calendarHost: String {
