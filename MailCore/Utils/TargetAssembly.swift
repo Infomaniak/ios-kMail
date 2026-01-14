@@ -45,7 +45,7 @@ open class TargetAssembly {
     public static let bundleId = "com.infomaniak.mail"
     public static let loginConfig = InfomaniakLogin.Config(
         clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4",
-        loginURL: URL(string: "https://login.\(apiEnvironment.host)/")!,
+        loginURL: URL(string: "https://\(apiEnvironment.loginHost)/")!,
         accessType: nil
     )
 
