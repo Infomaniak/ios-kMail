@@ -26,7 +26,7 @@ public extension ApiEnvironment {
         switch self {
         case .prod, .preprod:
             return "mail.\(host)"
-        case let .customHost(host):
+        case .customHost(let host):
             if host.contains("mail-mr") {
                 return host
             }
