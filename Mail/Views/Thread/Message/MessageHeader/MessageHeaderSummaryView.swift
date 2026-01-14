@@ -62,7 +62,7 @@ struct MessageHeaderSummaryView: View {
                             size: 40
                         )
                     }
-                    .adaptivePanel(item: $contactViewRecipient) { recipient in
+                    .adaptivePanel(item: $contactViewRecipient, style: .native) { recipient in
                         ContactActionsView(recipient: recipient, bimi: message.bimi)
                             .environmentObject(mailboxManager)
                             .environment(\.currentUser, currentUser)

@@ -24,10 +24,47 @@ import SwiftUI
 public extension View {
     func adaptivePanel<Item: Identifiable, Content: View>(
         item: Binding<Item?>,
+        style: AdaptivePanelStyle = .selfSizing,
         popoverArrowEdge: Edge = .top,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View {
-        return modifier(AdaptivePanelViewModifier(item: item, popoverArrowEdge: popoverArrowEdge, panelContent: content))
+        return modifier(AdaptivePanelViewModifier(
+            item: item,
+            style: style,
+            popoverArrowEdge: popoverArrowEdge,
+            panelContent: content
+        ))
+    }
+}
+
+public enum AdaptivePanelStyle {
+    case native
+    case selfSizing
+}
+
+@available(iOS 16.4, *)
+struct NativePanelView<Item: Identifiable, PanelContent: View>: View {
+    @State private var selection: PresentationDetent = .medium
+
+    let item: Item
+
+    @ViewBuilder let panelContent: (Item) -> PanelContent
+
+    var body: some View {
+        IKFloatingPanelView(
+            currentDetent: $selection,
+            closeButtonHidden: false,
+            topPadding: IKPadding.large,
+            bottomPadding: 0,
+            detents: [.medium, .large],
+            dragIndicator: .visible
+        ) {
+            ScrollView {
+                panelContent(item)
+                    .padding(.bottom, IKPadding.medium)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
     }
 }
 
@@ -36,7 +73,9 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
 
     @Binding var item: Item?
 
-    var popoverArrowEdge: Edge
+    let style: AdaptivePanelStyle
+    let popoverArrowEdge: Edge
+
     @ViewBuilder let panelContent: (Item) -> PanelContent
 
     func body(content: Content) -> some View {
@@ -46,16 +85,24 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
             }, set: { newValue in
                 item = newValue
             })) { item in
-                if #available(iOS 16.0, *) {
-                    panelContent(item)
-                        .modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large,
-                                                              bottomPadding: IKPadding.medium))
+                if style == .native,
+                   #available(iOS 16.4, *) {
+                    NativePanelView(item: item, panelContent: panelContent)
                         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 } else {
-                    panelContent(item)
-                        .modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
-                                                                      bottomPadding: IKPadding.medium))
-                        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                    if #available(iOS 16.4, *) {
+                        panelContent(item)
+                            .modifier(SelfSizingPanelViewModifier(
+                                topPadding: IKPadding.large,
+                                bottomPadding: IKPadding.medium
+                            ))
+                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                    } else {
+                        panelContent(item)
+                            .modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
+                                                                          bottomPadding: IKPadding.medium))
+                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                    }
                 }
             }
             .popover(item:

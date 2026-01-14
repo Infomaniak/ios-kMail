@@ -90,7 +90,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $messages, popoverArrowEdge: popoverArrowEdge) { messages in
+        content.adaptivePanel(item: $messages, style: .native, popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
                 user: currentUser.value,
                 target: messages,
