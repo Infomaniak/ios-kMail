@@ -61,6 +61,7 @@ struct ComposeMessageBodyView: View {
             AttachmentsHeaderView()
             RichHTMLEditor(html: $draftBody, textAttributes: textAttributes)
                 .focused($focusedField, equals: .editor)
+                .onEditorLoaded(perform: editorDidLoad)
                 .editorCSS(Self.customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
@@ -74,11 +75,24 @@ struct ComposeMessageBodyView: View {
         }
     }
 
+    private func editorDidLoad(_ richHTMLEditorView: RichHTMLEditorView) {
+        Task {
+            try? await richHTMLEditorView.webView.evaluateJavaScript(.removeAllProperties)
+        }
+    }
+
     private func setupEditor(_ editor: RichHTMLEditorView) {
         Task {
             let contentBlocker = ContentBlocker(webView: editor.webView)
             try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
+
             disableDragAndDrop(editor: editor)
+
+            editor.webView.configuration.userContentController.addUserScript(
+                named: "fixEmailStyle",
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
         }
     }
 
