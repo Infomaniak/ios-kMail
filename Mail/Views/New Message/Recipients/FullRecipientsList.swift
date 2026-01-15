@@ -36,15 +36,17 @@ struct FullRecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        BackportedFlowLayout(recipients, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) { recipient in
-            RecipientChip(recipient: recipient, fieldType: type, focusedField: _focusedField) {
-                remove(recipient: recipient)
-            } switchFocusHandler: {
-                switchFocus()
+        FlowLayout(alignment: .leading, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
+            ForEach(recipients) { recipient in
+                RecipientChip(recipient: recipient, fieldType: type, focusedField: _focusedField) {
+                    remove(recipient: recipient)
+                } switchFocusHandler: {
+                    switchFocus()
+                }
+                .focused($focusedField, equals: .chip(type.hashValue, recipient))
+                .environmentObject(mailboxManager)
+                .environment(\.currentUser, currentUser)
             }
-            .focused($focusedField, equals: .chip(type.hashValue, recipient))
-            .environmentObject(mailboxManager)
-            .environment(\.currentUser, currentUser)
         }
     }
 
