@@ -32,7 +32,7 @@ public enum JavaScriptDeclaration {
     case removeAllProperties
     case documentReadyState
 
-    public var description: String {
+    public var invocation: String {
         switch self {
         case .normalizeMessageWidth(let width, let messageUid):
             return "normalizeMessageWidth(\(width), '\(messageUid)')"
@@ -56,7 +56,7 @@ public extension WKWebView {
 
     @discardableResult
     func evaluateJavaScript(_ declaration: JavaScriptDeclaration) async throws -> Any? {
-        return try await evaluateJavaScript(declaration.description)
+        return try await evaluateJavaScript(declaration.invocation)
     }
 }
 
