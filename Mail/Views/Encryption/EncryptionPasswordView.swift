@@ -105,23 +105,11 @@ struct EncryptionPasswordView: View {
                         }
                     }
 
-                    Group {
-                        if #available(iOS 16.0, *) {
-                            ShareLink(item: draft.encryptionPassword) {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.buttonShare)
-                                } icon: {
-                                    MailResourcesAsset.squareArrowUp.swiftUIImage
-                                }
-                            }
-                        } else {
-                            Backport.ShareLink(item: draft.encryptionPassword) {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.buttonShare)
-                                } icon: {
-                                    MailResourcesAsset.squareArrowUp.swiftUIImage
-                                }
-                            }
+                    ShareLink(item: draft.encryptionPassword) {
+                        Label {
+                            Text(MailResourcesStrings.Localizable.buttonShare)
+                        } icon: {
+                            MailResourcesAsset.squareArrowUp.swiftUIImage
                         }
                     }
                     .disabled(draft.encryptionPassword.isEmpty)

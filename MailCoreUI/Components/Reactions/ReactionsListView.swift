@@ -72,11 +72,7 @@ public struct ReactionsListView: View {
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
         .sheet(item: $selectedReactionToDisplay) { selectedReaction in
-            if #available(iOS 16, *) {
-                ReactionsDetailsView(reactions: reactions, initialSelection: selectedReaction)
-            } else {
-                ReactionsDetailsBackportView(reactions: reactions, initialSelection: selectedReaction)
-            }
+            ReactionsDetailsView(reactions: reactions, initialSelection: selectedReaction)
         }
     }
 

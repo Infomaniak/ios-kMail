@@ -37,7 +37,7 @@ struct ComposeMessageCellTextField: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    AxisTextField("", text: $text, axis: .vertical)
+                    TextField("", text: $text, axis: .vertical)
                         .focused($focusedField, equals: .subject)
                         .textStyle(.body)
                         .accessibilityIdentifier(type.title)

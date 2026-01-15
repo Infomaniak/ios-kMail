@@ -81,15 +81,9 @@ struct AttachmentPreview: View {
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                     .sheet(item: $downloadedAttachmentURL) { downloadedAttachmentURL in
-                        if #available(iOS 16.0, *) {
-                            ActivityView(activityItems: [downloadedAttachmentURL.url])
-                                .ignoresSafeArea(edges: [.bottom])
-                                .presentationDetents([.medium, .large])
-                        } else {
-                            ActivityView(activityItems: [downloadedAttachmentURL.url])
-                                .ignoresSafeArea(edges: [.bottom])
-                                .backport.presentationDetents([.medium, .large])
-                        }
+                        ActivityView(activityItems: [downloadedAttachmentURL.url])
+                            .ignoresSafeArea(edges: [.bottom])
+                            .presentationDetents([.medium, .large])
                     }
 
                     if platformDetector.isMac {

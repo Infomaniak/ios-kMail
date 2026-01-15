@@ -20,7 +20,6 @@ import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
-import NavigationBackport
 import SwiftUI
 
 struct SettingsSubMenuLabel: View {
@@ -56,14 +55,8 @@ struct DeepLinkSettingsSubMenuCell: View {
     let value: SettingsDestination
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationLink(value: value) {
-                SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
-            }
-        } else {
-            NBNavigationLink(value: value) {
-                SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
-            }
+        NavigationLink(value: value) {
+            SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
         }
     }
 }

@@ -42,7 +42,7 @@ public struct NavigationBarStyleViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { viewController in
+            .introspect(.viewController, on: .iOS(.v16, .v17, .v18, .v26)) { viewController in
                 guard navigationViewController != viewController.navigationController else { return }
                 navigationViewController = viewController.navigationController
                 updateAppearanceNavigationController()

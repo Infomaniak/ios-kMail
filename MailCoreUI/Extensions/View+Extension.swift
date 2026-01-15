@@ -48,15 +48,7 @@ public extension View {
     }
 
     func navigationBarThreadListStyle() -> some View {
-        if #available(iOS 16.0, *) {
-            return toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUIColor, for: .navigationBar)
-        } else {
-            return modifier(NavigationBarStyleViewModifier(
-                standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance
-            ))
-        }
+        return toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUIColor, for: .navigationBar)
     }
 
     func navigationBarThreadViewStyle(appearance: UINavigationBarAppearance) -> some View {
@@ -72,15 +64,7 @@ public extension View {
     }
 
     func navigationBarSearchListStyle() -> some View {
-        if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUIColor, for: .navigationBar)
-        } else {
-            return modifier(NavigationBarStyleViewModifier(
-                standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                compactAppearance: nil
-            ))
-        }
+        return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUIColor, for: .navigationBar)
     }
 
     func emptyState<T>(isEmpty: Bool, @ViewBuilder emptyView: () -> T) -> some View where T: View {

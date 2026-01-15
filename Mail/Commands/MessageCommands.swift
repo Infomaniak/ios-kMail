@@ -23,7 +23,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-@available(iOS 16.0, *)
 struct MessageCommands: View {
     @Environment(\.openWindow) private var openWindow
 

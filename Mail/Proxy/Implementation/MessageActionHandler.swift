@@ -161,12 +161,6 @@ public struct MessageActionHandler: MessageActionHandlable {
     /// Update the unread count
     private func updateUnreadBadgeCount() async {
         let unreadCount = await NotificationsHelper.getUnreadCount()
-        if #available(iOS 16.0, *) {
-            try? await UNUserNotificationCenter.current().setBadgeCount(unreadCount)
-        } else {
-            Task { @MainActor in
-                UIApplication.shared.applicationIconBadgeNumber = unreadCount
-            }
-        }
+        try? await UNUserNotificationCenter.current().setBadgeCount(unreadCount)
     }
 }

@@ -22,18 +22,16 @@ import SwiftUI
 
 struct ComposeMessageScene: Scene {
     var body: some Scene {
-        if #available(iOS 16.1, *) {
-            WindowGroup(
-                MailResourcesStrings.Localizable.settingsTitle,
-                id: DesktopWindowIdentifier.composeWindowIdentifier,
-                for: ComposeMessageIntent.self
-            ) { $composeMessageIntent in
-                if let composeMessageIntent {
-                    ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
-                        .standardWindow()
-                }
+        WindowGroup(
+            MailResourcesStrings.Localizable.settingsTitle,
+            id: DesktopWindowIdentifier.composeWindowIdentifier,
+            for: ComposeMessageIntent.self
+        ) { $composeMessageIntent in
+            if let composeMessageIntent {
+                ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
+                    .standardWindow()
             }
-            .defaultAppStorage(.shared)
         }
+        .defaultAppStorage(.shared)
     }
 }

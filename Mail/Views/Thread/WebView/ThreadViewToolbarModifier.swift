@@ -92,7 +92,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if #available(iOS 16.0, *), showMoreButton {
+                    if showMoreButton {
                         moreButton
                     }
                 }
@@ -128,7 +128,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
 
-                    if #unavailable(iOS 16.0), showMoreButton {
+                    if showMoreButton {
                         moreButton
                     }
                 }
