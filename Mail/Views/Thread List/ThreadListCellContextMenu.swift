@@ -81,9 +81,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             userEmail: currentUser.value.email
         )
 
-        guard #available(iOS 16.4, *) else {
-            return ([], actions.quickActions + actions.listActions)
-        }
         return actions
     }
 
@@ -101,14 +98,12 @@ struct ThreadListCellContextMenu: ViewModifier {
             .contextMenu {
                 let computedActions = actions // Capture actions to avoid re-computation
 
-                if #available(iOS 16.4, *) {
-                    ControlGroup {
-                        ForEach(computedActions.quickActions) { action in
-                            ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
-                        }
+                ControlGroup {
+                    ForEach(computedActions.quickActions) { action in
+                        ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
                     }
-                    .controlGroupStyle(.compactMenu)
                 }
+                .controlGroupStyle(.compactMenu)
 
                 ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
                     multipleSelectionViewModel.toggleMultipleSelection(of: thread, withImpact: false)
@@ -160,15 +155,9 @@ struct ThreadListCellContextMenu: ViewModifier {
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
             }
             .sheet(item: $shareMailLink) { shareMailLinkResult in
-                if #available(iOS 16.0, *) {
-                    ActivityView(activityItems: [shareMailLinkResult.url])
-                        .ignoresSafeArea(edges: [.bottom])
-                        .presentationDetents([.medium, .large])
-                } else {
-                    ActivityView(activityItems: [shareMailLinkResult.url])
-                        .ignoresSafeArea(edges: [.bottom])
-                        .backport.presentationDetents([.medium, .large])
-                }
+                ActivityView(activityItems: [shareMailLinkResult.url])
+                    .ignoresSafeArea(edges: [.bottom])
+                    .presentationDetents([.medium, .large])
             }
             .snoozedFloatingPanel(
                 messages: messagesToSnooze,
