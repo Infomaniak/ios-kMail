@@ -227,7 +227,8 @@ public extension Endpoint {
     static func quotas(mailbox: String, productId: Int) -> Endpoint {
         return .mailboxes.appending(path: "/quotas", queryItems: [
             URLQueryItem(name: "mailbox", value: mailbox),
-            URLQueryItem(name: "product_id", value: "\(productId)")
+            URLQueryItem(name: "product_id", value: "\(productId)"),
+            URLQueryItem(name: "unit", value: "B")
         ])
     }
 

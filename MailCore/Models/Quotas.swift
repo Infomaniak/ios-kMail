@@ -24,15 +24,11 @@ public class Quotas: EmbeddedObject, Codable {
     @Persisted public var sizeCheckedAt: Int64
     @Persisted public var maxStorage: Int64?
 
-    public var byteSize: Double {
-        Double(size * 1024)
-    }
-
     public var progression: Double {
         guard let maxStorage else {
             return Constants.minimumQuotasProgressionToDisplay
         }
-        let currentProgression = byteSize / Double(maxStorage)
+        let currentProgression = Double(size) / Double(maxStorage)
         return max(Constants.minimumQuotasProgressionToDisplay, currentProgression)
     }
 
