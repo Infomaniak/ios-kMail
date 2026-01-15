@@ -33,9 +33,9 @@ public enum Constants {
             "CODE_SIGN_IDENTITY[sdk=macosx*]": SettingValue(stringLiteral: "Apple Development")
         ])
 
-    public static let deploymentTarget = DeploymentTargets.iOS("15.0")
+    public static let deploymentTarget = DeploymentTargets.iOS("16.6")
 
-    public static let appIntentsDeploymentTarget = DeploymentTargets.iOS("16.4")
+    public static let appIntentsDeploymentTarget = DeploymentTargets.iOS("16.6")
 
     public static let destinations = Set<Destination>([.iPhone, .iPad, .macCatalyst])
 
