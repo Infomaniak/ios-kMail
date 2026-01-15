@@ -23,30 +23,6 @@ import Sentry
 import SwiftUI
 import WebKit
 
-enum JavaScriptDeclaration {
-    case normalizeMessageWidth(CGFloat, String)
-    case removeAllProperties
-    case documentReadyState
-
-    var description: String {
-        switch self {
-        case .normalizeMessageWidth(let width, let messageUid):
-            return "normalizeMessageWidth(\(width), '\(messageUid)')"
-        case .removeAllProperties:
-            return "removeAllProperties()"
-        case .documentReadyState:
-            return "document.readyState"
-        }
-    }
-}
-
-extension WKWebView {
-    @discardableResult
-    func evaluateJavaScript(_ declaration: JavaScriptDeclaration) async throws -> Any {
-        return try await evaluateJavaScript(declaration.description)
-    }
-}
-
 final class WebViewController: UIViewController {
     let messageUid: String
     let openURL: OpenURLAction

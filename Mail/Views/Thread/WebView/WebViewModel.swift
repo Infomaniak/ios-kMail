@@ -18,6 +18,7 @@
 
 import Combine
 import MailCore
+import MailResources
 import RealmSwift
 import Sentry
 import WebKit
@@ -104,14 +105,13 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     private func loadScripts() {
-        var scripts = ["javaScriptBridge", "sizeHandler", "fixEmailStyle"]
+        var scripts: [UserScript] = [.javaScriptBridge, .sizeHandler, .fixEmailStyle]
         #if DEBUG
-        scripts.insert("captureLog", at: 0)
+        scripts.insert(.captureLog, at: 0)
         #endif
 
         for script in scripts {
-            webView.configuration.userContentController
-                .addUserScript(named: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+            webView.loadUserScript(script)
         }
 
         if let mungeScript = Constants.mungeEmailScript {

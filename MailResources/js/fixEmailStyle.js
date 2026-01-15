@@ -52,6 +52,7 @@ function removeFromStylesheets(properties) {
             removePropertiesForAllCSSRules(properties, styleSheet);
         } catch (error) {
             // The stylesheet cannot be modified
+            console.error(`[FIX_EMAIL_STYLE] Error while modifying stylesheet: ${error}`);
         }
     }
 }

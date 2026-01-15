@@ -22,3 +22,4 @@ function captureLog(message) {
 
 window.console.log = captureLog;
 window.console.info = captureLog;
+window.console.error = captureLog;
