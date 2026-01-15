@@ -110,9 +110,10 @@ extension Action: CaseIterable {
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
 
         let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
+        let isInSpamFolder = message.folder?.role == .spam
         var spamAction: Action? {
             guard !isFromMe else { return nil }
-            return message.folder?.role == .spam ? .nonSpam : .spam
+            return isInSpamFolder ? .nonSpam : .spam
         }
         let archive = message.folder?.role != .archive
         let unread = !message.seen
@@ -122,8 +123,8 @@ extension Action: CaseIterable {
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
-            isFromMe ? nil : .phishing,
-            isFromMe ? nil : .blockList,
+            isFromMe || isInSpamFolder ? nil : .phishing,
+            isFromMe || isInSpamFolder ? nil : .blockList,
             .shareMailLink,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
@@ -151,16 +152,17 @@ extension Action: CaseIterable {
         let snoozedActions = snoozedActions(messages, folder: originFolder)
 
         let isSelfThread = isSelfThread(messages, userEmail)
+        let isInSpamFolder = originFolder?.role == .spam
         var spamAction: Action? {
             guard !isSelfThread else { return nil }
-            return originFolder?.role == .spam ? .nonSpam : .spam
+            return isInSpamFolder ? .nonSpam : .spam
         }
         let star = messages.allSatisfy(\.flagged)
 
         let tempListActions: [Action?] = [
             spamAction,
-            isSelfThread ? nil : .phishing,
-            isSelfThread ? nil : .blockList,
+            isSelfThread || isInSpamFolder ? nil : .phishing,
+            isSelfThread || isInSpamFolder ? nil : .blockList,
             star ? .unstar : .star,
             .saveThreadInkDrive
         ]
@@ -177,9 +179,10 @@ extension Action: CaseIterable {
         let showUnstar = messages.contains { $0.flagged }
 
         let isSelfThread = isSelfThread(messages, userEmail)
+        let isInSpamFolder = originFolder?.role == .spam
         var spamAction: Action? {
             guard !isSelfThread else { return nil }
-            return originFolder?.role == .spam ? .nonSpam : .spam
+            return isInSpamFolder ? .nonSpam : .spam
         }
 
         let snoozedActions = snoozedActions(messages, folder: originFolder)
@@ -187,8 +190,8 @@ extension Action: CaseIterable {
             .openMovePanel,
             unread ? .markAsUnread : .markAsRead,
             spamAction,
-            isSelfThread ? nil : .phishing,
-            isSelfThread ? nil : .blockList,
+            isSelfThread || isInSpamFolder ? nil : .phishing,
+            isSelfThread || isInSpamFolder ? nil : .blockList,
             archive ? .archive : .moveToInbox,
             showUnstar ? .unstar : .star,
             .saveThreadInkDrive
