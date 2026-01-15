@@ -84,7 +84,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.1.0")),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "2.1.0")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "3.0.0")),
         .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
         .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
