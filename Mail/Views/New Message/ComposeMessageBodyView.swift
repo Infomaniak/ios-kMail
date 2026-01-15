@@ -20,6 +20,7 @@ import InfomaniakCoreSwiftUI
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
+import MailResources
 import OSLog
 import PhotosUI
 import RealmSwift
@@ -88,11 +89,7 @@ struct ComposeMessageBodyView: View {
 
             disableDragAndDrop(editor: editor)
 
-            editor.webView.configuration.userContentController.addUserScript(
-                named: "fixEmailStyle",
-                injectionTime: .atDocumentStart,
-                forMainFrameOnly: true
-            )
+            editor.webView.loadUserScript(.fixEmailStyle)
         }
     }
 
