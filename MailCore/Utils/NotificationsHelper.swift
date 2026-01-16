@@ -24,6 +24,7 @@ import InfomaniakDI
 import InfomaniakNotifications
 import Intents
 import MailResources
+import Nuke
 import OSLog
 import RealmSwift
 import SwiftRegex
@@ -239,53 +240,90 @@ public enum NotificationsHelper {
         }
     }
 
+    private static func getUserAvatarForPreview(mailboxManager: MailboxManager, commonContact: CommonContact?) async -> INImage? {
+        guard let commonContact = commonContact else { return nil }
+
+        if let currentToken = mailboxManager.apiFetcher.currentToken,
+           let authenticatedRequest = commonContact.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken) {
+            do {
+                let (data, _) = try await ImagePipeline.shared.data(for: authenticatedRequest)
+                if !data.isEmpty {
+                    return INImage(imageData: data)
+                }
+            } catch {
+                return nil
+            }
+        }
+
+        return nil
+    }
+
     public static func generateCommunicationNotificationFor(
         message: Message,
         fromRecipient: Recipient,
         mailboxManager: MailboxManager,
         incompleteNotification: UNMutableNotificationContent
     ) async -> UNNotificationContent? {
+        @InjectService var accountManager: AccountManager
+        guard let userProfile = await accountManager.userProfileStore.getUserProfile(id: mailboxManager.mailbox.userId) else {
+            return nil
+        }
+
+        let contactConfiguration = ContactConfiguration.correspondent(
+            correspondent: fromRecipient,
+            associatedBimi: message.bimi,
+            contextUser: userProfile,
+            contextMailboxManager: mailboxManager
+        )
+
+        let commonContact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
+        let image = await getUserAvatarForPreview(mailboxManager: mailboxManager, commonContact: commonContact)
+
         let localContact = mailboxManager.contactManager.getContact(for: fromRecipient)
         let handleSender = INPersonHandle(value: fromRecipient.email, type: .emailAddress)
-        let sender = INPerson(personHandle: handleSender,
-                              nameComponents: nil,
-                              displayName: localContact?.name ?? fromRecipient.name,
-                              image: nil,
-                              contactIdentifier: localContact?.localIdentifier,
-                              customIdentifier: nil)
+
+        let sender = INPerson(
+            personHandle: handleSender,
+            nameComponents: nil,
+            displayName: localContact?.name ?? fromRecipient.name,
+            image: image,
+            contactIdentifier: localContact?.localIdentifier,
+            customIdentifier: nil
+        )
 
         let handleRecipient = INPersonHandle(value: MailResourcesStrings.Localizable.contactMe, type: .unknown)
-        let recipient = INPerson(personHandle: handleRecipient,
-                                 nameComponents: nil,
-                                 displayName: MailResourcesStrings.Localizable.contactMe,
-                                 image: nil,
-                                 contactIdentifier: localContact?.localIdentifier,
-                                 customIdentifier: nil,
-                                 isMe: true)
+        let recipient = INPerson(
+            personHandle: handleRecipient,
+            nameComponents: nil,
+            displayName: MailResourcesStrings.Localizable.contactMe,
+            image: nil,
+            contactIdentifier: localContact?.localIdentifier,
+            customIdentifier: nil,
+            isMe: true
+        )
 
         let body = await getMessagePreview(from: message, mailboxManager: mailboxManager)
         let subtitle = message.formattedSubject
         incompleteNotification.body = body
 
-        let intent = INSendMessageIntent(recipients: [sender, recipient],
-                                         outgoingMessageType: .outgoingMessageText,
-                                         content: body,
-                                         speakableGroupName: INSpeakableString(spokenPhrase: subtitle),
-                                         conversationIdentifier: message.uid,
-                                         serviceName: nil,
-                                         sender: sender,
-                                         attachments: nil)
+        let intent = INSendMessageIntent(
+            recipients: [recipient],
+            outgoingMessageType: .outgoingMessageText,
+            content: body,
+            speakableGroupName: INSpeakableString(spokenPhrase: subtitle),
+            conversationIdentifier: message.uid,
+            serviceName: nil,
+            sender: sender,
+            attachments: nil
+        )
 
         let interaction = INInteraction(intent: intent, response: nil)
-
         interaction.direction = .incoming
 
         do {
             try await interaction.donate()
             let updatedContent = try incompleteNotification.updating(from: intent)
-
             return updatedContent
-
         } catch {
             return nil
         }
