@@ -240,20 +240,21 @@ public enum NotificationsHelper {
         }
     }
 
-    private static func getUserAvatarForPreview(mailboxManager: MailboxManager, commonContact: CommonContact) async -> INImage? {
-        if let currentToken = mailboxManager.apiFetcher.currentToken,
-           let authenticatedRequest = commonContact.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken) {
-            do {
-                let (data, _) = try await ImagePipeline.shared.data(for: authenticatedRequest)
-                if !data.isEmpty {
-                    return INImage(imageData: data)
-                }
-            } catch {
-                return nil
-            }
+    private static func userAvatarForPreview(mailboxManager: MailboxManager, commonContact: CommonContact) async -> INImage? {
+        guard let currentToken = mailboxManager.apiFetcher.currentToken,
+              let authenticatedRequest = commonContact.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken) else {
+            return nil
         }
 
-        return nil
+        do {
+            let (data, _) = try await ImagePipeline.shared.data(for: authenticatedRequest)
+            if !data.isEmpty {
+                return INImage(imageData: data)
+            }
+            return nil
+        } catch {
+            return nil
+        }
     }
 
     public static func generateCommunicationNotificationFor(
@@ -275,17 +276,15 @@ public enum NotificationsHelper {
         )
 
         let commonContact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-        let image = await getUserAvatarForPreview(mailboxManager: mailboxManager, commonContact: commonContact)
-
-        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient)
+        let image = await userAvatarForPreview(mailboxManager: mailboxManager, commonContact: commonContact)
         let handleSender = INPersonHandle(value: fromRecipient.email, type: .emailAddress)
 
         let sender = INPerson(
             personHandle: handleSender,
             nameComponents: nil,
-            displayName: localContact?.name ?? fromRecipient.name,
+            displayName: commonContact.fullName,
             image: image,
-            contactIdentifier: localContact?.localIdentifier,
+            contactIdentifier: String(commonContact.id),
             customIdentifier: nil
         )
 
@@ -295,7 +294,7 @@ public enum NotificationsHelper {
             nameComponents: nil,
             displayName: MailResourcesStrings.Localizable.contactMe,
             image: nil,
-            contactIdentifier: localContact?.localIdentifier,
+            contactIdentifier: "me",
             customIdentifier: nil,
             isMe: true
         )
