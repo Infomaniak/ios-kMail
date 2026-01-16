@@ -1,3 +1,3 @@
-- Délai d'envoi de mail
-- Notification urgente de 2FA
+- Photo des contacts dans les notifications
+- Correction édition lors du forward d'un mail
 - Corrections de bugs et améliorations

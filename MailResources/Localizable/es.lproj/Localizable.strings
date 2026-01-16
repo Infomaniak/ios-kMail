@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 09 Dec 2025 15:20:46 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 16 Jan 2026 15:32:34 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -355,9 +355,6 @@
 /* loco:62b1c2566ff2923a1a5b0832 */
 "buttonCreate" = "Cree";
 
-/* loco:62c2ee4c19620114866e5bb2 */
-"buttonCreateAccount" = "Crear una cuenta";
-
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Añadir una carpeta";
 
@@ -609,9 +606,6 @@
 
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Reenviado";
-
-/* loco:64b621d61bdb4c64d60e80d2 */
-"contentDescriptionIconInvalidPassword" = "Desbloquear la dirección de correo electrónico";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nuevo";
@@ -1216,6 +1210,9 @@
 /* loco:62baab4c017b586c23177d62 */
 "notificationGeneralChannelName" = "Notificaciones generales";
 
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Puede que hayas recibido nuevos mensajes";
+
 /* loco:64ba47ab214bcfcf4c056014 */
 "notificationTitleArchive" = "Archivado";
 
@@ -1346,13 +1343,13 @@
 "searchFilterFolder" = "Todas las carpetas";
 
 /* loco:62d5561a4fa44b4a25143fc2 */
-"searchFilterRead" = "Leer";
+"searchFilterRead" = "Leídos";
 
 /* loco:62d5563645aa5e5f197eef92 */
 "searchFilterUnread" = "No leídos";
 
 /* loco:6537b4ae2236eeafef03c882 */
-"searchFolderName" = "Buscar en";
+"searchFolderName" = "Buscar";
 
 /* loco:662f89ba8e8c8321190ae342 */
 "selectSignatureNone" = "Sin firma";
