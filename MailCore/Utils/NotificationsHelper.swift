@@ -284,7 +284,7 @@ public enum NotificationsHelper {
             nameComponents: nil,
             displayName: commonContact.fullName,
             image: image,
-            contactIdentifier: String(commonContact.id),
+            contactIdentifier: commonContact.id,
             customIdentifier: nil
         )
 

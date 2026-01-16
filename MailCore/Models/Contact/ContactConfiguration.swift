@@ -85,9 +85,9 @@ extension ContactConfiguration: Identifiable {
         case .user(let user):
             return user.id
         case .contact(let wrappedContact):
-            return wrappedContact.id
+            return wrappedContact.id.hashValue
         case .emptyContact:
-            return CommonContact.emptyContact.id
+            return CommonContact.emptyContact.id.hashValue
         case .groupContact(let groupContact):
             return groupContact.id
         case .addressBook(let addressBook):
