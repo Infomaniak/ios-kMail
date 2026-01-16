@@ -26,16 +26,13 @@ public struct AvatarImageRequest {
     let shouldAuthenticate: Bool
 
     public func authenticatedRequestIfNeeded(token: ApiToken) -> ImageRequest? {
-        guard let unauthenticatedImageRequest = imageRequest,
-              let unauthenticatedUrlRequest = unauthenticatedImageRequest.urlRequest else {
+        guard let imageRequest,
+              let urlRequest = imageRequest.urlRequest,
+              shouldAuthenticate else {
             return imageRequest
         }
 
-        guard shouldAuthenticate else {
-            return unauthenticatedImageRequest
-        }
-
-        var authenticatedUrlRequest = unauthenticatedUrlRequest
+        var authenticatedUrlRequest = urlRequest
         authenticatedUrlRequest.addValue(
             "Bearer \(token.accessToken)",
             forHTTPHeaderField: "Authorization"
