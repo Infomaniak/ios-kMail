@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 09 Dec 2025 15:20:46 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 16 Jan 2026 15:32:34 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -355,9 +355,6 @@
 /* loco:62b1c2566ff2923a1a5b0832 */
 "buttonCreate" = "Erstellen";
 
-/* loco:62c2ee4c19620114866e5bb2 */
-"buttonCreateAccount" = "Ein Konto erstellen";
-
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Einen Ordner hinzufügen";
 
@@ -609,9 +606,6 @@
 
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Weitergeleitet";
-
-/* loco:64b621d61bdb4c64d60e80d2 */
-"contentDescriptionIconInvalidPassword" = "E-Mail-Adresse entsperren";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Neu";
