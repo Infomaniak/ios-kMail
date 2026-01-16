@@ -240,9 +240,7 @@ public enum NotificationsHelper {
         }
     }
 
-    private static func getUserAvatarForPreview(mailboxManager: MailboxManager, commonContact: CommonContact?) async -> INImage? {
-        guard let commonContact = commonContact else { return nil }
-
+    private static func getUserAvatarForPreview(mailboxManager: MailboxManager, commonContact: CommonContact) async -> INImage? {
         if let currentToken = mailboxManager.apiFetcher.currentToken,
            let authenticatedRequest = commonContact.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken) {
             do {
