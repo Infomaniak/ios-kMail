@@ -28,7 +28,7 @@ public final class CommonContact: Identifiable {
     /// Empty contact is a singleton
     public static let emptyContact = CommonContact()
 
-    public let id: Int
+    public let id: String
 
     public let fullName: String
     public let email: String
@@ -40,7 +40,7 @@ public final class CommonContact: Identifiable {
         let recipient = Recipient(email: "", name: "")
         email = recipient.email
         fullName = recipient.name
-        id = recipient.id.hashValue
+        id = recipient.id
         color = Color.backgroundColor(from: recipient.hash, with: UIConstants.avatarColors)
         avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: true)
     }
@@ -53,7 +53,7 @@ public final class CommonContact: Identifiable {
         contextMailboxManager: MailboxManager
     ) {
         email = correspondent.email
-        id = correspondent.id.hashValue
+        id = correspondent.id
 
         if correspondent.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
@@ -88,7 +88,7 @@ public final class CommonContact: Identifiable {
 
     /// Init form a `UserProfile`
     init(user: UserProfile) {
-        id = user.id
+        id = "user-\(user.id)"
         fullName = user.displayName
         email = user.email
         color = Color.backgroundColor(from: user.id, with: UIConstants.avatarColors)
