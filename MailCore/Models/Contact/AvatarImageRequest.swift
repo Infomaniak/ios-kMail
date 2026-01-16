@@ -28,7 +28,7 @@ public struct AvatarImageRequest {
     public func authenticatedRequestIfNeeded(token: ApiToken) -> ImageRequest? {
         guard let unauthenticatedImageRequest = imageRequest,
               let unauthenticatedUrlRequest = unauthenticatedImageRequest.urlRequest else {
-            return nil
+            return imageRequest
         }
 
         guard shouldAuthenticate else {
