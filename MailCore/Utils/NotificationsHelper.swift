@@ -247,8 +247,8 @@ public enum NotificationsHelper {
         }
 
         do {
-            let (data, _) = try await ImagePipeline.shared.data(for: authenticatedRequest)
-            if !data.isEmpty {
+            let uiImage = try await ImagePipeline.shared.image(for: authenticatedRequest)
+            if let data = uiImage.pngData() {
                 return INImage(imageData: data)
             }
             return nil
