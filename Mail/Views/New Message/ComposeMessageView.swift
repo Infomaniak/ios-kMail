@@ -192,14 +192,17 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .availableSpatialTapGesture { location in
-            // If the user directly tap on the UIScrollView, and not a
-            // subview like a TextField, we should target the editor
-            let targetView = scrollView?.hitTest(location, with: nil)
-            if targetView is UIScrollView {
-                focusedField = .editor
-            }
-        }
+        .gesture(
+            SpatialTapGesture()
+                .onEnded { event in
+                    // If the user directly tap on the UIScrollView, and not a
+                    // subview like a TextField, we should target the editor
+                    let targetView = scrollView?.hitTest(event.location, with: nil)
+                    if targetView is UIScrollView {
+                        focusedField = .editor
+                    }
+                }
+        )
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

@@ -78,16 +78,12 @@ struct ThreadListView: View {
     }
 
     private var selection: Binding<Thread?>? {
-        if #available(iOS 16.4, *) {
-            return Binding(get: {
-                mainViewState.selectedThread
-            }, set: { newValue in
-                guard !multipleSelectionViewModel.isEnabled else { return }
-                mainViewState.selectedThread = newValue
-            })
-        } else {
-            return nil
-        }
+        return Binding(get: {
+            mainViewState.selectedThread
+        }, set: { newValue in
+            guard !multipleSelectionViewModel.isEnabled else { return }
+            mainViewState.selectedThread = newValue
+        })
     }
 
     init(mailboxManager: MailboxManager,

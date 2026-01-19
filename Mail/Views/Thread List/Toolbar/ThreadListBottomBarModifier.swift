@@ -55,7 +55,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
         content
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if #available(iOS 16.0, *), isShowingBottomBarItems {
+                    if isShowingBottomBarItems {
                         moreButton
                     }
                 }
@@ -76,7 +76,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
                             LegacyToolbarSpacer()
                         }
 
-                        if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                        if isShowingBottomBarItems {
                             moreButton
                         }
                     }

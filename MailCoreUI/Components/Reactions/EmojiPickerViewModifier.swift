@@ -78,29 +78,16 @@ struct EmojiPickerViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .popover(isPresented: $isPresented) {
-                if #available(iOS 16.0, *) {
-                    ElegantEmojiPickerView(
-                        selectedEmoji: $selectedEmoji,
-                        configuration: configuration,
-                        localization: localization,
-                        background: backgroundColor,
-                        userDefaultsStore: .shared
-                    )
-                    .ignoresSafeArea()
-                    .frame(minWidth: minSize, minHeight: minSize)
-                    .presentationDetents([.medium, .large])
-                } else {
-                    ElegantEmojiPickerView(
-                        selectedEmoji: $selectedEmoji,
-                        configuration: configuration,
-                        localization: localization,
-                        background: backgroundColor,
-                        userDefaultsStore: .shared
-                    )
-                    .ignoresSafeArea()
-                    .frame(minWidth: minSize, minHeight: minSize)
-                    .backport.presentationDetents([.medium, .large])
-                }
+                ElegantEmojiPickerView(
+                    selectedEmoji: $selectedEmoji,
+                    configuration: configuration,
+                    localization: localization,
+                    background: backgroundColor,
+                    userDefaultsStore: .shared
+                )
+                .ignoresSafeArea()
+                .frame(minWidth: minSize, minHeight: minSize)
+                .presentationDetents([.medium, .large])
             }
     }
 }

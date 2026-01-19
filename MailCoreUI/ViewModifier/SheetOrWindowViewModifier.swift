@@ -26,19 +26,14 @@ public extension View {
         desktopIdentifier: String,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View where Item: Identifiable & Codable & Hashable, Content: View {
-        if #available(iOS 16.0, *) {
-            return modifier(IdentifiableSheetOrDesktopWindowViewModifier(
-                item: item,
-                desktopWindowIdentifier: desktopIdentifier,
-                sheetContent: content
-            ))
-        } else {
-            return sheet(item: item, content: content)
-        }
+        return modifier(IdentifiableSheetOrDesktopWindowViewModifier(
+            item: item,
+            desktopWindowIdentifier: desktopIdentifier,
+            sheetContent: content
+        ))
     }
 }
 
-@available(iOS 16.0, *)
 public struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable & Hashable, SheetContent: View>:
     ViewModifier {
     @InjectService private var platformDetector: PlatformDetectable
