@@ -214,6 +214,10 @@ extension Action: CaseIterable {
         }
     }
 
+    private static func draftActions() -> (quickActions: [Action], listActions: [Action]) {
+        return ([], [.shareMailLink, .saveThreadInkDrive])
+    }
+
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
     }
@@ -222,7 +226,9 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
-        if messages.count == 1, let message = messages.first {
+        if messages.contains(where: { $0.isDraft }) {
+            return draftActions()
+        } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
