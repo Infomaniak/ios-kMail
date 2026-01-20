@@ -89,7 +89,8 @@ let project = Project(name: "Mail",
                       options: .options(
                           automaticSchemesOptions: .enabled(
                               targetSchemesGrouping: .notGrouped
-                          )
+                          ),
+                          developmentRegion: "en"
                       ),
                       targets: [
                           mainTargetWith(name: "Infomaniak Mail", destinations: [.iPhone, .iPad]),
