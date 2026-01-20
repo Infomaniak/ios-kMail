@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
@@ -89,8 +90,16 @@ struct ActionsPanelViewModifier: ViewModifier {
         return initialDate
     }
 
+    private func getPanelStyle(for messages: [Message]?) -> AdaptivePanelStyle {
+        guard let messages, messages.contains(where: { $0.isDraft }) else {
+            return .native
+        }
+
+        return .selfSizing
+    }
+
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $messages, style: .native, popoverArrowEdge: popoverArrowEdge) { messages in
+        content.adaptivePanel(item: $messages, style: getPanelStyle(for: messages), popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
                 user: currentUser.value,
                 target: messages,
