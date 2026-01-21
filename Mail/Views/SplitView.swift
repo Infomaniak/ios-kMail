@@ -235,19 +235,13 @@ struct SplitView: View {
         .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
             AskForReviewView(
                 appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
-                feedbackURL: MailResourcesStrings.Localizable.urlUserReportiOS,
                 reviewManager: reviewManager,
                 onLike: {
                     matomo.track(eventWithCategory: .appReview, name: "like")
-                    UserDefaults.shared.appReview = .readyForReview
                     reviewManager.requestReview()
                 },
-                onDislike: { userReportURL in
+                onDislike: {
                     matomo.track(eventWithCategory: .appReview, name: "dislike")
-                    if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-                        UserDefaults.shared.appReview = .feedback
-                        mainViewState.isShowingSafariView = IdentifiableURL(url: userReportURL)
-                    }
                 }
             )
         }
