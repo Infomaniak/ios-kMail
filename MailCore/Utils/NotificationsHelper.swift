@@ -304,7 +304,7 @@ public enum NotificationsHelper {
         incompleteNotification.body = body
 
         let intent = INSendMessageIntent(
-            recipients: [recipient],
+            recipients: [recipient, sender],
             outgoingMessageType: .outgoingMessageText,
             content: body,
             speakableGroupName: INSpeakableString(spokenPhrase: subtitle),
