@@ -58,7 +58,7 @@ struct MailboxesManagementButtonView: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
                     .foregroundStyle(.tint)
-                Text(mailbox.email)
+                Text(mailbox.emailIdn)
                     .textStyle(.body)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)

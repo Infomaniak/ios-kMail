@@ -63,7 +63,7 @@ struct MailboxesManagementView: View {
                         .iconSize(.large)
                         .foregroundStyle(.tint)
 
-                    Text(mailboxManager.mailbox.email)
+                    Text(mailboxManager.mailbox.emailIdn)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
