@@ -347,6 +347,10 @@ struct SplitView: View {
             return false
         }
 
+        guard mainViewState.composeMessageIntent == nil else {
+            return false
+        }
+
         guard UserDefaults.shared.nextShowSync <= appLaunchCounter.value else {
             return false
         }
