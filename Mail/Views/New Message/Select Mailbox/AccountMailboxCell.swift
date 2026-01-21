@@ -33,7 +33,7 @@ struct AccountMailboxCell: View {
             }
         } label: {
             Label {
-                Text(mailbox.email)
+                Text(mailbox.emailIdn)
             } icon: {
                 if selectedMailbox?.mailboxId == mailbox.mailboxId {
                     MailResourcesAsset.check.swiftUIImage
