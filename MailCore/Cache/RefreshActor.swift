@@ -97,7 +97,7 @@ public actor RefreshActor {
                     }
 
                     try await mailboxManager?.threads(folder: folder)
-                } catch {
+                } catch let error as AFErrorWithContext where error.afError.responseCode ?? 0 >= 500 {
                     await serverStatusManager.updateStatus(using: mailboxManager)
                     throw error
                 }
