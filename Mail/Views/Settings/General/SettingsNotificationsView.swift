@@ -92,7 +92,7 @@ struct SettingsNotificationsView: View {
                                 subscribedTopics?.removeAll { $0 == mailbox.notificationTopicName }
                             }
                         })) {
-                            Text(mailbox.email)
+                            Text(mailbox.emailIdn)
                                 .textStyle(.body)
                         }
                         .tint(.accentColor)

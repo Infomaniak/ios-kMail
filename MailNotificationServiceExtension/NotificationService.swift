@@ -48,7 +48,7 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     func prepareEmptyMessageNotification(in mailbox: Mailbox) {
-        bestAttemptContent?.title = mailbox.email
+        bestAttemptContent?.title = mailbox.emailIdn
         if #available(iOSApplicationExtension 16.0, *) {
             bestAttemptContent?.filterCriteria = MailboxInfosManager.getObjectId(
                 mailboxId: mailbox.mailboxId,

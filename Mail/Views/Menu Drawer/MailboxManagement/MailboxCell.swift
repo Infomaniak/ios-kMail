@@ -76,7 +76,7 @@ struct MailboxCell: View {
             navigationDrawerState.close()
         }
         .mailFloatingPanel(isPresented: $isShowingLockedView) {
-            LockedMailboxView(email: mailbox.email)
+            LockedMailboxView(email: mailbox.emailIdn)
         }
     }
 }
