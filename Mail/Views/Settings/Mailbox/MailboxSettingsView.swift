@@ -44,7 +44,7 @@ struct MailboxSettingsView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationTitle(mailboxManager.mailbox.email)
+        .navigationTitle(mailboxManager.mailbox.emailIdn)
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Mailbox"])

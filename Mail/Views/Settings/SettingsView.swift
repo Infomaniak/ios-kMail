@@ -63,7 +63,7 @@ struct SettingsView: View {
                     Group {
                         SettingsSectionTitleView(title: myKSuite.isFree ? "my kSuite" : "my kSuite+")
 
-                        SettingsSubMenuCell(title: myKSuiteMailbox.email) {
+                        SettingsSubMenuCell(title: myKSuiteMailbox.emailIdn) {
                             MailboxSettingsView(mailboxManager: mailboxManager)
                         }
 
@@ -97,7 +97,7 @@ struct SettingsView: View {
                     ForEachMailboxView(userId: currentUser.value.id,
                                        excludedMailboxIds: [myKSuiteMailbox?.mailboxId ?? 0]) { mailbox in
                         if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
-                            SettingsSubMenuCell(title: mailbox.email) {
+                            SettingsSubMenuCell(title: mailbox.emailIdn) {
                                 MailboxSettingsView(mailboxManager: mailboxManager)
                             }
                         }
