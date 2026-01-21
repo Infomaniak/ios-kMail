@@ -14,12 +14,12 @@ jobs:
     runs-on: [ self-hosted, iOS ]
 
     steps:
-      - uses: jdx/mise-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
         with:
           cache: false
           experimental: true
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Create test env
         env:
           ENV_PATH: "MailTests/Env.swift"

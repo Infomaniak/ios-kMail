@@ -11,13 +11,13 @@ concurrency:
 jobs:
   build:
     name: Validate localization files
-    runs-on: [ self-hosted, iOS ]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup mise
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v3
         with:
           cache: false
           experimental: true
