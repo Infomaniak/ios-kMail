@@ -103,6 +103,7 @@ extension RandomAccessCollection where Element == Message {
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
+    private let networkMonitor = NetworkMonitor.shared
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
@@ -114,6 +115,10 @@ public class ActionsManager: ObservableObject {
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         let messagesWithDuplicates = Set(messages.addingDuplicates()).toArray()
+
+        guard networkMonitor.isConnected || action == .quickActionPanel else {
+            throw MailError.noConnection
+        }
 
         switch action {
         case .delete:
