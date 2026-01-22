@@ -19,7 +19,6 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           cache: false
-          experimental: true
       - name: Create test env
         env:
           ENV_PATH: "MailUITests/Env.swift"

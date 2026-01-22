@@ -21,6 +21,5 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           cache: false
-          experimental: true
       - name: SwiftLint
         run: swiftlint --config .swiftlint.yml --config .swiftlint-ci.yml --reporter github-actions-logging .
