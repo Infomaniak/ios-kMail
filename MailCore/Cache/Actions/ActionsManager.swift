@@ -103,7 +103,7 @@ extension RandomAccessCollection where Element == Message {
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
-    @ObservedObject private var networkMonitor = NetworkMonitor.shared
+    private let networkMonitor = NetworkMonitor.shared
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
