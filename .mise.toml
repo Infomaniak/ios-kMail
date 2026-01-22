@@ -1,8 +1,8 @@
 [tools]
-tuist = '4.119.4'
-periphery = '3.4.0'
-swiftformat = '0.58.7'
-swiftlint = '0.63.0'
-sentry-cli = "latest"
-pipx = "latest"
-"pipx:infomaniak/importloco" = "1.2.0"
+tuist = { version = '4.119.4', os = ["macos"] }
+periphery = { version = '3.4.0', os = ["macos"] }
+swiftformat = { version = '0.58.7', os = ["macos"] }
+swiftlint = { version = '0.63.0', os = ["macos"] }
+sentry-cli = { version = "latest", os = ["macos"] }
+pipx = { version = "latest", os = ["macos", "linux"] }
+"pipx:infomaniak/importloco" = { version = '1.2.0', os = ["macos", "linux"] }
