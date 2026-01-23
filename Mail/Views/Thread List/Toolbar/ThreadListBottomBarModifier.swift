@@ -51,16 +51,10 @@ struct ThreadListBottomBarModifier: ViewModifier {
         }
     }
 
-    private var hasDraftInSelection: Bool {
-        multipleSelectionViewModel.selectedItems.values.contains { $0.hasDrafts }
-    }
-
-    private var hasScheduleInSelection: Bool {
-        multipleSelectionViewModel.selectedItems.values.contains { $0.numberOfScheduledDraft > 0 }
-    }
-
     private var shouldDisableArchiveButton: Bool {
-        return hasDraftInSelection || hasScheduleInSelection
+        return multipleSelectionViewModel.selectedItems.values.contains {
+            $0.numberOfScheduledDraft > 0 || $0.hasDrafts
+        }
     }
 
     func body(content: Content) -> some View {
