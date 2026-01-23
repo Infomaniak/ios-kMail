@@ -90,16 +90,15 @@ struct ActionsPanelViewModifier: ViewModifier {
         return initialDate
     }
 
-    private func getPanelStyle() -> AdaptivePanelStyle {
+    private var panelStyle: AdaptivePanelStyle {
         guard let messages, messages.contains(where: { $0.isDraft }) else {
             return .native
         }
-
         return .selfSizing
     }
 
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $messages, style: getPanelStyle(),
+        content.adaptivePanel(item: $messages, style: panelStyle,
                               popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
                 user: currentUser.value,
