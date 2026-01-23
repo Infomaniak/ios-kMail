@@ -70,7 +70,7 @@ extension DestructiveActionAlertState {
             return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
 
         case .moveSnooze(let impactedMessages):
-            return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
+            return AttributedString(MailResourcesStrings.Localizable.snoozeMoveConfirmAlertDescription(impactedMessages))
 
         case .deleteFolder(let folder):
             var attributedDescription = AttributedString(MailResourcesStrings.Localizable
