@@ -7,29 +7,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Scan unused code
-    runs-on: [ self-hosted, iOS ]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8
-        with:
-          cache: false
-      - name: Create test env
-        env:
-          ENV_PATH: "MailTests/Env.swift"
-        run: |
-          touch $ENV_PATH
-          echo -e "enum Env {\n static let token = \"\"\n static let userId = 0\n static let mailboxId = 0\n static let mailboxUuid = \"\"\n}" > $ENV_PATH
-      - name: Create ui test env
-        env:
-          ENV_PATH: "MailUITests/Env.swift"
-        run: |
-          touch $ENV_PATH
-          echo -e "enum Env {\n static let testAccountEmail = \"\"\n static let testAccountPassword = \"\"\n}" > $ENV_PATH
-      - name: Generate
-        run: tuist install && tuist generate
-      - name: Periphery
-        run: periphery scan --retain-codable-properties --format github-actions --relative-results --strict
+  periphery:
+    uses: infomaniak/.github/.github/workflows/periphery.yml@feat/add-workflows
