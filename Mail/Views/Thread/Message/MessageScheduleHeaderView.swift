@@ -20,6 +20,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
@@ -88,4 +89,13 @@ struct MessageScheduleHeaderView: View {
             }
         }
     }
+}
+
+#Preview {
+    MessageScheduleHeaderView(scheduleDate: .now, draftResource: "", showBottomSeparator: false)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(MainViewState(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            selectedFolder: PreviewHelper.sampleFolder
+        ))
 }
