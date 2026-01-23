@@ -8,7 +8,7 @@ concurrency:
 
 jobs:
   periphery:
-    uses: infomaniak/.github/.github/workflows/periphery.yml@feat/add-workflows
+    uses: infomaniak/.github/.github/workflows/periphery.yml@v1
     with:
       setup_step: |
         echo -e "enum Env {\n static let token = \"\"\n static let userId = 0\n static let mailboxId = 0\n static let mailboxUuid = \"\"\n}" > MailTests/Env.swift;
