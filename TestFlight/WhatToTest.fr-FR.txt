@@ -1,3 +1,3 @@
-- Photo des contacts dans les notifications
-- Correction édition lors du forward d'un mail
+- Affichage de l'avatar dans les notifications seulement si nécessaire
+- Correction de l'affichage sujet notification 
 - Corrections de bugs et améliorations
