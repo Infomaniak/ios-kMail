@@ -70,10 +70,10 @@ struct MessageHeaderActionView<Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconSize)
                         .foregroundStyle(iconColor)
+
                     Text(message)
                         .font(MailTextStyle.label.font)
                         .foregroundStyle(textColor)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 if shouldDisplayActions {
