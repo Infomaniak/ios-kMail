@@ -119,7 +119,7 @@ extension Action: CaseIterable {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -133,6 +133,10 @@ extension Action: CaseIterable {
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
+        if message.isScheduledDraft == true {
+            tempListActions.removeAll { $0 == .archive }
+        }
+
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
         return (Action.quickActions, listActions)
@@ -142,7 +146,7 @@ extension Action: CaseIterable {
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
-        let quickActions: [Action] = [
+        var quickActions: [Action] = [
             .openMovePanel,
             unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
@@ -159,13 +163,23 @@ extension Action: CaseIterable {
         }
         let star = messages.allSatisfy(\.flagged)
 
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             spamAction,
             isSelfThread || isInSpamFolder ? nil : .phishing,
             isSelfThread || isInSpamFolder ? nil : .blockList,
             star ? .unstar : .star,
             .saveThreadInkDrive
         ]
+
+        if messages.contains(where: { $0.isScheduledDraft == true }) {
+            tempListActions.removeAll { $0 == .star || $0 == .unstar }
+            quickActions = quickActions.map { action in
+                if action == .archive {
+                    return star ? .unstar : .star
+                }
+                return action
+            }
+        }
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 

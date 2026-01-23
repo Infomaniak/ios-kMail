@@ -55,6 +55,14 @@ struct ThreadListBottomBarModifier: ViewModifier {
         multipleSelectionViewModel.selectedItems.values.contains { $0.hasDrafts }
     }
 
+    private var hasScheduleInSelection: Bool {
+        multipleSelectionViewModel.selectedItems.values.contains { $0.numberOfScheduledDraft > 0 }
+    }
+
+    private var shouldDisableArchiveButton: Bool {
+        return hasDraftInSelection || hasScheduleInSelection
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -76,7 +84,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
                             }
                             .accessibilityLabel(action.title)
                             .accessibilityAddTraits(.isButton)
-                            .disabled(action == .archive && hasDraftInSelection)
+                            .disabled(action == .archive && shouldDisableArchiveButton)
 
                             LegacyToolbarSpacer()
                         }
