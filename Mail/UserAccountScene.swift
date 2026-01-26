@@ -74,7 +74,7 @@ struct UserAccountScene: Scene {
     private func willEnterForeground() {
         if rootViewState.state != .onboarding && rootViewState.state != .preloading {
             appLaunchCounter.increase()
-            reviewManager.decreaseOpeningUntilReview()
+            reviewManager.decreaseActionUntilReview()
         }
         rootViewState.transitionToLockViewIfNeeded()
         checkAppVersion()
