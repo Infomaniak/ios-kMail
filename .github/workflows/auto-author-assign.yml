@@ -4,11 +4,13 @@ on:
   pull_request_target:
     types: [ opened, reopened ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   pull-requests: write
 
 jobs:
   assign-author:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: toshimaru/auto-author-assign@4d585cc37690897bd9015942ed6e766aa7cdb97f
+    uses: infomaniak/.github/.github/workflows/auto_author_assign.yml@v1
