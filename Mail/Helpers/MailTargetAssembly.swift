@@ -49,7 +49,7 @@ open class CommonAppAndShareTargetAssembly: TargetAssembly {
                 URLOpener()
             },
             Factory(type: ReviewManageable.self) { _, _ in
-                ReviewManager(userDefaults: UserDefaults.shared)
+                ReviewManager(userDefaults: UserDefaults.shared, actionBeforeFirstReview: 50)
             }
         ]
     }
