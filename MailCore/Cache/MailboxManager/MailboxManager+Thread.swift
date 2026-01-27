@@ -752,21 +752,19 @@ public extension MailboxManager {
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: resultThreads)
 
-            let allUniqueFetchedMessagesUids = Set(fetchedThreads.flatMap { $0.messages.map(\.uid) })
-            for messageUid in allUniqueFetchedMessagesUids {
-                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
-                    continue
-                }
-                self.keepCacheAttributes(for: liveMessage, keepProperties: .standard, using: writableRealm)
-                writableRealm.add(liveMessage, update: .modified)
-            }
-
             if result.currentOffset == 0 {
                 self.clearSearchResults(searchFolder: liveSearchFolder, writableRealm: writableRealm)
 
                 // Update thread in Realm
                 // Clean old threads after fetching first page
                 liveSearchFolder.lastUpdate = Date()
+            }
+
+            for thread in fetchedThreads {
+                for message in thread.messages {
+                    self.keepCacheAttributes(for: message, keepProperties: .standard, using: writableRealm)
+                    writableRealm.add(message, update: .modified)
+                }
             }
 
             writableRealm.add(fetchedThreads, update: .modified)
