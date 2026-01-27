@@ -50,7 +50,6 @@ let packageSettings = PackageSettings(
         "SwiftSoup": .framework,
         "SwiftUIIntrospect": .framework,
         "VersionChecker": .framework,
-        "WrappingHStack": .framework,
         "_LottieStub": .framework
     ]
 )
@@ -63,7 +62,6 @@ let package = Package(
         .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
         .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4")),
-        .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", .upToNextMajor(from: "1.1.0")),
