@@ -24,7 +24,6 @@ import MailCore
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
-import WrappingHStack
 
 struct ThreadTagsListView: View {
     @ModalState private var isShowingExternalTagAlert = false
@@ -33,7 +32,7 @@ struct ThreadTagsListView: View {
     let searchFolderName: String?
 
     var body: some View {
-        WrappingHStack(lineSpacing: IKPadding.mini) {
+        FlowLayout(alignment: .leading, horizontalSpacing: IKPadding.mini) {
             if externalTag.shouldDisplay {
                 Button {
                     @InjectService var matomo: MatomoUtils
@@ -53,6 +52,7 @@ struct ThreadTagsListView: View {
 
             MessageFolderTag(title: searchFolderName, inThreadHeader: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
