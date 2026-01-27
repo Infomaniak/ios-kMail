@@ -174,7 +174,7 @@ struct MessageReactionsView: View {
         guard let liveMessage = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)
         else { return nil }
 
-        let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .reply)
+        let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .replyAll)
 
         let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
         try? mailboxManager.writeTransaction { realm in
