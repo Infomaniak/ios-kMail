@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import InfomaniakDI
 import OrderedCollections
 import RealmSwift
@@ -159,7 +160,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = messages.contains { $0.flagged }
     }
 
-    public func makeFromSearch(using realm: Realm) {
+    public func makeFromSearch(using transactionable: Transactionable) {
         fromSearch = true
         guard messages.count == 1,
               let message = messages.first else {
@@ -167,10 +168,10 @@ public class Thread: Object, Decodable, Identifiable {
         }
 
         if isSnoozed {
-            let snoozedFolder = realm.objects(Folder.self).where { $0.role == .snoozed }
-            searchFolderName = snoozedFolder.first?.localizedName
+            let snoozedFolder = transactionable.fetchObject(ofType: Folder.self) { $0.where { $0.role == .snoozed }.first }
+            searchFolderName = snoozedFolder?.localizedName
         } else {
-            let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
+            let parentFolder = transactionable.fetchObject(ofType: Folder.self, forPrimaryKey: message.folderId)
             searchFolderName = parentFolder?.localizedName
         }
     }

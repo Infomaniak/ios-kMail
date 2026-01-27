@@ -86,14 +86,14 @@ public extension MailboxManager {
     }
 
     private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
-        try? writeTransaction { writableRealm in
-            for thread in threadResult.threads ?? [] {
-                thread.makeFromSearch(using: writableRealm)
+        for thread in threadResult.threads ?? [] {
+            thread.makeFromSearch(using: self)
 
-                for message in thread.messages
-                    where writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                    message.fromSearch = true
+            for message in thread.messages {
+                guard fetchObject(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
+                    continue
                 }
+                message.fromSearch = true
             }
         }
 
@@ -174,7 +174,7 @@ public extension MailboxManager {
                     answered: newMessage.answered,
                     forwarded: newMessage.forwarded
                 )
-                newThread.makeFromSearch(using: writableRealm)
+                newThread.makeFromSearch(using: self)
                 newThread.subject = message.subject
                 searchFolder.threads.insert(newThread)
             }
