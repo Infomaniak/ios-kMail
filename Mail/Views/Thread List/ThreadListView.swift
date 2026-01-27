@@ -27,7 +27,6 @@ import MailResources
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
-import SwiftUIIntrospect
 import VersionChecker
 
 private extension View {
