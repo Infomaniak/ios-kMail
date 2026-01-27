@@ -26,7 +26,6 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
-import WrappingHStack
 
 struct MessageHeaderDetailView: View {
     @ObservedRealmObject var message: Message
@@ -95,7 +94,7 @@ struct RecipientLabel: View {
                 .frame(width: labelWidth, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in
-                    WrappingHStack(lineSpacing: 2) {
+                    FlowLayout(alignment: .leading, horizontalSpacing: IKPadding.micro) {
                         ContactActionsMenuView(recipient: recipient, bimi: bimi) {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
