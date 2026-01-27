@@ -76,8 +76,7 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 .external(name: "SwiftRegex"),
                 .external(name: "SwiftSoup"),
                 .external(name: "SwiftUIIntrospect"),
-                .external(name: "VersionChecker"),
-                .external(name: "WrappingHStack")
+                .external(name: "VersionChecker")
             ],
             settings: .settings(base: Constants.baseSettings))
 }
@@ -175,8 +174,7 @@ let project = Project(name: "Mail",
                                       .external(name: "SwiftRegex"),
                                       .external(name: "SwiftSoup"),
                                       .external(name: "SwiftUIIntrospect"),
-                                      .external(name: "VersionChecker"),
-                                      .external(name: "WrappingHStack")
+                                      .external(name: "VersionChecker")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationServiceExtension",
@@ -253,8 +251,7 @@ let project = Project(name: "Mail",
                                       .external(name: "SwiftRegex"),
                                       .external(name: "SwiftSoup"),
                                       .external(name: "SwiftUIIntrospect"),
-                                      .external(name: "VersionChecker"),
-                                      .external(name: "WrappingHStack")
+                                      .external(name: "VersionChecker")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailAppIntentsExtension",
@@ -366,8 +363,7 @@ let project = Project(name: "Mail",
                                       .external(name: "NukeUI"),
                                       .external(name: "RealmSwift"),
                                       .external(name: "Shimmer"),
-                                      .external(name: "SwiftUIIntrospect"),
-                                      .external(name: "WrappingHStack")
+                                      .external(name: "SwiftUIIntrospect")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],
