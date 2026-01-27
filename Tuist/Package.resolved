@@ -145,15 +145,6 @@
       }
     },
     {
-      "identity" : "navigationbackport",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
-      "state" : {
-        "revision" : "5baf99855f6a0a02022f9b479cc41ad99a8e070c",
-        "version" : "0.11.5"
-      }
-    },
-    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
@@ -349,15 +340,6 @@
       "state" : {
         "revision" : "556d42f391b74059a354b81b8c8e19cc7cb576f4",
         "version" : "1.15.1"
-      }
-    },
-    {
-      "identity" : "wrappinghstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dkk/WrappingHStack",
-      "state" : {
-        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
-        "version" : "2.2.11"
       }
     }
   ],

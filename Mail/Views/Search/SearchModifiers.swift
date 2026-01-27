@@ -116,7 +116,7 @@ struct SearchToolbar: ViewModifier {
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if #available(iOS 16.0, *), isShowingBottomBarItems {
+                    if isShowingBottomBarItems {
                         moreButton
                     }
                 }
@@ -154,7 +154,7 @@ struct SearchToolbar: ViewModifier {
                             LegacyToolbarSpacer()
                         }
 
-                        if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                        if isShowingBottomBarItems {
                             moreButton
                         }
                     }

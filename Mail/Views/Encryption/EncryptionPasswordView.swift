@@ -17,13 +17,12 @@
  */
 
 import DesignSystem
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
-import SwiftUIBackports
-import WrappingHStack
 
 struct EncryptionPasswordView: View {
     @Environment(\.dismiss) private var dismiss
@@ -54,15 +53,15 @@ struct EncryptionPasswordView: View {
                             Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
                                 .textStyle(.bodyMedium)
 
-                            BackportedFlowLayout(draft.autoEncryptDisabledRecipients,
-                                                 verticalSpacing: IKPadding.mini,
-                                                 horizontalSpacing: IKPadding.mini) { recipient in
-                                RecipientChipLabelView(
-                                    recipient: recipient,
-                                    type: .encrypted(passwordSecured: false),
-                                    removeHandler: nil,
-                                    switchFocusHandler: nil
-                                )
+                            FlowLayout(alignment: .leading, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
+                                ForEach(draft.autoEncryptDisabledRecipients) { recipient in
+                                    RecipientChipLabelView(
+                                        recipient: recipient,
+                                        type: .encrypted(passwordSecured: false),
+                                        removeHandler: nil,
+                                        switchFocusHandler: nil
+                                    )
+                                }
                             }
                             .environmentObject(mailboxManager)
                         }
@@ -99,23 +98,11 @@ struct EncryptionPasswordView: View {
                         }
                     }
 
-                    Group {
-                        if #available(iOS 16.0, *) {
-                            ShareLink(item: draft.encryptionPassword) {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.buttonShare)
-                                } icon: {
-                                    MailResourcesAsset.squareArrowUp.swiftUIImage
-                                }
-                            }
-                        } else {
-                            Backport.ShareLink(item: draft.encryptionPassword) {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.buttonShare)
-                                } icon: {
-                                    MailResourcesAsset.squareArrowUp.swiftUIImage
-                                }
-                            }
+                    ShareLink(item: draft.encryptionPassword) {
+                        Label {
+                            Text(MailResourcesStrings.Localizable.buttonShare)
+                        } icon: {
+                            MailResourcesAsset.squareArrowUp.swiftUIImage
                         }
                     }
                     .disabled(draft.encryptionPassword.isEmpty)

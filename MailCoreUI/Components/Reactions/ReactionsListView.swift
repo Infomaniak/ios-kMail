@@ -19,6 +19,7 @@
 import DesignSystem
 import ElegantEmojiPicker
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailResources
 import RealmSwift
@@ -48,7 +49,7 @@ public struct ReactionsListView: View {
     }
 
     public var body: some View {
-        BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
+        FlowLayout(alignment: .leading, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
             ForEach(reactions) { reaction in
                 ReactionButton(reaction: reaction) {
                     didTapReactionButton(reaction)
@@ -72,11 +73,7 @@ public struct ReactionsListView: View {
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
         .sheet(item: $selectedReactionToDisplay) { selectedReaction in
-            if #available(iOS 16, *) {
-                ReactionsDetailsView(reactions: reactions, initialSelection: selectedReaction)
-            } else {
-                ReactionsDetailsBackportView(reactions: reactions, initialSelection: selectedReaction)
-            }
+            ReactionsDetailsView(reactions: reactions, initialSelection: selectedReaction)
         }
     }
 

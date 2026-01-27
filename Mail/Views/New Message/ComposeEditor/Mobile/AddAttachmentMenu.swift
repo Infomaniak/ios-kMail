@@ -40,32 +40,20 @@ struct AddAttachmentMenu: View {
 
     var body: some View {
         Menu {
-            if #available(iOS 16.0, *) {
-                Button {
-                    isShowingCamera = true
-                } label: {
-                    Label(CoreUILocalizable.buttonUploadFromCamera, asset: EditorToolbarAction.takePhoto.icon.swiftUIImage)
-                }
-                Button {
-                    isShowingPhotoLibrary = true
-                } label: {
-                    Label(CoreUILocalizable.buttonUploadFromGallery, asset: EditorToolbarAction.addPhoto.icon.swiftUIImage)
-                }
-                Button {
-                    isShowingFileSelection = true
-                } label: {
-                    Label(CoreUILocalizable.buttonUploadFromFiles, asset: EditorToolbarAction.addFile.icon.swiftUIImage)
-                }
-            } else {
-                Button(CoreUILocalizable.buttonUploadFromCamera) {
-                    isShowingCamera = true
-                }
-                Button(CoreUILocalizable.buttonUploadFromGallery) {
-                    isShowingPhotoLibrary = true
-                }
-                Button(CoreUILocalizable.buttonUploadFromFiles) {
-                    isShowingFileSelection = true
-                }
+            Button {
+                isShowingCamera = true
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromCamera, asset: EditorToolbarAction.takePhoto.icon.swiftUIImage)
+            }
+            Button {
+                isShowingPhotoLibrary = true
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromGallery, asset: EditorToolbarAction.addPhoto.icon.swiftUIImage)
+            }
+            Button {
+                isShowingFileSelection = true
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromFiles, asset: EditorToolbarAction.addFile.icon.swiftUIImage)
             }
         } label: {
             Label {
