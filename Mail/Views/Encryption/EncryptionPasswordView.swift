@@ -150,6 +150,7 @@ struct EncryptionPasswordView: View {
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
             generatePassword(regenerate: false)
+            matomo.track(eventWithCategory: .encryption, name: "openPasswordView")
         }
     }
 
