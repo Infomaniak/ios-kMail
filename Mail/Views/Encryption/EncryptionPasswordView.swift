@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -31,6 +33,8 @@ struct EncryptionPasswordView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     @ObservedRealmObject var draft: Draft
 
     var body: some View {
@@ -44,6 +48,7 @@ struct EncryptionPasswordView: View {
 
                             Button {
                                 openURL(URLConstants.encryptionFAQ.url)
+                                matomo.track(eventWithCategory: .encryption, name: "readFAQ")
                             } label: {
                                 Text(MailResourcesStrings.Localizable.moreInfo)
                                     .font(MailTextStyle.bodyMedium.font)
@@ -80,6 +85,7 @@ struct EncryptionPasswordView: View {
 
                         Button {
                             generatePassword(regenerate: true)
+                            matomo.track(eventWithCategory: .encryption, name: "generatePassword")
                         } label: {
                             MailResourcesAsset.passwordGenerate.swiftUIImage
                                 .resizable()
