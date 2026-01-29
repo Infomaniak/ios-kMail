@@ -38,6 +38,7 @@ public extension MatomoUtils.EventCategory {
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let manageFolder = MatomoUtils.EventCategory(displayName: "manageFolder")
     static let emojiReactions = MatomoUtils.EventCategory(displayName: "emojiReactions")
+    static let encryption = MatomoUtils.EventCategory(displayName: "encryption")
     static let easterEgg = MatomoUtils.EventCategory(displayName: "easterEgg")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let homeScreenShortcuts = MatomoUtils.EventCategory(displayName: "homeScreenShortcuts")
