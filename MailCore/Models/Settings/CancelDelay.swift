@@ -28,10 +28,6 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
     case seconds25 = 25
     case seconds30 = 30
 
-    public var safeValue: Int {
-        return rawValue
-    }
-
     public var snackbarDuration: Int {
         // Snackbar displays for 2 seconds less than the actual cancel delay
         // to ensure the user sees the snackbar disappear before the action is committed
