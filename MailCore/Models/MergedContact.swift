@@ -88,7 +88,7 @@ public final class MergedContact: Object, Identifiable, Correspondent {
             return nil
         }
 
-        let avatarURL = Endpoint.resource(remoteAvatarURL).url
+        let avatarURL = Endpoint.resource(remoteAvatarURL, queryItems: [URLQueryItem(name: "size", value: "medium")]).url
         return ImageRequest(url: avatarURL)
     }
 
