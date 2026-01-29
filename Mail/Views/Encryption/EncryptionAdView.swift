@@ -28,8 +28,6 @@ struct EncryptionAdView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     let enableEncryption: () -> Void
 
     var body: some View {
@@ -56,6 +54,8 @@ struct EncryptionAdView: View {
 
                         Button {
                             openURL(URLConstants.encryptionFAQ.url)
+
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .encryption, name: "readFAQ")
                         } label: {
                             Text(MailResourcesStrings.Localizable.moreInfo)

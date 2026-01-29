@@ -33,7 +33,7 @@ struct EncryptionPasswordView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @LazyInjectService private var matomo: MatomoUtils
+    @InjectService private var matomo: MatomoUtils
 
     @ObservedRealmObject var draft: Draft
 

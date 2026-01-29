@@ -29,7 +29,6 @@ struct EncryptionButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
-    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptPasswordPanel = false
@@ -138,6 +137,7 @@ struct EncryptionButton: View {
 
         canShowIncompleteUserSnackbar = true
 
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .encryption, name: "disable")
     }
 
