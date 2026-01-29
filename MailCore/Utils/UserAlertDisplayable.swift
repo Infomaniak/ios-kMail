@@ -95,8 +95,8 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
 
     public func showWithDelay(message: String, action: UserAlertAction?, shouldShow: Bool) {
         guard shouldShow else { return }
-        let durationValue = UserDefaults.shared.cancelSendDelay.rawValue
-        showInContext(message: message, action: action, delay: durationValue)
+        let snackbarDuration = UserDefaults.shared.cancelSendDelay.snackbarDuration
+        showInContext(message: message, action: action, delay: snackbarDuration)
     }
 
     // MARK: - private
