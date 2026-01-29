@@ -95,9 +95,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
 
     public func showWithDelay(message: String, action: UserAlertAction?, shouldShow: Bool) {
         guard shouldShow else { return }
-        let durationValue = UserDefaults.shared.cancelSendDelay.rawValue
-        // Subtract 2 seconds from snackbar duration (send rawValue to API)
-        let snackbarDuration = max(0, durationValue - 2)
+        let snackbarDuration = UserDefaults.shared.cancelSendDelay.snackbarDuration
         showInContext(message: message, action: action, delay: snackbarDuration)
     }
 

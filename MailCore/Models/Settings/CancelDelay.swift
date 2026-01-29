@@ -32,6 +32,10 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
         return rawValue
     }
 
+    public var snackbarDuration: Int {
+        return max(0, rawValue - 2)
+    }
+
     public var title: String {
         return self == .disabled
             ? MailResourcesStrings.Localizable.settingsDisabled
