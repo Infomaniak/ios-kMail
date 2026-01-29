@@ -29,12 +29,7 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
     case seconds30 = 30
 
     public var safeValue: Int {
-        switch self {
-        case .disabled:
-            return rawValue
-        default:
-            return rawValue + 2
-        }
+        return rawValue
     }
 
     public var title: String {
