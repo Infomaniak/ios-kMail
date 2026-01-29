@@ -100,7 +100,6 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
 
                 throw AFErrorWithContext(request: request, afError: afError)
             } else {
-                logError(error)
                 throw error
             }
         }
