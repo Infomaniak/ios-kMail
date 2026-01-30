@@ -28,22 +28,24 @@ import SwiftUI
 
 struct AccountCellPlaceholderView: View {
     var body: some View {
-        HStack {
-            Circle()
-                .fill(MailResourcesAsset.grayActionColor.swiftUIColor)
-                .frame(width: 40, height: 40)
-            VStack(alignment: .leading, spacing: 0) {
-                Text("user.displayName")
-                    .redacted(reason: .placeholder)
-                    .textStyle(.bodyMedium)
-                Text("user.email")
-                    .redacted(reason: .placeholder)
-                    .textStyle(.bodySecondary)
+        Button { /* Placeholder does nothing */ } label: {
+            HStack {
+                Circle()
+                    .fill(MailResourcesAsset.grayActionColor.swiftUIColor)
+                    .frame(width: 40, height: 40)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("user.displayName")
+                        .redacted(reason: .placeholder)
+                        .textStyle(.bodyMedium)
+                    Text("user.email")
+                        .redacted(reason: .placeholder)
+                        .textStyle(.bodySecondary)
+                }
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, value: .mini)
         }
-        .padding(.vertical, value: .mini)
     }
 }
 
