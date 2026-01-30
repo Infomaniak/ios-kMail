@@ -1,3 +1,4 @@
-- Affichage de l'avatar dans les notifications seulement si nécessaire
-- Correction de l'affichage sujet notification 
+- Amélioration de la qualité des avatars
+- Correction d'un bug avec le délai d'annulation d'envoi
+- Correction de l'affichage de la notation de l'app
 - Corrections de bugs et améliorations

@@ -1,3 +1,4 @@
-- Display avatar in notifications only when necessary
-- Fixed notification subject 
+- Improved avatar quality
+- Fixed a bug with the send cancellation delay
+- Fixed display of app rating alert
 - Bug fixes and improvements

@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "a9fb8f7f5fe161ad56dc5169615f1870fcc4cd1b",
-        "version" : "1.31.0"
+        "revision" : "35dfce743f9669c4a5d2834885a90cd39c43fa30",
+        "version" : "1.32.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "4360f62b9396075195989a3e31ab5a7daf988977",
-        "version" : "18.5.0"
+        "revision" : "a2ab3fd1cfa3733118fcb8a96f08857c444c70f7",
+        "version" : "18.5.1"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "d04e30b94a5a8371d6e587128d492733dbdeb788",
-        "version" : "24.4.0"
+        "revision" : "9860c081e5495bf97f6c6dcf1775ca050541123b",
+        "version" : "24.4.1"
       }
     },
     {
