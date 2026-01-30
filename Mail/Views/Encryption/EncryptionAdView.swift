@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -52,6 +54,9 @@ struct EncryptionAdView: View {
 
                         Button {
                             openURL(URLConstants.encryptionFAQ.url)
+
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: .encryption, name: "readFAQ")
                         } label: {
                             Text(MailResourcesStrings.Localizable.moreInfo)
                         }

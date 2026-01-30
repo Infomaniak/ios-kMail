@@ -136,6 +136,9 @@ struct EncryptionButton: View {
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarEncryptionDisabled)
 
         canShowIncompleteUserSnackbar = true
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .encryption, name: "disable")
     }
 
     private func showEncryptionSnackbarIfNeeded(for recipientsCount: Int) {
