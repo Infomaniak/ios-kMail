@@ -1,4 +1,4 @@
 - Amélioration de la qualité des avatars
 - Correction d'un bug avec le délai d'annulation d'envoi
 - Correction de l'affichage de la notation de l'app
-- Corrections de bugs et améliorations
+- Corrections de bugs et améliorations.
