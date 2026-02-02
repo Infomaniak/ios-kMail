@@ -70,3 +70,6 @@ release/
 ### Tests ###
 MailTests/Env.swift
 MailUITests/Env.swift
+
+### Import Loco ###
+.import_loco_api
