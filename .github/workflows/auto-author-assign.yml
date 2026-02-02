@@ -13,4 +13,4 @@ permissions:
 
 jobs:
   assign-author:
-    uses: infomaniak/.github/.github/workflows/auto_author_assign.yml@v1
+    uses: infomaniak/.github/.github/workflows/auto_author_assign.yml@v2
