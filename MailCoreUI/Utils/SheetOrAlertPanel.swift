@@ -19,7 +19,6 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import SwiftUI
-import SwiftUIBackports
 
 public extension View {
     func sheetOrAlertPanel<ModalContent: View>(isPresented: Binding<Bool>,
@@ -43,14 +42,8 @@ public struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
-                if #available(iOS 16.0, *) {
-                    modalContent()
-                        .modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large, bottomPadding: IKPadding.medium))
-                } else {
-                    modalContent()
-                        .modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
-                                                                      bottomPadding: IKPadding.medium))
-                }
+                modalContent()
+                    .modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large, bottomPadding: IKPadding.medium))
             }
             .mailCustomAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 modalContent()

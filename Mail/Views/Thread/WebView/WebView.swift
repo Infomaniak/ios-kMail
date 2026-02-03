@@ -88,9 +88,7 @@ final class WebViewController: UIViewController {
         webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         #if DEBUG
-        if #available(iOS 16.4, *) {
-            webView.isInspectable = true
-        }
+        webView.isInspectable = true
         #endif
     }
 

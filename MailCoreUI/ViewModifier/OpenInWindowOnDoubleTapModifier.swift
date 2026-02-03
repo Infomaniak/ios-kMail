@@ -22,15 +22,10 @@ import SwiftUI
 
 public extension View {
     func openInWindowOnDoubleTap<Value: Codable & Hashable>(windowId: String, value: Value) -> some View {
-        if #available(iOS 16.0, *) {
-            return modifier(OpenInWindowOnDoubleTapModifier(windowId: windowId, value: value))
-        } else {
-            return self
-        }
+        return modifier(OpenInWindowOnDoubleTapModifier(windowId: windowId, value: value))
     }
 }
 
-@available(iOS 16.0, *)
 public struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier {
     @InjectService private var platformDetector: PlatformDetectable
 

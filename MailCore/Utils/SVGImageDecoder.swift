@@ -36,23 +36,8 @@ final class SVGImageDecoder: ImageDecoding {
             .ignoresSafeArea()
 
         let uiImage = DispatchQueue.main.sync {
-            if #available(iOS 16.0, *) {
-                let renderer = ImageRenderer(content: svgView)
-                return renderer.uiImage
-            } else {
-                let controller = UIHostingController(rootView: svgView)
-                let view = controller.view
-
-                let targetSize = controller.view.intrinsicContentSize
-                view?.bounds = CGRect(origin: .zero, size: targetSize)
-                view?.backgroundColor = .clear
-
-                let renderer = UIGraphicsImageRenderer(size: targetSize)
-
-                return renderer.image { _ in
-                    view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
-                }
-            }
+            let renderer = ImageRenderer(content: svgView)
+            return renderer.uiImage
         }
 
         guard let uiImage else {

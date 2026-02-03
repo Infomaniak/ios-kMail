@@ -19,23 +19,6 @@
 import DesignSystem
 import SwiftUI
 
-struct BackportNumericContentTransition: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .contentTransition(.numericText())
-        } else {
-            content
-        }
-    }
-}
-
-extension View {
-    func backportNumericContentTransition() -> some View {
-        modifier(BackportNumericContentTransition())
-    }
-}
-
 struct ReactionButton: View {
     let reaction: UIReaction
 
@@ -48,7 +31,7 @@ struct ReactionButton: View {
                 Text(verbatim: reaction.emoji)
                 Text(verbatim: "\(reaction.authors.count)")
                     .monospacedDigit()
-                    .backportNumericContentTransition()
+                    .contentTransition(.numericText())
                     .animation(.default, value: reaction.authors.count)
             }
         }

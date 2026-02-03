@@ -21,15 +21,13 @@ import SwiftUI
 
 struct DisplayThreadScene: Scene {
     var body: some Scene {
-        if #available(iOS 16.1, *) {
-            WindowGroup(id: DesktopWindowIdentifier.threadWindowIdentifier,
-                        for: OpenThreadIntent.self) { $openThreadIntent in
-                if let openThreadIntent {
-                    OpenThreadIntentView(openThreadIntent: openThreadIntent)
-                        .standardWindow()
-                }
+        WindowGroup(id: DesktopWindowIdentifier.threadWindowIdentifier,
+                    for: OpenThreadIntent.self) { $openThreadIntent in
+            if let openThreadIntent {
+                OpenThreadIntentView(openThreadIntent: openThreadIntent)
+                    .standardWindow()
             }
-            .defaultAppStorage(.shared)
         }
+        .defaultAppStorage(.shared)
     }
 }

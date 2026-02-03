@@ -53,22 +53,20 @@ struct UserAccountScene: Scene {
         }
         .defaultAppStorage(.shared)
 
-        if #available(iOS 16.1, *) {
-            WindowGroup(
-                MailResourcesStrings.Localizable.settingsTitle,
-                id: DesktopWindowIdentifier.settingsWindowIdentifier,
-                for: SettingsViewConfig.self
-            ) { $config in
-                if case .mainView(let user, let mainViewState) = rootViewState.state,
-                   let baseNavigationPath = config?.baseNavigationPath {
-                    SettingsNavigationView(baseNavigationPath: baseNavigationPath)
-                        .standardWindow()
-                        .environmentObject(mainViewState.mailboxManager)
-                        .environment(\.currentUser, MandatoryEnvironmentContainer(value: user))
-                }
+        WindowGroup(
+            MailResourcesStrings.Localizable.settingsTitle,
+            id: DesktopWindowIdentifier.settingsWindowIdentifier,
+            for: SettingsViewConfig.self
+        ) { $config in
+            if case .mainView(let user, let mainViewState) = rootViewState.state,
+               let baseNavigationPath = config?.baseNavigationPath {
+                SettingsNavigationView(baseNavigationPath: baseNavigationPath)
+                    .standardWindow()
+                    .environmentObject(mainViewState.mailboxManager)
+                    .environment(\.currentUser, MandatoryEnvironmentContainer(value: user))
             }
-            .defaultAppStorage(.shared)
         }
+        .defaultAppStorage(.shared)
     }
 
     private func willEnterForeground() {

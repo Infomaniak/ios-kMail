@@ -27,7 +27,6 @@ import MailCore
 import MailCoreUI
 import MailResources
 import MyKSuite
-import NavigationBackport
 import OSLog
 import RealmSwift
 import SwiftModalPresentation
@@ -75,60 +74,29 @@ struct SplitView: View {
 
     var body: some View {
         Group {
-            if #available(iOS 16.0, *) {
-                if isCompactWindow {
-                    ZStack {
-                        NavigationStack(path: $mainViewState.threadPath) {
-                            ThreadListManagerView()
-                                .accessibilityHidden(navigationDrawerState.isOpen)
-                                .navigationDestination(for: Thread.self) { thread in
-                                    ThreadView(thread: thread)
-                                }
-                        }
-
-                        NavigationDrawer()
-                    }
-                } else {
-                    NavigationSplitView {
-                        MenuDrawerView()
-                            .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
-                    } content: {
+            if isCompactWindow {
+                ZStack {
+                    NavigationStack(path: $mainViewState.threadPath) {
                         ThreadListManagerView()
-                    } detail: {
-                        if let thread = mainViewState.selectedThread {
-                            ThreadView(thread: thread)
-                        } else {
-                            EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
-                        }
+                            .accessibilityHidden(navigationDrawerState.isOpen)
+                            .navigationDestination(for: Thread.self) { thread in
+                                ThreadView(thread: thread)
+                            }
                     }
+
+                    NavigationDrawer()
                 }
             } else {
-                if isCompactWindow {
-                    ZStack {
-                        NBNavigationStack(path: $mainViewState.threadPath) {
-                            ThreadListManagerView()
-                                .accessibilityHidden(navigationDrawerState.isOpen)
-                                .nbNavigationDestination(for: Thread.self) { thread in
-                                    ThreadView(thread: thread)
-                                }
-                        }
-                        .nbUseNavigationStack(.whenAvailable)
-                        .navigationViewStyle(.stack)
-
-                        NavigationDrawer()
-                    }
-                } else {
-                    NavigationView {
-                        MenuDrawerView()
-                            .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
-
-                        ThreadListManagerView()
-
-                        if let thread = mainViewState.selectedThread {
-                            ThreadView(thread: thread)
-                        } else {
-                            EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
-                        }
+                NavigationSplitView {
+                    MenuDrawerView()
+                        .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
+                } content: {
+                    ThreadListManagerView()
+                } detail: {
+                    if let thread = mainViewState.selectedThread {
+                        ThreadView(thread: thread)
+                    } else {
+                        EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
                     }
                 }
             }

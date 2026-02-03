@@ -36,18 +36,15 @@ struct CustomCommands: Commands {
 
     var body: some Commands {
         CommandMenu(MailResourcesStrings.Localizable.messageMenuTitle) {
-            if #available(iOS 16.0, *),
-               let mainViewState {
+            if let mainViewState {
                 MessageCommands(mainViewState: mainViewState)
             }
         }
 
         CommandGroup(replacing: .newItem) {
-            if #available(iOS 16.0, *) {
-                NewMessageCommand(mailboxManager: mainViewState?.mailboxManager)
+            NewMessageCommand(mailboxManager: mainViewState?.mailboxManager)
 
-                NewWindowCommand()
-            }
+            NewWindowCommand()
         }
 
         CommandGroup(after: .importExport) {
@@ -66,10 +63,8 @@ struct CustomCommands: Commands {
         }
 
         CommandGroup(replacing: .appSettings) {
-            if #available(iOS 16.0, *) {
-                OpenSettingsCommand()
-                    .disabled(mainViewState == nil)
-            }
+            OpenSettingsCommand()
+                .disabled(mainViewState == nil)
         }
     }
 

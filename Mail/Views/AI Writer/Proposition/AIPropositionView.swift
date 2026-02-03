@@ -24,7 +24,6 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
-import SwiftUIIntrospect
 
 struct AIPropositionView: View {
     @LazyInjectService private var matomo: MatomoUtils

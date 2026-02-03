@@ -79,7 +79,7 @@ struct MobileFormattingToolbarView: View {
                 }
                 .padding(.trailing, value: .medium)
             }
-            .backportScrollBounceBasedOnSize()
+            .scrollBounceBehavior(.basedOnSize)
         }
     }
 

@@ -17,7 +17,6 @@
  */
 
 import SwiftUI
-import SwiftUIBackports
 
 extension View {
     func aiPromptPresenter<ModalContent: View>(isPresented: Binding<Bool>,
@@ -36,13 +35,8 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
-                if #available(iOS 16.0, *) {
-                    modalContent()
-                        .presentationDetents([.height(232)])
-                } else {
-                    modalContent()
-                        .backport.presentationDetents([.medium])
-                }
+                modalContent()
+                    .presentationDetents([.height(232)])
             }
             .mailCustomAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 modalContent()

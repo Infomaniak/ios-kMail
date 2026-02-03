@@ -30,7 +30,6 @@ enum ReactionSelectionType: Identifiable, Hashable {
     var id: Int { hashValue }
 }
 
-@available(iOS 16.0, *)
 struct ReactionsDetailsView: View {
     @State private var selectedReaction: ReactionSelectionType?
     @State private var currentDetent = PresentationDetent.medium
@@ -64,35 +63,6 @@ struct ReactionsDetailsView: View {
     }
 }
 
-@available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
-struct ReactionsDetailsBackportView: View {
-    @State private var selectedReaction: ReactionSelectionType? = .all
-
-    let reactions: [UIReaction]
-    var initialSelection: ReactionSelectionType?
-
-    var body: some View {
-        IKFloatingPanelBackportView(
-            title: MailResourcesStrings.Localizable.reactionsTitle,
-            topPadding: IKPadding.large,
-            bottomPadding: 0,
-            detents: Set([.medium, .large]),
-            dragIndicator: .visible
-        ) {
-            VStack(spacing: 0) {
-                ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
-                ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
-            }
-            .onAppear {
-                if let initialSelection {
-                    selectedReaction = initialSelection
-                }
-            }
-        }
-    }
-}
-
-@available(iOS 16.0, *)
 #Preview {
     ReactionsDetailsView(reactions: PreviewHelper.uiReactions)
 }

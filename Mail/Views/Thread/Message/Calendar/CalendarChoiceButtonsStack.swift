@@ -36,15 +36,15 @@ struct CalendarChoiceButtonsStack: View {
     }
 
     var body: some View {
-        BackportedFlowLayout(AttendeeState.allCases,
-                             verticalSpacing: IKPadding.mini,
-                             horizontalSpacing: IKPadding.mini) { choice in
-            CalendarChoiceButton(
-                selectedChoice: $selectedChoice,
-                choice: choice,
-                isSelected: selectedChoice == choice,
-                messageUid: messageUid
-            )
+        FlowLayout(alignment: .leading, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
+            ForEach(AttendeeState.allCases) { choice in
+                CalendarChoiceButton(
+                    selectedChoice: $selectedChoice,
+                    choice: choice,
+                    isSelected: selectedChoice == choice,
+                    messageUid: messageUid
+                )
+            }
         }
         .onChange(of: currentState) { newState in
             if newState != selectedChoice {
