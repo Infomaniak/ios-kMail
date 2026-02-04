@@ -81,11 +81,12 @@ extension ThreadListViewModel {
     }
 
     private func mapSectionedResults(results: Results<Thread>) -> (threads: [Thread], sections: [DateSection]) {
+        let threadsSort = frozenFolder.threadsSort
+
         let results = Dictionary(grouping: results.freezeIfNeeded()) { $0.sectionDate }
             .sorted {
                 guard let firstThread = $0.value.first, let secondThread = $1.value.first else { return false }
 
-                let threadsSort = frozenFolder.threadsSort
                 guard let firstDate = threadsSort.getReferenceDate(from: firstThread),
                       let secondDate = threadsSort.getReferenceDate(from: secondThread) else { return false }
 
