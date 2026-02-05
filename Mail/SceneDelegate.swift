@@ -31,7 +31,7 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        NotificationCenter.default.post(name: .userPerformedHomeScreenShortcut, object: shortcutItem)
+        QuickActionsManager.instance.publishQuickAction(shortcutItem)
         completionHandler(true)
     }
 }
