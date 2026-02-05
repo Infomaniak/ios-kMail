@@ -16,11 +16,11 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
 import MailCore
+import UIKit
 
 class SceneDelegate: NSObject, UIWindowSceneDelegate {
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(_ _: UIScene, willConnectTo _: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         if let shortcutItem = connectionOptions.shortcutItem {
             QuickActionsManager.instance.publishQuickAction(shortcutItem)
         }
