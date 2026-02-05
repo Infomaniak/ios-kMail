@@ -211,10 +211,11 @@ struct SplitView: View {
                    perform: handleCloseDrawer)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
-        .onReceive(NotificationCenter.default.publisher(for: .userPerformedHomeScreenShortcut).receive(on: DispatchQueue.main),
-                   perform: handleApplicationShortcut)
         .onAppear {
             orientationManager.setOrientationLock(.all)
+            handleShortcutItem()
+        }
+        .onChange(of: quickActionsManager.homeScreenShortcut) { _ in
             handleShortcutItem()
         }
         .task(id: mailboxManager.mailbox.objectId) {
@@ -378,23 +379,6 @@ struct SplitView: View {
     // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
     private func handleCloseDrawer(_ notification: NotificationPublisher) {
         navigationDrawerState.close()
-    }
-
-    private func handleApplicationShortcut(_ notification: NotificationPublisher) {
-        guard let shortcut = notification.object as? UIApplicationShortcutItem,
-              let homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcut)
-        else { return }
-
-        switch homeScreenShortcut {
-        case .newMessage:
-            mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
-        case .search:
-            mainViewState.isShowingSearch = true
-        case .support:
-            openURL(URLConstants.chatbot.url)
-        }
-
-        matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 
     private func handleShortcutItem() {
