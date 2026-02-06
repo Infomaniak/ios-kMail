@@ -59,6 +59,7 @@ struct SplitView: View {
     @LazyInjectService private var cacheManager: CacheManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var reviewManager: ReviewManageable
+    @LazyInjectService private var quickActionsManager: QuickActionsManager
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -70,7 +71,6 @@ struct SplitView: View {
 
     @StateObject private var navigationDrawerState = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
-    @StateObject private var quickActionsManager = QuickActionsManager.instance
 
     let mailboxManager: MailboxManager
 
@@ -382,7 +382,7 @@ struct SplitView: View {
     }
 
     private func handleShortcutItem() {
-        guard let homeScreenShortcut = quickActionsManager.consumeQuickAction() else { return }
+        guard let homeScreenShortcut = quickActionsManager.homeScreenShortcut else { return }
 
         switch homeScreenShortcut {
         case .newMessage:
@@ -394,6 +394,7 @@ struct SplitView: View {
         }
 
         matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
+        quickActionsManager.homeScreenShortcut = nil
     }
 
     // periphery:ignore:parameters notification - Needed for signature calling in .onReceive

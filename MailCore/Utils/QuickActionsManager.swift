@@ -17,19 +17,10 @@
  */
 
 import Foundation
-import UIKit
 
+@MainActor
 public final class QuickActionsManager: ObservableObject {
-    public static let instance = QuickActionsManager()
-
     @Published public var homeScreenShortcut: HomeScreenShortcut?
 
-    public func publishQuickAction(_ shortcutItem: UIApplicationShortcutItem) {
-        homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcutItem)
-    }
-
-    public func consumeQuickAction() -> HomeScreenShortcut? {
-        defer { homeScreenShortcut = nil }
-        return homeScreenShortcut
-    }
+    public nonisolated init() {}
 }
