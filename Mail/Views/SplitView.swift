@@ -213,10 +213,10 @@ struct SplitView: View {
                    perform: handleOpenNotificationSettings)
         .onAppear {
             orientationManager.setOrientationLock(.all)
-            handleShortcutItem()
+            handleShortcutItem(shortcut: quickActionsManager.homeScreenShortcut)
         }
-        .onChange(of: quickActionsManager.homeScreenShortcut) { _ in
-            handleShortcutItem()
+        .onChange(of: quickActionsManager.homeScreenShortcut) { newHomeScreenShortcut in
+            handleShortcutItem(shortcut: newHomeScreenShortcut)
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
@@ -381,10 +381,10 @@ struct SplitView: View {
         navigationDrawerState.close()
     }
 
-    private func handleShortcutItem() {
-        guard let homeScreenShortcut = quickActionsManager.homeScreenShortcut else { return }
+    private func handleShortcutItem(shortcut: HomeScreenShortcut?) {
+        guard let shortcut else { return }
 
-        switch homeScreenShortcut {
+        switch shortcut {
         case .newMessage:
             mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
         case .search:
@@ -393,7 +393,7 @@ struct SplitView: View {
             openURL(URLConstants.chatbot.url)
         }
 
-        matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
+        matomo.track(eventWithCategory: .homeScreenShortcuts, name: shortcut.rawValue)
         quickActionsManager.homeScreenShortcut = nil
     }
 
