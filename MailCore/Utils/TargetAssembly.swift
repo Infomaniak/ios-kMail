@@ -155,6 +155,9 @@ open class TargetAssembly {
             },
             Factory(type: ServerStatusManager.self) { _, _ in
                 ServerStatusManager()
+            },
+            Factory(type: QuickActionsManager.self) { _, _ in
+                QuickActionsManager()
             }
         ]
     }
