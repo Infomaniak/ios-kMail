@@ -31,6 +31,8 @@ struct RecipientChip: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isMenuPresented = false
+
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
     // periphery:ignore - Used in removeAndFocus
@@ -47,7 +49,7 @@ struct RecipientChip: View {
     }
 
     var body: some View {
-        Templates.Menu {
+        Templates.Menu(present: $isMenuPresented) {
             $0.width = nil
             $0.originAnchor = .topLeft
             $0.popoverAnchor = .topLeft
@@ -79,6 +81,9 @@ struct RecipientChip: View {
                 switchFocusHandler: switchFocusHandler
             )
             .opacity(isSelected ? 0.8 : 1)
+            .onTapGesture {
+                isMenuPresented = true
+            }
         }
     }
 
