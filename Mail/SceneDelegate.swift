@@ -16,15 +16,25 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
+import MailCore
 import UIKit
 
 class SceneDelegate: NSObject, UIWindowSceneDelegate {
+    @LazyInjectService private var quickActionsManager: QuickActionsManager
+
+    func scene(_ _: UIScene, willConnectTo _: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        if let shortcutItem = connectionOptions.shortcutItem {
+            quickActionsManager.homeScreenShortcut = .init(shortcutItem: shortcutItem)
+        }
+    }
+
     func windowScene(
         _ windowScene: UIWindowScene,
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        NotificationCenter.default.post(name: .userPerformedHomeScreenShortcut, object: shortcutItem)
+        quickActionsManager.homeScreenShortcut = .init(shortcutItem: shortcutItem)
         completionHandler(true)
     }
 }

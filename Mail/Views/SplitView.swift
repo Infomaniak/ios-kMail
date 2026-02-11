@@ -59,6 +59,7 @@ struct SplitView: View {
     @LazyInjectService private var cacheManager: CacheManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var reviewManager: ReviewManageable
+    @LazyInjectService private var quickActionsManager: QuickActionsManager
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -210,10 +211,12 @@ struct SplitView: View {
                    perform: handleCloseDrawer)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
-        .onReceive(NotificationCenter.default.publisher(for: .userPerformedHomeScreenShortcut).receive(on: DispatchQueue.main),
-                   perform: handleApplicationShortcut)
         .onAppear {
             orientationManager.setOrientationLock(.all)
+            handleShortcutItem(shortcut: quickActionsManager.homeScreenShortcut)
+        }
+        .onChange(of: quickActionsManager.homeScreenShortcut) { newHomeScreenShortcut in
+            handleShortcutItem(shortcut: newHomeScreenShortcut)
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
@@ -378,12 +381,10 @@ struct SplitView: View {
         navigationDrawerState.close()
     }
 
-    private func handleApplicationShortcut(_ notification: NotificationPublisher) {
-        guard let shortcut = notification.object as? UIApplicationShortcutItem,
-              let homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcut)
-        else { return }
+    private func handleShortcutItem(shortcut: HomeScreenShortcut?) {
+        guard let shortcut else { return }
 
-        switch homeScreenShortcut {
+        switch shortcut {
         case .newMessage:
             mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
         case .search:
@@ -392,7 +393,8 @@ struct SplitView: View {
             openURL(URLConstants.chatbot.url)
         }
 
-        matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
+        matomo.track(eventWithCategory: .homeScreenShortcuts, name: shortcut.rawValue)
+        quickActionsManager.homeScreenShortcut = nil
     }
 
     // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
