@@ -68,6 +68,11 @@ enum NewMessageAlertType {
     case emptySubject(handler: () -> Void)
 }
 
+struct EditorPositionPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect { return CGRect() }
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) { value = nextValue() }
+}
+
 struct ComposeMessageView: View {
     @InjectService private var platformDetector: PlatformDetectable
     @InjectService private var featureFlagsManager: FeatureFlagsManageable
@@ -95,7 +100,10 @@ struct ComposeMessageView: View {
 
     @State private var isShowingEncryptStatePanel = false
 
+    @State private var editorFrame: CGRect?
+
     @Weak private var scrollView: UIScrollView?
+    @Weak private var editor: RichHTMLEditorView?
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -130,6 +138,10 @@ struct ComposeMessageView: View {
         }
 
         return false
+    }
+
+    private var isShowingEditor: Bool {
+        return autocompletionType == nil && !isLoadingContent
     }
 
     // MARK: - Init
@@ -179,26 +191,39 @@ struct ComposeMessageView: View {
                     .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :
                     .none)
 
-                if autocompletionType == nil && !isLoadingContent {
+                if isShowingEditor {
                     ComposeMessageBodyView(
                         textAttributes: textAttributes,
                         focusedField: _focusedField,
                         draftBody: $draftContentManager.draftContent,
                         draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
+                        editor: _editor,
                         messageReply: messageReply
                     )
                     .environmentObject(attachmentsManager)
+                    .overlay {
+                        GeometryReader { geometry in
+                            Color.clear.preference(
+                                key: EditorPositionPreferenceKey.self,
+                                value: geometry.frame(in: .global)
+                            )
+                        }
+                        .onPreferenceChange(EditorPositionPreferenceKey.self) { value in
+                            editorFrame = value
+                        }
+                        .hidden()
+                    }
                 }
             }
         }
         .availableSpatialTapGesture { location in
-            // If the user directly tap on the UIScrollView, and not a
-            // subview like a TextField, we should target the editor
-            let targetView = scrollView?.hitTest(location, with: nil)
-            if targetView is UIScrollView {
-                focusedField = .editor
-            }
+            guard isShowingEditor, location.y >= editorFrame?.maxY ?? 0 else { return }
+
+            focusedField = .editor
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            _ = editor?.becomeFirstResponder()
+            #endif
         }
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {

@@ -27,6 +27,7 @@ import RealmSwift
 import Sentry
 import SwiftModalPresentation
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
@@ -42,6 +43,8 @@ struct ComposeMessageBodyView: View {
     @Binding var draftBody: String
     let draft: Draft
     @Binding var isShowingAI: Bool
+
+    @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
 
@@ -90,6 +93,12 @@ struct ComposeMessageBodyView: View {
             disableDragAndDrop(editor: editor)
 
             editor.webView.loadUserScript(.fixEmailStyle)
+
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            Task { @MainActor in
+                self.editor = editor
+            }
+            #endif
         }
     }
 
@@ -133,12 +142,13 @@ struct ComposeMessageBodyView: View {
 
 #Preview {
     let draft = Draft()
-    return ComposeMessageBodyView(
+    ComposeMessageBodyView(
         textAttributes: TextAttributes(),
         focusedField: .init(),
         draftBody: .constant(""),
         draft: draft,
         isShowingAI: .constant(false),
+        editor: .init(wrappedValue: nil),
         messageReply: nil
     )
     .environmentObject(AttachmentsManager(
