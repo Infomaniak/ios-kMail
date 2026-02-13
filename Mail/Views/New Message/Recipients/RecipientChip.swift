@@ -31,8 +31,6 @@ struct RecipientChip: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isMenuPresented = false
-
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
     // periphery:ignore - Used in removeAndFocus
@@ -49,41 +47,34 @@ struct RecipientChip: View {
     }
 
     var body: some View {
-        Templates.Menu(present: $isMenuPresented) {
-            $0.width = nil
-            $0.originAnchor = .topLeft
-            $0.popoverAnchor = .topLeft
-        } content: {
-            RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
-                .padding(.vertical, value: .mini)
-                .padding(.horizontal, value: .medium)
-                .frame(maxWidth: 600)
-                .environment(\.currentUser, currentUser)
-                .environmentObject(mailboxManager)
-
-            Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
-                                 image: MailResourcesAsset.duplicate.swiftUIImage) {
-                UIPasteboard.general.string = recipient.email
-
-                @InjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
+        Menu {
+            Section {
+                RecipientHeaderCell(recipient: recipient)
             }
+            Section {
+                Button(action: {
+                    UIPasteboard.general.string = recipient.email
 
-            Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.actionDelete),
-                                 image: MailResourcesAsset.bin.swiftUIImage) {
-                removeHandler?()
+                    @InjectService var snackbarPresenter: IKSnackBarPresentable
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
+                }, label: {
+                    Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress)
+                    MailResourcesAsset.duplicate.swiftUIImage
+                })
+                Button(role: .destructive, action: {
+                    removeHandler?()
+                }, label: {
+                    Text(MailResourcesStrings.Localizable.actionDelete)
+                    MailResourcesAsset.bin.swiftUIImage
+                })
             }
-        } label: { isSelected in
+        } label: {
             RecipientChipLabelView(
                 recipient: recipient,
                 type: recipientChipType,
                 removeHandler: removeAndFocus,
                 switchFocusHandler: switchFocusHandler
             )
-            .opacity(isSelected ? 0.8 : 1)
-            .onTapGesture {
-                isMenuPresented = true
-            }
         }
     }
 

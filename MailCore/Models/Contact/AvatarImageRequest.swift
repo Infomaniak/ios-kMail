@@ -25,10 +25,15 @@ public struct AvatarImageRequest {
     let imageRequest: ImageRequest?
     let shouldAuthenticate: Bool
 
-    public func authenticatedRequestIfNeeded(token: ApiToken) -> ImageRequest? {
+    public func authenticatedRequestIfNeeded(token: ApiToken, processors: [ImageProcessing] = []) -> ImageRequest? {
         guard let imageRequest,
               let urlRequest = imageRequest.urlRequest,
               shouldAuthenticate else {
+            if !processors.isEmpty {
+                var newRequest = imageRequest
+                newRequest?.processors = processors
+                return newRequest
+            }
             return imageRequest
         }
 
@@ -38,6 +43,6 @@ public struct AvatarImageRequest {
             forHTTPHeaderField: "Authorization"
         )
 
-        return ImageRequest(urlRequest: authenticatedUrlRequest)
+        return ImageRequest(urlRequest: authenticatedUrlRequest, processors: processors)
     }
 }
