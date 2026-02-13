@@ -65,6 +65,8 @@ struct RecipientHeaderCell: View {
 
             if let loadedImage {
                 loadedImage
+                    .resizable()
+                    .frame(maxWidth: Self.defaultAvatarSize)
             } else if let iconImage {
                 iconImage
             }
