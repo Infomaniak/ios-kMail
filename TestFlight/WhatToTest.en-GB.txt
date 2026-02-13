@@ -1,4 +1,6 @@
-- Improved avatar quality
-- Fixed a bug with the send cancellation delay
-- Fixed display of app rating alert
-- Bug fixes and improvements.
+- Fix quick actions on app start 
+- Fix two factor authentication on macOS
+- Fix performances issues with editor
+- Fix local contact pictures
+- Fix recipient chip selection
+- Bug fixes and improvements
