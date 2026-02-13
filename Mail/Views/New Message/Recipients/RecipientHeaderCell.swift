@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,6 +29,8 @@ struct RecipientHeaderCell: View {
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @InjectService private var platformDetector: PlatformDetectable
 
     @State private var loadedImage: Image?
     @State private var iconImage: Image?
@@ -63,12 +67,14 @@ struct RecipientHeaderCell: View {
                     .textStyle(.bodySecondary)
             }
 
-            if let loadedImage {
-                loadedImage
-                    .resizable()
-                    .frame(maxWidth: Self.defaultAvatarSize)
-            } else if let iconImage {
-                iconImage
+            if !platformDetector.isMac {
+                if let loadedImage {
+                    loadedImage
+                        .resizable()
+                        .frame(maxWidth: Self.defaultAvatarSize)
+                } else if let iconImage {
+                    iconImage
+                }
             }
         }
         .task {

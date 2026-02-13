@@ -38,8 +38,7 @@ struct MessageHeaderDetailView: View {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,
-                recipients: message.from,
-                bimi: message.bimi
+                recipients: message.from
             )
             RecipientLabel(
                 labelWidth: $labelWidth,
@@ -85,7 +84,6 @@ struct RecipientLabel: View {
     @Binding var labelWidth: CGFloat
     let title: String
     let recipients: RealmSwift.List<Recipient>
-    var bimi: Bimi?
 
     var body: some View {
         HStack(alignment: .top) {

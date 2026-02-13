@@ -39,7 +39,6 @@ struct MessageHeaderSummaryView: View {
     @ObservedRealmObject var message: Message
 
     @State private var replyOrReplyAllMessage: Message?
-    @State private var contactViewRecipient: Recipient?
 
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
