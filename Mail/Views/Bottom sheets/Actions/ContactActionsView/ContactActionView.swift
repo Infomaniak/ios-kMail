@@ -49,10 +49,8 @@ struct ContactActionView: View {
         case .writeEmailAction:
             writeEmail()
         case .addContactsAction:
-            dismiss()
             addToContacts()
         case .copyEmailAction:
-            dismiss()
             copyEmail()
         default:
             return
@@ -75,6 +73,5 @@ struct ContactActionView: View {
 
     private func copyEmail() {
         UIPasteboard.general.string = recipient.email
-        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
     }
 }

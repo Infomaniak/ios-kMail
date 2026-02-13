@@ -118,7 +118,7 @@ struct RecipientLabel: View {
                 }
             }
             .adaptivePanel(item: $contactViewRecipient) { recipient in
-                ContactActionsView(recipient: recipient, bimi: bimi)
+                ContactActionsMenuView(recipient: recipient, bimi: bimi)
                     .environmentObject(mailboxManager)
                     .environment(\.currentUser, currentUser)
                 // We need to manually pass environment and environmentObject because of a bug with SwiftUI end popovers on macOS
