@@ -32,8 +32,8 @@ extension CNContact {
 
     func pngImageData() -> Data? {
         // We have to load something that Nuke can cache
-        guard let imageData,
-              let convertedImage = UIImage(data: imageData)?.pngData() else {
+        guard let thumbnailImageData,
+              let convertedImage = UIImage(data: thumbnailImageData)?.pngData() else {
             return nil
         }
         return convertedImage

@@ -47,7 +47,7 @@ public final class LocalContactsHelper: LocalContactsHelpable {
         CNContactIdentifierKey,
         CNContactEmailAddressesKey,
         CNContactImageDataAvailableKey,
-        CNContactImageDataKey,
+        CNContactThumbnailImageDataKey,
         CNContactNicknameKey
     ] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
