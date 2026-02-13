@@ -50,7 +50,7 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    ContactActionsMenuView(recipient: recipient, bimi: message.bimi) {
+                    ContactActionsMenuView(recipient: recipient) {
                         AvatarView(
                             mailboxManager: mailboxManager,
                             contactConfiguration: .correspondent(
@@ -133,11 +133,6 @@ struct MessageHeaderSummaryView: View {
                 .padding(.leading, value: .mini)
             }
         }
-    }
-
-    private func didTapAvatar(of recipient: Recipient) {
-        matomo.track(eventWithCategory: .message, name: "selectAvatar")
-        contactViewRecipient = recipient
     }
 
     private func replyToMessage() {

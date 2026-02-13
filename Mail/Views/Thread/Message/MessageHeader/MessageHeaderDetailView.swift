@@ -87,8 +87,6 @@ struct RecipientLabel: View {
     let recipients: RealmSwift.List<Recipient>
     var bimi: Bimi?
 
-    @State private var contactViewRecipient: Recipient?
-
     var body: some View {
         HStack(alignment: .top) {
             Text(title)
@@ -98,7 +96,7 @@ struct RecipientLabel: View {
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in
                     WrappingHStack(lineSpacing: 2) {
-                        ContactActionsMenuView(recipient: recipient, bimi: bimi) {
+                        ContactActionsMenuView(recipient: recipient) {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
                                 .lineLimit(1)

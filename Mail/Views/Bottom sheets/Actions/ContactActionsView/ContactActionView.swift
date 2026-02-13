@@ -26,8 +26,6 @@ import SwiftUI
 struct ContactActionView: View {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 

@@ -26,11 +26,9 @@ import MailCoreUI
 import SwiftUI
 
 struct ContactActionsMenuView<Content: View>: View {
-    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
-    let bimi: Bimi?
     @ViewBuilder let label: () -> Content
 
     private var actions: [Action] {
@@ -60,8 +58,8 @@ struct ContactActionsMenuView<Content: View>: View {
 }
 
 #Preview {
-    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1, bimi: nil) {
-        Text(PreviewHelper.sampleUser.displayName)
+    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1) {
+        Text(PreviewHelper.sampleRecipient1.name)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
