@@ -43,27 +43,27 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.mini) {
-            let contactConfiguration = ContactConfiguration.correspondent(
-                correspondent: recipient,
-                associatedBimi: bimi,
-                contextUser: currentUser.value,
-                contextMailboxManager: mailboxManager
-            )
-            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-            ContactActionsHeaderView(displayablePerson: contact, bimi: bimi)
-
-            VStack(alignment: .leading, spacing: 0) {
+        Menu {
+            Section {
+                RecipientHeaderCell(recipient: recipient)
+            }
+            Section {
                 ForEach(actions) { action in
-                    if action != actions.first {
-                        IKDivider()
-                    }
-
                     ContactActionView(recipient: recipient, action: action)
                 }
             }
+        } label: {
+            AvatarView(
+                mailboxManager: mailboxManager,
+                contactConfiguration: .correspondent(
+                    correspondent: recipient,
+                    associatedBimi: bimi,
+                    contextUser: currentUser.value,
+                    contextMailboxManager: mailboxManager
+                ),
+                size: 40
+            )
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }
 }

@@ -50,26 +50,9 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    Button {
-                        didTapAvatar(of: recipient)
-                    } label: {
-                        AvatarView(
-                            mailboxManager: mailboxManager,
-                            contactConfiguration: .correspondent(correspondent: recipient,
-                                                                 associatedBimi: message.bimi,
-                                                                 contextUser: currentUser.value,
-                                                                 contextMailboxManager: mailboxManager),
-                            size: 40
-                        )
-                    }
-                    .adaptivePanel(item: $contactViewRecipient, style: .native) { recipient in
-                        ContactActionsView(recipient: recipient, bimi: message.bimi)
-                            .environmentObject(mailboxManager)
-                            .environment(\.currentUser, currentUser)
-                        // We need to manually pass environment and environmentObject because of a bug with SwiftUI end popovers
-                        // on macOS
-                    }
-                    .disabled(!isMessageInteractive)
+                    ContactActionsView(recipient: recipient, bimi: message.bimi)
+                        .environmentObject(mailboxManager)
+                        .environment(\.currentUser, currentUser)
                 }
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
