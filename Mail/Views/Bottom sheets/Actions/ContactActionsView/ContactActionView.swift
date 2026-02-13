@@ -38,7 +38,11 @@ struct ContactActionView: View {
         Button {
             handleAction(action)
         } label: {
-            ActionButtonLabel(action: action)
+            Label {
+                Text(action.title)
+            } icon: {
+                action.icon
+            }
         }
     }
 
@@ -58,7 +62,6 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        dismiss()
         mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
     }
 
