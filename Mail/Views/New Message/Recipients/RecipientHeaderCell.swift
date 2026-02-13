@@ -71,11 +71,9 @@ struct RecipientHeaderCell: View {
         }
         .task {
             if let imageRequest = getAvatarImageRequest() {
-                do {
-                    let task = ImagePipeline.shared.imageTask(with: imageRequest)
-                    let uiImage = try await task.image
-                    self.loadedImage = Image(uiImage: uiImage)
-                } catch {}
+                let task = ImagePipeline.shared.imageTask(with: imageRequest)
+                guard let uiImage = try? await task.image else { return }
+                loadedImage = Image(uiImage: uiImage)
             }
             await getIconImage()
         }
@@ -105,7 +103,10 @@ struct RecipientHeaderCell: View {
 
     private func getAvatarImageRequest() -> ImageRequest? {
         guard let currentToken = mailboxManager.apiFetcher.currentToken else { return nil }
-        return displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken, processors: [.circle()])
+        return displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(
+            token: currentToken,
+            processors: [.circle()]
+        )
     }
 
     private func getIconImage() async {
@@ -113,15 +114,16 @@ struct RecipientHeaderCell: View {
             iconImage = nil
             return
         }
-        guard let renderedImage =
-            ImageRenderer(content:
-                AvatarView(
+        guard
+            let renderedImage = ImageRenderer(
+                content: AvatarView(
                     mailboxManager: mailboxManager,
                     contactConfiguration: avatarConfiguration,
                     size: Self.defaultAvatarSize
                 )
             )
-                .uiImage else { return }
+            .uiImage
+        else { return }
         iconImage = Image(uiImage: renderedImage)
     }
 }

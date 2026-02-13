@@ -54,9 +54,6 @@ struct RecipientChip: View {
             Section {
                 Button(action: {
                     UIPasteboard.general.string = recipient.email
-
-                    @InjectService var snackbarPresenter: IKSnackBarPresentable
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
                 }, label: {
                     Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress)
                     MailResourcesAsset.duplicate.swiftUIImage
