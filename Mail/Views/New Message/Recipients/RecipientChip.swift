@@ -51,18 +51,19 @@ struct RecipientChip: View {
                 RecipientHeaderCell(recipient: recipient)
             }
             Section {
-                Button(action: {
+                Button {
                     UIPasteboard.general.string = recipient.email
-                }, label: {
+                } label: {
                     Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress)
                     MailResourcesAsset.duplicate.swiftUIImage
-                })
-                Button(role: .destructive, action: {
+                }
+
+                Button(role: .destructive) {
                     removeHandler?()
-                }, label: {
+                } label: {
                     Text(MailResourcesStrings.Localizable.actionDelete)
                     MailResourcesAsset.bin.swiftUIImage
-                })
+                }
             }
         } label: {
             RecipientChipLabelView(
