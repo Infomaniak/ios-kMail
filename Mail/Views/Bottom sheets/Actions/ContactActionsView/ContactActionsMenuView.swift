@@ -25,12 +25,13 @@ import MailCore
 import MailCoreUI
 import SwiftUI
 
-struct ContactActionsMenuView: View {
+struct ContactActionsMenuView<Content: View>: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
     let bimi: Bimi?
+    @ViewBuilder let label: () -> Content
 
     private var actions: [Action] {
         let contact = mailboxManager.contactManager.getContact(for: recipient)
@@ -53,23 +54,15 @@ struct ContactActionsMenuView: View {
                 }
             }
         } label: {
-            AvatarView(
-                mailboxManager: mailboxManager,
-                contactConfiguration: .correspondent(
-                    correspondent: recipient,
-                    associatedBimi: bimi,
-                    contextUser: currentUser.value,
-                    contextMailboxManager: mailboxManager
-                ),
-                size: 40
-            )
+            label()
         }
-        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }
 }
 
 #Preview {
-    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1, bimi: nil)
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
+    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1, bimi: nil) {
+        Text(PreviewHelper.sampleUser.displayName)
+    }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

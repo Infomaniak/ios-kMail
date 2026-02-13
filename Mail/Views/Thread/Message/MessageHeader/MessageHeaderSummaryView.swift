@@ -50,9 +50,20 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    ContactActionsMenuView(recipient: recipient, bimi: message.bimi)
-                        .environmentObject(mailboxManager)
-                        .environment(\.currentUser, currentUser)
+                    ContactActionsMenuView(recipient: recipient, bimi: message.bimi) {
+                        AvatarView(
+                            mailboxManager: mailboxManager,
+                            contactConfiguration: .correspondent(
+                                correspondent: recipient,
+                                associatedBimi: message.bimi,
+                                contextUser: currentUser.value,
+                                contextMailboxManager: mailboxManager
+                            ),
+                            size: 40
+                        )
+                    }
+                    .environmentObject(mailboxManager)
+                    .environment(\.currentUser, currentUser)
                 }
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
