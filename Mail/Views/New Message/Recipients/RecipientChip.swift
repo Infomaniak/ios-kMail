@@ -26,7 +26,6 @@ import Popovers
 import SwiftUI
 
 struct RecipientChip: View {
-    @Environment(\.currentUser) private var currentUser
     @Environment(\.draftEncryption) private var draftEncryption: DraftEncryption
 
     @EnvironmentObject private var mailboxManager: MailboxManager
