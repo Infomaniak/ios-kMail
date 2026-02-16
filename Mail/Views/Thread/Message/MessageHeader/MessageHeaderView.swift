@@ -52,25 +52,28 @@ struct MessageHeaderView: View {
                     .disabled(!isMessageInteractive)
             }
         }
-        .contentShape(Rectangle())
         .padding(value: .medium)
-        .onTapGesture {
-            guard isMessageInteractive else { return }
+        .background(
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    guard isMessageInteractive else { return }
 
-            if message.isDraft {
-                DraftUtils.editDraft(
-                    from: message,
-                    mailboxManager: mailboxManager,
-                    composeMessageIntent: $mainViewState.composeMessageIntent
-                )
-            } else if message.originalThread?.messages.isEmpty == false {
-                withAnimation {
-                    isHeaderExpanded = false
-                    isMessageExpanded.toggle()
-                    matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
+                    if message.isDraft {
+                        DraftUtils.editDraft(
+                            from: message,
+                            mailboxManager: mailboxManager,
+                            composeMessageIntent: $mainViewState.composeMessageIntent
+                        )
+                    } else if message.originalThread?.messages.isEmpty == false {
+                        withAnimation {
+                            isHeaderExpanded = false
+                            isMessageExpanded.toggle()
+                            matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
+                        }
+                    }
                 }
-            }
-        }
+        )
     }
 
     private func deleteDraft() {
