@@ -23,7 +23,6 @@ import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import MailResources
-import Popovers
 import SwiftUI
 
 struct EditorDesktopToolbarView: View {
