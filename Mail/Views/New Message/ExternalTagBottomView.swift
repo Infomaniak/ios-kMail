@@ -40,7 +40,7 @@ struct ExternalTagBottomView: View {
                     isShowingExternalTagAlert = true
                 } label: {
                     HStack(spacing: IKPadding.mini) {
-                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                        Text(externalTag.recipientTitle)
                             .font(MailTextStyle.bodySmallMedium.font)
 
                         MailResourcesAsset.info

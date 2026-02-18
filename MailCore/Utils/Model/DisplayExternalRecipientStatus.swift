@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public struct DisplayExternalRecipientStatus {
@@ -36,6 +37,36 @@ public struct DisplayExternalRecipientStatus {
                 return false
             case .one, .many:
                 return true
+            }
+        }
+
+        public var recipientTitle: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings
+                    .Localizable.unknownDialogTitleRecipient
+            default:
+                return ""
+            }
+        }
+
+        public var expeditorTitle: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalDialogTitleExpeditor : MailResourcesStrings
+                    .Localizable.unknownDialogTitleExpeditor
+            default:
+                return ""
+            }
+        }
+
+        public var tag: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalTag : MailResourcesStrings.Localizable
+                    .unknownTag
+            default:
+                return ""
             }
         }
     }

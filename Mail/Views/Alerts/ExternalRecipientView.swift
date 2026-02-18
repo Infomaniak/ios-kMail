@@ -31,8 +31,7 @@ struct ExternalRecipientView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(isDraft ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings.Localizable
-                .externalDialogTitleExpeditor)
+            Text(isDraft ? externalTagState.recipientTitle : externalTagState.expeditorTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 

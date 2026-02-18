@@ -40,7 +40,7 @@ struct ThreadTagsListView: View {
                     matomo.track(eventWithCategory: .externals, name: "threadTag")
                     isShowingExternalTagAlert = true
                 } label: {
-                    Text(MailResourcesStrings.Localizable.externalTag)
+                    Text(externalTag.tag)
                         .tagModifier(
                             foregroundColor: MailResourcesAsset.onTagExternalColor,
                             backgroundColor: MailResourcesAsset.yellowColor
