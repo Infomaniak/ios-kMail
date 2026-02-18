@@ -63,6 +63,7 @@ struct MessageHeaderSummaryView: View {
                     }
                     .environmentObject(mailboxManager)
                     .environment(\.currentUser, currentUser)
+                    .onTapGesture { /* Avoid triggering the message expansion when tapping on the avatar */ }
                 }
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
@@ -132,6 +133,7 @@ struct MessageHeaderSummaryView: View {
                 .padding(.leading, value: .mini)
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     private func replyToMessage() {
