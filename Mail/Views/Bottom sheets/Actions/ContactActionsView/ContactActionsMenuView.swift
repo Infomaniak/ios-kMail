@@ -29,6 +29,7 @@ struct ContactActionsMenuView<Content: View>: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+    let bimi: Bimi?
     @ViewBuilder let label: () -> Content
 
     private var actions: [Action] {
@@ -44,7 +45,7 @@ struct ContactActionsMenuView<Content: View>: View {
     var body: some View {
         Menu {
             Section {
-                RecipientHeaderCell(recipient: recipient)
+                RecipientHeaderCell(recipient: recipient, bimi: bimi)
             }
             Section {
                 ForEach(actions) { action in
@@ -58,7 +59,7 @@ struct ContactActionsMenuView<Content: View>: View {
 }
 
 #Preview {
-    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1) {
+    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1, bimi: nil) {
         Text(PreviewHelper.sampleRecipient1.name)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)

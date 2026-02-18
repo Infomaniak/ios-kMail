@@ -49,7 +49,7 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    ContactActionsMenuView(recipient: recipient) {
+                    ContactActionsMenuView(recipient: recipient, bimi: message.bimi) {
                         AvatarView(
                             mailboxManager: mailboxManager,
                             contactConfiguration: .correspondent(

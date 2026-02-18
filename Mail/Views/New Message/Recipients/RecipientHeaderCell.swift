@@ -60,9 +60,11 @@ struct RecipientHeaderCell: View {
 
         Button {} label: {
             if title.isEmpty || title == subtitle {
-                header(subtitle)
+                Text(highlightedAttributedString(from: title))
+                    .textStyle(.bodyMedium)
             } else {
-                header(title)
+                Text(highlightedAttributedString(from: title))
+                    .textStyle(.bodyMedium)
                 Text(highlightedAttributedString(from: subtitle))
                     .textStyle(.bodySecondary)
             }
@@ -84,18 +86,6 @@ struct RecipientHeaderCell: View {
                 loadedImage = Image(uiImage: uiImage)
             }
             await getIconImage()
-        }
-    }
-
-    private func header(_ title: String) -> some View {
-        HStack(spacing: IKPadding.mini) {
-            Text(highlightedAttributedString(from: title))
-                .textStyle(.bodyMedium)
-
-            if bimi?.shouldDisplayBimi == true {
-                MailResourcesAsset.checkmarkAuthentication
-                    .iconSize(.medium)
-            }
         }
     }
 
