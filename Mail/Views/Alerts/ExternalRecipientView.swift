@@ -26,7 +26,7 @@ import SwiftUI
 struct ExternalRecipientView: View {
     @Environment(\.dismiss) private var dismiss
 
-    var externalTagSate: DisplayExternalRecipientStatus.State
+    var externalTagState: DisplayExternalRecipientStatus.State
     var isDraft: Bool
 
     var body: some View {
@@ -36,7 +36,7 @@ struct ExternalRecipientView: View {
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
-            switch externalTagSate {
+            switch externalTagState {
             case .none:
                 EmptyView()
             case .one(let recipient):
@@ -63,5 +63,5 @@ struct ExternalRecipientView: View {
 }
 
 #Preview {
-    ExternalRecipientView(externalTagSate: .many, isDraft: false)
+    ExternalRecipientView(externalTagState: .many(type: .external), isDraft: false)
 }

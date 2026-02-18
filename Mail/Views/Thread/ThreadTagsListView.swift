@@ -47,7 +47,7 @@ struct ThreadTagsListView: View {
                         )
                 }
                 .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
-                    ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
+                    ExternalRecipientView(externalTagState: externalTag, isDraft: false)
                 }
             }
 
