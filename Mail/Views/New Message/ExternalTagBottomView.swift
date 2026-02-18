@@ -73,5 +73,5 @@ struct ExternalTagBottomView: View {
 }
 
 #Preview {
-    ExternalTagBottomView(externalTag: .many)
+    ExternalTagBottomView(externalTag: .many(type: .external))
 }

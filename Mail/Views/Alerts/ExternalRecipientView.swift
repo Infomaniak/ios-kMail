@@ -39,7 +39,7 @@ struct ExternalRecipientView: View {
             switch externalTagState {
             case .none:
                 EmptyView()
-            case .one(let recipient):
+            case .one(let recipient, _):
                 Text(isDraft ? MailResourcesStrings.Localizable
                     .externalDialogDescriptionRecipient(recipient.email) : MailResourcesStrings.Localizable
                     .externalDialogDescriptionExpeditor(recipient.email))

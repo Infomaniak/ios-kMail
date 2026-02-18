@@ -20,10 +20,15 @@ import Foundation
 import RealmSwift
 
 public struct DisplayExternalRecipientStatus {
+    public enum ExternalRecipientType {
+        case external
+        case unknown
+    }
+
     public enum State {
         case none
-        case one(recipient: Recipient)
-        case many
+        case one(recipient: Recipient, type: ExternalRecipientType)
+        case many(type: ExternalRecipientType)
 
         public var shouldDisplay: Bool {
             switch self {
@@ -53,12 +58,15 @@ public struct DisplayExternalRecipientStatus {
             externalList.append(recipient)
         }
 
+        let type: ExternalRecipientType = (mailboxManager.mailbox.pack == .myKSuiteFree || mailboxManager.mailbox
+            .pack == .myKSuitePlus) ? .unknown : .external
+
         if externalList.isEmpty {
             return .none
         } else if let recipient = externalList.first, externalList.count == 1 {
-            return .one(recipient: recipient)
+            return .one(recipient: recipient, type: type)
         } else {
-            return .many
+            return .many(type: type)
         }
     }
 }

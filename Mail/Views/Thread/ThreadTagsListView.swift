@@ -57,5 +57,5 @@ struct ThreadTagsListView: View {
 }
 
 #Preview {
-    ThreadTagsListView(externalTag: .many, searchFolderName: "Hello")
+    ThreadTagsListView(externalTag: .many(type: .external), searchFolderName: "Hello")
 }
