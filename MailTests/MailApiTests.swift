@@ -49,6 +49,12 @@ final class MailApiTests: XCTestCase {
         return mailboxes[0]
     }
 
+    func inboxFolderIn(mailbox: Mailbox) async throws -> Folder {
+        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
+        let inboxFolder = folders.first { $0.role == .inbox }!
+        return inboxFolder
+    }
+
     // MARK: - Tests methods
 
     func testMailboxes() async throws {
@@ -97,8 +103,7 @@ final class MailApiTests: XCTestCase {
 
     func testThreadsFromResource() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inboxFolder = folders.first { $0.role == .inbox }!
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
         let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inboxFolder.remoteId)
         guard let resource = threadResult.resourceNext else { return }
         _ = try await currentApiFetcher.threads(from: resource, searchFilter: [])
@@ -147,16 +152,14 @@ final class MailApiTests: XCTestCase {
 
     func testMessagesUids() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inboxFolder = folders.first { $0.role == .inbox }!
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
         let uidsResult = try await currentApiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: inboxFolder.remoteId)
         XCTAssertTrue(!uidsResult.messageShortUids.isEmpty)
     }
 
     func testMessagesByUids() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inboxFolder = folders.first { $0.role == .inbox }!
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
         let uidsResult = try await currentApiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: inboxFolder.remoteId)
         guard !uidsResult.messageShortUids.isEmpty else { return }
         let messagesResult = try await currentApiFetcher.messagesByUids(
@@ -169,10 +172,9 @@ final class MailApiTests: XCTestCase {
 
     func testMessagesDelta() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inboxFolder = folders.first { $0.role == .inbox }!
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
         let uidsResult = try await currentApiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: inboxFolder.remoteId)
-        let delta = try await currentApiFetcher.messagesDelta(
+        _ = try await currentApiFetcher.messagesDelta(
             mailboxUuid: mailbox.uuid,
             folderId: inboxFolder.remoteId,
             signature: uidsResult.cursor,
@@ -184,9 +186,8 @@ final class MailApiTests: XCTestCase {
 
     func testDownloadAttachments() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inbox = folders.first { $0.role == .inbox }!
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox.remoteId)
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inboxFolder.remoteId)
         guard let threads = threadResult.threads, !threads.isEmpty else { return }
         let thread = threads[0]
         let messages = thread.messages
@@ -199,9 +200,8 @@ final class MailApiTests: XCTestCase {
 
     func testMarkAsSeenAndUnseen() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inbox = folders.first { $0.role == .inbox }!
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox.remoteId)
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inboxFolder.remoteId)
         guard let threads = threadResult.threads, !threads.isEmpty else { return }
         let thread = threads[0]
         let messages = thread.messages
@@ -215,9 +215,8 @@ final class MailApiTests: XCTestCase {
 
     func testDraftFromMessage() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inbox = folders.first { $0.role == .inbox }!
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox.remoteId)
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inboxFolder.remoteId)
         guard let threads = threadResult.threads, !threads.isEmpty else { return }
         let thread = threads[0]
         let messages = thread.messages
@@ -246,9 +245,8 @@ final class MailApiTests: XCTestCase {
 
     func testSnoozeSettings() async throws {
         let mailbox = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        let inbox = folders.first { $0.role == .inbox }!
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox.remoteId)
+        let inboxFolder = try await inboxFolderIn(mailbox: mailbox)
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inboxFolder.remoteId)
         guard let threads = threadResult.threads, !threads.isEmpty else { return }
         let thread = threads[0]
         let messages = thread.messages
