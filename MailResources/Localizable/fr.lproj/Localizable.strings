@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Wed, 18 Feb 2026 13:24:37 +0100
+ * Exported by: Baptiste Griva
+ * Exported at: Thu, 19 Feb 2026 15:15:36 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1716,6 +1716,15 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
+
+/* loco:699716d77182f3feca0185f2 */
+"snackbarThreadMovedToSpam" = "Conversation déplacée vers Spam et utilisateur bloqué";
+
+/* loco:699717487182f3feca0185f4 */
+"snackbarThreadMovedToSpam-plural" = "Conversations déplacées vers Spam et utilisateurs bloqués";
+
+/* loco:699719e8283044be6e0aa0d2 */
+"snackbarThreadMovedToSpam-plural-many" = "Conversations déplacées vers Spam et utilisateurs bloqués";
 
 /* loco:6909acad8905a0c64a0747d2 */
 "snackbarUnsubscribeFailure" = "Désinscription impossible";

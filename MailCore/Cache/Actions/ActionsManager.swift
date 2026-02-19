@@ -288,7 +288,8 @@ public class ActionsManager: ObservableObject {
         let snackbarMessage = snackbarMoveMessage(
             for: messages,
             originFolder: originFolder,
-            destinationFolderName: destinationFolder.localizedName
+            destinationFolderName: destinationFolder.localizedName,
+            isDestinationSpam: destinationFolder.role == .spam
         )
 
         async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
@@ -392,15 +393,25 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolderName: String) -> String {
+    private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolderName: String,
+                                     isDestinationSpam: Bool) -> String {
         if messages.isSingleMessage(currentFolder: originFolder) {
             return MailResourcesStrings.Localizable.snackbarMessageMoved(destinationFolderName)
         } else {
             let uniqueThreadCount = messages.uniqueThreadsInFolder(originFolder).count
             if uniqueThreadCount == 1 {
-                return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
+                guard isDestinationSpam else {
+                    return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
+                }
+
+                return MailResourcesStrings.Localizable.snackbarThreadMovedToSpam
+
             } else {
-                return MailResourcesStrings.Localizable.snackbarThreadMovedPlural(destinationFolderName)
+                guard isDestinationSpam else {
+                    return MailResourcesStrings.Localizable.snackbarThreadMovedPlural(destinationFolderName)
+                }
+
+                return MailResourcesStrings.Localizable.snackbarThreadMovedToSpamPlural
             }
         }
     }
