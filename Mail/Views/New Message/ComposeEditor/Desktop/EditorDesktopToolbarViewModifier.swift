@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Popovers
 import SwiftUI
 
 struct KeyboardToolbarShortcut: ViewModifier {

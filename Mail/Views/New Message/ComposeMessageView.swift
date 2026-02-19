@@ -26,7 +26,6 @@ import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
-import Popovers
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI

@@ -25,12 +25,12 @@ import MailCore
 import MailCoreUI
 import SwiftUI
 
-struct ContactActionsView: View {
-    @Environment(\.currentUser) private var currentUser
+struct ContactActionsMenuView<Content: View>: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
     let bimi: Bimi?
+    @ViewBuilder let label: () -> Content
 
     private var actions: [Action] {
         let contact = mailboxManager.contactManager.getContact(for: recipient)
@@ -43,33 +43,25 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.mini) {
-            let contactConfiguration = ContactConfiguration.correspondent(
-                correspondent: recipient,
-                associatedBimi: bimi,
-                contextUser: currentUser.value,
-                contextMailboxManager: mailboxManager
-            )
-            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-            ContactActionsHeaderView(displayablePerson: contact, bimi: bimi)
-
-            VStack(alignment: .leading, spacing: 0) {
+        Menu {
+            Section {
+                RecipientHeaderCell(recipient: recipient, bimi: bimi)
+            }
+            Section {
                 ForEach(actions) { action in
-                    if action != actions.first {
-                        IKDivider()
-                    }
-
                     ContactActionView(recipient: recipient, action: action)
                 }
             }
+        } label: {
+            label()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }
 }
 
 #Preview {
-    ContactActionsView(recipient: PreviewHelper.sampleRecipient1, bimi: nil)
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
+    ContactActionsMenuView(recipient: PreviewHelper.sampleRecipient1, bimi: nil) {
+        Text(PreviewHelper.sampleRecipient1.name)
+    }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

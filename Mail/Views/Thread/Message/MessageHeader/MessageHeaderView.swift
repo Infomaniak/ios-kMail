@@ -23,6 +23,7 @@ import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -42,34 +43,43 @@ struct MessageHeaderView: View {
 
     var body: some View {
         VStack(spacing: IKPadding.medium) {
-            MessageHeaderSummaryView(message: message,
-                                     isMessageExpanded: $isMessageExpanded,
-                                     isHeaderExpanded: $isHeaderExpanded,
-                                     deleteDraftTapped: deleteDraft)
+            MessageHeaderSummaryView(
+                message: message,
+                isMessageExpanded: $isMessageExpanded,
+                isHeaderExpanded: $isHeaderExpanded,
+                deleteDraftTapped: deleteDraft
+            )
+            .padding([.top, .horizontal], value: .medium)
+            .disabled(!isMessageInteractive)
+            .onTapGesture(perform: didTapHeader)
 
             if isHeaderExpanded {
                 MessageHeaderDetailView(message: message)
-                    .disabled(!isMessageInteractive)
+                    .padding([.horizontal], value: .medium)
             }
         }
-        .contentShape(Rectangle())
-        .padding(value: .medium)
-        .onTapGesture {
-            guard isMessageInteractive else { return }
+        .padding(.bottom, value: .medium)
+    }
 
-            if message.isDraft {
-                DraftUtils.editDraft(
-                    from: message,
-                    mailboxManager: mailboxManager,
-                    composeMessageIntent: $mainViewState.composeMessageIntent
-                )
-            } else if message.originalThread?.messages.isEmpty == false {
-                withAnimation {
-                    isHeaderExpanded = false
-                    isMessageExpanded.toggle()
-                    matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
-                }
-            }
+    private func didTapHeader() {
+        guard !message.isDraft else {
+            DraftUtils.editDraft(
+                from: message,
+                mailboxManager: mailboxManager,
+                composeMessageIntent: $mainViewState.composeMessageIntent
+            )
+            return
+        }
+
+        guard let originalThreadMessages = message.originalThread?.messages,
+              originalThreadMessages.count > 1 else {
+            return
+        }
+
+        withAnimation {
+            isHeaderExpanded = false
+            isMessageExpanded.toggle()
+            matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
         }
     }
 

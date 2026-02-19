@@ -39,7 +39,6 @@ struct MessageHeaderSummaryView: View {
     @ObservedRealmObject var message: Message
 
     @State private var replyOrReplyAllMessage: Message?
-    @State private var contactViewRecipient: Recipient?
 
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
@@ -50,26 +49,21 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    Button {
-                        didTapAvatar(of: recipient)
-                    } label: {
+                    ContactActionsMenuView(recipient: recipient, bimi: message.bimi) {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactConfiguration: .correspondent(correspondent: recipient,
-                                                                 associatedBimi: message.bimi,
-                                                                 contextUser: currentUser.value,
-                                                                 contextMailboxManager: mailboxManager),
+                            contactConfiguration: .correspondent(
+                                correspondent: recipient,
+                                associatedBimi: message.bimi,
+                                contextUser: currentUser.value,
+                                contextMailboxManager: mailboxManager
+                            ),
                             size: 40
                         )
                     }
-                    .adaptivePanel(item: $contactViewRecipient, style: .native) { recipient in
-                        ContactActionsView(recipient: recipient, bimi: message.bimi)
-                            .environmentObject(mailboxManager)
-                            .environment(\.currentUser, currentUser)
-                        // We need to manually pass environment and environmentObject because of a bug with SwiftUI end popovers
-                        // on macOS
-                    }
-                    .disabled(!isMessageInteractive)
+                    .environmentObject(mailboxManager)
+                    .environment(\.currentUser, currentUser)
+                    .onTapGesture { /* Avoid triggering the message expansion when tapping on the avatar */ }
                 }
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
@@ -139,11 +133,7 @@ struct MessageHeaderSummaryView: View {
                 .padding(.leading, value: .mini)
             }
         }
-    }
-
-    private func didTapAvatar(of recipient: Recipient) {
-        matomo.track(eventWithCategory: .message, name: "selectAvatar")
-        contactViewRecipient = recipient
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     private func replyToMessage() {

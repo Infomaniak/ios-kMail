@@ -22,7 +22,6 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import Popovers
 import SwiftUI
 
 struct RecipientChip: View {

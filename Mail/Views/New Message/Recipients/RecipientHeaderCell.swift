@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,6 +29,8 @@ struct RecipientHeaderCell: View {
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @InjectService private var platformDetector: PlatformDetectable
 
     @State private var loadedImage: Image?
     @State private var iconImage: Image?
@@ -56,17 +60,23 @@ struct RecipientHeaderCell: View {
 
         Button {} label: {
             if title.isEmpty || title == subtitle {
-                header(subtitle)
+                Text(highlightedAttributedString(from: subtitle))
+                    .textStyle(.bodyMedium)
             } else {
-                header(title)
+                Text(highlightedAttributedString(from: title))
+                    .textStyle(.bodyMedium)
                 Text(highlightedAttributedString(from: subtitle))
                     .textStyle(.bodySecondary)
             }
 
-            if let loadedImage {
-                loadedImage
-            } else if let iconImage {
-                iconImage
+            if !platformDetector.isMac {
+                if let loadedImage {
+                    loadedImage
+                        .resizable()
+                        .frame(maxWidth: Self.defaultAvatarSize)
+                } else if let iconImage {
+                    iconImage
+                }
             }
         }
         .task {
@@ -76,18 +86,6 @@ struct RecipientHeaderCell: View {
                 loadedImage = Image(uiImage: uiImage)
             }
             await getIconImage()
-        }
-    }
-
-    private func header(_ title: String) -> some View {
-        HStack(spacing: IKPadding.mini) {
-            Text(highlightedAttributedString(from: title))
-                .textStyle(.bodyMedium)
-
-            if bimi?.shouldDisplayBimi == true {
-                MailResourcesAsset.checkmarkAuthentication
-                    .iconSize(.medium)
-            }
         }
     }
 

@@ -26,8 +26,6 @@ import SwiftUI
 struct ContactActionView: View {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -38,7 +36,11 @@ struct ContactActionView: View {
         Button {
             handleAction(action)
         } label: {
-            ActionButtonLabel(action: action)
+            Label {
+                Text(action.title)
+            } icon: {
+                action.icon
+            }
         }
     }
 
@@ -49,10 +51,8 @@ struct ContactActionView: View {
         case .writeEmailAction:
             writeEmail()
         case .addContactsAction:
-            dismiss()
             addToContacts()
         case .copyEmailAction:
-            dismiss()
             copyEmail()
         default:
             return
@@ -60,7 +60,6 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        dismiss()
         mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
     }
 
@@ -75,6 +74,5 @@ struct ContactActionView: View {
 
     private func copyEmail() {
         UIPasteboard.general.string = recipient.email
-        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
     }
 }

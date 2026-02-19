@@ -87,8 +87,6 @@ struct RecipientLabel: View {
     let recipients: RealmSwift.List<Recipient>
     var bimi: Bimi?
 
-    @State private var contactViewRecipient: Recipient?
-
     var body: some View {
         HStack(alignment: .top) {
             Text(title)
@@ -98,16 +96,14 @@ struct RecipientLabel: View {
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in
                     WrappingHStack(lineSpacing: 2) {
-                        Button {
-                            @InjectService var matomo: MatomoUtils
-                            matomo.track(eventWithCategory: .message, name: "selectRecipient")
-                            contactViewRecipient = recipient
-                        } label: {
+                        ContactActionsMenuView(recipient: recipient, bimi: bimi) {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
+                        .environmentObject(mailboxManager)
+                        .environment(\.currentUser, currentUser)
 
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
@@ -116,12 +112,6 @@ struct RecipientLabel: View {
                         }
                     }
                 }
-            }
-            .adaptivePanel(item: $contactViewRecipient) { recipient in
-                ContactActionsView(recipient: recipient, bimi: bimi)
-                    .environmentObject(mailboxManager)
-                    .environment(\.currentUser, currentUser)
-                // We need to manually pass environment and environmentObject because of a bug with SwiftUI end popovers on macOS
             }
         }
         .padding(.bottom, 2)
