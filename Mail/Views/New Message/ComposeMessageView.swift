@@ -467,10 +467,12 @@ struct ComposeMessageView: View {
 
         guard !draft.subject.isEmpty || skipSubjectCheck else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
-            isShowingAlert = NewMessageAlert(type: .emptySubject { trySendingMessage(
-                skipSubjectCheck: true,
-                skipAttachmentsCheck: skipAttachmentsCheck
-            ) })
+            isShowingAlert = NewMessageAlert(type: .emptySubject {
+                trySendingMessage(
+                    skipSubjectCheck: true,
+                    skipAttachmentsCheck: skipAttachmentsCheck
+                )
+            })
             return
         }
 
@@ -478,10 +480,12 @@ struct ComposeMessageView: View {
            let matches = Regex(pattern: Constants.attachmentsReminderRegex, options: .caseInsensitive)?
            .matches(in: draft.body),
            !matches.isEmpty {
-            isShowingAlert = NewMessageAlert(type: .attachmentsReminder { trySendingMessage(
-                skipSubjectCheck: skipSubjectCheck,
-                skipAttachmentsCheck: true
-            ) })
+            isShowingAlert = NewMessageAlert(type: .attachmentsReminder {
+                trySendingMessage(
+                    skipSubjectCheck: skipSubjectCheck,
+                    skipAttachmentsCheck: true
+                )
+            })
             return
         }
 
