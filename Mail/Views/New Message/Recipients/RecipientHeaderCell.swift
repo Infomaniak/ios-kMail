@@ -60,7 +60,7 @@ struct RecipientHeaderCell: View {
 
         Button {} label: {
             if title.isEmpty || title == subtitle {
-                Text(highlightedAttributedString(from: title))
+                Text(highlightedAttributedString(from: subtitle))
                     .textStyle(.bodyMedium)
             } else {
                 Text(highlightedAttributedString(from: title))
