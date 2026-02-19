@@ -221,4 +221,115 @@ public enum Constants {
         let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
         return isiOS15Breakable || isiOS16Breakable
     }
+
+    private static var frAttachmentsReminderRegex: String {
+        [
+            "voir pi[eèé]ces? jointes?",
+            "voir fichiers? joints?",
+            "voir fichiers? associ[eèé]s?",
+            "jointe?s? [aà] cet e-mail",
+            "jointe?s? [aà] ce message",
+            "je ((te|vous) )?joins",
+            "j'ai joint",
+            "ci(-| )joint",
+            "cf.?\\s(pj|pi[eèé]ces? jointes?)",
+            "pi[eèé]ces? jointes?",
+            "fichiers? joints?",
+            "voir le fichier joint",
+            "voir les fichiers joints",
+            "voir la pi[eèé]ce jointe",
+            "voir les pi[eèé]ces jointes",
+            "en annexe",
+            // Generic key
+            "[^\\w]jointe?s?[^\\w]"
+        ].joined(separator: "|")
+    }
+
+    private static var enAttachmentsReminderRegex: String {
+        [
+            "see (the\\s)?attach(ed|ments?)",
+            "see included",
+            "is attached",
+            "attached is",
+            "are attached",
+            "attached are",
+            "attached to this email",
+            "attached to this message",
+            "I('|\\sa)m attaching",
+            "I('|\\sha)ve attached",
+            "I attache?d?",
+            "find (the\\s)?(attached|included)",
+            "attached files?",
+            "here is the attachment",
+            "[^\\w]attached you will find[^\\w]"
+        ].joined(separator: "|")
+    }
+
+    private static var deAttachmentsReminderRegex: String {
+        [
+            "siehe Anhang",
+            "angehängt",
+            "hinzugefügt",
+            "Anhang hinzufügen",
+            "Anhang anbei",
+            "Anhang hinzugefügt",
+            "anbei finden",
+            "anbei",
+            "im Anhang",
+            "mit dieser E-Mail sende ich",
+            "angehängte Datei",
+            "siehe angehängte Datei",
+            "siehe Anhänge",
+            "angehängte Dateien",
+            "[^\\w]siehe Anlagen?[^\\w]"
+        ].joined(separator: "|")
+    }
+
+    private static var esAttachmentsReminderRegex: String {
+        [
+            "ver (el\\s)?(archivo\\s)?(adjunto|incluido)",
+            "se ha adjuntado",
+            "adjuntados?",
+            "se ha adjuntado a este (correo|mensaje)",
+            "se han adjuntado",
+            "Adjunto te envío",
+            "He adjuntado",
+            "He adjuntado un archivo",
+            "adjunto el archivo",
+            "incluyo el archivo",
+            "archivo adjunto",
+            "mira el archivo adjunto",
+            "ver archivos adjuntos",
+            "archivos adjuntos",
+            "añadido adjunto",
+            "adjunto añadido",
+            "[^\\w]adjunto[^\\w]"
+        ].joined(separator: "|")
+    }
+
+    private static var itAttachmentsReminderRegex: String {
+        [
+            "(vedi\\s)?(in\\s)?allegat(o|i)",
+            "vedi accluso",
+            "è allegato",
+            "sono allegati",
+            "giunto a questo mail",
+            "in allegato a questa (email|messaggio)",
+            "invio in allegato",
+            "allego",
+            "ho allegato",
+            "in allegato trovi",
+            "trova in allegato",
+            "trova accluso",
+            "incluso troverai",
+            "file allegat(o|i)",
+            "vedi l'allegato",
+            "[^\\w]ti allego[^\\w]"
+        ].joined(separator: "|")
+    }
+
+    public static var attachmentsReminderRegex: String {
+        [frAttachmentsReminderRegex, enAttachmentsReminderRegex, deAttachmentsReminderRegex, esAttachmentsReminderRegex,
+         itAttachmentsReminderRegex].joined(separator: "|")
+    }
 }
