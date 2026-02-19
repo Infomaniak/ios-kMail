@@ -40,7 +40,7 @@ struct ExternalTagBottomView: View {
                     isShowingExternalTagAlert = true
                 } label: {
                     HStack(spacing: IKPadding.mini) {
-                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                        Text(externalTag.recipientTitle)
                             .font(MailTextStyle.bodySmallMedium.font)
 
                         MailResourcesAsset.info
@@ -49,7 +49,7 @@ struct ExternalTagBottomView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
-                    ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
+                    ExternalRecipientView(externalTagState: externalTag, isDraft: true)
                 }
 
                 Button {
@@ -73,5 +73,5 @@ struct ExternalTagBottomView: View {
 }
 
 #Preview {
-    ExternalTagBottomView(externalTag: .many)
+    ExternalTagBottomView(externalTag: .many(type: .external))
 }

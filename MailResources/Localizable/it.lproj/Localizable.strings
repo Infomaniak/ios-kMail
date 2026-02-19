@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Fri, 16 Jan 2026 15:32:34 +0100
+ * Exported by: Ambroise Decouttere
+ * Exported at: Wed, 18 Feb 2026 13:24:37 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1846,8 +1846,17 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Sbloccare";
 
+/* loco:6995af71f61e72e4d4004be2 */
+"unknownDialogTitleExpeditor" = "Spedizioniere sconosciuto";
+
+/* loco:6995a57f05da42c3ae0bb253 */
+"unknownDialogTitleRecipient" = "Destinatario sconosciuto";
+
 /* loco:62b95774aee47c626b773693 */
 "unknownRecipientTitle" = "(sconosciuto)";
+
+/* loco:6995a893d03cfb81d80e25c2 */
+"unknownTag" = "Sconosciuto";
 
 /* loco:690387a073a26a6c7a0ca602 */
 "unsubscribeButtonTitle" = "Annulla iscrizione";

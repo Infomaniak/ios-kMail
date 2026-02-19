@@ -26,20 +26,19 @@ import SwiftUI
 struct ExternalRecipientView: View {
     @Environment(\.dismiss) private var dismiss
 
-    var externalTagSate: DisplayExternalRecipientStatus.State
+    var externalTagState: DisplayExternalRecipientStatus.State
     var isDraft: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(isDraft ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings.Localizable
-                .externalDialogTitleExpeditor)
+            Text(isDraft ? externalTagState.recipientTitle : externalTagState.expeditorTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
-            switch externalTagSate {
+            switch externalTagState {
             case .none:
                 EmptyView()
-            case .one(let recipient):
+            case .one(let recipient, _):
                 Text(isDraft ? MailResourcesStrings.Localizable
                     .externalDialogDescriptionRecipient(recipient.email) : MailResourcesStrings.Localizable
                     .externalDialogDescriptionExpeditor(recipient.email))
@@ -63,5 +62,5 @@ struct ExternalRecipientView: View {
 }
 
 #Preview {
-    ExternalRecipientView(externalTagSate: .many, isDraft: false)
+    ExternalRecipientView(externalTagState: .many(type: .external), isDraft: false)
 }

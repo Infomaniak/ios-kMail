@@ -40,14 +40,14 @@ struct ThreadTagsListView: View {
                     matomo.track(eventWithCategory: .externals, name: "threadTag")
                     isShowingExternalTagAlert = true
                 } label: {
-                    Text(MailResourcesStrings.Localizable.externalTag)
+                    Text(externalTag.tag)
                         .tagModifier(
                             foregroundColor: MailResourcesAsset.onTagExternalColor,
                             backgroundColor: MailResourcesAsset.yellowColor
                         )
                 }
                 .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
-                    ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
+                    ExternalRecipientView(externalTagState: externalTag, isDraft: false)
                 }
             }
 
@@ -57,5 +57,5 @@ struct ThreadTagsListView: View {
 }
 
 #Preview {
-    ThreadTagsListView(externalTag: .many, searchFolderName: "Hello")
+    ThreadTagsListView(externalTag: .many(type: .external), searchFolderName: "Hello")
 }

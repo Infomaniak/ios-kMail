@@ -17,13 +17,19 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public struct DisplayExternalRecipientStatus {
+    public enum ExternalRecipientType {
+        case external
+        case unknown
+    }
+
     public enum State {
         case none
-        case one(recipient: Recipient)
-        case many
+        case one(recipient: Recipient, type: ExternalRecipientType)
+        case many(type: ExternalRecipientType)
 
         public var shouldDisplay: Bool {
             switch self {
@@ -31,6 +37,36 @@ public struct DisplayExternalRecipientStatus {
                 return false
             case .one, .many:
                 return true
+            }
+        }
+
+        public var recipientTitle: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings
+                    .Localizable.unknownDialogTitleRecipient
+            default:
+                return ""
+            }
+        }
+
+        public var expeditorTitle: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalDialogTitleExpeditor : MailResourcesStrings
+                    .Localizable.unknownDialogTitleExpeditor
+            default:
+                return ""
+            }
+        }
+
+        public var tag: String {
+            switch self {
+            case .one(_, let type), .many(let type):
+                return type == .external ? MailResourcesStrings.Localizable.externalTag : MailResourcesStrings.Localizable
+                    .unknownTag
+            default:
+                return ""
             }
         }
     }
@@ -53,12 +89,15 @@ public struct DisplayExternalRecipientStatus {
             externalList.append(recipient)
         }
 
+        let type: ExternalRecipientType = (mailboxManager.mailbox.pack == .myKSuiteFree || mailboxManager.mailbox
+            .pack == .myKSuitePlus) ? .unknown : .external
+
         if externalList.isEmpty {
             return .none
         } else if let recipient = externalList.first, externalList.count == 1 {
-            return .one(recipient: recipient)
+            return .one(recipient: recipient, type: type)
         } else {
-            return .many
+            return .many(type: type)
         }
     }
 }
