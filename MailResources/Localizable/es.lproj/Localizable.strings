@@ -262,6 +262,12 @@
 /* loco:6374f6a12619632e014135d2 */
 "attachmentFileLimitReached" = "Los archivos que está intentando enviar superan el límite de archivos adjuntos de 25 MB.";
 
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Ha mencionado un archivo adjunto, pero no se ha añadido ningún archivo. ¿Lo envía de todos modos?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Falta un accesorio";
+
 /* loco:659665294692c252640fa103 */
 "attendeesListTitle" = "Lista de asistentes (%d)";
 

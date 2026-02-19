@@ -28,17 +28,17 @@ struct AttachmentsReminderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Pièce jointe manquante ?")
+            Text(MailResourcesStrings.Localizable.attachmentsReminderTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
-            Text("Vous avez mentionné une pièce jointe mais aucun fichier n'a été ajouté. Envoyer quand même ?")
+            Text(MailResourcesStrings.Localizable.attachmentsReminderDescription)
                 .textStyle(.body)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
 
-            ModalButtonsView(primaryButtonTitle: "Envoyer") {
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.send) {
                 @InjectService var matomo: MatomoUtils
-                matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubjectConfirm")
+                matomo.track(eventWithCategory: .newMessage, name: "falseAttachmentReminder")
                 actionHandler()
             }
         }

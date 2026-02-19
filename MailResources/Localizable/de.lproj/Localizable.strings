@@ -262,6 +262,12 @@
 /* loco:6374f6a12619632e014135d2 */
 "attachmentFileLimitReached" = "Die Dateien, die Sie zu senden versuchen, überschreiten das Limit von 25 MB für Anhänge";
 
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Sie haben einen Anhang erwähnt, aber es ist keine Datei hinzugefügt worden. Trotzdem senden?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Fehlender Anhang";
+
 /* loco:659665294692c252640fa103 */
 "attendeesListTitle" = "Liste der Teilnehmer (%d)";
 

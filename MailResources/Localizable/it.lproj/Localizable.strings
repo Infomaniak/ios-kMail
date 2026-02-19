@@ -262,6 +262,12 @@
 /* loco:6374f6a12619632e014135d2 */
 "attachmentFileLimitReached" = "I file che si sta tentando di inviare superano il limite di 25 MB per gli allegati.";
 
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Hai menzionato un allegato, ma non è stato aggiunto alcun file. Si può inviare lo stesso?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Allegato mancante";
+
 /* loco:659665294692c252640fa103 */
 "attendeesListTitle" = "Elenco dei partecipanti (%d)";
 
