@@ -216,14 +216,17 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .availableSpatialTapGesture { location in
-            guard isShowingEditor, location.y >= editorFrame?.maxY ?? 0 else { return }
+        .gesture(
+            SpatialTapGesture()
+                .onEnded { event in
+                    guard isShowingEditor, event.location.y >= editorFrame?.maxY ?? 0 else { return }
 
-            focusedField = .editor
-            #if os(macOS) || targetEnvironment(macCatalyst)
-            _ = editor?.becomeFirstResponder()
-            #endif
-        }
+                    focusedField = .editor
+                    #if os(macOS) || targetEnvironment(macCatalyst)
+                    _ = editor?.becomeFirstResponder()
+                    #endif
+                }
+        )
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
