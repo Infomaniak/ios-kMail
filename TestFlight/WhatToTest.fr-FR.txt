@@ -1,6 +1,1 @@
-- Correction des actions rapides au démarrage de l’app
-- Correction de l’authentification à deux facteurs sur macOS
-- Correction de problèmes de performance dans l’éditeur
-- Correction des photos de contacts locales
-- Correction de la sélection des chips de destinataires
 - Corrections de bugs et améliorations
