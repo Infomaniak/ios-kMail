@@ -61,7 +61,7 @@ public enum PreviewHelper {
                                               email: "test@example.com",
                                               emailIdn: "",
                                               mailbox: "",
-                                              linkId: 0,
+                                              accessId: "u0",
                                               mailboxId: 0,
                                               hostingId: 0,
                                               isPrimary: true,
