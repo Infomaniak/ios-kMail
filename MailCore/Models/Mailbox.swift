@@ -58,7 +58,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var email: String
     @Persisted public var emailIdn: String
     @Persisted public var mailbox: String
-    @Persisted public var linkId: Int
+    @Persisted public var accessId: String
     @Persisted public var mailboxId: Int
     @Persisted public var hostingId: Int
     @Persisted public var isPrimary: Bool
@@ -103,7 +103,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case email
         case emailIdn
         case mailbox
-        case linkId
+        case accessId
         case mailboxId
         case hostingId
         case isPrimary
@@ -130,7 +130,7 @@ public class Mailbox: Object, Codable, Identifiable {
         email: String,
         emailIdn: String,
         mailbox: String,
-        linkId: Int,
+        accessId: String,
         mailboxId: Int,
         hostingId: Int,
         isPrimary: Bool,
@@ -147,7 +147,7 @@ public class Mailbox: Object, Codable, Identifiable {
         self.email = email
         self.emailIdn = emailIdn
         self.mailbox = mailbox
-        self.linkId = linkId
+        self.accessId = accessId
         self.mailboxId = mailboxId
         self.hostingId = hostingId
         self.isPrimary = isPrimary
@@ -165,7 +165,7 @@ public class Mailbox: Object, Codable, Identifiable {
         email = try container.decode(String.self, forKey: .email)
         emailIdn = try container.decode(String.self, forKey: .emailIdn)
         mailbox = try container.decode(String.self, forKey: .mailbox)
-        linkId = try container.decode(Int.self, forKey: .linkId)
+        accessId = try container.decode(String.self, forKey: .accessId)
         mailboxId = try container.decode(Int.self, forKey: .mailboxId)
         hostingId = try container.decode(Int.self, forKey: .hostingId)
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
