@@ -196,10 +196,8 @@ public enum NotificationsHelper {
         incompleteNotification.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
         incompleteNotification.badge = await getUnreadCount() as NSNumber
         incompleteNotification.sound = .default
-        incompleteNotification.categoryIdentifier = NotificationActionGroupIdentifier.newMail // enable actions
-        if #available(iOS 16.0, *) {
-            incompleteNotification.filterCriteria = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
-        }
+        incompleteNotification.categoryIdentifier = NotificationActionGroupIdentifier.newMail
+        incompleteNotification.filterCriteria = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         incompleteNotification.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
                                            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
                                            NotificationsHelper.UserInfoKeys.messageUid: message.uid]

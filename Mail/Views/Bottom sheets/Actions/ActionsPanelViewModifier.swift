@@ -149,15 +149,9 @@ struct ActionsPanelViewModifier: ViewModifier {
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in
-            if #available(iOS 16.0, *) {
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
-            } else {
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .backport.presentationDetents([.medium, .large])
-            }
+            ActivityView(activityItems: [shareMailLinkResult.url])
+                .ignoresSafeArea(edges: [.bottom])
+                .presentationDetents([.medium, .large])
         }
         .snoozedFloatingPanel(
             messages: messagesToSnooze,

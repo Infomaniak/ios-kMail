@@ -72,19 +72,8 @@ struct AIPropositionMenu: View {
         .simultaneousGesture(TapGesture().onEnded {
             matomo.track(eventWithCategory: .aiWriter, name: "refine")
         })
-        .modifier(FixedMenuOrderModifier())
+        .menuOrder(.fixed)
         .disabled(buttonShouldBeDisabled)
-    }
-}
-
-struct FixedMenuOrderModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .menuOrder(.fixed)
-        } else {
-            content
-        }
     }
 }
 

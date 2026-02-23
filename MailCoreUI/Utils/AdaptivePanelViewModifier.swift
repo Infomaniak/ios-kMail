@@ -42,7 +42,6 @@ public enum AdaptivePanelStyle {
     case selfSizing
 }
 
-@available(iOS 16.4, *)
 struct NativePanelView<Item: Identifiable, PanelContent: View>: View {
     @State private var selection: PresentationDetent = .medium
 
@@ -85,24 +84,16 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
             }, set: { newValue in
                 item = newValue
             })) { item in
-                if style == .native,
-                   #available(iOS 16.4, *) {
+                if style == .native {
                     NativePanelView(item: item, panelContent: panelContent)
                         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 } else {
-                    if #available(iOS 16.4, *) {
-                        panelContent(item)
-                            .modifier(SelfSizingPanelViewModifier(
-                                topPadding: IKPadding.large,
-                                bottomPadding: IKPadding.medium
-                            ))
-                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-                    } else {
-                        panelContent(item)
-                            .modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
-                                                                          bottomPadding: IKPadding.medium))
-                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-                    }
+                    panelContent(item)
+                        .modifier(SelfSizingPanelViewModifier(
+                            topPadding: IKPadding.large,
+                            bottomPadding: IKPadding.medium
+                        ))
+                        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 }
             }
             .popover(item:

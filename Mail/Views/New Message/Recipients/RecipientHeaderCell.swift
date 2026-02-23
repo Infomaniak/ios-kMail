@@ -108,20 +108,14 @@ struct RecipientHeaderCell: View {
     }
 
     private func getIconImage() async {
-        guard #available(iOS 16.0, *) else {
-            iconImage = nil
-            return
-        }
-        guard
-            let renderedImage = ImageRenderer(
-                content: AvatarView(
-                    mailboxManager: mailboxManager,
-                    contactConfiguration: avatarConfiguration,
-                    size: Self.defaultAvatarSize
-                )
+        guard let renderedImage = ImageRenderer(
+            content: AvatarView(
+                mailboxManager: mailboxManager,
+                contactConfiguration: avatarConfiguration,
+                size: Self.defaultAvatarSize
             )
-            .uiImage
-        else { return }
+        )
+        .uiImage else { return }
         iconImage = Image(uiImage: renderedImage)
     }
 }
