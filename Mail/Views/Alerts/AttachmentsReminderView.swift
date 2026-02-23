@@ -38,7 +38,7 @@ struct AttachmentsReminderView: View {
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.send) {
                 @InjectService var matomo: MatomoUtils
-                matomo.track(eventWithCategory: .newMessage, name: "falseAttachmentReminder")
+                matomo.track(eventWithCategory: .newMessage, name: "sendAnyway")
                 actionHandler()
             }
         }
