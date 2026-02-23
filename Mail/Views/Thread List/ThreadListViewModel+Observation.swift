@@ -146,6 +146,7 @@ extension ThreadListViewModel {
         let allThreads = mailboxManager.fetchResults(ofType: Thread.self) { partial in
             partial
                 .filter(containAnyOf)
+                .where { $0.isMovedOutLocally == false }
                 .sorted(by: \.date, ascending: false)
         }
 
