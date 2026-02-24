@@ -153,10 +153,6 @@ struct SearchToolbar: ViewModifier {
 
                             LegacyToolbarSpacer()
                         }
-
-                        if isShowingBottomBarItems {
-                            moreButton
-                        }
                     }
                 }
             }

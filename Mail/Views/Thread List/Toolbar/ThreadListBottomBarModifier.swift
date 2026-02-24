@@ -82,10 +82,6 @@ struct ThreadListBottomBarModifier: ViewModifier {
 
                             LegacyToolbarSpacer()
                         }
-
-                        if isShowingBottomBarItems {
-                            moreButton
-                        }
                     }
                 }
             }

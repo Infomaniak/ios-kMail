@@ -127,10 +127,6 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             LegacyToolbarSpacer()
                         }
                     }
-
-                    if showMoreButton {
-                        moreButton
-                    }
                 }
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
