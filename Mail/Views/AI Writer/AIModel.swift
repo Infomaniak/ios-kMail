@@ -99,6 +99,7 @@ extension AIModel {
             }
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(
                 messages: conversation,
+                output: .mail,
                 mailbox: mailboxManager.mailbox
             )
             handleAIResponse(response)
@@ -163,6 +164,7 @@ extension AIModel {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
                 shortcut: shortcut,
                 messages: conversation,
+                output: .mail,
                 mailbox: mailboxManager.mailbox
             )
             handleAIResponse(response)

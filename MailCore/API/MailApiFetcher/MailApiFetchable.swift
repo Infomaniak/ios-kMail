@@ -25,7 +25,7 @@ public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchabl
     MailApiExtendedFetchable & MailApiSnoozeFetchable & MailApiSyncProfileFetchable
 
 /// Main interface of the `MailApiFetcher`
-public protocol MailApiCommonFetchable {
+public protocol MailApiCommonFetchable: ApiFetcher {
     func mailboxes() async throws -> [Mailbox]
 
     func checkAPIStatus() async throws -> Empty
@@ -60,6 +60,12 @@ public protocol MailApiCommonFetchable {
 
     func reportPhishing(message: Message) async throws -> Bool
 
+    func reportSpams(mailboxUuid: String, messages: [Message]) async throws -> UndoResponse
+
+    func updateSendersRestrictions(mailbox: Mailbox, sendersRestrictions: SendersRestrictions) async throws -> Bool
+
+    func updateSpamFilter(mailbox: Mailbox, value: Bool) async throws -> Bool
+
     func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder
 
     @discardableResult
@@ -73,6 +79,16 @@ public protocol MailApiCommonFetchable {
                           progressObserver: @escaping (Double) -> Void) async throws -> Attachment
 
     func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult
+
+    func shareMailLink(message: Message) async throws -> ShareMailLinkResult
+
+    func swissTransferAttachment(stUuid: String) async throws -> SwissTransferAttachment
+
+    func downloadSwissTransferAttachment(stUuid: String,
+                                         fileUuid: String,
+                                         progressObserver: ((Double) -> Void)?) async throws -> URL
+
+    func downloadAllSwissTransferAttachment(stUuid: String, progressObserver: ((Double) -> Void)?) async throws -> URL
 }
 
 /// Extended capabilities of the `MailApiFetcher`
@@ -125,6 +141,8 @@ public protocol MailApiExtendedFetchable {
 
     func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft
 
+    func draft(draftResource: String) async throws -> Draft
+
     func draft(from message: Message) async throws -> Draft
 
     func send<T: Decodable>(mailbox: Mailbox, draft: Draft) async throws -> T
@@ -132,6 +150,23 @@ public protocol MailApiExtendedFetchable {
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty?
 
     func deleteDraft(draftResource: String) async throws -> Empty?
+
+    func cancelSend(resource: String) async throws -> Bool
+
+    func changeDraftSchedule(draftResource: String, scheduleDate: Date) async throws
+
+    func deleteSchedule(scheduleAction: String) async throws
+
+    func mailHosted(for recipients: [String]) async throws -> [MailHosted]
+
+    func unsubscribe(messageResource: String) async throws
+
+    func acknowledgeMessage(messageResource: String) async throws
+
+    func lastSyncDate() async throws -> String?
+
+    func batchOver<Input, Output>(values: [Input], chunkSize: Int,
+                                  perform: @escaping (([Input]) async throws -> Output?)) async rethrows -> [Output]
 }
 
 public protocol MailApiAIFetchable {
@@ -171,5 +206,9 @@ public protocol MailApiSnoozeFetchable {
 
     func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeUpdatedAPIResponse]
 
+    func updateSnooze(message: Message, until date: Date, mailbox: Mailbox) async throws
+
     func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws -> [SnoozeCancelledAPIResponse]
+
+    func deleteSnooze(message: Message, mailbox: Mailbox) async throws
 }
