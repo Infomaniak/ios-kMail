@@ -288,8 +288,7 @@ public class ActionsManager: ObservableObject {
         let snackbarMessage = snackbarMoveMessage(
             for: messages,
             originFolder: originFolder,
-            destinationFolderName: destinationFolder.localizedName,
-            isDestinationSpam: destinationFolder.role == .spam
+            destinationFolder: destinationFolder
         )
 
         async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
@@ -393,11 +392,12 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolderName: String,
-                                     isDestinationSpam: Bool) -> String {
+    private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolder: Folder) -> String {
+        let destinationFolderName = destinationFolder.localizedName
         if messages.isSingleMessage(currentFolder: originFolder) {
             return MailResourcesStrings.Localizable.snackbarMessageMoved(destinationFolderName)
         } else {
+            let isDestinationSpam = destinationFolder.role == .spam
             let uniqueThreadCount = messages.uniqueThreadsInFolder(originFolder).count
             if uniqueThreadCount == 1 {
                 guard isDestinationSpam else {
