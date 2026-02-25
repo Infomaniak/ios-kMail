@@ -40,6 +40,18 @@ public struct SwiftSoupUtils {
         return cleanedDocument
     }
 
+    public func cleanDocumentForAttachmentReminder() -> String? {
+        let classToRemove = [Constants.replyQuoteHTMLClass, Constants.forwardQuoteHTMLClass]
+
+        for htmlElement in classToRemove {
+            guard let selectedElements = try? document.select("div.\(htmlElement)") else { continue }
+            for selectedElement in selectedElements {
+                try? selectedElement.parent()?.removeChild(selectedElement)
+            }
+        }
+        return try? document.text()
+    }
+
     public func cleanCompleteDocument() async throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
             .clean(document)
