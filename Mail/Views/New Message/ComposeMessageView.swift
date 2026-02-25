@@ -476,9 +476,10 @@ struct ComposeMessageView: View {
             return
         }
 
+        let cleanBody = (try? SwiftSoupUtils(fromHTML: draft.body).cleanDocumentForAttachmentReminder()) ?? draft.body
         if !skipAttachmentsCheck, draft.attachments.isEmpty,
            let matches = Regex(pattern: Constants.attachmentsReminderRegex, options: .caseInsensitive)?
-           .matches(in: draft.body),
+           .matches(in: cleanBody),
            !matches.isEmpty {
             isShowingAlert = NewMessageAlert(type: .attachmentsReminder {
                 trySendingMessage(
