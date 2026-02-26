@@ -36,7 +36,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     public let mailbox: Mailbox
 
-    public let apiFetcher: MailApiFetcher
+    public let apiFetcher: MailApiFetchable
+
     public let contactManager: ContactManageable
 
     enum ErrorDomain: Error {

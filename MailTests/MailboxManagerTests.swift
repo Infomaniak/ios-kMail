@@ -87,7 +87,10 @@ final class MailboxManagerTests: XCTestCase {
         let inboxFolder = folders.first { $0.role == .inbox }!
         let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
             mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: inboxFolder.remoteId
+            folderId: inboxFolder.remoteId,
+            filter: .all,
+            searchFilter: [],
+            isDraftFolder: false
         )
 
         // WHEN

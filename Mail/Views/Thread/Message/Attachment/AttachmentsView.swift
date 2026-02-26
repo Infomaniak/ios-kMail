@@ -178,7 +178,7 @@ struct AttachmentsView: View {
                 try await withThrowingTaskGroup(of: URL.self) { group in
                     var urls = [URL]()
                     group.addTask {
-                        try await mailboxManager.apiFetcher.downloadAttachments(message: message)
+                        try await mailboxManager.apiFetcher.downloadAttachments(message: message, progressObserver: nil)
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         group.addTask {

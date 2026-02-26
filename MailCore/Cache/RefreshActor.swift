@@ -45,7 +45,7 @@ public actor RefreshActor {
         self.mailboxManager = mailboxManager
     }
 
-    public func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
+    public func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: any MailApiFetchable) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.remoteId)
         await refreshFolderContent(folder)
         return response
