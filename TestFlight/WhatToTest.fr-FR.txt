@@ -1,1 +1,3 @@
+- Correction clignotement suppression d'un mail en filtrage non lu
+- Fin du support d'iOS 15
 - Corrections de bugs et améliorations
