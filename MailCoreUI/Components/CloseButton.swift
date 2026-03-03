@@ -65,7 +65,7 @@ public struct CloseButton: View {
             Label {
                 Text(MailResourcesStrings.Localizable.buttonClose)
             } icon: {
-                Image(systemName: "xmark")
+                MailResourcesAsset.close.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: size?.rawValue, height: size?.rawValue)
