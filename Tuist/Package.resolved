@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "40f37f59dc2aeba44285a1cfed48a380aca65da1",
-        "version" : "24.5.0"
+        "branch" : "feat/use-liquid-glass",
+        "revision" : "4745323a8d9d01f847d8bf4815503c5faa219563"
       }
     },
     {

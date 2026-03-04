@@ -47,6 +47,7 @@ struct ExtendedFAB: View {
             }
         }
         .buttonStyle(.ikFloatingActionButton(isExtended: isExtended))
+        .ikButtonUseLiquidGlass(true)
         .ikSensoryFeedback(.impact(weight: .heavy), trigger: didTapButton)
     }
 }
