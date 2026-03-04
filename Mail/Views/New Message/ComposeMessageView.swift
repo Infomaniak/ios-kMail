@@ -28,6 +28,7 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftModalPresentation
+import SwiftRegex
 import SwiftUI
 import UniformTypeIdentifiers
 @_spi(Advanced) import SwiftUIIntrospect
@@ -65,6 +66,7 @@ struct NewMessageAlert: Identifiable {
 
 enum NewMessageAlertType {
     case emptySubject(handler: () -> Void)
+    case attachmentsReminder(handler: () -> Void)
 }
 
 struct EditorPositionPreferenceKey: PreferenceKey {
@@ -256,7 +258,7 @@ struct ComposeMessageView: View {
 
             ToolbarItem(placement: .confirmationAction) {
                 Button {
-                    trySendingMessage(skipSubjectCheck: false)
+                    trySendingMessage()
                 } label: {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
@@ -367,6 +369,8 @@ struct ComposeMessageView: View {
             switch alert.type {
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
+            case .attachmentsReminder(let handler):
+                AttachmentsReminderView(actionHandler: handler)
             }
         }
         .mailCustomAlert(isPresented: $isShowingCancelAttachmentsError) {
@@ -455,7 +459,7 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
-    private func trySendingMessage(skipSubjectCheck: Bool) {
+    private func trySendingMessage(skipSubjectCheck: Bool = false, skipAttachmentsCheck: Bool = false) {
         if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
             isShowingEncryptStatePanel = true
             return
@@ -463,7 +467,26 @@ struct ComposeMessageView: View {
 
         guard !draft.subject.isEmpty || skipSubjectCheck else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
-            isShowingAlert = NewMessageAlert(type: .emptySubject { trySendingMessage(skipSubjectCheck: true) })
+            isShowingAlert = NewMessageAlert(type: .emptySubject {
+                trySendingMessage(
+                    skipSubjectCheck: true,
+                    skipAttachmentsCheck: skipAttachmentsCheck
+                )
+            })
+            return
+        }
+
+        let cleanBody = (try? SwiftSoupUtils(fromHTML: draft.body).cleanDocumentForAttachmentReminder()) ?? draft.body
+        if !skipAttachmentsCheck, draft.attachments.isEmpty,
+           let matches = Regex(pattern: Constants.attachmentsReminderRegex, options: .caseInsensitive)?
+           .matches(in: cleanBody),
+           !matches.isEmpty {
+            isShowingAlert = NewMessageAlert(type: .attachmentsReminder {
+                trySendingMessage(
+                    skipSubjectCheck: skipSubjectCheck,
+                    skipAttachmentsCheck: true
+                )
+            })
             return
         }
 
