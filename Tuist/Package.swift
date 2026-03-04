@@ -78,7 +78,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.1.0")),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "3.0.0")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "3.1.0")),
         .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
         .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
