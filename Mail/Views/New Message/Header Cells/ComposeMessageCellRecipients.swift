@@ -87,10 +87,8 @@ struct ComposeMessageCellRecipients: View {
                             currentText: $textDebounce.text,
                             recipients: $recipients,
                             type: type
-                        ) {
-                            if let bestMatch = autocompletion.first {
-                                addNewRecipient(bestMatch)
-                            }
+                        ) { submitReason in
+                            handleSubmit(reason: submitReason)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,6 +131,21 @@ struct ComposeMessageCellRecipients: View {
         }
     }
 
+    @MainActor private func handleSubmit(reason: AdvancedTextField.SubmitReason) {
+        if case .paste = reason {
+            let text = textDebounce.text
+            let newRecipient = Recipient(email: text, name: "")
+            withAnimation {
+                newRecipient.isAddedByMe = true
+                $recipients.append(newRecipient)
+            }
+            textDebounce.text = ""
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+        } else if let bestMatch = autocompletion.first {
+            addNewRecipient(bestMatch)
+        }
+    }
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")

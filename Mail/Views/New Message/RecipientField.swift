@@ -43,7 +43,9 @@ struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
 
     let type: ComposeViewFieldType
-    var onSubmit: (() -> Void)?
+    var onSubmit: ((AdvancedTextField.SubmitReason) -> Void)?
+
+    private let submitKeys: Set = [" ", ","]
 
     private var isCurrentFieldFocused: Bool {
         if case .chip(let hash, _) = focusedField {
@@ -72,15 +74,20 @@ struct RecipientField: View {
                     )
                 }
 
-                RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
-                    .focused($focusedField, equals: type)
-                    .alignmentGuide(.iconAndTextFieldAlignment) { d in
-                        d[VerticalAlignment.center]
-                    }
-                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.micro : 0)
-                    .padding(.top, IKPadding.recipientChip.top)
-                    .padding(.bottom, IKPadding.recipientChip.bottom)
-                    .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
+                AdvancedTextField(
+                    text: $currentText,
+                    submitKeys: submitKeys,
+                    onSubmit: onSubmit,
+                    onBackspace: handleBackspaceTextField
+                )
+                .focused($focusedField, equals: type)
+                .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                    d[VerticalAlignment.center]
+                }
+                .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.micro : 0)
+                .padding(.top, IKPadding.recipientChip.top)
+                .padding(.bottom, IKPadding.recipientChip.bottom)
+                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
             }
             .padding(.vertical, value: .small)
 
