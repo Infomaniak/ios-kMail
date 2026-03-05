@@ -141,22 +141,25 @@ struct ComposeMessageCellRecipients: View {
 
     private func handlePaste() {
         let text = textDebounce.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let adresses = text.components(separatedBy: CharacterSet(charactersIn: ",; ")).filter { !$0.isEmpty }
         Task {
-            if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
-                matching: text,
-                fetchLimit: 1
-            ).first {
-                addNewRecipient(autocompletedRecipient)
-            } else {
-                guard EmailChecker(email: text).validate() else {
-                    @InjectService var snackbarPresenter: IKSnackBarPresentable
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-                    return
-                }
-                let newRecipient = Recipient(email: text, name: "")
-                withAnimation {
-                    newRecipient.isAddedByMe = true
-                    $recipients.append(newRecipient)
+            for address in adresses {
+                if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
+                    matching: address,
+                    fetchLimit: 1
+                ).first {
+                    addNewRecipient(autocompletedRecipient)
+                } else {
+                    guard EmailChecker(email: address).validate() else {
+                        @InjectService var snackbarPresenter: IKSnackBarPresentable
+                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+                        continue
+                    }
+                    let newRecipient = Recipient(email: address, name: "")
+                    withAnimation {
+                        newRecipient.isAddedByMe = true
+                        $recipients.append(newRecipient)
+                    }
                 }
             }
         }
