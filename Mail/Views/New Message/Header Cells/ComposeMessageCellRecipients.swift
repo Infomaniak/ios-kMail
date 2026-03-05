@@ -133,19 +133,36 @@ struct ComposeMessageCellRecipients: View {
 
     @MainActor private func handleSubmit(reason: AdvancedTextField.SubmitReason) {
         if case .paste = reason {
-            let text = textDebounce.text
-            let newRecipient = Recipient(email: text, name: "")
-            withAnimation {
-                newRecipient.isAddedByMe = true
-                $recipients.append(newRecipient)
-            }
-            textDebounce.text = ""
-            @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+            handlePaste()
         } else if let bestMatch = autocompletion.first {
             addNewRecipient(bestMatch)
         }
     }
+
+    private func handlePaste() {
+        let text = textDebounce.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        Task {
+            if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
+                matching: text,
+                fetchLimit: 1
+            ).first {
+                addNewRecipient(autocompletedRecipient)
+            } else {
+                guard EmailChecker(email: text).validate() else {
+                    @InjectService var snackbarPresenter: IKSnackBarPresentable
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+                    return
+                }
+                let newRecipient = Recipient(email: text, name: "")
+                withAnimation {
+                    newRecipient.isAddedByMe = true
+                    $recipients.append(newRecipient)
+                }
+            }
+        }
+        textDebounce.text = ""
+    }
+
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
