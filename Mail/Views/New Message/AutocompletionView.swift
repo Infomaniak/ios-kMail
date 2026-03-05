@@ -73,26 +73,13 @@ struct AutocompletionView: View {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
         Task { @MainActor in
-            let autocompleteContacts = await Array(mailboxManager.contactManager.frozenContactsAsync(
-                matching: trimmedSearch,
-                fetchLimit: Self.maxAutocompleteCount,
-                sorted: sortByRemoteAndName
-            ))
-
-            let autocompleteGroupContacts = Array(mailboxManager.contactManager.frozenGroupContacts(
+            let combinedResults = await mailboxManager.contactManager.searchAllAutocompletable(
                 matching: trimmedSearch,
                 fetchLimit: Self.maxAutocompleteCount
-            ))
+            )
 
-            let autocompleteAddressBookContacts = Array(mailboxManager.contactManager.frozenAddressBookContacts(
-                matching: trimmedSearch,
-                fetchLimit: Self.maxAutocompleteCount
-            ))
-
-            let combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
-                autocompleteAddressBookContacts
-
-            let realResults = autocompleteGroupContacts.filter {
+            let groupContacts = combinedResults.compactMap { $0 as? GroupContact }
+            let realResults = groupContacts.filter {
                 !addedRecipients.map(\.email).contains($0.autocompletableName)
             }
 
@@ -108,30 +95,6 @@ struct AutocompletionView: View {
 
             autocompletion = combinedResults.prefix(10) + [mergedContact]
         }
-    }
-
-    private nonisolated func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
-        var lhsWeight = lhs.remoteContactedTimes ?? 0
-        var rhsWeight = rhs.remoteContactedTimes ?? 0
-
-        if rhs.name.isEmpty || rhs.remoteOther {
-            rhsWeight = -1
-        }
-
-        if lhs.name.isEmpty || lhs.remoteOther {
-            lhsWeight = -1
-        }
-
-        if lhsWeight > rhsWeight {
-            return true
-        } else if lhsWeight == rhsWeight {
-            if lhs.isRemote != rhs.isRemote {
-                return lhs.isRemote && !rhs.isRemote
-            } else {
-                return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-            }
-        }
-        return false
     }
 }
 
