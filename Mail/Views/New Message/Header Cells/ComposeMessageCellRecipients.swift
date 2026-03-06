@@ -87,10 +87,8 @@ struct ComposeMessageCellRecipients: View {
                             currentText: $textDebounce.text,
                             recipients: $recipients,
                             type: type
-                        ) {
-                            if let bestMatch = autocompletion.first {
-                                addNewRecipient(bestMatch)
-                            }
+                        ) { submitReason in
+                            handleSubmit(reason: submitReason)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -131,6 +129,41 @@ struct ComposeMessageCellRecipients: View {
                 }
             }
         }
+    }
+
+    @MainActor private func handleSubmit(reason: AdvancedTextField.SubmitReason) {
+        if case .paste = reason {
+            handlePaste()
+        } else if let bestMatch = autocompletion.first {
+            addNewRecipient(bestMatch)
+        }
+    }
+
+    private func handlePaste() {
+        let text = textDebounce.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let adresses = text.components(separatedBy: CharacterSet(charactersIn: ",; ")).filter { !$0.isEmpty }
+        Task {
+            for address in adresses {
+                if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
+                    matching: address,
+                    fetchLimit: 1
+                ).first {
+                    addNewRecipient(autocompletedRecipient)
+                } else {
+                    guard EmailChecker(email: address).validate() else {
+                        @InjectService var snackbarPresenter: IKSnackBarPresentable
+                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+                        continue
+                    }
+                    let newRecipient = Recipient(email: address, name: "")
+                    withAnimation {
+                        newRecipient.isAddedByMe = true
+                        $recipients.append(newRecipient)
+                    }
+                }
+            }
+        }
+        textDebounce.text = ""
     }
 
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
