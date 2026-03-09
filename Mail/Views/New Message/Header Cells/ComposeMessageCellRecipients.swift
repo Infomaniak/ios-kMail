@@ -155,6 +155,11 @@ struct ComposeMessageCellRecipients: View {
                         snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
                         continue
                     }
+                    guard !recipients.contains(where: { $0.email == address }) else {
+                        @InjectService var snackbarPresenter: IKSnackBarPresentable
+                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
+                        continue
+                    }
                     let newRecipient = Recipient(email: address, name: "")
                     withAnimation {
                         newRecipient.isAddedByMe = true
