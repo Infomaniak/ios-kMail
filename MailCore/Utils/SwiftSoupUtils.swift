@@ -41,8 +41,11 @@ public struct SwiftSoupUtils {
     }
 
     public func cleanCompleteDocument() async throws -> Document {
-        let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
-            .clean(document)
+        let cleanedDocument = try SwiftSoup.Cleaner(
+            headWhitelist: .headWhitelist,
+            bodyWhitelist: .extendedBodyWhitelist
+        )
+        .clean(document)
 
         // We need to remove the tag <meta http-equiv="refresh" content="x">
         let metaRefreshTags = try await cleanedDocument.select("meta[http-equiv='refresh']")

@@ -25,8 +25,9 @@ extension WebViewModel {
         guard let rawHTML = value else { return .errorEmptyInputValue }
 
         do {
-            guard let safeDocument = try? await SwiftSoupUtils(fromHTML: rawHTML).cleanCompleteDocument()
-            else { return .errorCleanHTMLContent }
+            guard let safeDocument = try? await SwiftSoupUtils(fromHTML: rawHTML).cleanCompleteDocument() else {
+                return .errorCleanHTMLContent
+            }
 
             try updateViewportMetaTag(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
