@@ -41,8 +41,11 @@ public struct SwiftSoupUtils {
     }
 
     public func cleanCompleteDocument() async throws -> Document {
-        let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
-            .clean(document)
+        let cleanedDocument = try SwiftSoup.Cleaner(
+            headWhitelist: .headWhitelist,
+            bodyWhitelist: .extendedBodyWhitelist
+        )
+        .clean(document)
 
         // We need to remove the tag <meta http-equiv="refresh" content="x">
         let metaRefreshTags = try await cleanedDocument.select("meta[http-equiv='refresh']")
@@ -51,6 +54,7 @@ public struct SwiftSoupUtils {
         }
 
         try unwrapDoubleBody(of: cleanedDocument)
+        try copyDocumentType(from: document, to: cleanedDocument)
 
         return cleanedDocument
     }
@@ -83,6 +87,13 @@ public struct SwiftSoupUtils {
         }
 
         try body.child(0).unwrap()
+    }
+
+    private func copyDocumentType(from dirtyDocument: Document, to cleanedDocument: Document) throws {
+        guard let documentType = dirtyDocument.getChildNodes().first as? DocumentType else {
+            return
+        }
+        try cleanedDocument.insertChildren(0, [documentType])
     }
 }
 

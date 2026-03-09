@@ -47,6 +47,7 @@ public enum MessageBodyUtils {
         guard let messageBody = message.body else {
             return nil
         }
+
         var bodyValue = messageBody.value ?? ""
 
         do {
@@ -193,8 +194,8 @@ public enum MessageBodyUtils {
     public static func prependPrintHeader(to body: String, with message: Message) async throws -> String {
         let parsedBody = try await SwiftSoup.parse(body)
         let printHeader = try createPrintHeader(message: message)
-        let originalDocument = try parsedBody.prependChild(printHeader)
-        return try originalDocument.outerHtml()
+        try parsedBody.body()?.prependChild(printHeader)
+        return try parsedBody.outerHtml()
     }
 
     // MARK: - Utils
