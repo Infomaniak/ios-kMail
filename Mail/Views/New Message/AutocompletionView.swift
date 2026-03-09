@@ -86,14 +86,14 @@ struct AutocompletionView: View {
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
 
             guard shouldAddUserProposal else {
-                autocompletion = Array(combinedResults.prefix(10))
+                autocompletion = combinedResults
                 return
             }
 
             let mergedContact = MergedContact(email: textDebounce.text, local: nil, remote: nil)
             mergedContact.name = textDebounce.text
 
-            autocompletion = combinedResults.prefix(10) + [mergedContact]
+            autocompletion = combinedResults + [mergedContact]
         }
     }
 }

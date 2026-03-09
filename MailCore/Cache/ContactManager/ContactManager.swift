@@ -162,15 +162,23 @@ public final class ContactManager: ObservableObject, ContactManageable {
     ) async -> [any ContactAutocompletable] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        async let contacts = Array(frozenContactsAsync(
+        async let contacts: [any ContactAutocompletable] = Array(frozenContactsAsync(
             matching: trimmed,
             fetchLimit: fetchLimit,
             sorted: sortByRemoteAndName
         ))
-        async let groups = Array(frozenGroupContacts(matching: trimmed, fetchLimit: fetchLimit))
-        async let addressBooks = Array(frozenAddressBookContacts(matching: trimmed, fetchLimit: fetchLimit))
+        async let groups: [any ContactAutocompletable] = Array(frozenGroupContacts(
+            matching: trimmed,
+            fetchLimit: fetchLimit
+        ))
+        async let addressBooks: [any ContactAutocompletable] = Array(frozenAddressBookContacts(
+            matching: trimmed,
+            fetchLimit: fetchLimit
+        ))
 
-        return await contacts + groups + addressBooks
+        let combinedResults = await contacts + groups + addressBooks
+
+        return Array(combinedResults.prefix(fetchLimit))
     }
 
     private nonisolated func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
