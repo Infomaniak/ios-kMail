@@ -328,8 +328,11 @@ public enum Constants {
         ].joined(separator: "|")
     }
 
-    public static var attachmentsReminderRegex: String {
-        [frAttachmentsReminderRegex, enAttachmentsReminderRegex, deAttachmentsReminderRegex, esAttachmentsReminderRegex,
-         itAttachmentsReminderRegex].joined(separator: "|")
-    }
+    public static let attachmentsReminderRegex: String = [
+        frAttachmentsReminderRegex,
+        enAttachmentsReminderRegex,
+        deAttachmentsReminderRegex,
+        esAttachmentsReminderRegex,
+        itAttachmentsReminderRegex
+    ].joined(separator: "|")
 }
