@@ -66,6 +66,8 @@ struct ComposeMessageCellRecipients: View {
 
     let isRecipientLimitExceeded: Bool
 
+    private let emailSeparators = CharacterSet(charactersIn: ",; ")
+
     /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
     private var shouldDisplayChevron: Bool {
         return type == .to && autocompletionType == nil && areCCAndBCCEmpty
@@ -141,9 +143,9 @@ struct ComposeMessageCellRecipients: View {
 
     private func handlePaste() {
         let text = textDebounce.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let adresses = text.components(separatedBy: CharacterSet(charactersIn: ",; ")).filter { !$0.isEmpty }
+        let addresses = text.components(separatedBy: emailSeparators).filter { !$0.isEmpty }
         Task {
-            for address in adresses {
+            for address in addresses {
                 if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
                     matching: address,
                     fetchLimit: 1
