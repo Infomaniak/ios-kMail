@@ -150,21 +150,9 @@ struct ComposeMessageCellRecipients: View {
                 ).first {
                     addNewRecipient(autocompletedRecipient)
                 } else {
-                    guard EmailChecker(email: address).validate() else {
-                        @InjectService var snackbarPresenter: IKSnackBarPresentable
-                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-                        continue
-                    }
-                    guard !recipients.contains(where: { $0.email == address }) else {
-                        @InjectService var snackbarPresenter: IKSnackBarPresentable
-                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
-                        continue
-                    }
-                    let newRecipient = Recipient(email: address, name: "")
-                    withAnimation {
-                        newRecipient.isAddedByMe = true
-                        $recipients.append(newRecipient)
-                    }
+                    let mergedContact = MergedContact(email: address, local: nil, remote: nil)
+                    mergedContact.name = address
+                    addNewRecipient(mergedContact)
                 }
             }
         }
