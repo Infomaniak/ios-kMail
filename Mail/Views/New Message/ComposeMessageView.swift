@@ -476,11 +476,8 @@ struct ComposeMessageView: View {
             return
         }
 
-        let cleanBody = (try? SwiftSoupUtils(fromHTML: draft.body).cleanDocumentForAttachmentReminder()) ?? draft.body
-        if !skipAttachmentsCheck, draft.attachments.isEmpty,
-           let matches = Regex(pattern: Constants.attachmentsReminderRegex, options: .caseInsensitive)?
-           .matches(in: cleanBody),
-           !matches.isEmpty {
+        let shouldShowAttachmentsAlert = shouldShowAttachmentsReminderAlert(skipAttachmentsCheck: skipAttachmentsCheck)
+        if shouldShowAttachmentsAlert {
             isShowingAlert = NewMessageAlert(type: .attachmentsReminder {
                 trySendingMessage(
                     skipSubjectCheck: skipSubjectCheck,
@@ -516,6 +513,24 @@ struct ComposeMessageView: View {
                 }
             }
         }
+    }
+
+    private func shouldShowAttachmentsReminderAlert(skipAttachmentsCheck: Bool) -> Bool {
+        guard !skipAttachmentsCheck else {
+            return false
+        }
+
+        guard draft.attachments.isEmpty else {
+            return false
+        }
+
+        let cleanBody = (try? SwiftSoupUtils(fromHTML: draft.body).cleanDocumentForAttachmentReminder()) ?? draft.body
+        if let matches = Regex(pattern: Constants.attachmentsReminderRegex, options: .caseInsensitive)?.matches(in: cleanBody),
+           !matches.isEmpty {
+            return true
+        }
+
+        return false
     }
 
     private func markDraftReadyForSend() {
