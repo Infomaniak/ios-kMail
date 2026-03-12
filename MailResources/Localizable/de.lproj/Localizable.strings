@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 19 Feb 2026 15:15:36 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Thu, 12 Mar 2026 10:12:37 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1448,7 +1448,7 @@
 "settingsDensityOptionNormal" = "Normal";
 
 /* loco:6295d75d0ac5a369d16b45c5 */
-"settingsDisabled" = "Behinderte";
+"settingsDisabled" = "Deaktiviert";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Benachrichtigungen einschalten";
