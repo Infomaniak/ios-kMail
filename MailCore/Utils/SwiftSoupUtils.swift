@@ -41,7 +41,7 @@ public struct SwiftSoupUtils {
     }
 
     public func cleanDocumentForAttachmentReminder() -> String? {
-        let classToRemove = [Constants.replyQuoteHTMLClass, Constants.forwardQuoteHTMLClass]
+        let classToRemove = [Constants.signatureHTMLClass, Constants.replyQuoteHTMLClass, Constants.forwardQuoteHTMLClass]
 
         for htmlElement in classToRemove {
             guard let selectedElements = try? document.select("div.\(htmlElement)") else { continue }
