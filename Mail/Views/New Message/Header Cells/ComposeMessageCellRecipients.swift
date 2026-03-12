@@ -66,6 +66,8 @@ struct ComposeMessageCellRecipients: View {
 
     let isRecipientLimitExceeded: Bool
 
+    private let emailSeparators = CharacterSet(charactersIn: ",; ")
+
     /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
     private var shouldDisplayChevron: Bool {
         return type == .to && autocompletionType == nil && areCCAndBCCEmpty
@@ -87,10 +89,8 @@ struct ComposeMessageCellRecipients: View {
                             currentText: $textDebounce.text,
                             recipients: $recipients,
                             type: type
-                        ) {
-                            if let bestMatch = autocompletion.first {
-                                addNewRecipient(bestMatch)
-                            }
+                        ) { submitReason in
+                            handleSubmit(reason: submitReason)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -131,6 +131,34 @@ struct ComposeMessageCellRecipients: View {
                 }
             }
         }
+    }
+
+    @MainActor private func handleSubmit(reason: AdvancedTextField.SubmitReason) {
+        if case .paste = reason {
+            handlePaste()
+        } else if let bestMatch = autocompletion.first {
+            addNewRecipient(bestMatch)
+        }
+    }
+
+    private func handlePaste() {
+        let text = textDebounce.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let addresses = text.components(separatedBy: emailSeparators).filter { !$0.isEmpty }
+        Task {
+            for address in addresses {
+                if let autocompletedRecipient = await mailboxManager.contactManager.searchAllAutocompletable(
+                    matching: address,
+                    fetchLimit: 1
+                ).first {
+                    addNewRecipient(autocompletedRecipient)
+                } else {
+                    let mergedContact = MergedContact(email: address, local: nil, remote: nil)
+                    mergedContact.name = address
+                    addNewRecipient(mergedContact)
+                }
+            }
+        }
+        textDebounce.text = ""
     }
 
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {

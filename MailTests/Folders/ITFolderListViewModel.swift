@@ -63,6 +63,8 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
     func refreshContactsAndAddressBooks() async throws {}
 
     static func deleteUserContacts(userId: Int) {}
+
+    func searchAllAutocompletable(matching query: String, fetchLimit: Int) async -> [any ContactAutocompletable] { [] }
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
