@@ -262,6 +262,12 @@
 /* loco:6374f6a12619632e014135d2 */
 "attachmentFileLimitReached" = "The files that you are trying to send exceed the 25 MB attachment limit";
 
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "You mentioned an attachment, but no file has been added. Send anyway?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Missing attachment";
+
 /* loco:659665294692c252640fa103 */
 "attendeesListTitle" = "List of attendees (%d)";
 
