@@ -154,8 +154,9 @@ public extension MailApiFetcher {
         attachment: Attachment,
         progressObserver: @escaping (Double) -> Void
     ) async throws -> Attachment {
+        let encodedName = attachment.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? attachment.name
         let headers = HTTPHeaders([
-            "x-ws-attachment-filename": attachment.name,
+            "x-ws-attachment-filename": encodedName,
             "x-ws-attachment-mime-type": attachment.mimeType,
             "x-ws-attachment-disposition": attachment.disposition.rawValue
         ])
