@@ -58,17 +58,12 @@ extension NSItemProvider: Attachable {
             let result = try await getPlist.result.get()
             return (result.url, result.title)
 
-        case .isText:
-            let getText = try ItemProviderTextRepresentation(from: self)
-            let resultURL = try await getText.result.get()
-            return (resultURL, nil)
-
         case .isUIImage:
             let getUIImage = try ItemProviderUIImageRepresentation(from: self)
             let resultURL = try await getUIImage.result.get()
             return (resultURL, nil)
 
-        case .isImageData, .isCompressedData, .isMiscellaneous:
+        case .isImageData, .isCompressedData, .isMiscellaneous, .isText:
             let getFile = try ItemProviderFileRepresentation(from: self)
             let result = try await getFile.result.get()
             return (result.url, result.title)
