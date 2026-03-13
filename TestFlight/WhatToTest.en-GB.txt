@@ -1,3 +1,4 @@
-- Fixed issue with email deletion flashing when filtering unread emails
-- Drop iOS 15
+- Alert in case you forgot to add attachments
+- Add multiple recipients on paste
+- Fix issues when adding attachments
 - Bug fixes and improvements

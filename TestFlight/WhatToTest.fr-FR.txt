@@ -1,3 +1,4 @@
-- Correction clignotement suppression d'un mail en filtrage non lu
-- Fin du support d'iOS 15
+- Alerte en cas d'oubli de pièce-jointe
+- Ajout de plusieurs destinataires au collage
+- Correction de problèmes à l'ajout de pièce-jointes
 - Corrections de bugs et améliorations
