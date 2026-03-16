@@ -1,0 +1,1931 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: nb, Norwegian Bokmål
+ * Tagged: ios
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ */
+
+/* loco:62bb154d7513e127cb2e9c94 */
+"accentColorBlueTitle" = "Blå";
+
+/* loco:62bb155aef94e921b059e1c3 */
+"accentColorPinkTitle" = "Rosa";
+
+/* loco:642179d9733cd4523d03dcf2 */
+"accentColorSystemTitle" = "Systemfarge";
+
+/* loco:6936f775de93800154038b75 */
+"acknowledgementMessage" = "Avsenderen har bedt om lesebekreftelse.";
+
+/* loco:6936f7e6835ef86e27063eb6 */
+"acknowledgementMessageSent" = "Lesebekreftelse er sendt til avsenderen.";
+
+/* loco:629f0e2244ac887a51141312 */
+"actionArchive" = "Arkiver";
+
+/* loco:629f0f37ccbf1e53bf0ab752 */
+"actionBlockSender" = "Blokker avsender";
+
+/* loco:67e690c60b27fb17340e57b2 */
+"actionCancelSnooze" = "Avbryt utsettelse";
+
+/* loco:629f0e12701ef82cde591a62 */
+"actionDelete" = "Slett";
+
+/* loco:629f0fe5f3c27b205b282582 */
+"actionEditMenu" = "Rediger meny";
+
+/* loco:6284fd55867ed227676f1743 */
+"actionForward" = "Videresend";
+
+/* loco:629f0e3e701ef82cde591a65 */
+"actionMarkAsRead" = "Merk som lest";
+
+/* loco:62a1e691ede283161606f7f4 */
+"actionMarkAsUnread" = "Merk som ulest";
+
+/* loco:67e68dbbdfc30429280f7db3 */
+"actionModifySnooze" = "Endre utsettelse";
+
+/* loco:629f0e49b7fae5715e13e972 */
+"actionMove" = "Flytt";
+
+/* loco:63e22d56403b335b953b0672 */
+"actionMoveToInbox" = "Flytt til innboks";
+
+/* loco:62ab21e14956e9775f391ca4 */
+"actionNonSpam" = "Rapporter som ikke spam";
+
+/* loco:629f0f6557b1a86b24759543 */
+"actionPhishing" = "Rapporter phishing";
+
+/* loco:629f0f8232570829c53e38e2 */
+"actionPrint" = "Skriv ut";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Gi nytt navn";
+
+/* loco:6284fd413d98060ac31f76d2 */
+"actionReply" = "Svar";
+
+/* loco:62a85b6ad3c793021731f332 */
+"actionReplyAll" = "Svar alle";
+
+/* loco:629f0fd21c251254874665a2 */
+"actionReportDisplayProblem" = "Rapporter visningsproblem";
+
+/* loco:62e13281cd9a910e235d06d2 */
+"actionShortMarkAsRead" = "Lest";
+
+/* loco:62e14b027e61d3640a5bf7e3 */
+"actionShortMarkAsUnread" = "Ulest";
+
+/* loco:64089f358a3d4917a9149802 */
+"actionShortSpam" = "Spam";
+
+/* loco:62e14df023e4fb767e2391a4 */
+"actionShortStar" = "Favoritter";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Utsett";
+
+/* loco:629f0e67a7c8ea4e366cf342 */
+"actionSpam" = "Rapporter spam";
+
+/* loco:62dfcbfd27c35d15796e01c3 */
+"actionStar" = "Legg til favoritter";
+
+/* loco:62dfccb7dfb07663055fc0b2 */
+"actionUnstar" = "Fjern fra favoritter";
+
+/* loco:640070c70e888e3c550040d2 */
+"actionViewInDark" = "Vis i mørkt tema";
+
+/* loco:63fdb9239bfffe2abc3e1c02 */
+"actionViewInLight" = "Vis i lyst tema";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtrering av postbokser";
+
+/* loco:668cd87ac01614f14603ac92 */
+"addLinkTextPlaceholder" = "Tekst å vise";
+
+/* loco:63ecf9b0415fc86eea26ec03 */
+"addUnknownRecipientAlreadyUsed" = "E-postadressen er allerede i bruk";
+
+/* loco:63ecfa898018fd68e85e29a2 */
+"addUnknownRecipientInvalidEmail" = "E-postadressen er ugyldig";
+
+/* loco:63ecd31247f7a57fc228b532 */
+"addUnknownRecipientTitle" = "Legg til mottaker";
+
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Adressebok: %@";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Sett inn";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Forbedre";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Prøv igjen";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Forenkle skrivingen av meldingene dine med kunstig intelligens.";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Skriv e-postene dine med Euria";
+
+/* loco:6555e85e5cfcd5053e081e92 */
+"aiErrorContextMaxTokenReached" = "E-posten du svarer på er for lang for at AI-en skal kunne generere et svar.\n\nOppsummer det du vil si for å få hjelp.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Forespørselen din er for lang, vennligst forkort den.";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "For mange forespørsler på kort tid. Vennligst vent.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "En feil har oppstått. Hvis denne feilen vedvarer, vennligst kontakt vår brukerstøtte.\nTakk for din tålmodighet.";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Rediger forespørselen min";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Utvid";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Vennlig skriving";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Generer et svar på nytt";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Seriøs skriving";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Forkort";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Forklar Euria hvordan du kan få hjelp til å svare på denne e-posten.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "en takke-e-post for en velkomstgave";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "en e-post som bekrefter hotellreservasjonen din";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "en takke-e-post for en invitasjon til en begivenhet";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "en invitasjon til en bedriftsbegivenhet";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "en e-post som ber om et møte med en viktig kunde";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Euria skriver…";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Fortell Euria hva du vil skrive. For eksempel \"%@\".";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Euria";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Generer";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Emnet vil bli:\n\n%@";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Erstatt gjeldende emne med Euria sitt forslag?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Ved å klikke på \"Erstatt\" vil eksisterende innhold gå tapt.";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Erstatt";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Erstatt eksisterende innhold?";
+
+/* loco:64649a4f09a501c76901b37b */
+"alertBlockedImagesDescription" = "For din sikkerhet har vi blokkert visse innhold i meldingen din.";
+
+/* loco:64649adb0070f636ff04bc12 */
+"alertBlockedImagesDisplayContent" = "Vis innhold";
+
+/* loco:6481a576efb1d3072f0ede02 */
+"alertNotificationsDisabledButton" = "Se innstillinger";
+
+/* loco:6481a3d9c7a313bee80faa42 */
+"alertNotificationsDisabledDescription" = "Vennligst aktiver varsler for Infomaniak Mail **i iOS-innstillingene** for å bli varslet når nye meldinger mottas";
+
+/* loco:6481a2d4fdda813a7f0d3662 */
+"alertNotificationsDisabledTitle" = "Varsler deaktivert";
+
+/* loco:62baa963ab8fce473930eea4 */
+"appSecurityDescription" = "Beskytte tilgangen til appen ved å aktivere telefonlåsen.";
+
+/* loco:627e4053e699c44b3f1f9be2 */
+"archiveFolder" = "Arkiv";
+
+/* loco:6437c60334e2ec004807c7f2 */
+"attachMailboxDescription1" = "Hvis du allerede har en Infomaniak e-postadresse, koble til nå";
+
+/* loco:6437c532f51a3257a53fa6f2 */
+"attachMailboxDescription2" = "Kun Infomaniak e-postadresser støttes";
+
+/* loco:6437c70f4234b3111a48be63 */
+"attachMailboxInputHint" = "E-postadresse";
+
+/* loco:6437c47e426da35ef96cfc12 */
+"attachMailboxPasswordInputHint" = "Passord";
+
+/* loco:6437e8f60dad565a51542b62 */
+"attachMailboxTitle" = "Legg til e-postadresse";
+
+/* loco:62b47ed7bd878067784e6f62 */
+"attachmentActionFile" = "Legg ved en fil";
+
+/* loco:62b47f35c231ca5bb0344262 */
+"attachmentActionPhotoLibrary" = "Send et bilde fra bildelageret";
+
+/* loco:62b4807d362dbc0bed1eb402 */
+"attachmentActionTitle" = "Legg til et vedlegg";
+
+/* loco:6374f6a12619632e014135d2 */
+"attachmentFileLimitReached" = "Filene du prøver å sende overstiger grensen på 25 MB for vedlegg";
+
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Du nevnte et vedlegg, men ingen fil ble lagt til. Sende likevel?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Manglende vedlegg";
+
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Liste over deltakere (%d)";
+
+/* loco:6266649755d41301973d0c43 */
+"bccTitle" = "Bcc:";
+
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Blokker en avsender";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Blokker %@";
+
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Blokker %d avsendere";
+
+/* loco:62cd641b15742c678d4c30e2 */
+"buttonAccept" = "Godta";
+
+/* loco:628216026aae4d7bc05773c3 */
+"buttonAccountDelete" = "Slett konto";
+
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Logg ut";
+
+/* loco:6282142ca5e6f61ada1c4014 */
+"buttonAccountSwitch" = "Bytt konto";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Aktiver";
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Legg til konto";
+
+/* loco:62cbe10de2840a0cdc2be0d2 */
+"buttonAddEmailAddress" = "Legg til e-postadresse";
+
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Legg til reaksjon";
+
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Alle";
+
+/* loco:6437c062dd576a7631052413 */
+"buttonAttachMailbox" = "Legg til denne e-postadressen";
+
+/* loco:62b2e09059ff20150b5c1b52 */
+"buttonAttachment" = "Legg til et vedlegg";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Deltakere";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Tilbake til Mail-applikasjonen";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Blokker";
+
+/* loco:62b2d43771635f1d1f0da462 */
+"buttonBold" = "Fet";
+
+/* loco:62b2e3ddf30bc656eb06a442 */
+"buttonCamera" = "Ta et bilde";
+
+/* loco:62a20a5c73b7e9202e05fabe */
+"buttonCancel" = "Avbryt";
+
+/* loco:66f2853e4d75905fd406ea93 */
+"buttonCancelFormatting" = "Avbryt formatering";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Avbryt påminnelse";
+
+/* loco:62befe9ca822415272753592 */
+"buttonClose" = "Lukk";
+
+/* loco:63e391b028b5fa7bab41e292 */
+"buttonConfirm" = "Bekreft";
+
+/* loco:62bf20b963bddf721324a142 */
+"buttonConfirmRestoreEmails" = "Gjenopprett";
+
+/* loco:64245322f2b3ab37ed1b26b2 */
+"buttonContinue" = "Fortsett";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Kopier";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Kopier passord";
+
+/* loco:62b1c2566ff2923a1a5b0832 */
+"buttonCreate" = "Opprett";
+
+/* loco:62b1c0de630e5a572542c032 */
+"buttonCreateFolder" = "Legg til mappe";
+
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Egendefinert timeplan";
+
+/* loco:6267af44cf90a405c97af322 */
+"buttonDownload" = "Last ned";
+
+/* loco:6267aff571442d3f666a71c2 */
+"buttonDownloadAll" = "Last ned alle";
+
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Rediger tekst";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedback" = "Tilbakemelding";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Mapper";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Gå til innstillinger";
+
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Hjelp";
+
+/* loco:62b2e44a50f68769a0054863 */
+"buttonHyperlink" = "Legg til hyperlenke";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "Jeg er ferdig";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "Importer e-poster";
+
+/* loco:62b2d9637708901a27423992 */
+"buttonItalic" = "Kursiv";
+
+/* loco:6425777e2343387912223aa2 */
+"buttonLater" = "Senere";
+
+/* loco:645b485e158c37a429012092 */
+"buttonLoadMore" = "Last flere samtaler";
+
+/* loco:62cbe12c9251f174a43c5205 */
+"buttonLogInDifferentAccount" = "Logg inn med en annen konto";
+
+/* loco:628dfebda6add66651161554 */
+"buttonLogin" = "Logg inn";
+
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Kanskje";
+
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "Endre";
+
+/* loco:6284fd623d98060ac31f76d5 */
+"buttonMore" = "Mer";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Velg";
+
+/* loco:6267bafe7edebd666d7d6923 */
+"buttonNewMessage" = "Ny melding";
+
+/* loco:66596b6a5fa78a61780e4315 */
+"buttonNewWindow" = "Nytt vindu";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonNo" = "Nei";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Åpne i kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Åpne i kalenderen min";
+
+/* loco:62cd642815742c678d4c30e4 */
+"buttonRefuse" = "Avslå";
+
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Endre timeplan";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "Gjenopprett e-poster";
+
+/* loco:62b2e4a24486732cbc2f04d3 */
+"buttonSchedule" = "Planlegg e-post til senere sending";
+
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Se";
+
+/* loco:626918473e1b2d7fe4329d52 */
+"buttonSelectAll" = "Alle";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Send med en annen adresse";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Angi nå";
+
+/* loco:6267af86c6ebf234e9213012 */
+"buttonShare" = "Del";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Start";
+
+/* loco:62b2dd31865d4941c92777d3 */
+"buttonStrikeThrough" = "Gjennomstreking";
+
+/* loco:62b2d26c5fd79a7b69199b92 */
+"buttonTextOptionsClose" = "Lukk tekstformatering";
+
+/* loco:62b2cafadce4b504255da0e3 */
+"buttonTextOptionsOpen" = "Åpne tekstformatering";
+
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Prøv";
+
+/* loco:62b2d9af68273c4a783d30d2 */
+"buttonUnderline" = "Understreking";
+
+/* loco:641322a5ac96d1091376a812 */
+"buttonUnlock" = "Lås opp";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Usortert liste";
+
+/* loco:640adf8cc17f7c5be778c933 */
+"buttonUnselectAll" = "Ingen";
+
+/* loco:642572dc0839911c7350abf2 */
+"buttonUpdate" = "Oppdater";
+
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Oppgrader";
+
+/* loco:62b42d5d2b411f48ef2eb982 */
+"buttonValid" = "Bekreft";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonYes" = "Ja";
+
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Hele dagen";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Du er ikke invitert";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Arrangør)";
+
+/* loco:626664836e30e75f1c390202 */
+"ccTitle" = "Cc:";
+
+/* loco:64477b57fd06fe11190c1f13 */
+"comingSoon" = "Kommer snart…";
+
+/* loco:62a33e1331304f212d104d43 */
+"commercialFolder" = "Kampanjer";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Send en melding med adressen:";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Velg avsenderadresse:";
+
+/* loco:63a474bd648cd86d56444012 */
+"confirmLogoutDescription" = "Er du sikker på at du vil logge ut fra %@?";
+
+/* loco:63a473bcf3bb7f422358cfd2 */
+"confirmLogoutTitle" = "Logg ut";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Alle fremtidige meldinger fra %@ vil bli flyttet til spam-mappen.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Alle fremtidige meldinger fra disse avsenderne vil bli flyttet til Søppelpost-mappen.";
+
+/* loco:62737dea7bd28e302301e5c2 */
+"contactActionAddToContacts" = "Legg til kontakter";
+
+/* loco:62737e120020a371c709a8e2 */
+"contactActionCopyEmailAddress" = "Kopier e-postadresse";
+
+/* loco:62737d79e632c04950610ed2 */
+"contactActionWriteEmail" = "Skriv en e-post";
+
+/* loco:627cef9a9e08324b604c8612 */
+"contactMe" = "Meg";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Kontakter";
+
+/* loco:628c9d1654bb544229106572 */
+"contentDescriptionButtonBack" = "Tilbake";
+
+/* loco:6295d8a6be385969441d55f2 */
+"contentDescriptionButtonDeleteDraft" = "Slett utkast";
+
+/* loco:642456b7a9f7d62fda3252d2 */
+"contentDescriptionButtonDeleteHistory" = "Slett historikkoppføring";
+
+/* loco:62a9d5b4ee7aa537c701dec3 */
+"contentDescriptionButtonExpandAccountSelection" = "Utvid kontovalg";
+
+/* loco:62a9d5feeda57b54d242e682 */
+"contentDescriptionButtonExpandCustomFolders" = "Utvid egendefinerte mapper";
+
+/* loco:64c13b09da352fc751044323 */
+"contentDescriptionButtonExpandFolder" = "Utvid mappe %@";
+
+/* loco:628c9db2c6482c597c115152 */
+"contentDescriptionButtonExpandHeader" = "Utvid overskrift";
+
+/* loco:6422e08598a76c7f98590952 */
+"contentDescriptionButtonExpandRecipients" = "Se detaljer";
+
+/* loco:628c97c0e21b4a3db5218982 */
+"contentDescriptionButtonFilterSearch" = "Filtrer søk";
+
+/* loco:628c99d77702e65f5779df32 */
+"contentDescriptionButtonMenu" = "Meny";
+
+/* loco:630c6314609abb40215d6482 */
+"contentDescriptionButtonNext" = "Neste";
+
+/* loco:64c1409a9dfa82cc110e3252 */
+"contentDescriptionButtonSelectSignature" = "Velg en annen signatur";
+
+/* loco:629f3973a183191c9564a302 */
+"contentDescriptionButtonSettings" = "Innstillinger";
+
+/* loco:64380fdd8d050844fe71ae26 */
+"contentDescriptionButtonShowPassword" = "Vis passord";
+
+/* loco:642bef2a4b57be636f4d03e2 */
+"contentDescriptionContactAlreadyUsed" = "Kontakt allerede brukt som mottaker";
+
+/* loco:62864ffe2129f0730a307462 */
+"contentDescriptionIconAttachments" = "Har vedlegg";
+
+/* loco:628ca42f2edf27145113fbb3 */
+"contentDescriptionIconCalendar" = "Har kalenderhendelse";
+
+/* loco:62864eec841ea80f560649f2 */
+"contentDescriptionIconFavorite" = "Er favoritt";
+
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Videresendt";
+
+/* loco:628c9f21fe133f61075b64f2 */
+"contentDescriptionIconNewMail" = "Ny";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Svar";
+
+/* loco:62b1d1ee36cd805389679933 */
+"contentDescriptionIconStorage" = "Lagringsstatus";
+
+/* loco:642430a9ce12f43b026e7ef2 */
+"contentDescriptionSelectedItem" = "Valgt";
+
+/* loco:64a4240f5579c83f7b070182 */
+"contentDescriptionUnreadPastille" = "Denne mappen inneholder uleste e-poster";
+
+/* loco:62b9669e0e674b404f5a5212 */
+"contentDescriptionUserAvatar" = "Brukeravatar";
+
+/* loco:64787b6c6a6ceb25210556d2 */
+"contentDescriptionWarningIcon" = "Advarsel";
+
+/* loco:62b1c12cc1df8a35281faba4 */
+"createFolderName" = "Navn på mappen";
+
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Velg dato og tid";
+
+/* loco:6294648c19755a1ae9494462 */
+"dateTitle" = "Dato:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "Sletting av kontoen din vil være endelig. Du vil ikke kunne reaktivere kontoen din.";
+
+/* loco:685a98be5d3b4256930591f2 */
+"deleteFolderDialogDescription" = "Innholdet i mappen %@ vil bli permanent slettet uten å gå via papirkurven.";
+
+/* loco:685a96cac7aa83dd0a0a4332 */
+"deleteFolderDialogTitle" = "Slett mappe";
+
+/* loco:672e3534c133d192fb0acc92 */
+"disabledFeatureFlagDescription" = "Du vil snart kunne låse opp grensene for din ik.me e-postadresse\n(lagringsgrense, egendefinert timeplan, sending og mer…)";
+
+/* loco:672e34e12d859bafeb03be32 */
+"disabledFeatureFlagTitle" = "Trenger du mer lagring og funksjoner?";
+
+/* loco:6777dbf1dc5a5d9dbf09db92 */
+"downloadAlertDescription" = "Nedlastingen kan ta litt tid.";
+
+/* loco:627e3fa5774ef45bfd4d3b92 */
+"draftFolder" = "Utkast";
+
+/* loco:6364d5ac2e2f281d52389ee2 */
+"draftPrefix" = "(Utkast)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Denne meldingen vil bli flyttet til utkastene dine for å bli sendt når du vil.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Rediger sending";
+
+/* loco:64243b4a9a9a1f26302e33f3 */
+"emailWithoutSubjectDescription" = "Du er i ferd med å sende en melding uten emne. Vil du fortsette?";
+
+/* loco:64243b2f0c473e027779afc4 */
+"emailWithoutSubjectTitle" = "Tomt emne";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Aktiviteter";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Dyr og natur";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Flagg";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Mat og drikke";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objekter";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Personer og kropp";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Nylig brukt";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys og følelser";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Symboler";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Reiser og steder";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Resultater";
+
+/* loco:6348008e331e743e77176522 */
+"emptyStateFolderDescription" = "Det er ingenting å se her.";
+
+/* loco:63480020415e160cac510302 */
+"emptyStateFolderTitle" = "Denne mappen er tom";
+
+/* loco:637799775ff1e6190b2cd622 */
+"emptyStateHistoryDescription" = "Søk etter kontakt eller nøkkelord";
+
+/* loco:626a51f5e1663d3865426573 */
+"emptyStateInboxDescription" = "Skriv en ny e-post ved å klikke på \"Ny melding\" nederst til høyre.";
+
+/* loco:626a458f3be3444c205ee892 */
+"emptyStateInboxTitle" = "Du har ingen e-poster";
+
+/* loco:62a992fdee966e51e955b6d2 */
+"emptyStateNetworkDescription" = "Vennligst sjekk tilkoblingen din eller koble til Internett for å sjekke e-postene dine.";
+
+/* loco:62a992d5499836193818b633 */
+"emptyStateNetworkTitle" = "Du er ikke koblet til Internett";
+
+/* loco:633163748419ac683a189ba2 */
+"emptyStateSearchDescription" = "Vi fant ingen e-poster som matcher søket ditt.";
+
+/* loco:63316306552e4c217c351c42 */
+"emptyStateSearchTitle" = "Ingen resultater";
+
+/* loco:641178c63f22e04fa704c022 */
+"emptyStateTrashDescription" = "Flytt meldingene til papirkurven. De vil bli permanent slettet etter 30 dager.";
+
+/* loco:641178a6902412584c6acf62 */
+"emptyStateTrashTitle" = "Papirkurven er tom";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Aktiver filter";
+
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Se relevante mottakere";
+
+/* loco:6853c6e1ae6f39008c06cf82 */
+"encryptedMessageAddPasswordButton" = "Beskytte med passord";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Passord kreves kun for mottakere utenfor Infomaniak. For dem vil meldingen utløpe 30 dager etter sending.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Deaktiver kryptering";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageHeader" = "Denne meldingen er kryptert.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Denne meldingen har blitt kryptert og vil utløpe %@ kun for mottakere som ikke kan nyte godt av automatisk kryptering.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Berørte mottakere";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Del dette passordet via privat melding. Du vil ikke kunne kopiere det etter at du har sendt det.";
+
+/* loco:6877a03a5b42fa4d5f0f9882 */
+"encryptedMessageSnackbarEncryptionActivated" = "Kryptering er aktivert";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Kryptering er deaktivert";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Beskytt";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Planlagte e-poster er ikke tilgjengelig for krypterte meldinger";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Endre passord";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Passordbeskyttelse";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Beskytte meldingen din mot uautorisert tilgang med Infomaniak-kryptering.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Meldingsemnet forblir synlig, men innholdet er helt sikkert.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Passord kreves for mottakere utenfor Infomaniak.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Krypter konfidensielle meldinger";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Mottakere med passord (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Meldingen din er beskyttet.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Passord kreves for å fullføre sendingen.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Delvis";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Kryptering";
+
+/* loco:64a2b5254093e7708d0de5b2 */
+"enterPasswordTitle" = "Skriv inn passord";
+
+/* loco:6493f877e4cdab71070ad552 */
+"errorAlreadyLinkedMailbox" = "Denne e-postadressen er allerede koblet til kontoen din";
+
+/* loco:644928aac87be149bf05d254 */
+"errorAtLeastOneRecipient" = "Minst én mottaker kreves";
+
+/* loco:64940ce4eee54db1a50e44b4 */
+"errorAttachmentNotFound" = "Vedlegg ikke funnet";
+
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "En feil oppstod under sending av svaret ditt";
+
+/* loco:63d14902e3c4eb4832777c42 */
+"errorCancelAttachmentsUploadInProgress" = "Noen vedlegg importeres fortsatt. Hvis du lukker visningen vil vedleggene gå tapt.";
+
+/* loco:6470516c5a7017daea03dde3 */
+"errorDraftNotFound" = "Utkast ikke funnet";
+
+/* loco:6449292ce5f4e56abb063f65 */
+"errorEditScheduledMessage" = "Planlagte eller sendte meldinger kan ikke redigeres";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Du har allerede reagert med denne reaksjonen";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Du kan ikke reagere på et utkast";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Du kan ikke reagere på en planlagt e-post";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Du kan ikke reagere på en e-post markert som spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Du kan ikke reagere på en e-post i papirkurven";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Du har nådd maksimalt antall reaksjoner for denne e-posten";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Du kan ikke reagere på en e-post med mer enn 20 mottakere";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "Du kan ikke reagere på en kryptert e-post";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Du kan ikke reagere på denne typen e-post";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Du kan ikke reagere på denne e-posten";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Kun mottakere og avsendere kan reagere på denne e-posten";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "En feil oppstod ved åpning av hendelsen i Infomaniak Calendar";
+
+/* loco:6493fd86b3b044cbef0df789 */
+"errorFolderDoesNotExist" = "Mappen finnes ikke";
+
+/* loco:645c9dbc8c94de23f7091a42 */
+"errorFolderNotFound" = "Mappe ikke funnet";
+
+/* loco:64942b149051a862c5049f03 */
+"errorInvalidAttachment" = "Ugyldig vedlegg";
+
+/* loco:643e9d37c9a67764c307d742 */
+"errorInvalidCredentials" = "Ugyldig e-post eller passord";
+
+/* loco:64aea2c18a9e9776080ee393 */
+"errorInvalidEmailAddress" = "Ugyldig e-postadresse";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Denne meldingen kunne ikke lastes ned fra serveren.";
+
+/* loco:628e1ad9d1c6366c8a4e6362 */
+"errorLoginDescription" = "Tilkoblingen mislyktes.";
+
+/* loco:628e1af711413554dd3010a5 */
+"errorLoginTitle" = "Innloggingsfeil";
+
+/* loco:6450d3f93e5fcf13c9037b02 */
+"errorMailboxLocked" = "Denne postboksen er låst";
+
+/* loco:65d4ae8ef9b6570a070b3e92 */
+"errorMailboxUnavailable" = "Denne e-postadressen er ikke tilgjengelig";
+
+/* loco:680b69620fe68fbfc80ac583 */
+"errorMaxNumberOfScheduledSnoozeReached" = "Du har nådd maksimalt antall planlagte utsettelser";
+
+/* loco:680b8d7f855ff2c2e708b282 */
+"errorMessageCannotBeSnoozed" = "Denne meldingen kan ikke utsettes";
+
+/* loco:645c9af969688c1b200ad4a2 */
+"errorMessageNotFound" = "Melding ikke funnet";
+
+/* loco:680b6895a9a8ec84c3020a73 */
+"errorMessageNotSnoozed" = "Denne meldingen er ikke utsatt";
+
+/* loco:680b692fe83f3ba1df0a2895 */
+"errorMessageSnoozeAlreadyScheduled" = "En utsettelse er allerede planlagt for denne meldingen";
+
+/* loco:6494050cd62813225a066fb2 */
+"errorMoveDestinationNotFound" = "Målmappen finnes ikke";
+
+/* loco:63ea46d0b146e764dd672ee2 */
+"errorNewFolderAlreadyExists" = "Mappen finnes allerede";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Mappenavnet inneholder ugyldige tegn";
+
+/* loco:63fe19a90375095d660d0152 */
+"errorNewFolderNameTooLong" = "Mappenavnet må ikke overstige 255 tegn";
+
+/* loco:64492a1e7d49e1ef190ab465 */
+"errorRefusedRecipients" = "Serveren nekter alle mottakere";
+
+/* loco:649424a6e244ffcc6c011135 */
+"errorRefusedSender" = "Serveren nekter avsenderen";
+
+/* loco:678f61b9f7e8ef480f043962 */
+"errorScheduleDelayTooShort" = "Du kan ikke planlegge en e-post på mindre enn %d minutter";
+
+/* loco:67e3ecd6b4a0b7e90d00c382 */
+"errorScheduledSnoozeDelayTooShort" = "Minimumstid for å utsette en e-post er %d minutter";
+
+/* loco:6448ef7a5b39bc7e040ce0b3 */
+"errorSendLimitExceeded" = "Sendegrense nådd";
+
+/* loco:6448e34925a77d88bc0f8ab4 */
+"errorTooManyRecipients" = "For mange mottakere";
+
+/* loco:6493ff227390f40cdb06d7d3 */
+"errorUnableToCreateFolder" = "Kan ikke opprette mappen";
+
+/* loco:649400300f4bf580f6093602 */
+"errorUnableToFlushFolder" = "Mappen kan ikke tømmes";
+
+/* loco:645c9bbb13c8e41a84040012 */
+"errorUnknown" = "Ukjent feil";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Vis melding";
+
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "Avsenderens opprinnelse har blitt autentisert.";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Jeg forstår";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescriptionExpeditor" = "Avsenderen %@ er ikke en del av organisasjonen din eller kontaktene dine. Vær forsiktig hvis du deler sensitiv informasjon.";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescriptionExpeditor-plural" = "Noen avsendere er ikke en del av organisasjonen din eller kontaktene dine. Vær forsiktig hvis du deler sensitiv informasjon.";
+
+/* loco:69b4300348915079af041856 */
+"externalDialogDescriptionExpeditor-plural-2" = "";
+
+/* loco:69b4300348915079af041857 */
+"externalDialogDescriptionExpeditor-plural-3" = "";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "Mottakeren %@ er ikke en del av organisasjonen din eller kontaktene dine. Vær forsiktig hvis du deler sensitiv informasjon.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Noen mottakere er ikke en del av organisasjonen din eller kontaktene dine. Vær forsiktig hvis du deler sensitiv informasjon.";
+
+/* loco:69b4300348915079af041858 */
+"externalDialogDescriptionRecipient-plural-2" = "";
+
+/* loco:69b4300348915079af041859 */
+"externalDialogDescriptionRecipient-plural-3" = "";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Ekstern avsender";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Ekstern mottaker";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Ekstern";
+
+/* loco:6436aae98d2f282f4c6ba492 */
+"failToOpenDraft" = "Kunne ikke åpne utkast";
+
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/en/support/faq/admin2/email-service";
+
+/* loco:62a9dbdf0bddbc02ce031ba2 */
+"favoritesFolder" = "Favoritter";
+
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Tillatte postbokser";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Tillat varsler for valgte postbokser.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filtrer postbokser";
+
+/* loco:62665f7d647475580e06e912 */
+"fromTitle" = "Fra:";
+
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Gruppe: %@";
+
+/* loco:62c466f080a5557baa2d0d84 */
+"helpChatbot" = "Chatbot";
+
+/* loco:62c466d780a5557baa2d0d82 */
+"helpFAQ" = "FAQ";
+
+/* loco:62c4672bb812405fb22925f2 */
+"helpSubtitle" = "For å hjelpe deg";
+
+/* loco:627a3c64f10f5f31f53e1c02 */
+"inboxFolder" = "Innboks";
+
+/* loco:689c766a433c6c94c70e1742 */
+"kSuiteProQuotasAlertDescription" = "Din e-postlagringsplass er nesten full. Oppgrader til ubegrenset lagring og lås opp nye funksjoner.";
+
+/* loco:689c76e6a75a2c10bb0ec9a2 */
+"kSuiteProQuotasAlertFullDescription" = "Din e-postlagringsplass er full. Oppgrader til ubegrenset lagring og lås opp nye funksjoner.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Din e-postlagringsplass er full";
+
+/* loco:686f61f2208a37e573055822 */
+"lastEventOccurrence" = "Gjentakende hendelse, siste forekomst";
+
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Siste valgte timeplan";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Senere i morges";
+
+/* loco:62c427c7ad522f1ff078a162 */
+"loadingText" = "Laster…";
+
+/* loco:62baa8f1786752698b4ff2b2 */
+"lockAppTitle" = "Applikasjonen er låst";
+
+/* loco:6491b5d13be3801fbb056c22 */
+"lockedMailboxBottomSheetDescription" = "Tilgang til postboksen din er for øyeblikket blokkert.\nFor mer informasjon, vennligst les FAQ.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Postboks %@ er blokkert";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "For mer informasjon:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Noen av postboksene dine er blokkert";
+
+/* loco:67e26d1c96ffb194f70925b2 */
+"macUsageDisclaimerTitle" = "Denne appen fungerer på macOS, men er optimalisert for bruk på mobil og nettbrett.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Få mer lagringsplass og nye funksjoner med e-postadressen din.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "For å dra nytte av Premium, endre tilbudet ditt fra webgrensesnittet ditt.";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Ta det til neste nivå med Premium-planen";
+
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Administrer signaturer";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Avanserte handlinger";
+
+/* loco:62b2f6bcdfa4fa28ad7bb122 */
+"menuDrawerMailboxStorage" = "%1$@ / %2$@ brukt";
+
+/* loco:6903874c026e3f7b78066ba2 */
+"messageComesFromDiscussionList" = "Denne meldingen kommer fra en diskusjonsliste.";
+
+/* loco:62df8c27cc288916217bd964 */
+"messageDetailsDateAt" = "%1$@ kl. %2$@";
+
+/* loco:62df8aee00dc4d02575d73f2 */
+"messageDetailsYesterday" = "I går";
+
+/* loco:6294634e9f544121e77de3b2 */
+"messageForwardHeader" = "Videresendt melding";
+
+/* loco:6400bb16c117ec0d866887b5 */
+"messageHideQuotedText" = "Skjul samtalen";
+
+/* loco:628b90d373427778f14fd442 */
+"messageIsDraftOption" = "Utkast";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "Denne meldingen vises i spam-mappen fordi %@ er på listen over blokkerte avsendere.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "Denne meldingen anses som spam. For sikkerhet anbefaler vi deg å aktivere spam-filteret.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "Denne meldingen anses som spam. Vi anbefaler deg å flytte den til \"Spam\"-mappen.";
+
+/* loco:65c35d9e6e00f9b3e60f34d3 */
+"messageMenuTitle" = "Melding";
+
+/* loco:628b6d81110f662ac808a165 */
+"messageReplyHeader" = "%1$@ skrev %2$@:";
+
+/* loco:6400bafe3dae40636c716ea2 */
+"messageShowQuotedText" = "Vis samtalen";
+
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Mandag ettermiddag";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Mandag morgen";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Mer informasjon";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Flytt til Spam";
+
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Når du har nådd denne grensen, vil du ikke lenger kunne sende eller motta meldinger. Frigjør plass eller oppgrader til my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Frigjør plass eller oppgrader til my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Mottak og sending av meldinger blokkert";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Lagringsgrense nesten nådd";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "Det er ikke nok lagringsplass til å utføre denne handlingen.";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Mitt abonnement";
+
+/* loco:64c21d831dadd3122c0c73f2 */
+"newAccountDescription" = "Kommuniser og lagre dokumentene og bildene dine i et reklamefritt økosystem som respekterer personvernet ditt";
+
+/* loco:64c21f7b8b1932323c047792 */
+"newAccountStorageDrive" = "15 GB kDrive-lagring";
+
+/* loco:64c21b867739a75d260c0272 */
+"newAccountStorageMail" = "20 GB gratis e-postlagring";
+
+/* loco:64c2115c61d539e7b80a4f12 */
+"newAccountTitle" = "Opprett din livstids gratis e-postadresse";
+
+/* loco:63c64f5d53fe7b61a46310c3 */
+"newFolderDialogHint" = "Mappenavn";
+
+/* loco:63ee0cbbad127b43f8650242 */
+"newFolderDialogMovePositiveButton" = "Opprett og flytt";
+
+/* loco:63f48eda1e7aec342b70c5a2 */
+"newFolderDialogTitle" = "Ny mappe";
+
+/* loco:6266655afabeeb6bc774c932 */
+"newMessagePlaceholderTitle" = "Skriv meldingen din";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Gjentakende hendelse, neste forekomst";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMonday" = "Neste mandag";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyDescription" = "Denne meldingen er tom.";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Ingen tilkobling";
+
+/* loco:634ea0a369dac5469e1ce6d2 */
+"noConversationSelected" = "Ingen samtale valgt i %@";
+
+/* loco:637ce6f461e6ca5762134f53 */
+"noFolderTitle" = "Du har ingen mappe ennå…";
+
+/* loco:62cbe0be9251f174a43c5202 */
+"noMailboxDescription" = "Du har ingen e-postadresse tilknyttet Infomaniak-kontoen din.";
+
+/* loco:62cbdde9f492421f63253c52 */
+"noMailboxTitle" = "Ingen e-postadresse tilknyttet denne kontoen";
+
+/* loco:641196a69abab039df3a23f2 */
+"noNetwork" = "Ingen internettforbindelse";
+
+/* loco:62b9579b3dfaf347e24071f3 */
+"noSubjectTitle" = "(intet emne)";
+
+/* loco:6419645b21b6617fba4a8dc2 */
+"noUpdatedAt" = "Aldri oppdatert";
+
+/* loco:62baab4c017b586c23177d62 */
+"notificationGeneralChannelName" = "Generelle varsler";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Du kan ha mottatt nye meldinger";
+
+/* loco:64ba47ab214bcfcf4c056014 */
+"notificationTitleArchive" = "Arkivert";
+
+/* loco:6492a96bf71de72ab30e8c02 */
+"notificationTitleCouldNotSaveDraft" = "Utkastet kunne ikke lagres";
+
+/* loco:6492a702283a5b8f7e04df72 */
+"notificationTitleCouldNotSendDraft" = "E-posten kunne ikke sendes";
+
+/* loco:64ba47d60f3176675907c474 */
+"notificationTitleDelete" = "Slettet";
+
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Denne tilgangen vil la deg enkelt skrive til kontaktene dine fra Infomaniak Mail.\nVi respekterer personvernet ditt og kontaktene dine vil ikke bli brukt til andre formål.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Tillat appen å få tilgang til kontaktene dine";
+
+/* loco:62c2eede5bc8fa0201054443 */
+"onBoardingDescription2" = "Tilpass snarveiene dine fritt i app-innstillingene.";
+
+/* loco:62c2ef31d501950dff4cbda2 */
+"onBoardingDescription3" = "Arkiver, slett, flytt eller legg til favoritt flere meldinger på en gang.";
+
+/* loco:62c2ef65c564d9260842db32 */
+"onBoardingDescription4" = "Opprett en gratis adresse eller koble til en eksisterende Infomaniak-konto.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Ikke gå glipp av viktige e-poster og vær i stand til å svare raskt ved å aktivere varsler.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Aktiver varsler";
+
+/* loco:62c2ee73d35f8933bc4b5262 */
+"onBoardingTitle1" = "Velg temaet ditt";
+
+/* loco:62c2ee8cfa454b3819243ba2 */
+"onBoardingTitle2" = "Spar tid med sveipehandlinger";
+
+/* loco:62c2ef13b664ac09fe4a0762 */
+"onBoardingTitle3" = "Trykk på en melding i noen sekunder for å velge flere meldinger";
+
+/* loco:62c2ef4a24eb9878221dcd63 */
+"onBoardingTitle4" = "Kom i gang!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisasjon: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Annet";
+
+/* loco:62c424189aacc248962d6224 */
+"pickerNoSelection" = "Ingen valg";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Vennligst logg inn i Infomaniak Mail-appen først.";
+
+/* loco:68b05985327f49a8eb0936b2 */
+"previewReaction" = "%2$@ %1$@ reagerte";
+
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Alle";
+
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reaksjoner";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Les FAQ";
+
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Nylige søk";
+
+/* loco:62baabfc07e6a001ca19e535 */
+"refreshTokenError" = "Du har blitt koblet fra";
+
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Gi nytt navn til mappen";
+
+/* loco:62cd640724b16d271d296bc2 */
+"reportDisplayProblemDescription" = "Godtar du å dele dataene dine med utviklerne våre slik at de kan hjelpe deg med problemet?";
+
+/* loco:62cd63dab9cd016ad83df012 */
+"reportDisplayProblemTitle" = "Rapporter et visningsproblem";
+
+/* loco:62cecdf0413c882ede7451c2 */
+"reportPhishingTitle" = "Rapporter et phishing-forsøk";
+
+/* loco:62bf21b31385976cad230b43 */
+"restoreEmailsBackupDate" = "Sikkerhetskopieringsdato";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Ingen sikkerhetskopi funnet";
+
+/* loco:62bf1dc26398da30d5675c52 */
+"restoreEmailsText" = "Alle e-poster vil komme tilbake til innboksen din.";
+
+/* loco:62bf1d8b38fa643dbc4c8b42 */
+"restoreEmailsTitle" = "Gjenopprett e-postene dine";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Liker du Infomaniak Mail?";
+
+/* loco:66e2826251d88f0bdc097c12 */
+"saveMailInkDrive" = "Lagre i kDrive";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Planlegg sending";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "Denne e-posten vil bli sendt denne datoen: %@";
+
+/* loco:62a9db4ae45f1e29371ff802 */
+"scheduledMessagesFolder" = "Planlagte meldinger";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Søk";
+
+/* loco:640836aa0f09a82bfa0da572 */
+"searchAllMessages" = "Alle meldinger";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "Søk etter e-post";
+
+/* loco:62d5568245072b538b5aeaa2 */
+"searchFilterAttachment" = "Vedlegg";
+
+/* loco:62d559f7bd07624399379972 */
+"searchFilterFolder" = "Alle mapper";
+
+/* loco:62d5561a4fa44b4a25143fc2 */
+"searchFilterRead" = "Lest";
+
+/* loco:62d5563645aa5e5f197eef92 */
+"searchFilterUnread" = "Ulest";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Søk";
+
+/* loco:662f89ba8e8c8321190ae342 */
+"selectSignatureNone" = "Ingen signatur";
+
+/* loco:62ac871d2502053d7b0cbb32 */
+"send" = "Send";
+
+/* loco:6936f6d2c3bd045a2001d752 */
+"sendConfirmationAction" = "Send bekreftelsen";
+
+/* loco:627e401ec1c7c02de9181292 */
+"sentFolder" = "Sendte meldinger";
+
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Servere utilgjengelige";
+
+/* loco:657314ba4d64ddc63f074b42 */
+"setAsDefaultAppDescription" = "Velg som standard en sikker e-posttjeneste som respekterer personvernet ditt og miljøet.";
+
+/* loco:65731498b8f6abbd070ce033 */
+"setAsDefaultAppTitle" = "Gjør Infomaniak til din standard Mail-app";
+
+/* loco:62bb144be43a74010f186a22 */
+"settingsAccentColor" = "Aksentfarge";
+
+/* loco:62bb14784ae7d90af73a4c93 */
+"settingsAccentColorDescription" = "Velg aksentfargen for applikasjonen";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Kontoadministrasjon";
+
+/* loco:627a306b1e32027c033896b2 */
+"settingsAppLock" = "Applås";
+
+/* loco:65b275e7c53c28d1410bf342 */
+"settingsAutoAdvanceDescription" = "Velg hva som skal vises når en melding arkiveres eller slettes";
+
+/* loco:65b27dc325bc06589501c462 */
+"settingsAutoAdvanceFollowingThreadDescription" = "Vis neste samtale ved arkivering eller sletting";
+
+/* loco:65b277d399fe1ebac10546a2 */
+"settingsAutoAdvanceFollowingThreadTitle" = "Neste samtale";
+
+/* loco:65b27e2b4f176d33ca06b302 */
+"settingsAutoAdvanceListOfThreadsDescription" = "Vis listen over samtaler ved arkivering eller sletting";
+
+/* loco:65b2780c2b7256da8b038512 */
+"settingsAutoAdvanceListOfThreadsTitle" = "Liste over samtaler";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Gjentar siste handling du utførte";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Velger automatisk neste eller forrige samtale, avhengig av din siste interaksjon.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Gjenta siste handling";
+
+/* loco:65b27d1e0565d99b930ae142 */
+"settingsAutoAdvancePreviousThreadDescription" = "Vis forrige samtale ved arkivering eller sletting";
+
+/* loco:65b277b504a5c5b4710041f3 */
+"settingsAutoAdvancePreviousThreadTitle" = "Forrige samtale";
+
+/* loco:65b274f8719e4e08b103c7f4 */
+"settingsAutoAdvanceTitle" = "Automatisk fremgang";
+
+/* loco:62c693f572adfe66fd2a82b7 */
+"settingsCancellationPeriodDescription" = "Du har mulighet til å avbryte sendingen av e-posten din i opptil 30 sekunder";
+
+/* loco:627a53b37b420855254af032 */
+"settingsCancellationPeriodTitle" = "Avbryt varighet for sending";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Databehandling";
+
+/* loco:627a40651c78f22cb67efdd2 */
+"settingsDefault" = "Standard";
+
+/* loco:6295d7b8a080fe0c5d544952 */
+"settingsDelaySeconds" = "%d sekunder";
+
+/* loco:627a40878416713fac6e6c82 */
+"settingsDensityOptionCompact" = "Kompakt";
+
+/* loco:627a40769905e5026f4309f3 */
+"settingsDensityOptionLarge" = "Stor";
+
+/* loco:62cd280d733bbc7d8f42d194 */
+"settingsDensityOptionNormal" = "Normal";
+
+/* loco:6295d75d0ac5a369d16b45c5 */
+"settingsDisabled" = "Deaktivert";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Aktiver varsler";
+
+/* loco:62c691f711673b15f21d70b4 */
+"settingsEnabled" = "Aktivert";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Vis eksternt innhold";
+
+/* loco:627a329eeeb721567557b3a2 */
+"settingsExternalContentTitle" = "Eksternt innhold";
+
+/* loco:627a3cf1cf1b8849996f97c2 */
+"settingsInboxAlias" = "Alias";
+
+/* loco:627a3cdead26c25ce97e94f4 */
+"settingsInboxRedirect" = "Viderekoblinger";
+
+/* loco:627a3c9ce8a52f1aaf66dfb3 */
+"settingsInboxRules" = "Regler";
+
+/* loco:627a3c83ad26c25ce97e94f2 */
+"settingsInboxType" = "Innbokstype";
+
+/* loco:627a3be50425fc78766ad173 */
+"settingsMailboxGeneralAutoreply" = "Automatisk svar";
+
+/* loco:627a3c02e402a4304d327033 */
+"settingsMailboxGeneralFolders" = "Mappeinnstillinger";
+
+/* loco:627a3c1e89de4237021b5622 */
+"settingsMailboxGeneralNotifications" = "Varsler";
+
+/* loco:627a3ba7d5f44d600a6f1803 */
+"settingsMailboxGeneralSignature" = "Signaturinnstillinger";
+
+/* loco:627a418d50aa01240d501ae4 */
+"settingsOptionAlways" = "Alltid";
+
+/* loco:627a419ea4d53353fb587204 */
+"settingsOptionAskMe" = "Spør meg";
+
+/* loco:627a40fe23cf464d52393803 */
+"settingsOptionDarkTheme" = "Mørk";
+
+/* loco:627a40e8203b0403f20a0db5 */
+"settingsOptionLightTheme" = "Lys";
+
+/* loco:62cfb94ffe73905627441c62 */
+"settingsOptionSystemTheme" = "System";
+
+/* loco:627a413a4a9b8944955fd206 */
+"settingsOptionThreadModeConversation" = "Diskusjoner";
+
+/* loco:627a4172023031490409d6b5 */
+"settingsOptionThreadModeMessage" = "Meldinger";
+
+/* loco:627a3e42e849cb43282bb484 */
+"settingsPrivacyDeleteSearchHistory" = "Slett søkehistorikk";
+
+/* loco:627a3e68a068242a09294182 */
+"settingsPrivacyViewLogs" = "Vis logger";
+
+/* loco:627a30b24e987302322d0f64 */
+"settingsSectionAppearance" = "Utseende";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Data & Personvern";
+
+/* loco:627a2ab189bc1f4ea90851c2 */
+"settingsSectionEmailAddresses" = "E-postadresser";
+
+/* loco:627a2ae2fc0dff2fce768ef2 */
+"settingsSectionGeneral" = "Generelt";
+
+/* loco:627a3e29e849cb43282bb482 */
+"settingsSectionPrivacy" = "Personvern";
+
+/* loco:627a3d03cf1b8849996f97c4 */
+"settingsSectionSecurity" = "Sikkerhet";
+
+/* loco:627a3d72da7e600e226ddca2 */
+"settingsSecurityAdsFilter" = "Reklame- og sosiale nettverk-filter";
+
+/* loco:627a3df94e4a1b1eff6c77a2 */
+"settingsSecurityBlockedRecipients" = "Blokkerte / autoriserte mottakere";
+
+/* loco:627a3daeda7e600e226ddca4 */
+"settingsSecuritySpamFilter" = "Spam-filter";
+
+/* loco:627a409fc889f27ef73a61e2 */
+"settingsSelectDisplayModeDescription" = "Velg en visningsmodus";
+
+/* loco:627a54238311502e273bbd62 */
+"settingsSendAcknowledgementSubtitle" = "Be om lesebekreftelse for hver sendt melding";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Lesebekreftelser";
+
+/* loco:627a5401ba58a853294d57a2 */
+"settingsSendIncludeOriginalMessage" = "Inkluder den originale meldingen i svaret";
+
+/* loco:627a2f67a6d27d332a2f4926 */
+"settingsSendTitle" = "Send";
+
+/* loco:644f6a7bf8a5eec20801ac93 */
+"settingsSignatureDescription" = "Velg en standard signatur";
+
+/* loco:644b7ef4a60127b0b201ab52 */
+"settingsSignatureTitle" = "Signaturer";
+
+/* loco:6295e9101cbb5020e33ad4d2 */
+"settingsSwipeActionNone" = "Ingen";
+
+/* loco:6295e8f405a6650e5621df92 */
+"settingsSwipeActionQuickActionsMenu" = "Meny for raske handlinger";
+
+/* loco:6295dbd84dc6ed5644064ba2 */
+"settingsSwipeActionReadUnread" = "Lest / ulest";
+
+/* loco:62c2b600d8c4bb2ee63957f2 */
+"settingsSwipeActionToDefine" = "Å definere";
+
+/* loco:627a323b7f79c0171c37aa42 */
+"settingsSwipeActionsTitle" = "Sveipehandlinger";
+
+/* loco:62b017def2354224c578fc12 */
+"settingsSwipeDescription" = "Sveip elementer i innboksen din og få rask tilgang til de vanligste handlingene";
+
+/* loco:6295d5d7b524ea4e9d4d72d3 */
+"settingsSwipeLongLeft" = "Lang sveip til venstre";
+
+/* loco:6295d58f35b3260585685212 */
+"settingsSwipeLongRight" = "Lang sveip til høyre";
+
+/* loco:6295d5b6dff6bd5f535fce82 */
+"settingsSwipeShortLeft" = "Kort sveip til venstre";
+
+/* loco:6295d5650b0ed37f63022fe3 */
+"settingsSwipeShortRight" = "Kort sveip til høyre";
+
+/* loco:627a40cb203b0403f20a0db2 */
+"settingsThemeDescription" = "Temavalg";
+
+/* loco:627a318d0c2fa16955156a22 */
+"settingsThemeTitle" = "Tema";
+
+/* loco:627a317093c0713ccc6df012 */
+"settingsThreadListDensityTitle" = "Tetthet for samtaleliste";
+
+/* loco:64cca81829e8aeaec602e1c2 */
+"settingsThreadModeTitle" = "Melding visningsmodus";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Vær oppmerksom på at endring av dette alternativet vil laste ned alle meldingene dine på nytt";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Bytte til %@ modus?";
+
+/* loco:627e52f442b7411bfd029f02 */
+"settingsTitle" = "Innstillinger";
+
+/* loco:627a54958311502e273bbd74 */
+"settingsTransferAsAttachment" = "Som vedlegg";
+
+/* loco:62c6a408b365f734dd2c0d73 */
+"settingsTransferEmailsDescription" = "Når du videresender en e-post, velg visningsmodusen som passer deg best";
+
+/* loco:627a53d47b420855254af035 */
+"settingsTransferEmailsTitle" = "Videresend e-poster";
+
+/* loco:627a547ad27ea17771565867 */
+"settingsTransferInBody" = "I meldingskroppen";
+
+/* loco:668cdbc1a27f04dd51065022 */
+"shareEmail" = "Del e-post";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Oppdater";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Konto slettet";
+
+/* loco:6937d843b9fb15c2510859d2 */
+"snackbarAcknowledgementFailure" = "Kunne ikke sende";
+
+/* loco:6937d715da67a52ff201eed2 */
+"snackbarAcknowledgementSuccess" = "Lesebekreftelse sendt";
+
+/* loco:63f3961e7c16fb607809d632 */
+"snackbarBlockUserConfirmation" = "Avsender er nå blokkert";
+
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Svar tatt i betraktning";
+
+/* loco:62bc67601f560d734f2fbe58 */
+"snackbarContactSaved" = "Ny kontakt registrert";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Samtalen finnes ikke lenger";
+
+/* loco:62cd644f5141ee164b494272 */
+"snackbarDisplayProblemReported" = "Visningsproblem rapportert";
+
+/* loco:62b959dd7994e66bc4719df2 */
+"snackbarDraftDeleted" = "Utkast slettet";
+
+/* loco:62b959afe3c12548284cb282 */
+"snackbarDraftSaved" = "Utkast lagret";
+
+/* loco:646e10cd8b1764c28f0fb3e2 */
+"snackbarDraftSaving" = "Lagrer utkast";
+
+/* loco:62bd85a64880c362bd5ece72 */
+"snackbarEmailCopiedToClipboard" = "E-postadresse kopiert til utklippstavlen";
+
+/* loco:63c6c6744cd306160719c9c2 */
+"snackbarEmailSending" = "E-post sending pågår";
+
+/* loco:62a336b8e2b762772773d2c2 */
+"snackbarEmailSent" = "E-post sendt";
+
+/* loco:62b42e39dbeac92077145712 */
+"snackbarInvalidUrl" = "Ugyldig URL";
+
+/* loco:638f5f9440687b206c230e64 */
+"snackbarMessageDeletedPermanently" = "Melding slettet";
+
+/* loco:62ab223f0763d104d71437f2 */
+"snackbarMessageMoved" = "Melding flyttet til %@";
+
+/* loco:62ab22a33a9b9314d8557222 */
+"snackbarMoveCancelled" = "Flytting avbrutt";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Passord kopiert";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reaksjon %@ sendt";
+
+/* loco:62ab4ae387f65e26e577dd42 */
+"snackbarReportPhishingConfirmation" = "Rapportert";
+
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "En feil oppstod under rapporteringen, vennligst prøv igjen.";
+
+/* loco:62c2f9feea59c120ad52bc23 */
+"snackbarRestorationLaunched" = "Starter gjenoppretting";
+
+/* loco:672b6a80c4e88a09f20598f2 */
+"snackbarSaveInDraft" = "Meldingen din er lagret i utkast.";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Meldingen vil bli sendt %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Meldingen planlegges";
+
+/* loco:67ea70102a2bbfe96e02d072 */
+"snackbarSnoozeSuccess" = "Du vil motta en påminnelse for denne meldingen %@";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Emne kopiert til utklippstavlen";
+
+/* loco:62ab221b4956e9775f391ca6 */
+"snackbarThreadMoved" = "Samtale flyttet til %@";
+
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Samtaler flyttet til %@";
+
+/* loco:69b4300348915079af04186a */
+"snackbarThreadMoved-plural-2" = "";
+
+/* loco:69b4300348915079af04186b */
+"snackbarThreadMoved-plural-3" = "";
+
+/* loco:699716d77182f3feca0185f2 */
+"snackbarThreadMovedToSpam" = "Samtale flyttet til Spam og bruker blokkert";
+
+/* loco:699717487182f3feca0185f4 */
+"snackbarThreadMovedToSpam-plural" = "Samtaler flyttet til Spam og brukere blokkert";
+
+/* loco:69b4300348915079af04186c */
+"snackbarThreadMovedToSpam-plural-2" = "";
+
+/* loco:69b4300348915079af04186d */
+"snackbarThreadMovedToSpam-plural-3" = "";
+
+/* loco:6909acad8905a0c64a0747d2 */
+"snackbarUnsubscribeFailure" = "Avmelding umulig";
+
+/* loco:6909abe4583bcfb2d2034ec2 */
+"snackbarUnsubscribeSuccess" = "Avmelding fullført";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Utsatt til: %@";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "Utsatt";
+
+/* loco:62a33e2d0c5ac4438c366a32 */
+"socialNetworksFolder" = "Sosiale nettverk";
+
+/* loco:627e40381ad4112c06450102 */
+"spamFolder" = "Spam";
+
+/* loco:626664d06926336d9e25c462 */
+"subjectTitle" = "Emne:";
+
+/* loco:65ba2326ef9447c160013bf2 */
+"superCollapsedBlock" = "Se alle (%d)";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Se kontakter og kalender direkte fra enheten din.";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"syncCalendarsAndContactsTitle" = "Kalender- og kontaktsynkronisering";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Kopier passordet, du vil trenge det for å validere neste steg.";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Kopier valideringspassord";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "For å laste ned profilen, klikk på \"Last ned\" og tillat deretter nedlastingen.";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Last ned konfigurasjonsprofil";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "I innstillingene dine, åpne fanen \"Nedlastet profil\" og klikk på installer.";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Skriv inn koden: skriv inn telefonens **PIN-kode**.";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Klikk på **Installer**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Skriv inn valideringspassordet **to ganger**: én gang for kalendere og én gang for adressebøker.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Gå tilbake til Mail-applikasjonen.";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Skriv \"Nedlastet profil\" i søket i innstillingene for å finne fanen enklere!";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Installer profil";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d av %2$d";
+
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "I ettermiddag";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "I kveld";
+
+/* loco:63eddb9871489a3042032122 */
+"threadListEmptyFolderAlertDescription" = "Er du sikker på at du vil slette alle meldingene i denne mappen permanent?";
+
+/* loco:63ebae36eeb4ae34ef49ba42 */
+"threadListEmptySpamButton" = "Tøm spam";
+
+/* loco:63ebad842446f5106c0058b2 */
+"threadListEmptyTrashButton" = "Tøm papirkurven";
+
+/* loco:62bc355b27ec7c112e166eb2 */
+"threadListHeaderLastUpdate" = "Oppdatert %@";
+
+/* loco:62bc35840445497c51137862 */
+"threadListHeaderUnreadCount" = "%@ ulest";
+
+/* loco:62bc35a8de12a01f3a49e022 */
+"threadListHeaderUnreadCount-plural" = "%@ ulest";
+
+/* loco:69b4300348915079af04187a */
+"threadListHeaderUnreadCount-plural-2" = "";
+
+/* loco:69b4300348915079af04187b */
+"threadListHeaderUnreadCount-plural-3" = "";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Henter";
+
+/* loco:6267f93e15e2421b9677e212 */
+"threadListSectionLastWeek" = "Forrige uke";
+
+/* loco:62c6b582acc973360733ab94 */
+"threadListSectionThisMonth" = "Denne måneden";
+
+/* loco:6267f91723d767283212ffd2 */
+"threadListSectionThisWeek" = "Denne uken";
+
+/* loco:6267f813a44c1a465c763c92 */
+"threadListSectionToday" = "I dag";
+
+/* loco:63ebacb17b37201ea253d432 */
+"threadListSpamHint" = "Meldinger som har vært i spam-mappen i mer enn 30 dager vil bli automatisk slettet.";
+
+/* loco:63ebabc469ccbb24d90659c2 */
+"threadListTrashHint" = "Meldinger som har vært i papirkurven i mer enn 30 dager vil bli automatisk slettet.";
+
+/* loco:62665fa13789aa7e8353ad62 */
+"toTitle" = "Til:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "I morgen tidlig";
+
+/* loco:641db88f88b1f63cb05aad52 */
+"tooManyRecipients" = "Du kan ikke legge til denne adressen fordi du har nådd grensen for mottakere";
+
+/* loco:627e40419151de052d2d3962 */
+"trashFolder" = "Papirkurv";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Opphev blokkering";
+
+/* loco:6995af71f61e72e4d4004be2 */
+"unknownDialogTitleExpeditor" = "Ukjent avsender";
+
+/* loco:6995a57f05da42c3ae0bb253 */
+"unknownDialogTitleRecipient" = "Ukjent mottaker";
+
+/* loco:62b95774aee47c626b773693 */
+"unknownRecipientTitle" = "(ukjent)";
+
+/* loco:6995a893d03cfb81d80e25c2 */
+"unknownTag" = "Ukjent";
+
+/* loco:690387a073a26a6c7a0ca602 */
+"unsubscribeButtonTitle" = "Meld av";
+
+/* loco:64257388057ce0235d2c5222 */
+"updateAvailableDescription" = "For å få mest mulig ut av Infomaniak Mail anbefaler vi at du oppdaterer applikasjonen.";
+
+/* loco:6425728328677e02905abef2 */
+"updateAvailableTitle" = "Oppdatering tilgjengelig!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "For din sikkerhet og for å forbedre opplevelsen din, vennligst oppdater enheten.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Opplevelsen din kan være redusert fordi enheten din ikke er oppdatert";
+
+/* loco:62b42dc3832cca6d684a4ae2 */
+"urlEntryTitle" = "Opprett en hyperlenke";
+
+/* loco:62b4362a0524dc792a0ee634 */
+"urlPlaceholder" = "URL";
+
+/* loco:641d60b6f5c19a18734d9192 */
+"urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Brukernavn";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Denne hendelsen har allerede funnet sted";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Denne hendelsen er avlyst";
+
+/* loco:6481d72ebb3c88db6e002332 */
+"warningNotificationsDisabledButton" = "Aktiver dem i innstillingene";
+
+/* loco:6481d7112f7eca9f7e0ad572 */
+"warningNotificationsDisabledDescription" = "ADVARSEL: Push-varsler er deaktivert.";
+
+/* loco:635fab674606bd5f944f7784 */
+"workInProgressTitle" = "Tilgjengelig snart";
