@@ -51,7 +51,6 @@ final class WebViewModel: NSObject, ObservableObject {
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
 
         webView = WKWebView(frame: .zero, configuration: configuration)
         contentBlocker = ContentBlocker(webView: webView)
