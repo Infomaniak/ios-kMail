@@ -1,4 +1,4 @@
-name: NEW Euria Review
+name: NEW NEW Euria Review
 
 on:
   pull_request:
@@ -7,18 +7,13 @@ on:
 jobs:
   ai-review:
     runs-on: ubuntu-latest
-    name: Euria code Review
     steps:
-      - name: Euria code Review
-        uses: adrien-coye/genai-code-review@ab5c1ac0725162390c5d1ac9fea08e31b96cd07a
-        with:
-          openai_api_key: ${{ secrets.EURIA_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_pr_id: ${{ github.event.number }}
-          openai_model: "moonshotai/Kimi-K2.5"
-          openai_temperature: 0.3
-          mode: files
-          language: en
-          custom_prompt: "" # optional
-        env:
-          OPENAI_BASE_URL: "https://api.infomaniak.com/2/ai/27/openai/v1"
+    - name: PR Agent action step
+      uses: Codium-ai/pr-agent@main
+      env:
+        OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
+        OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        github_action_config.auto_review: "true"
+        github_action_config.auto_describe: "false"
+        github_action_config.auto_improve: "false"
