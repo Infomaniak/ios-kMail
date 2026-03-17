@@ -14,11 +14,14 @@ jobs:
       issues: write
           
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
     - name: PR Agent action step
       uses: Codium-ai/pr-agent@main
       env:
         OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
         OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
+        OPENAI_MODEL: "moonshotai/Kimi-K2.5"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         github_action_config.auto_review: "true"
         github_action_config.auto_describe: "false"

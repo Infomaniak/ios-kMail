@@ -1,11 +1,14 @@
 [CONFIG]
 model="moonshotai/Kimi-K2.5"
+fallback_models=[]
 
 [PR_REVIEWER]
 auto_review=true
 review_on_pr_open=true
 review_on_push=true
+
+# Enables inline code comments
 inline_code_comments=true
 
 [PR_CODE_SUGGESTIONS]
-num_code_suggestions=8
+num_code_suggestions=10
