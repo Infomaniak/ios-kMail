@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 19 Feb 2026 15:15:36 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -976,8 +976,11 @@
 /* loco:64db6125fde80c52f005cd42 */
 "externalDialogDescriptionExpeditor-plural" = "Certains expéditeurs ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
 
-/* loco:64e7612b488e98f39d0960e2 */
-"externalDialogDescriptionExpeditor-plural-many" = "Certains expéditeurs ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
+/* loco:69b4300348915079af041856 */
+"externalDialogDescriptionExpeditor-plural-2" = "";
+
+/* loco:69b4300348915079af041857 */
+"externalDialogDescriptionExpeditor-plural-3" = "";
 
 /* loco:64db6d8c2395a8caf3096ae3 */
 "externalDialogDescriptionRecipient" = "Le destinataire %@ ne fait pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
@@ -985,8 +988,11 @@
 /* loco:64db6e28e1a0ee7e7405efc5 */
 "externalDialogDescriptionRecipient-plural" = "Certains destinataires ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
 
-/* loco:64e7615fcdd6976491020982 */
-"externalDialogDescriptionRecipient-plural-many" = "Certains destinataires ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
+/* loco:69b4300348915079af041858 */
+"externalDialogDescriptionRecipient-plural-2" = "";
+
+/* loco:69b4300348915079af041859 */
+"externalDialogDescriptionRecipient-plural-3" = "";
 
 /* loco:64db5c4e6ded79bce2077102 */
 "externalDialogTitleExpeditor" = "Expéditeur externe";
@@ -1720,8 +1726,11 @@
 /* loco:62ab2274c8d2fe4bb7134de4 */
 "snackbarThreadMoved-plural" = "Conversations déplacées vers %@";
 
-/* loco:638f6f4f55158c5b515a5ff2 */
-"snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
+/* loco:69b4300348915079af04186a */
+"snackbarThreadMoved-plural-2" = "";
+
+/* loco:69b4300348915079af04186b */
+"snackbarThreadMoved-plural-3" = "";
 
 /* loco:699716d77182f3feca0185f2 */
 "snackbarThreadMovedToSpam" = "Conversation déplacée vers Spam et utilisateur bloqué";
@@ -1729,8 +1738,11 @@
 /* loco:699717487182f3feca0185f4 */
 "snackbarThreadMovedToSpam-plural" = "Conversations déplacées vers Spam et utilisateurs bloqués";
 
-/* loco:699719e8283044be6e0aa0d2 */
-"snackbarThreadMovedToSpam-plural-many" = "Conversations déplacées vers Spam et utilisateurs bloqués";
+/* loco:69b4300348915079af04186c */
+"snackbarThreadMovedToSpam-plural-2" = "";
+
+/* loco:69b4300348915079af04186d */
+"snackbarThreadMovedToSpam-plural-3" = "";
 
 /* loco:6909acad8905a0c64a0747d2 */
 "snackbarUnsubscribeFailure" = "Désinscription impossible";
@@ -1822,8 +1834,11 @@
 /* loco:62bc35a8de12a01f3a49e022 */
 "threadListHeaderUnreadCount-plural" = "%@ non lus";
 
-/* loco:638f6f782bdb800e9d6c3682 */
-"threadListHeaderUnreadCount-plural-many" = "%@ non lus";
+/* loco:69b4300348915079af04187a */
+"threadListHeaderUnreadCount-plural-2" = "";
+
+/* loco:69b4300348915079af04187b */
+"threadListHeaderUnreadCount-plural-3" = "";
 
 /* loco:671f821cbd4358e9af00c172 */
 "threadListHeaderUpdating" = "Récupération en cours";

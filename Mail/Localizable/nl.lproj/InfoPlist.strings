@@ -1,0 +1,32 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: nl, Dutch; Flemish
+ * Tagged: ios-info-plist
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:46 +0100
+ */
+
+/* loco:62ce828ff799954b2054aac2 */
+"NSCameraUsageDescription" = "De camera wordt gebruikt om een foto aan uw e-mail toe te voegen.";
+
+/* loco:62bd538485526660827f95d2 */
+"NSContactsUsageDescription" = "Lokale contacten worden gebruikt om informatie over ontvangers weer te geven. We sturen ze NIET naar de server.";
+
+/* loco:62bd4fa9c71d395cd431e6a2 */
+"NSFaceIDUsageDescription" = "Face ID wordt gebruikt om de applicatie te ontgrendelen.";
+
+/* loco:650001c07121218fa306c072 */
+"NSPhotoLibraryAddUsageDescription" = "Foto-toegang wordt gebruikt om afbeeldingen in uw fotobibliotheek op te slaan.";
+
+/* loco:6500020fc1619e44fa0c5d52 */
+"NSPhotoLibraryUsageDescription" = "Foto-toegang wordt gebruikt om afbeeldingen in uw fotobibliotheek op te slaan.";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Zoeken";
+
+/* loco:660bfd6073d23c2eb30ab462 */
+"shortcutNewMessageTitle" = "Nieuw bericht";
+
+/* loco:660bfe8fd1bd42615e0cdbb2 */
+"shortcutSupportTitle" = "Hulp & Ondersteuning";

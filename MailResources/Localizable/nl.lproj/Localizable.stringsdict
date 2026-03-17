@@ -3,7 +3,7 @@
 <!--
  Loco ios export: Xcode Stringsdict (legacy)
  Project: kMail
- Locale: fr, French
+ Locale: nl, Dutch; Flemish
  Tagged: ios-stringsdict
  Exported by: Philippe Weidmann
  Exported at: Mon, 16 Mar 2026 15:11:46 +0100
@@ -21,9 +21,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d pièce jointe</string>
+        <string>%d bijlage</string>
         <key>other</key>
-        <string>%d pièces jointes</string>
+        <string>%d bijlagen</string>
       </dict>
     </dict>
     <key>encryptedMessageIncompleteUser</key>
@@ -37,9 +37,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataire.</string>
+        <string>Versleuteling wordt niet ondersteund door %d ontvanger.</string>
         <key>other</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataires.</string>
+        <string>Versleuteling wordt niet ondersteund door %d ontvangers.</string>
       </dict>
     </dict>
     <key>fileQuantity</key>
@@ -53,9 +53,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d fichier envoyé via SwissTransfer</string>
+        <string>%d bestand verzonden via SwissTransfer</string>
         <key>other</key>
-        <string>%d fichiers envoyés via SwissTransfer</string>
+        <string>%d bestanden verzonden via SwissTransfer</string>
       </dict>
     </dict>
     <key>lockedMailboxTitle</key>
@@ -69,9 +69,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Adresse mail bloquée</string>
+        <string>Geblokkeerde mailbox</string>
         <key>other</key>
-        <string>Adresses mail bloquées</string>
+        <string>Geblokkeerde mailboxen</string>
       </dict>
     </dict>
     <key>messageDeletionConfirmationAlertTitle</key>
@@ -85,9 +85,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d message</string>
+        <string>%d bericht verwijderen</string>
         <key>other</key>
-        <string>Supprimer %d messages</string>
+        <string>%d berichten verwijderen</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>
@@ -101,9 +101,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d sélectionné</string>
+        <string>%d geselecteerd</string>
         <key>other</key>
-        <string>%d sélectionnés</string>
+        <string>%d geselecteerd</string>
       </dict>
     </dict>
     <key>reportPhishingDescription</key>
@@ -117,17 +117,17 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Als dit bericht probeert gevoelige informatie te stelen (wachtwoord, bankgegevens, enz.) en/of een erkende identiteit nabootst, dan is het phishing.
 
-En nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Door het aan ons te melden, versnelt u de detectie van gevaarlijke berichten voor al onze gebruikers.
 
-Le signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.</string>
+De melding wordt naar ons beveiligingsteam gestuurd voor analyse en actie. De e-mail wordt ook automatisch naar uw spammap verplaatst.</string>
         <key>other</key>
-        <string>Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Als deze berichten proberen gevoelige informatie te stelen (wachtwoorden, bankgegevens, enz.) en/of erkende identiteiten nabootsen, dan is het phishing.
 
-En nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Door ze aan ons te melden, versnelt u de detectie van gevaarlijke berichten voor al onze gebruikers.
 
-Les signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.</string>
+De meldingen worden naar ons beveiligingsteam gestuurd voor analyse en actie. De e-mails worden ook automatisch naar uw spammap verplaatst.</string>
       </dict>
     </dict>
     <key>snackbarSenderBlacklisted</key>
@@ -141,9 +141,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Expéditeur blacklisté avec succès</string>
+        <string>Afzender succesvol op de blacklist gezet</string>
         <key>other</key>
-        <string>Expéditeurs blacklistés avec succès</string>
+        <string>Afzenders succesvol op de blacklist gezet</string>
       </dict>
     </dict>
     <key>snackbarThreadDeletedPermanently</key>
@@ -157,9 +157,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Conversation supprimée</string>
+        <string>Conversatie verwijderd</string>
         <key>other</key>
-        <string>Conversations supprimées</string>
+        <string>Conversaties verwijderd</string>
       </dict>
     </dict>
     <key>snackbarUnsnoozeSuccess</key>
@@ -173,9 +173,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Rappel annulé. Votre message est revenu dans votre boîte de réception</string>
+        <string>Herinnering geannuleerd. Uw bericht is terug in uw inbox</string>
         <key>other</key>
-        <string>Rappels annulés. Vos messages sont revenus dans votre boîte de réception</string>
+        <string>Herinneringen geannuleerd. Uw berichten zijn terug in uw inbox</string>
       </dict>
     </dict>
     <key>snoozeArchiveConfirmAlertDescription</key>
@@ -189,9 +189,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera archivée</string>
+        <string>Deze conversatie zal niet meer worden uitgesteld en wordt gearchiveerd</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront archivées</string>
+        <string>Deze conversaties zullen niet meer worden uitgesteld en worden gearchiveerd</string>
       </dict>
     </dict>
     <key>snoozeDeleteConfirmAlertDescription</key>
@@ -205,9 +205,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera supprimée</string>
+        <string>Deze conversatie zal niet meer worden uitgesteld en wordt verwijderd</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront supprimées</string>
+        <string>Deze conversaties zullen niet meer worden uitgesteld en worden verwijderd</string>
       </dict>
     </dict>
     <key>snoozeMoveConfirmAlertDescription</key>
@@ -221,9 +221,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera déplacée</string>
+        <string>Deze conversatie zal niet meer worden uitgesteld en wordt verplaatst</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront déplacées</string>
+        <string>Deze conversaties zullen niet meer worden uitgesteld en worden verplaatst</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertDescription</key>
@@ -237,9 +237,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Êtes-vous sûr de vouloir supprimer cette conversation définitivement ?</string>
+        <string>Weet u zeker dat u deze conversatie definitief wilt verwijderen?</string>
         <key>other</key>
-        <string>Êtes-vous sûr de vouloir supprimer ces conversations définitivement ?</string>
+        <string>Weet u zeker dat u deze conversaties definitief wilt verwijderen?</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertTitle</key>
@@ -253,9 +253,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d conversation</string>
+        <string>%d conversatie verwijderen</string>
         <key>other</key>
-        <string>Supprimer %d conversations</string>
+        <string>%d conversaties verwijderen</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>
@@ -269,9 +269,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Mon compte</string>
+        <string>Mijn account</string>
         <key>other</key>
-        <string>Mes comptes</string>
+        <string>Mijn accounts</string>
       </dict>
     </dict>
   </dict>

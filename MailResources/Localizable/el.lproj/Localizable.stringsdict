@@ -3,7 +3,7 @@
 <!--
  Loco ios export: Xcode Stringsdict (legacy)
  Project: kMail
- Locale: fr, French
+ Locale: el, Greek
  Tagged: ios-stringsdict
  Exported by: Philippe Weidmann
  Exported at: Mon, 16 Mar 2026 15:11:46 +0100
@@ -21,9 +21,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d pièce jointe</string>
+        <string>%d συνημμένο</string>
         <key>other</key>
-        <string>%d pièces jointes</string>
+        <string>%d συνημμένα</string>
       </dict>
     </dict>
     <key>encryptedMessageIncompleteUser</key>
@@ -37,9 +37,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataire.</string>
+        <string>Η κρυπτογράφηση δεν υποστηρίζεται από %d παραλήπτη.</string>
         <key>other</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataires.</string>
+        <string>Η κρυπτογράφηση δεν υποστηρίζεται από %d παραλήπτες.</string>
       </dict>
     </dict>
     <key>fileQuantity</key>
@@ -53,9 +53,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d fichier envoyé via SwissTransfer</string>
+        <string>%d αρχείο στάλθηκε μέσω SwissTransfer</string>
         <key>other</key>
-        <string>%d fichiers envoyés via SwissTransfer</string>
+        <string>%d αρχεία στάλθηκαν μέσω SwissTransfer</string>
       </dict>
     </dict>
     <key>lockedMailboxTitle</key>
@@ -69,9 +69,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Adresse mail bloquée</string>
+        <string>Μπλοκαρισμένο γραμματοκιβώτιο</string>
         <key>other</key>
-        <string>Adresses mail bloquées</string>
+        <string>Μπλοκαρισμένα γραμματοκιβώτια</string>
       </dict>
     </dict>
     <key>messageDeletionConfirmationAlertTitle</key>
@@ -85,9 +85,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d message</string>
+        <string>Διαγραφή %d μηνύματος</string>
         <key>other</key>
-        <string>Supprimer %d messages</string>
+        <string>Διαγραφή %d μηνυμάτων</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>
@@ -101,9 +101,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d sélectionné</string>
+        <string>%d επιλεγμένο</string>
         <key>other</key>
-        <string>%d sélectionnés</string>
+        <string>%d επιλεγμένα</string>
       </dict>
     </dict>
     <key>reportPhishingDescription</key>
@@ -117,17 +117,17 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Αν αυτό το μήνυμα προσπαθεί να κλέψει ευαίσθητες πληροφορίες (κωδικό πρόσβασης, τραπεζικά στοιχεία κ.λπ.) και/ή προσποιείται γνωστή ταυτότητα, τότε είναι phishing.
 
-En nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Με την αναφορά του σε εμάς, επιταχύνετε την ανίχνευση επικίνδυνων μηνυμάτων για όλους τους χρήστες μας.
 
-Le signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.</string>
+Η αναφορά θα σταλεί στην ομάδα ασφαλείας μας για ανάλυση και ενέργειες. Το email θα μετακινηθεί επίσης αυτόματα στον φάκελο ανεπιθύμητων.</string>
         <key>other</key>
-        <string>Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Αν αυτά τα μηνύματα προσπαθούν να κλέψουν ευαίσθητες πληροφορίες (κωδικούς πρόσβασης, τραπεζικά στοιχεία κ.λπ.) και/ή προσποιούνται γνωστές ταυτότητες, τότε είναι phishing.
 
-En nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Με την αναφορά τους σε εμάς, επιταχύνετε την ανίχνευση επικίνδυνων μηνυμάτων για όλους τους χρήστες μας.
 
-Les signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.</string>
+Οι αναφορές θα σταλούν στην ομάδα ασφαλείας μας για ανάλυση και ενέργειες. Τα emails θα μετακινηθούν επίσης αυτόματα στον φάκελο ανεπιθύμητων.</string>
       </dict>
     </dict>
     <key>snackbarSenderBlacklisted</key>
@@ -141,9 +141,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Expéditeur blacklisté avec succès</string>
+        <string>Ο αποστολέας προστέθηκε επιτυχώς στη μαύρη λίστα</string>
         <key>other</key>
-        <string>Expéditeurs blacklistés avec succès</string>
+        <string>Οι αποστολείς προστέθηκαν επιτυχώς στη μαύρη λίστα</string>
       </dict>
     </dict>
     <key>snackbarThreadDeletedPermanently</key>
@@ -157,9 +157,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Conversation supprimée</string>
+        <string>Η συνομιλία διαγράφηκε</string>
         <key>other</key>
-        <string>Conversations supprimées</string>
+        <string>Οι συνομιλίες διαγράφηκαν</string>
       </dict>
     </dict>
     <key>snackbarUnsnoozeSuccess</key>
@@ -173,9 +173,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Rappel annulé. Votre message est revenu dans votre boîte de réception</string>
+        <string>Η υπενθύμιση ακυρώθηκε. Το μήνυμά σας επέστρεψε στα εισερχόμενά σας</string>
         <key>other</key>
-        <string>Rappels annulés. Vos messages sont revenus dans votre boîte de réception</string>
+        <string>Οι υπενθυμίσεις ακυρώθηκαν. Τα μηνύματά σας επέστρεψαν στα εισερχόμενά σας</string>
       </dict>
     </dict>
     <key>snoozeArchiveConfirmAlertDescription</key>
@@ -189,9 +189,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera archivée</string>
+        <string>Αυτή η συνομιλία δεν θα είναι πλέον σε αναμονή και θα αρχειοθετηθεί</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront archivées</string>
+        <string>Αυτές οι συνομιλίες δεν θα είναι πλέον σε αναμονή και θα αρχειοθετηθούν</string>
       </dict>
     </dict>
     <key>snoozeDeleteConfirmAlertDescription</key>
@@ -205,9 +205,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera supprimée</string>
+        <string>Αυτή η συνομιλία δεν θα είναι πλέον σε αναμονή και θα διαγραφεί</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront supprimées</string>
+        <string>Αυτές οι συνομιλίες δεν θα είναι πλέον σε αναμονή και θα διαγραφούν</string>
       </dict>
     </dict>
     <key>snoozeMoveConfirmAlertDescription</key>
@@ -221,9 +221,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera déplacée</string>
+        <string>Αυτή η συνομιλία δεν θα είναι πλέον σε αναμονή και θα μετακινηθεί</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront déplacées</string>
+        <string>Αυτές οι συνομιλίες δεν θα είναι πλέον σε αναμονή και θα μετακινηθούν</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertDescription</key>
@@ -237,9 +237,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Êtes-vous sûr de vouloir supprimer cette conversation définitivement ?</string>
+        <string>Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη συνομιλία οριστικά;</string>
         <key>other</key>
-        <string>Êtes-vous sûr de vouloir supprimer ces conversations définitivement ?</string>
+        <string>Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις συνομιλίες οριστικά;</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertTitle</key>
@@ -253,9 +253,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d conversation</string>
+        <string>Διαγραφή %d συνομιλίας</string>
         <key>other</key>
-        <string>Supprimer %d conversations</string>
+        <string>Διαγραφή %d συνομιλιών</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>
@@ -269,9 +269,9 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Mon compte</string>
+        <string>Ο λογαριασμός μου</string>
         <key>other</key>
-        <string>Mes comptes</string>
+        <string>Οι λογαριασμοί μου</string>
       </dict>
     </dict>
   </dict>

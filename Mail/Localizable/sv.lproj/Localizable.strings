@@ -1,0 +1,17 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: sv, Swedish
+ * Tagged: ios-main-target
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ */
+
+/* loco:68ff6af10759e730de0f0f02 */
+"notification2faApproval" = "Bekräfta inloggning";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Du kan ha fått nya meddelanden";
+
+/* loco:68ff6ae1b0ac4a934e0ee4f2 */
+"notificationTitle2faApproval" = "Infomaniak Mail";

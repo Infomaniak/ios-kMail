@@ -1,0 +1,1931 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: fi, Finnish
+ * Tagged: ios
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ */
+
+/* loco:62bb154d7513e127cb2e9c94 */
+"accentColorBlueTitle" = "Sininen";
+
+/* loco:62bb155aef94e921b059e1c3 */
+"accentColorPinkTitle" = "Pinkki";
+
+/* loco:642179d9733cd4523d03dcf2 */
+"accentColorSystemTitle" = "Järjestelmän väri";
+
+/* loco:6936f775de93800154038b75 */
+"acknowledgementMessage" = "Lähettäjä pyysi vastaanottokuittausta.";
+
+/* loco:6936f7e6835ef86e27063eb6 */
+"acknowledgementMessageSent" = "Vastaanottokuittaus on lähetetty lähettäjälle.";
+
+/* loco:629f0e2244ac887a51141312 */
+"actionArchive" = "Arkistoi";
+
+/* loco:629f0f37ccbf1e53bf0ab752 */
+"actionBlockSender" = "Estä lähettäjä";
+
+/* loco:67e690c60b27fb17340e57b2 */
+"actionCancelSnooze" = "Peruuta torkku";
+
+/* loco:629f0e12701ef82cde591a62 */
+"actionDelete" = "Poista";
+
+/* loco:629f0fe5f3c27b205b282582 */
+"actionEditMenu" = "Muokkaa valikkoa";
+
+/* loco:6284fd55867ed227676f1743 */
+"actionForward" = "Välitä";
+
+/* loco:629f0e3e701ef82cde591a65 */
+"actionMarkAsRead" = "Merkitse luetuksi";
+
+/* loco:62a1e691ede283161606f7f4 */
+"actionMarkAsUnread" = "Merkitse lukemattomaksi";
+
+/* loco:67e68dbbdfc30429280f7db3 */
+"actionModifySnooze" = "Muokkaa torkkua";
+
+/* loco:629f0e49b7fae5715e13e972 */
+"actionMove" = "Siirrä";
+
+/* loco:63e22d56403b335b953b0672 */
+"actionMoveToInbox" = "Siirrä saapuneisiin";
+
+/* loco:62ab21e14956e9775f391ca4 */
+"actionNonSpam" = "Ilmoita ei-roskapostiksi";
+
+/* loco:629f0f6557b1a86b24759543 */
+"actionPhishing" = "Ilmoita kalasteluyrityksestä";
+
+/* loco:629f0f8232570829c53e38e2 */
+"actionPrint" = "Tulosta";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Nimeä uudelleen";
+
+/* loco:6284fd413d98060ac31f76d2 */
+"actionReply" = "Vastaa";
+
+/* loco:62a85b6ad3c793021731f332 */
+"actionReplyAll" = "Vastaa kaikille";
+
+/* loco:629f0fd21c251254874665a2 */
+"actionReportDisplayProblem" = "Ilmoita näyttöongelmasta";
+
+/* loco:62e13281cd9a910e235d06d2 */
+"actionShortMarkAsRead" = "Luettu";
+
+/* loco:62e14b027e61d3640a5bf7e3 */
+"actionShortMarkAsUnread" = "Lukematon";
+
+/* loco:64089f358a3d4917a9149802 */
+"actionShortSpam" = "Roskaposti";
+
+/* loco:62e14df023e4fb767e2391a4 */
+"actionShortStar" = "Suosikit";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Torkku";
+
+/* loco:629f0e67a7c8ea4e366cf342 */
+"actionSpam" = "Ilmoita roskapostiksi";
+
+/* loco:62dfcbfd27c35d15796e01c3 */
+"actionStar" = "Lisää suosikkeihin";
+
+/* loco:62dfccb7dfb07663055fc0b2 */
+"actionUnstar" = "Poista suosikeista";
+
+/* loco:640070c70e888e3c550040d2 */
+"actionViewInDark" = "Näytä tummassa teemassa";
+
+/* loco:63fdb9239bfffe2abc3e1c02 */
+"actionViewInLight" = "Näytä vaaleassa teemassa";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Postilaatikoiden suodatus";
+
+/* loco:668cd87ac01614f14603ac92 */
+"addLinkTextPlaceholder" = "Näytettävä teksti";
+
+/* loco:63ecf9b0415fc86eea26ec03 */
+"addUnknownRecipientAlreadyUsed" = "Sähköpostiosoite on jo käytössä";
+
+/* loco:63ecfa898018fd68e85e29a2 */
+"addUnknownRecipientInvalidEmail" = "Sähköpostiosoite on virheellinen";
+
+/* loco:63ecd31247f7a57fc228b532 */
+"addUnknownRecipientTitle" = "Lisää vastaanottaja";
+
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Osoitekirja: %@";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Lisää";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Tarkenna";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Yritä uudelleen";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Yksinkertaista viestien kirjoittamista tekoälyn avulla.";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Kirjoita sähköpostisi Eurialla";
+
+/* loco:6555e85e5cfcd5053e081e92 */
+"aiErrorContextMaxTokenReached" = "Viesti, johon vastaat, on liian pitkä, jotta tekoäly voisi tällä hetkellä tuottaa vastausta.\n\nTiivistä, mitä haluat sanoa, saadaksesi apua.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Pyyntösi on liian pitkä, lyhennä sitä.";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Liian monta pyyntöä lyhyessä ajassa. Odota hetki.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Tapahtui virhe. Jos tämä virhe jatkuu, ota yhteyttä asiakastukeemme.\nKiitos kärsivällisyydestäsi.";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Muokkaa pyyntöäni";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Laajenna";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Ystävällinen kirjoittaminen";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Luo vastaus uudelleen";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Vakava kirjoittaminen";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Lyhennä";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Selitä Euralle, miten voit saada apua tämän sähköpostin vastaamiseen.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "kiitosviesti tervetuliaislahjasta";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "sähköposti hotellivarauksen vahvistamiseksi";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "kiitosviesti tapahtumakutsusta";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "kutsu yritystapahtumaan";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "sähköposti tärkeän asiakkaan tapaamisen pyytämiseksi";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Euria kirjoittaa…";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Kerro Euralle, mitä haluat kirjoittaa. Esimerkiksi \"%@\".";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Euria";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Luo";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Otsikosta tulee:\n\n%@";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Korvataanko nykyinen otsikko Eurian ehdotuksella?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Napsauttamalla \"Korvaa\" aiempi sisältö menetetään.";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Korvaa";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Korvataanko olemassa oleva sisältö?";
+
+/* loco:64649a4f09a501c76901b37b */
+"alertBlockedImagesDescription" = "Turvallisuutesi vuoksi osa viestin sisällöstä on estetty.";
+
+/* loco:64649adb0070f636ff04bc12 */
+"alertBlockedImagesDisplayContent" = "Näytä sisältö";
+
+/* loco:6481a576efb1d3072f0ede02 */
+"alertNotificationsDisabledButton" = "Näytä asetukset";
+
+/* loco:6481a3d9c7a313bee80faa42 */
+"alertNotificationsDisabledDescription" = "Salli ilmoitukset Infomaniak Mailille **iOS-asetuksissa**, jotta saat ilmoituksen uusista viesteistä";
+
+/* loco:6481a2d4fdda813a7f0d3662 */
+"alertNotificationsDisabledTitle" = "Ilmoitukset poistettu käytöstä";
+
+/* loco:62baa963ab8fce473930eea4 */
+"appSecurityDescription" = "Suojaa pääsy sovellukseesi ottamalla käyttöön puhelimesi lukitus.";
+
+/* loco:627e4053e699c44b3f1f9be2 */
+"archiveFolder" = "Arkisto";
+
+/* loco:6437c60334e2ec004807c7f2 */
+"attachMailboxDescription1" = "Jos sinulla on jo Infomaniak-sähköpostiosoite, kirjaudu nyt sisään";
+
+/* loco:6437c532f51a3257a53fa6f2 */
+"attachMailboxDescription2" = "Vain Infomaniak-sähköpostiosoitteet tuetaan";
+
+/* loco:6437c70f4234b3111a48be63 */
+"attachMailboxInputHint" = "Sähköpostiosoite";
+
+/* loco:6437c47e426da35ef96cfc12 */
+"attachMailboxPasswordInputHint" = "Salasana";
+
+/* loco:6437e8f60dad565a51542b62 */
+"attachMailboxTitle" = "Lisää sähköpostiosoite";
+
+/* loco:62b47ed7bd878067784e6f62 */
+"attachmentActionFile" = "Liitä tiedosto";
+
+/* loco:62b47f35c231ca5bb0344262 */
+"attachmentActionPhotoLibrary" = "Lähetä valokuva kuvakirjastosta";
+
+/* loco:62b4807d362dbc0bed1eb402 */
+"attachmentActionTitle" = "Lisää liite";
+
+/* loco:6374f6a12619632e014135d2 */
+"attachmentFileLimitReached" = "Tiedostot, jotka yrität lähettää, ylittävät 25 Mt:n liiterajan";
+
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Mainitsit liitteen, mutta tiedostoa ei ole lisätty. Lähetetäänkö silti?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Liite puuttuu";
+
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Osallistujien luettelo (%d)";
+
+/* loco:6266649755d41301973d0c43 */
+"bccTitle" = "Piilokopio:";
+
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Estä lähettäjä";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Estä %@";
+
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Estä %d lähettäjää";
+
+/* loco:62cd641b15742c678d4c30e2 */
+"buttonAccept" = "Hyväksy";
+
+/* loco:628216026aae4d7bc05773c3 */
+"buttonAccountDelete" = "Poista tili";
+
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Kirjaudu ulos";
+
+/* loco:6282142ca5e6f61ada1c4014 */
+"buttonAccountSwitch" = "Vaihda tiliä";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Ota käyttöön";
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Lisää tili";
+
+/* loco:62cbe10de2840a0cdc2be0d2 */
+"buttonAddEmailAddress" = "Lisää sähköpostiosoite";
+
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Lisää reaktio";
+
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Kaikki";
+
+/* loco:6437c062dd576a7631052413 */
+"buttonAttachMailbox" = "Lisää tämä sähköpostiosoite";
+
+/* loco:62b2e09059ff20150b5c1b52 */
+"buttonAttachment" = "Lisää liite";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Osallistujat";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Takaisin Mail-sovellukseen";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Estä";
+
+/* loco:62b2d43771635f1d1f0da462 */
+"buttonBold" = "Lihavoitu";
+
+/* loco:62b2e3ddf30bc656eb06a442 */
+"buttonCamera" = "Ota valokuva";
+
+/* loco:62a20a5c73b7e9202e05fabe */
+"buttonCancel" = "Peruuta";
+
+/* loco:66f2853e4d75905fd406ea93 */
+"buttonCancelFormatting" = "Peru muotoilu";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Peruuta muistutus";
+
+/* loco:62befe9ca822415272753592 */
+"buttonClose" = "Sulje";
+
+/* loco:63e391b028b5fa7bab41e292 */
+"buttonConfirm" = "Vahvista";
+
+/* loco:62bf20b963bddf721324a142 */
+"buttonConfirmRestoreEmails" = "Palauta";
+
+/* loco:64245322f2b3ab37ed1b26b2 */
+"buttonContinue" = "Jatka";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Kopioi";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Kopioi salasana";
+
+/* loco:62b1c2566ff2923a1a5b0832 */
+"buttonCreate" = "Luo";
+
+/* loco:62b1c0de630e5a572542c032 */
+"buttonCreateFolder" = "Lisää kansio";
+
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Mukautettu aikataulu";
+
+/* loco:6267af44cf90a405c97af322 */
+"buttonDownload" = "Lataa";
+
+/* loco:6267aff571442d3f666a71c2 */
+"buttonDownloadAll" = "Lataa kaikki";
+
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Muokkaa tekstiä";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedback" = "Palaute";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Kansiot";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Siirry asetuksiin";
+
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Ohje";
+
+/* loco:62b2e44a50f68769a0054863 */
+"buttonHyperlink" = "Lisää hyperlinkki";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "Valmis";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "Tuo sähköpostit";
+
+/* loco:62b2d9637708901a27423992 */
+"buttonItalic" = "Kursiivi";
+
+/* loco:6425777e2343387912223aa2 */
+"buttonLater" = "Myöhemmin";
+
+/* loco:645b485e158c37a429012092 */
+"buttonLoadMore" = "Lataa lisää keskusteluja";
+
+/* loco:62cbe12c9251f174a43c5205 */
+"buttonLogInDifferentAccount" = "Kirjaudu sisään toisella tilillä";
+
+/* loco:628dfebda6add66651161554 */
+"buttonLogin" = "Kirjaudu sisään";
+
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Ehkä";
+
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "Muokkaa";
+
+/* loco:6284fd623d98060ac31f76d5 */
+"buttonMore" = "Lisää";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Valitse";
+
+/* loco:6267bafe7edebd666d7d6923 */
+"buttonNewMessage" = "Uusi viesti";
+
+/* loco:66596b6a5fa78a61780e4315 */
+"buttonNewWindow" = "Uusi ikkuna";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonNo" = "Ei";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Avaa kDrivessa";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Avaa kalenterissani";
+
+/* loco:62cd642815742c678d4c30e4 */
+"buttonRefuse" = "Hylkää";
+
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Aikatauluta uudelleen";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "Palauta sähköpostit";
+
+/* loco:62b2e4a24486732cbc2f04d3 */
+"buttonSchedule" = "Ajasta sähköpostin lähetys";
+
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Katso";
+
+/* loco:626918473e1b2d7fe4329d52 */
+"buttonSelectAll" = "Kaikki";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Lähetä toisella osoitteella";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Aseta nyt";
+
+/* loco:6267af86c6ebf234e9213012 */
+"buttonShare" = "Jaa";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Aloita";
+
+/* loco:62b2dd31865d4941c92777d3 */
+"buttonStrikeThrough" = "Yliviivaus";
+
+/* loco:62b2d26c5fd79a7b69199b92 */
+"buttonTextOptionsClose" = "Sulje tekstin muotoilu";
+
+/* loco:62b2cafadce4b504255da0e3 */
+"buttonTextOptionsOpen" = "Avaa tekstin muotoilu";
+
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Kokeile";
+
+/* loco:62b2d9af68273c4a783d30d2 */
+"buttonUnderline" = "Alleviivaus";
+
+/* loco:641322a5ac96d1091376a812 */
+"buttonUnlock" = "Avaa lukitus";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Luettelomerkit";
+
+/* loco:640adf8cc17f7c5be778c933 */
+"buttonUnselectAll" = "Ei mitään";
+
+/* loco:642572dc0839911c7350abf2 */
+"buttonUpdate" = "Päivitä";
+
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Päivitä";
+
+/* loco:62b42d5d2b411f48ef2eb982 */
+"buttonValid" = "Vahvista";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonYes" = "Kyllä";
+
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Koko päivä";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Et ole kutsuttu";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Järjestäjä)";
+
+/* loco:626664836e30e75f1c390202 */
+"ccTitle" = "Kopio:";
+
+/* loco:64477b57fd06fe11190c1f13 */
+"comingSoon" = "Tulossa pian…";
+
+/* loco:62a33e1331304f212d104d43 */
+"commercialFolder" = "Tarjoukset";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Lähetä viesti osoitteella:";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Valitse lähetysosoite:";
+
+/* loco:63a474bd648cd86d56444012 */
+"confirmLogoutDescription" = "Haluatko varmasti kirjautua ulos tililtä %@?";
+
+/* loco:63a473bcf3bb7f422358cfd2 */
+"confirmLogoutTitle" = "Kirjaudu ulos";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Kaikki tulevat viestit lähettäjältä %@ siirretään roskapostikansioon.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Kaikki tulevat viestit näiltä lähettäjiltä siirretään Roskaposti-kansioon.";
+
+/* loco:62737dea7bd28e302301e5c2 */
+"contactActionAddToContacts" = "Lisää yhteystietoihin";
+
+/* loco:62737e120020a371c709a8e2 */
+"contactActionCopyEmailAddress" = "Kopioi sähköpostiosoite";
+
+/* loco:62737d79e632c04950610ed2 */
+"contactActionWriteEmail" = "Kirjoita sähköposti";
+
+/* loco:627cef9a9e08324b604c8612 */
+"contactMe" = "Minä";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Yhteystiedot";
+
+/* loco:628c9d1654bb544229106572 */
+"contentDescriptionButtonBack" = "Takaisin";
+
+/* loco:6295d8a6be385969441d55f2 */
+"contentDescriptionButtonDeleteDraft" = "Poista luonnos";
+
+/* loco:642456b7a9f7d62fda3252d2 */
+"contentDescriptionButtonDeleteHistory" = "Poista historiatietue";
+
+/* loco:62a9d5b4ee7aa537c701dec3 */
+"contentDescriptionButtonExpandAccountSelection" = "Laajenna tilin valinta";
+
+/* loco:62a9d5feeda57b54d242e682 */
+"contentDescriptionButtonExpandCustomFolders" = "Laajenna mukautetut kansiot";
+
+/* loco:64c13b09da352fc751044323 */
+"contentDescriptionButtonExpandFolder" = "Laajenna kansio %@";
+
+/* loco:628c9db2c6482c597c115152 */
+"contentDescriptionButtonExpandHeader" = "Laajenna otsikko";
+
+/* loco:6422e08598a76c7f98590952 */
+"contentDescriptionButtonExpandRecipients" = "Katso tiedot";
+
+/* loco:628c97c0e21b4a3db5218982 */
+"contentDescriptionButtonFilterSearch" = "Suodata haku";
+
+/* loco:628c99d77702e65f5779df32 */
+"contentDescriptionButtonMenu" = "Valikko";
+
+/* loco:630c6314609abb40215d6482 */
+"contentDescriptionButtonNext" = "Seuraava";
+
+/* loco:64c1409a9dfa82cc110e3252 */
+"contentDescriptionButtonSelectSignature" = "Valitse toinen allekirjoitus";
+
+/* loco:629f3973a183191c9564a302 */
+"contentDescriptionButtonSettings" = "Asetukset";
+
+/* loco:64380fdd8d050844fe71ae26 */
+"contentDescriptionButtonShowPassword" = "Näytä salasana";
+
+/* loco:642bef2a4b57be636f4d03e2 */
+"contentDescriptionContactAlreadyUsed" = "Yhteystieto on jo käytetty vastaanottajana";
+
+/* loco:62864ffe2129f0730a307462 */
+"contentDescriptionIconAttachments" = "Sisältää liitteitä";
+
+/* loco:628ca42f2edf27145113fbb3 */
+"contentDescriptionIconCalendar" = "Sisältää kalenteritapahtuman";
+
+/* loco:62864eec841ea80f560649f2 */
+"contentDescriptionIconFavorite" = "On suosikki";
+
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Välitetty";
+
+/* loco:628c9f21fe133f61075b64f2 */
+"contentDescriptionIconNewMail" = "Uusi";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Vastaus";
+
+/* loco:62b1d1ee36cd805389679933 */
+"contentDescriptionIconStorage" = "Tallennustilan tila";
+
+/* loco:642430a9ce12f43b026e7ef2 */
+"contentDescriptionSelectedItem" = "Valittu";
+
+/* loco:64a4240f5579c83f7b070182 */
+"contentDescriptionUnreadPastille" = "Tässä kansiossa on lukemattomia viestejä";
+
+/* loco:62b9669e0e674b404f5a5212 */
+"contentDescriptionUserAvatar" = "Käyttäjän avatar";
+
+/* loco:64787b6c6a6ceb25210556d2 */
+"contentDescriptionWarningIcon" = "Varoitus";
+
+/* loco:62b1c12cc1df8a35281faba4 */
+"createFolderName" = "Kansion nimi";
+
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Valitse päivämäärä ja aika";
+
+/* loco:6294648c19755a1ae9494462 */
+"dateTitle" = "Päivämäärä:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "Tilisi poistaminen on lopullista. Et voi enää aktivoida tiliäsi uudelleen.";
+
+/* loco:685a98be5d3b4256930591f2 */
+"deleteFolderDialogDescription" = "Kansion %@ sisältö poistetaan pysyvästi ilman siirtämistä roskakoriin.";
+
+/* loco:685a96cac7aa83dd0a0a4332 */
+"deleteFolderDialogTitle" = "Poista kansio";
+
+/* loco:672e3534c133d192fb0acc92 */
+"disabledFeatureFlagDescription" = "Voit pian poistaa ik.me-sähköpostiosoitteesi rajoitukset\n(tallennustilaraja, mukautettu aikataulu, lähetys ja muut…)";
+
+/* loco:672e34e12d859bafeb03be32 */
+"disabledFeatureFlagTitle" = "Tarvitsetko lisää tallennustilaa ja ominaisuuksia?";
+
+/* loco:6777dbf1dc5a5d9dbf09db92 */
+"downloadAlertDescription" = "Lataus voi kestää jonkin aikaa.";
+
+/* loco:627e3fa5774ef45bfd4d3b92 */
+"draftFolder" = "Luonnokset";
+
+/* loco:6364d5ac2e2f281d52389ee2 */
+"draftPrefix" = "(Luonnos)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Tämä viesti siirretään luonnoksiisi lähetettäväksi milloin haluat.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Muokkaa lähetystä";
+
+/* loco:64243b4a9a9a1f26302e33f3 */
+"emailWithoutSubjectDescription" = "Olet lähettämässä viestiä ilman aihetta. Haluatko jatkaa?";
+
+/* loco:64243b2f0c473e027779afc4 */
+"emailWithoutSubjectTitle" = "Tyhjä aihe";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Aktiviteetit";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Eläimet ja luonto";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Liput";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Ruoka ja juomat";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Esineet";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Ihmiset ja keho";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Äskettäin käytetyt";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Hymiöt ja tunteet";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Symbolit";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Matkailu ja paikat";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Tulokset";
+
+/* loco:6348008e331e743e77176522 */
+"emptyStateFolderDescription" = "Täällä ei ole mitään nähtävää.";
+
+/* loco:63480020415e160cac510302 */
+"emptyStateFolderTitle" = "Tämä kansio on tyhjä";
+
+/* loco:637799775ff1e6190b2cd622 */
+"emptyStateHistoryDescription" = "Hae yhteystiedon tai avainsanojen perusteella";
+
+/* loco:626a51f5e1663d3865426573 */
+"emptyStateInboxDescription" = "Kirjoita uusi sähköposti napsauttamalla \"Uusi viesti\" oikeassa alakulmassa.";
+
+/* loco:626a458f3be3444c205ee892 */
+"emptyStateInboxTitle" = "Sinulla ei ole sähköposteja";
+
+/* loco:62a992fdee966e51e955b6d2 */
+"emptyStateNetworkDescription" = "Tarkista yhteytesi tai muodosta Internet-yhteys tarkistaaksesi sähköpostisi.";
+
+/* loco:62a992d5499836193818b633 */
+"emptyStateNetworkTitle" = "Et ole yhteydessä Internetiin";
+
+/* loco:633163748419ac683a189ba2 */
+"emptyStateSearchDescription" = "Emme löytäneet hakusi vastaavia sähköposteja.";
+
+/* loco:63316306552e4c217c351c42 */
+"emptyStateSearchTitle" = "Ei tuloksia";
+
+/* loco:641178c63f22e04fa704c022 */
+"emptyStateTrashDescription" = "Siirrä viestit roskakoriin. Ne poistetaan pysyvästi 30 päivän kuluttua.";
+
+/* loco:641178a6902412584c6acf62 */
+"emptyStateTrashTitle" = "Roskakori on tyhjä";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Ota suodatin käyttöön";
+
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Katso asianomaiset vastaanottajat";
+
+/* loco:6853c6e1ae6f39008c06cf82 */
+"encryptedMessageAddPasswordButton" = "Suojaa salasanalla";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Salasana vaaditaan vain Infomaniaxin ulkopuolisille vastaanottajille. Heille viesti vanhenee 30 päivän kuluttua lähetyksestä.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Poista salaus käytöstä";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageHeader" = "Tämä viesti on salattu.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Tämä viesti on salattu ja vanhenee %@ vain vastaanottajille, jotka eivät voi hyötyä automaattisesta salauksesta.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Asianomaiset vastaanottajat";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Jaa tämä salasana yksityisviestillä. Et voi kopioida sitä enää lähetyksen jälkeen.";
+
+/* loco:6877a03a5b42fa4d5f0f9882 */
+"encryptedMessageSnackbarEncryptionActivated" = "Salaus on aktivoitu";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Salaus on poistettu käytöstä";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Suojaa";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Ajastettu lähetys ei ole käytettävissä salatuille viesteille";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Muuta salasanaa";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Salasanasuojaus";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Suojaa viestisi luvattomalta käytöltä Infomaniaxin salauksella.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Viestin aihe pysyy näkyvissä, mutta sisältö on täysin suojattu.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Salasana vaaditaan Infomaniaxin ulkopuolisille vastaanottajille.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Salaa luottamukselliset viestisi";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Vastaanottajat salasanalla (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Viestisi on suojattu.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Salasana vaaditaan lähetyksen viimeistelemiseksi.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Osittainen";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Salaus";
+
+/* loco:64a2b5254093e7708d0de5b2 */
+"enterPasswordTitle" = "Anna salasana";
+
+/* loco:6493f877e4cdab71070ad552 */
+"errorAlreadyLinkedMailbox" = "Tämä sähköpostiosoite on jo liitetty tiliisi";
+
+/* loco:644928aac87be149bf05d254 */
+"errorAtLeastOneRecipient" = "Vähintään yksi vastaanottaja vaaditaan";
+
+/* loco:64940ce4eee54db1a50e44b4 */
+"errorAttachmentNotFound" = "Liitettä ei löydy";
+
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Vastauksesi lähettämisessä tapahtui virhe";
+
+/* loco:63d14902e3c4eb4832777c42 */
+"errorCancelAttachmentsUploadInProgress" = "Joitakin liitteitä tuodaan vielä. Jos suljet näkymän, liitteet menetetään.";
+
+/* loco:6470516c5a7017daea03dde3 */
+"errorDraftNotFound" = "Luonnosta ei löydy";
+
+/* loco:6449292ce5f4e56abb063f65 */
+"errorEditScheduledMessage" = "Ajastettua tai lähetettyä viestiä ei voi muokata";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Olet jo reagoinut tällä reaktiolla";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Et voi reagoida luonnokseen";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Et voi reagoida ajastettuun sähköpostiin";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Et voi reagoida roskapostiksi merkittyyn sähköpostiin";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Et voi reagoida roskakorissa olevaan sähköpostiin";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Olet saavuttanut reaktioiden enimmäismäärän tälle sähköpostille";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Et voi reagoida sähköpostiin, jossa on yli 20 vastaanottajaa";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "Et voi reagoida salattuun sähköpostiin";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Et voi reagoida tähän viestityyppiin";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Et voi reagoida tähän sähköpostiin";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Vain vastaanottajat ja lähettäjät voivat reagoida tähän sähköpostiin";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "Tapahtumaa avattaessa Infomaniak Calendarissa tapahtui virhe";
+
+/* loco:6493fd86b3b044cbef0df789 */
+"errorFolderDoesNotExist" = "Kansiota ei ole olemassa";
+
+/* loco:645c9dbc8c94de23f7091a42 */
+"errorFolderNotFound" = "Kansiota ei löytynyt";
+
+/* loco:64942b149051a862c5049f03 */
+"errorInvalidAttachment" = "Virheellinen liite";
+
+/* loco:643e9d37c9a67764c307d742 */
+"errorInvalidCredentials" = "Virheellinen sähköposti tai salasana";
+
+/* loco:64aea2c18a9e9776080ee393 */
+"errorInvalidEmailAddress" = "Virheellinen sähköpostiosoite";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Tätä viestiä ei voitu ladata palvelimelta.";
+
+/* loco:628e1ad9d1c6366c8a4e6362 */
+"errorLoginDescription" = "Yhteyden muodostaminen epäonnistui.";
+
+/* loco:628e1af711413554dd3010a5 */
+"errorLoginTitle" = "Kirjautumisvirhe";
+
+/* loco:6450d3f93e5fcf13c9037b02 */
+"errorMailboxLocked" = "Tämä sähköpostilaatikko on lukittu";
+
+/* loco:65d4ae8ef9b6570a070b3e92 */
+"errorMailboxUnavailable" = "Tämä sähköpostiosoite ei ole käytettävissä";
+
+/* loco:680b69620fe68fbfc80ac583 */
+"errorMaxNumberOfScheduledSnoozeReached" = "Olet saavuttanut ajastettujen torkkujen enimmäismäärän";
+
+/* loco:680b8d7f855ff2c2e708b282 */
+"errorMessageCannotBeSnoozed" = "Tätä viestiä ei voi laittaa torkkuun";
+
+/* loco:645c9af969688c1b200ad4a2 */
+"errorMessageNotFound" = "Viestiä ei löytynyt";
+
+/* loco:680b6895a9a8ec84c3020a73 */
+"errorMessageNotSnoozed" = "Tämä viesti ei ole torkussa";
+
+/* loco:680b692fe83f3ba1df0a2895 */
+"errorMessageSnoozeAlreadyScheduled" = "Tälle viestille on jo ajastettu torkku";
+
+/* loco:6494050cd62813225a066fb2 */
+"errorMoveDestinationNotFound" = "Kohdekansiota ei ole olemassa";
+
+/* loco:63ea46d0b146e764dd672ee2 */
+"errorNewFolderAlreadyExists" = "Kansio on jo olemassa";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Kansion nimi sisältää virheellisiä merkkejä";
+
+/* loco:63fe19a90375095d660d0152 */
+"errorNewFolderNameTooLong" = "Kansion nimi ei saa ylittää 255 merkkiä";
+
+/* loco:64492a1e7d49e1ef190ab465 */
+"errorRefusedRecipients" = "Palvelin hylkää kaikki vastaanottajat";
+
+/* loco:649424a6e244ffcc6c011135 */
+"errorRefusedSender" = "Palvelin hylkää lähettäjän";
+
+/* loco:678f61b9f7e8ef480f043962 */
+"errorScheduleDelayTooShort" = "Et voi ajastaa sähköpostia vähemmän kuin %d minuutin päähän";
+
+/* loco:67e3ecd6b4a0b7e90d00c382 */
+"errorScheduledSnoozeDelayTooShort" = "Sähköpostin torkkuajan vähimmäisaika on %d minuuttia";
+
+/* loco:6448ef7a5b39bc7e040ce0b3 */
+"errorSendLimitExceeded" = "Lähetysraja saavutettu";
+
+/* loco:6448e34925a77d88bc0f8ab4 */
+"errorTooManyRecipients" = "Liian monta vastaanottajaa";
+
+/* loco:6493ff227390f40cdb06d7d3 */
+"errorUnableToCreateFolder" = "Kansiota ei voitu luoda";
+
+/* loco:649400300f4bf580f6093602 */
+"errorUnableToFlushFolder" = "Kansiota ei voi tyhjentää";
+
+/* loco:645c9bbb13c8e41a84040012 */
+"errorUnknown" = "Tuntematon virhe";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Näytä viesti";
+
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "Lähettäjän alkuperä on vahvistettu.";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Ymmärrän";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescriptionExpeditor" = "Lähettäjä %@ ei ole organisaatiosi tai yhteystietojesi jäsen. Ole varovainen, jos jaat arkaluonteista tietoa.";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescriptionExpeditor-plural" = "Jotkut lähettäjät eivät ole organisaatiosi tai yhteystietojesi jäseniä. Ole varovainen, jos jaat arkaluonteista tietoa.";
+
+/* loco:69b4300348915079af041856 */
+"externalDialogDescriptionExpeditor-plural-2" = "";
+
+/* loco:69b4300348915079af041857 */
+"externalDialogDescriptionExpeditor-plural-3" = "";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "Vastaanottaja %@ ei ole organisaatiosi tai yhteystietojesi jäsen. Ole varovainen, jos jaat arkaluonteista tietoa.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Jotkut vastaanottajat eivät ole organisaatiosi tai yhteystietojesi jäseniä. Ole varovainen, jos jaat arkaluonteista tietoa.";
+
+/* loco:69b4300348915079af041858 */
+"externalDialogDescriptionRecipient-plural-2" = "";
+
+/* loco:69b4300348915079af041859 */
+"externalDialogDescriptionRecipient-plural-3" = "";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Ulkoinen lähettäjä";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Ulkoinen vastaanottaja";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Ulkoinen";
+
+/* loco:6436aae98d2f282f4c6ba492 */
+"failToOpenDraft" = "Luonnoksen avaaminen epäonnistui";
+
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/en/support/faq/admin2/email-service";
+
+/* loco:62a9dbdf0bddbc02ce031ba2 */
+"favoritesFolder" = "Suosikit";
+
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Sallitut postilaatikot";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Salli ilmoitukset valituille postilaatikoille.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Suodata postilaatikoita";
+
+/* loco:62665f7d647475580e06e912 */
+"fromTitle" = "Lähettäjä:";
+
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Ryhmä: %@";
+
+/* loco:62c466f080a5557baa2d0d84 */
+"helpChatbot" = "Chatbot";
+
+/* loco:62c466d780a5557baa2d0d82 */
+"helpFAQ" = "UKK";
+
+/* loco:62c4672bb812405fb22925f2 */
+"helpSubtitle" = "Avuksesi";
+
+/* loco:627a3c64f10f5f31f53e1c02 */
+"inboxFolder" = "Saapuneet";
+
+/* loco:689c766a433c6c94c70e1742 */
+"kSuiteProQuotasAlertDescription" = "Mail-tallennustilasi on melkein täynnä. Päivitä rajattomaan tallennustilaan ja avaa uusia ominaisuuksia.";
+
+/* loco:689c76e6a75a2c10bb0ec9a2 */
+"kSuiteProQuotasAlertFullDescription" = "Mail-tallennustilasi on täynnä. Päivitä rajattomaan tallennustilaan ja avaa uusia ominaisuuksia.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Mail-tallennustilasi on täynnä";
+
+/* loco:686f61f2208a37e573055822 */
+"lastEventOccurrence" = "Toistuva tapahtuma, viimeinen esiintyminen";
+
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Viimeksi valittu aikataulu";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Myöhemmin tänä aamuna";
+
+/* loco:62c427c7ad522f1ff078a162 */
+"loadingText" = "Ladataan…";
+
+/* loco:62baa8f1786752698b4ff2b2 */
+"lockAppTitle" = "Sovellus lukittu";
+
+/* loco:6491b5d13be3801fbb056c22 */
+"lockedMailboxBottomSheetDescription" = "Pääsy sähköpostilaatikkoosi on tällä hetkellä estetty.\nLisätietoja saat UKK:sta.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Sähköpostilaatikko %@ on estetty";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "Lisätietoja:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Jotkin sähköpostilaatikot ovat estettyjä";
+
+/* loco:67e26d1c96ffb194f70925b2 */
+"macUsageDisclaimerTitle" = "Tämä sovellus toimii macOS:ssä, mutta se on optimoitu mobiili- ja tablettikäyttöön.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Hanki lisää tallennustilaa ja uusia ominaisuuksia sähköpostiosoitteellasi.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "Saadaksesi Premium-edut, muokkaa tarjousta web-käyttöliittymästäsi.";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Siirry seuraavalle tasolle Premium-suunnitelmalla";
+
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Hallinnoi allekirjoituksiani";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Edistyneet toiminnot";
+
+/* loco:62b2f6bcdfa4fa28ad7bb122 */
+"menuDrawerMailboxStorage" = "%1$@ / %2$@ käytetty";
+
+/* loco:6903874c026e3f7b78066ba2 */
+"messageComesFromDiscussionList" = "Tämä viesti tulee keskustelulistalta.";
+
+/* loco:62df8c27cc288916217bd964 */
+"messageDetailsDateAt" = "%1$@ klo %2$@";
+
+/* loco:62df8aee00dc4d02575d73f2 */
+"messageDetailsYesterday" = "Eilen";
+
+/* loco:6294634e9f544121e77de3b2 */
+"messageForwardHeader" = "Välitetty viesti";
+
+/* loco:6400bb16c117ec0d866887b5 */
+"messageHideQuotedText" = "Piilota keskustelu";
+
+/* loco:628b90d373427778f14fd442 */
+"messageIsDraftOption" = "Luonnos";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "Tämä viesti näkyy roskapostikansiossa, koska %@ on estettyjen lähettäjien listalla.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "Tämä viesti katsotaan roskapostiksi. Turvallisuutesi vuoksi suosittelemme roskapostisuodattimen aktivointia.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "Tämä viesti katsotaan roskapostiksi. Suosittelemme siirtämään sen \"Roskaposti\"-kansioon.";
+
+/* loco:65c35d9e6e00f9b3e60f34d3 */
+"messageMenuTitle" = "Viesti";
+
+/* loco:628b6d81110f662ac808a165 */
+"messageReplyHeader" = "%1$@, %2$@ kirjoitti:";
+
+/* loco:6400bafe3dae40636c716ea2 */
+"messageShowQuotedText" = "Näytä keskustelu";
+
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Maanantai-iltapäivä";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Maanantaiaamu";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Lisätietoja";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Siirrä roskapostiin";
+
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Kun olet saavuttanut tämän rajan, et voi enää lähettää tai vastaanottaa viestejä. Vapauta tilaa tai päivitä my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Vapauta tilaa tai päivitä my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Viestien vastaanotto ja lähetys estetty";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Tallennustilaraja lähestyy";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "Tallennustila ei riitä tämän toiminnon suorittamiseen.";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Tilaukseni";
+
+/* loco:64c21d831dadd3122c0c73f2 */
+"newAccountDescription" = "Kommunikoi ja tallenna asiakirjasi ja valokuvasi mainoksettoman ja yksityisyyttäsi kunnioittavan ekosysteemin sisällä";
+
+/* loco:64c21f7b8b1932323c047792 */
+"newAccountStorageDrive" = "15 Gt kDrive-tallennustilaa";
+
+/* loco:64c21b867739a75d260c0272 */
+"newAccountStorageMail" = "20 Gt ilmaista sähköpostitilaa";
+
+/* loco:64c2115c61d539e7b80a4f12 */
+"newAccountTitle" = "Luo ilmainen sähköpostiosoitteesi eliniäksi";
+
+/* loco:63c64f5d53fe7b61a46310c3 */
+"newFolderDialogHint" = "Kansion nimi";
+
+/* loco:63ee0cbbad127b43f8650242 */
+"newFolderDialogMovePositiveButton" = "Luo ja siirrä";
+
+/* loco:63f48eda1e7aec342b70c5a2 */
+"newFolderDialogTitle" = "Uusi kansio";
+
+/* loco:6266655afabeeb6bc774c932 */
+"newMessagePlaceholderTitle" = "Kirjoita viestisi";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Toistuva tapahtuma, seuraava esiintyminen";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMonday" = "Ensi maanantai";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyDescription" = "Tämä viesti on tyhjä.";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Ei yhteyttä";
+
+/* loco:634ea0a369dac5469e1ce6d2 */
+"noConversationSelected" = "Ei keskustelua valittuna kohteessa %@";
+
+/* loco:637ce6f461e6ca5762134f53 */
+"noFolderTitle" = "Sinulla ei ole vielä kansiota…";
+
+/* loco:62cbe0be9251f174a43c5202 */
+"noMailboxDescription" = "Sinulla ei ole sähköpostiosoitetta liitettynä Infomaniak-tiliisi.";
+
+/* loco:62cbdde9f492421f63253c52 */
+"noMailboxTitle" = "Ei sähköpostiosoitetta liitettynä tähän tiliin";
+
+/* loco:641196a69abab039df3a23f2 */
+"noNetwork" = "Ei Internet-yhteyttä";
+
+/* loco:62b9579b3dfaf347e24071f3 */
+"noSubjectTitle" = "(ei aihetta)";
+
+/* loco:6419645b21b6617fba4a8dc2 */
+"noUpdatedAt" = "Ei päivitetty";
+
+/* loco:62baab4c017b586c23177d62 */
+"notificationGeneralChannelName" = "Yleiset ilmoitukset";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Saatat olla saanut uusia viestejä";
+
+/* loco:64ba47ab214bcfcf4c056014 */
+"notificationTitleArchive" = "Arkistoitu";
+
+/* loco:6492a96bf71de72ab30e8c02 */
+"notificationTitleCouldNotSaveDraft" = "Luonnosta ei voitu tallentaa";
+
+/* loco:6492a702283a5b8f7e04df72 */
+"notificationTitleCouldNotSendDraft" = "Sähköpostia ei voitu lähettää";
+
+/* loco:64ba47d60f3176675907c474 */
+"notificationTitleDelete" = "Poistettu";
+
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Tämä käyttöoikeus mahdollistaa helpon yhteydenoton yhteystietoihisi Infomaniak Mailista.\nKunnioitamme yksityisyyttäsi, eikä yhteystietojasi käytetä muihin tarkoituksiin.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Kirjoita helposti yhteystietoihisi";
+
+/* loco:62c2eede5bc8fa0201054443 */
+"onBoardingDescription2" = "Hallitse sähköpostiasi ilman mainoksia ja yksityisyyttäsi kunnioittaen.";
+
+/* loco:62c2ef31d501950dff4cbda2 */
+"onBoardingDescription3" = "Arkistoi, poista tai merkitse viestejä lukemattomiksi yhdellä pyyhkäisyllä.";
+
+/* loco:62c2ef65c564d9260842db32 */
+"onBoardingDescription4" = "Käytä kaikkia Infomaniak Mailin ominaisuuksia heti.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Aktivoi ilmoitukset vastaanottaaksesi hälytyksiä uusista viesteistä reaaliaikaisesti.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Pysy ajan tasalla ilmoitusten avulla";
+
+/* loco:62c2ee73d35f8933bc4b5262 */
+"onBoardingTitle1" = "Tervetuloa Infomaniak Mailiin";
+
+/* loco:62c2ee8cfa454b3819243ba2 */
+"onBoardingTitle2" = "Hallitse sähköpostiasi helposti";
+
+/* loco:62c2ef13b664ac09fe4a0762 */
+"onBoardingTitle3" = "Paina viestiä muutaman sekunnin ajan valitaksesi useita viestejä";
+
+/* loco:62c2ef4a24eb9878221dcd63 */
+"onBoardingTitle4" = "Aloita!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisaatio: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Muu";
+
+/* loco:62c424189aacc248962d6224 */
+"pickerNoSelection" = "Ei valintaa";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Kirjaudu ensin Infomaniak Mail -sovellukseen.";
+
+/* loco:68b05985327f49a8eb0936b2 */
+"previewReaction" = "%2$@ %1$@ reagoi";
+
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Kaikki";
+
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reaktiot";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Lue UKK";
+
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Viimeisimmät haut";
+
+/* loco:62baabfc07e6a001ca19e535 */
+"refreshTokenError" = "Sinut on kirjattu ulos";
+
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Nimeä kansio uudelleen";
+
+/* loco:62cd640724b16d271d296bc2 */
+"reportDisplayProblemDescription" = "Suostutko jakamaan tietojasi kehittäjiemme kanssa, jotta he voivat auttaa sinua ongelmassasi?";
+
+/* loco:62cd63dab9cd016ad83df012 */
+"reportDisplayProblemTitle" = "Ilmoita näyttöongelmasta";
+
+/* loco:62cecdf0413c882ede7451c2 */
+"reportPhishingTitle" = "Ilmoita kalasteluyrityksestä";
+
+/* loco:62bf21b31385976cad230b43 */
+"restoreEmailsBackupDate" = "Varmuuskopion päivämäärä";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Varmuuskopiota ei löytynyt";
+
+/* loco:62bf1dc26398da30d5675c52 */
+"restoreEmailsText" = "Kaikki sähköpostit palaavat saapuneisiin.";
+
+/* loco:62bf1d8b38fa643dbc4c8b42 */
+"restoreEmailsTitle" = "Palauta sähköpostisi";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Pidätkö Infomaniak Mailista?";
+
+/* loco:66e2826251d88f0bdc097c12 */
+"saveMailInkDrive" = "Tallenna kDriveen";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Ajasta lähetys";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "Tämä sähköposti lähetetään tänä päivämääränä: %@";
+
+/* loco:62a9db4ae45f1e29371ff802 */
+"scheduledMessagesFolder" = "Ajastetut viestit";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Hae";
+
+/* loco:640836aa0f09a82bfa0da572 */
+"searchAllMessages" = "Kaikki viestit";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "Hae sähköpostia";
+
+/* loco:62d5568245072b538b5aeaa2 */
+"searchFilterAttachment" = "Liitteet";
+
+/* loco:62d559f7bd07624399379972 */
+"searchFilterFolder" = "Kaikki kansiot";
+
+/* loco:62d5561a4fa44b4a25143fc2 */
+"searchFilterRead" = "Luetut";
+
+/* loco:62d5563645aa5e5f197eef92 */
+"searchFilterUnread" = "Lukemattomat";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Haku";
+
+/* loco:662f89ba8e8c8321190ae342 */
+"selectSignatureNone" = "Ei allekirjoitusta";
+
+/* loco:62ac871d2502053d7b0cbb32 */
+"send" = "Lähetä";
+
+/* loco:6936f6d2c3bd045a2001d752 */
+"sendConfirmationAction" = "Lähetä vahvistus";
+
+/* loco:627e401ec1c7c02de9181292 */
+"sentFolder" = "Lähetetyt viestit";
+
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Palvelimet eivät ole käytettävissä";
+
+/* loco:657314ba4d64ddc63f074b42 */
+"setAsDefaultAppDescription" = "Valitse oletuksena turvallinen sähköpostipalvelu, joka kunnioittaa yksityisyyttäsi ja ympäristöä.";
+
+/* loco:65731498b8f6abbd070ce033 */
+"setAsDefaultAppTitle" = "Tee Infomaniakista oletus Mail-sovelluksesi";
+
+/* loco:62bb144be43a74010f186a22 */
+"settingsAccentColor" = "Korostusväri";
+
+/* loco:62bb14784ae7d90af73a4c93 */
+"settingsAccentColorDescription" = "Valitse sovelluksen korostusväri";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Tilin hallinta";
+
+/* loco:627a306b1e32027c033896b2 */
+"settingsAppLock" = "Sovelluksen lukitus";
+
+/* loco:65b275e7c53c28d1410bf342 */
+"settingsAutoAdvanceDescription" = "Valitse, mitä näytetään, kun viesti arkistoidaan tai poistetaan";
+
+/* loco:65b27dc325bc06589501c462 */
+"settingsAutoAdvanceFollowingThreadDescription" = "Näytä seuraava keskustelu arkistoinnin tai poistamisen jälkeen";
+
+/* loco:65b277d399fe1ebac10546a2 */
+"settingsAutoAdvanceFollowingThreadTitle" = "Seuraava keskustelu";
+
+/* loco:65b27e2b4f176d33ca06b302 */
+"settingsAutoAdvanceListOfThreadsDescription" = "Näytä keskustelulista arkistoinnin tai poistamisen jälkeen";
+
+/* loco:65b2780c2b7256da8b038512 */
+"settingsAutoAdvanceListOfThreadsTitle" = "Keskustelulista";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Toistaa viimeisen suorittamasi toiminnon";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Valitsee automaattisesti seuraavan tai edellisen keskustelun viimeisen vuorovaikutuksesi perusteella.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Toista viimeinen toiminto";
+
+/* loco:65b27d1e0565d99b930ae142 */
+"settingsAutoAdvancePreviousThreadDescription" = "Näytä edellinen keskustelu arkistoinnin tai poistamisen jälkeen";
+
+/* loco:65b277b504a5c5b4710041f3 */
+"settingsAutoAdvancePreviousThreadTitle" = "Edellinen keskustelu";
+
+/* loco:65b274f8719e4e08b103c7f4 */
+"settingsAutoAdvanceTitle" = "Automaattinen eteneminen";
+
+/* loco:62c693f572adfe66fd2a82b7 */
+"settingsCancellationPeriodDescription" = "Voit peruuttaa sähköpostisi lähetyksen 30 sekunnin kuluessa";
+
+/* loco:627a53b37b420855254af032 */
+"settingsCancellationPeriodTitle" = "Lähetyksen peruutusaika";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Tietojen hallinta";
+
+/* loco:627a40651c78f22cb67efdd2 */
+"settingsDefault" = "Oletus";
+
+/* loco:6295d7b8a080fe0c5d544952 */
+"settingsDelaySeconds" = "%d sekuntia";
+
+/* loco:627a40878416713fac6e6c82 */
+"settingsDensityOptionCompact" = "Tiivis";
+
+/* loco:627a40769905e5026f4309f3 */
+"settingsDensityOptionLarge" = "Suuri";
+
+/* loco:62cd280d733bbc7d8f42d194 */
+"settingsDensityOptionNormal" = "Normaali";
+
+/* loco:6295d75d0ac5a369d16b45c5 */
+"settingsDisabled" = "Pois käytöstä";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Ota ilmoitukset käyttöön";
+
+/* loco:62c691f711673b15f21d70b4 */
+"settingsEnabled" = "Käytössä";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Näytä ulkoinen sisältö";
+
+/* loco:627a329eeeb721567557b3a2 */
+"settingsExternalContentTitle" = "Ulkoinen sisältö";
+
+/* loco:627a3cf1cf1b8849996f97c2 */
+"settingsInboxAlias" = "Alias";
+
+/* loco:627a3cdead26c25ce97e94f4 */
+"settingsInboxRedirect" = "Uudelleenohjaukset";
+
+/* loco:627a3c9ce8a52f1aaf66dfb3 */
+"settingsInboxRules" = "Säännöt";
+
+/* loco:627a3c83ad26c25ce97e94f2 */
+"settingsInboxType" = "Saapuneiden tyyppi";
+
+/* loco:627a3be50425fc78766ad173 */
+"settingsMailboxGeneralAutoreply" = "Automaattivastaus";
+
+/* loco:627a3c02e402a4304d327033 */
+"settingsMailboxGeneralFolders" = "Kansioiden asetukset";
+
+/* loco:627a3c1e89de4237021b5622 */
+"settingsMailboxGeneralNotifications" = "Ilmoitukset";
+
+/* loco:627a3ba7d5f44d600a6f1803 */
+"settingsMailboxGeneralSignature" = "Allekirjoituksen asetukset";
+
+/* loco:627a418d50aa01240d501ae4 */
+"settingsOptionAlways" = "Aina";
+
+/* loco:627a419ea4d53353fb587204 */
+"settingsOptionAskMe" = "Kysy minulta";
+
+/* loco:627a40fe23cf464d52393803 */
+"settingsOptionDarkTheme" = "Tumma";
+
+/* loco:627a40e8203b0403f20a0db5 */
+"settingsOptionLightTheme" = "Vaalea";
+
+/* loco:62cfb94ffe73905627441c62 */
+"settingsOptionSystemTheme" = "Järjestelmä";
+
+/* loco:627a413a4a9b8944955fd206 */
+"settingsOptionThreadModeConversation" = "Keskustelut";
+
+/* loco:627a4172023031490409d6b5 */
+"settingsOptionThreadModeMessage" = "Viestit";
+
+/* loco:627a3e42e849cb43282bb484 */
+"settingsPrivacyDeleteSearchHistory" = "Poista hakuhistoria";
+
+/* loco:627a3e68a068242a09294182 */
+"settingsPrivacyViewLogs" = "Näytä lokit";
+
+/* loco:627a30b24e987302322d0f64 */
+"settingsSectionAppearance" = "Ulkoasu";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Tiedot ja yksityisyys";
+
+/* loco:627a2ab189bc1f4ea90851c2 */
+"settingsSectionEmailAddresses" = "Sähköpostiosoitteet";
+
+/* loco:627a2ae2fc0dff2fce768ef2 */
+"settingsSectionGeneral" = "Yleiset";
+
+/* loco:627a3e29e849cb43282bb482 */
+"settingsSectionPrivacy" = "Yksityisyys";
+
+/* loco:627a3d03cf1b8849996f97c4 */
+"settingsSectionSecurity" = "Turvallisuus";
+
+/* loco:627a3d72da7e600e226ddca2 */
+"settingsSecurityAdsFilter" = "Mainokset ja sosiaaliset verkostot -suodatin";
+
+/* loco:627a3df94e4a1b1eff6c77a2 */
+"settingsSecurityBlockedRecipients" = "Estetyt / sallitut vastaanottajat";
+
+/* loco:627a3daeda7e600e226ddca4 */
+"settingsSecuritySpamFilter" = "Roskapostisuodatin";
+
+/* loco:627a409fc889f27ef73a61e2 */
+"settingsSelectDisplayModeDescription" = "Valitse näyttötila";
+
+/* loco:627a54238311502e273bbd62 */
+"settingsSendAcknowledgementSubtitle" = "Pyydä vastaanottokuittaus jokaiselle lähetetylle viestille";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Vastaanottokuittaukset";
+
+/* loco:627a5401ba58a853294d57a2 */
+"settingsSendIncludeOriginalMessage" = "Sisällytä alkuperäinen viesti vastaukseen";
+
+/* loco:627a2f67a6d27d332a2f4926 */
+"settingsSendTitle" = "Lähetä";
+
+/* loco:644f6a7bf8a5eec20801ac93 */
+"settingsSignatureDescription" = "Valitse oletusallekirjoitus";
+
+/* loco:644b7ef4a60127b0b201ab52 */
+"settingsSignatureTitle" = "Allekirjoitukset";
+
+/* loco:6295e9101cbb5020e33ad4d2 */
+"settingsSwipeActionNone" = "Ei mitään";
+
+/* loco:6295e8f405a6650e5621df92 */
+"settingsSwipeActionQuickActionsMenu" = "Pikatoimintojen valikko";
+
+/* loco:6295dbd84dc6ed5644064ba2 */
+"settingsSwipeActionReadUnread" = "Luettu / lukematon";
+
+/* loco:62c2b600d8c4bb2ee63957f2 */
+"settingsSwipeActionToDefine" = "Määritettävä";
+
+/* loco:627a323b7f79c0171c37aa42 */
+"settingsSwipeActionsTitle" = "Pyyhkäisyn toiminnot";
+
+/* loco:62b017def2354224c578fc12 */
+"settingsSwipeDescription" = "Pyyhkäise kohteita saapuneissasi ja käytä nopeasti yleisimpiä toimintoja";
+
+/* loco:6295d5d7b524ea4e9d4d72d3 */
+"settingsSwipeLongLeft" = "Pitkä pyyhkäisy vasemmalle";
+
+/* loco:6295d58f35b3260585685212 */
+"settingsSwipeLongRight" = "Pitkä pyyhkäisy oikealle";
+
+/* loco:6295d5b6dff6bd5f535fce82 */
+"settingsSwipeShortLeft" = "Lyhyt pyyhkäisy vasemmalle";
+
+/* loco:6295d5650b0ed37f63022fe3 */
+"settingsSwipeShortRight" = "Lyhyt pyyhkäisy oikealle";
+
+/* loco:627a40cb203b0403f20a0db2 */
+"settingsThemeDescription" = "Teeman valinta";
+
+/* loco:627a318d0c2fa16955156a22 */
+"settingsThemeTitle" = "Teema";
+
+/* loco:627a317093c0713ccc6df012 */
+"settingsThreadListDensityTitle" = "Keskustelulistan tiiviy";
+
+/* loco:64cca81829e8aeaec602e1c2 */
+"settingsThreadModeTitle" = "Viestien näyttötila";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Huomaa, että tämän asetuksen muuttaminen lataa kaikki viestisi uudelleen";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Vaihda tilaan %@?";
+
+/* loco:627e52f442b7411bfd029f02 */
+"settingsTitle" = "Asetukset";
+
+/* loco:627a54958311502e273bbd74 */
+"settingsTransferAsAttachment" = "Liitteenä";
+
+/* loco:62c6a408b365f734dd2c0d73 */
+"settingsTransferEmailsDescription" = "Kun välität sähköpostin, valitse sinulle parhaiten sopiva näyttötila";
+
+/* loco:627a53d47b420855254af035 */
+"settingsTransferEmailsTitle" = "Välitä sähköpostit";
+
+/* loco:627a547ad27ea17771565867 */
+"settingsTransferInBody" = "Viestin rungossa";
+
+/* loco:668cdbc1a27f04dd51065022 */
+"shareEmail" = "Jaa sähköposti";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Päivitä";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Tili poistettu";
+
+/* loco:6937d843b9fb15c2510859d2 */
+"snackbarAcknowledgementFailure" = "Lähetys epäonnistui";
+
+/* loco:6937d715da67a52ff201eed2 */
+"snackbarAcknowledgementSuccess" = "Vastaanottokuittaus lähetetty";
+
+/* loco:63f3961e7c16fb607809d632 */
+"snackbarBlockUserConfirmation" = "Lähettäjä on nyt estetty";
+
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Vastaus otettu huomioon";
+
+/* loco:62bc67601f560d734f2fbe58 */
+"snackbarContactSaved" = "Uusi yhteystieto rekisteröity onnistuneesti";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Keskustelua ei ole enää olemassa";
+
+/* loco:62cd644f5141ee164b494272 */
+"snackbarDisplayProblemReported" = "Näyttöongelma ilmoitettu";
+
+/* loco:62b959dd7994e66bc4719df2 */
+"snackbarDraftDeleted" = "Luonnos poistettu";
+
+/* loco:62b959afe3c12548284cb282 */
+"snackbarDraftSaved" = "Luonnos tallennettu";
+
+/* loco:646e10cd8b1764c28f0fb3e2 */
+"snackbarDraftSaving" = "Tallennetaan luonnosta";
+
+/* loco:62bd85a64880c362bd5ece72 */
+"snackbarEmailCopiedToClipboard" = "Sähköpostiosoite kopioitu leikepöydälle";
+
+/* loco:63c6c6744cd306160719c9c2 */
+"snackbarEmailSending" = "Sähköpostin lähetys käynnissä";
+
+/* loco:62a336b8e2b762772773d2c2 */
+"snackbarEmailSent" = "Sähköposti lähetetty";
+
+/* loco:62b42e39dbeac92077145712 */
+"snackbarInvalidUrl" = "Virheellinen URL";
+
+/* loco:638f5f9440687b206c230e64 */
+"snackbarMessageDeletedPermanently" = "Viesti poistettu";
+
+/* loco:62ab223f0763d104d71437f2 */
+"snackbarMessageMoved" = "Viesti siirretty kohteeseen %@";
+
+/* loco:62ab22a33a9b9314d8557222 */
+"snackbarMoveCancelled" = "Siirto peruutettu";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Salasana kopioitu";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reaktio %@ lähetetty";
+
+/* loco:62ab4ae387f65e26e577dd42 */
+"snackbarReportPhishingConfirmation" = "Ilmoitus tehty onnistuneesti";
+
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "Ilmoittamisen aikana tapahtui virhe, yritä uudelleen.";
+
+/* loco:62c2f9feea59c120ad52bc23 */
+"snackbarRestorationLaunched" = "Restaurointi käynnistetty";
+
+/* loco:672b6a80c4e88a09f20598f2 */
+"snackbarSaveInDraft" = "Viestisi on tallennettu luonnoksiin.";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Viesti lähetetään %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Viestiä ajastetaan";
+
+/* loco:67ea70102a2bbfe96e02d072 */
+"snackbarSnoozeSuccess" = "Saat muistutuksen tästä viestistä %@";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Aihe kopioitu leikepöydälle";
+
+/* loco:62ab221b4956e9775f391ca6 */
+"snackbarThreadMoved" = "Keskustelu siirretty kohteeseen %@";
+
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Keskustelut siirretty kohteeseen %@";
+
+/* loco:69b4300348915079af04186a */
+"snackbarThreadMoved-plural-2" = "";
+
+/* loco:69b4300348915079af04186b */
+"snackbarThreadMoved-plural-3" = "";
+
+/* loco:699716d77182f3feca0185f2 */
+"snackbarThreadMovedToSpam" = "Keskustelu siirretty roskapostiin ja käyttäjä estetty";
+
+/* loco:699717487182f3feca0185f4 */
+"snackbarThreadMovedToSpam-plural" = "Keskustelut siirretty roskapostiin ja käyttäjät estetty";
+
+/* loco:69b4300348915079af04186c */
+"snackbarThreadMovedToSpam-plural-2" = "";
+
+/* loco:69b4300348915079af04186d */
+"snackbarThreadMovedToSpam-plural-3" = "";
+
+/* loco:6909acad8905a0c64a0747d2 */
+"snackbarUnsubscribeFailure" = "Peruuttaminen ei onnistunut";
+
+/* loco:6909abe4583bcfb2d2034ec2 */
+"snackbarUnsubscribeSuccess" = "Peruutus suoritettu";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Torkku kunnes: %@";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "Torkussa";
+
+/* loco:62a33e2d0c5ac4438c366a32 */
+"socialNetworksFolder" = "Sosiaaliset verkostot";
+
+/* loco:627e40381ad4112c06450102 */
+"spamFolder" = "Roskaposti";
+
+/* loco:626664d06926336d9e25c462 */
+"subjectTitle" = "Aihe:";
+
+/* loco:65ba2326ef9447c160013bf2 */
+"superCollapsedBlock" = "Näytä kaikki (%d)";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Katso yhteystietojasi ja kalenteriasi suoraan laitteeltasi.";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"syncCalendarsAndContactsTitle" = "Kalenterin ja yhteystietojen synkronointi";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Kopioi salasana, tarvitset sitä seuraavan vaiheen vahvistamiseen.";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Kopioi vahvistussalasana";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "Lataa profiili napsauttamalla \"Lataa\" ja salli sitten lataus.";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Lataa määritysprofiili";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "Avaa asetuksista \"Ladattu profiili\" -välilehti ja napsauta Asenna.";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Syötä koodi: anna puhelimesi **PIN-koodi**.";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Napsauta **Asenna**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Anna vahvistussalasana **kahdesti**: kerran kalentereille ja kerran osoitekirjoille.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Palaa Mail-sovellukseesi.";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Kirjoita asetusten hakuun \"Ladattu profiili\" löytääksesi välilehden helposti!";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Asenna profiili";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d / %2$d";
+
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "Tänä iltapäivänä";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "Tänä iltana";
+
+/* loco:63eddb9871489a3042032122 */
+"threadListEmptyFolderAlertDescription" = "Haluatko varmasti poistaa kaikki tämän kansion viestit pysyvästi?";
+
+/* loco:63ebae36eeb4ae34ef49ba42 */
+"threadListEmptySpamButton" = "Tyhjennä roskaposti";
+
+/* loco:63ebad842446f5106c0058b2 */
+"threadListEmptyTrashButton" = "Tyhjennä roskakori";
+
+/* loco:62bc355b27ec7c112e166eb2 */
+"threadListHeaderLastUpdate" = "Päivitetty %@";
+
+/* loco:62bc35840445497c51137862 */
+"threadListHeaderUnreadCount" = "%@ lukematon";
+
+/* loco:62bc35a8de12a01f3a49e022 */
+"threadListHeaderUnreadCount-plural" = "%@ lukematonta";
+
+/* loco:69b4300348915079af04187a */
+"threadListHeaderUnreadCount-plural-2" = "";
+
+/* loco:69b4300348915079af04187b */
+"threadListHeaderUnreadCount-plural-3" = "";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Noudetaan";
+
+/* loco:6267f93e15e2421b9677e212 */
+"threadListSectionLastWeek" = "Viime viikolla";
+
+/* loco:62c6b582acc973360733ab94 */
+"threadListSectionThisMonth" = "Tässä kuussa";
+
+/* loco:6267f91723d767283212ffd2 */
+"threadListSectionThisWeek" = "Tällä viikolla";
+
+/* loco:6267f813a44c1a465c763c92 */
+"threadListSectionToday" = "Tänään";
+
+/* loco:63ebacb17b37201ea253d432 */
+"threadListSpamHint" = "Roskapostikansiossa yli 30 päivää olleet viestit poistetaan automaattisesti.";
+
+/* loco:63ebabc469ccbb24d90659c2 */
+"threadListTrashHint" = "Roskakorissa yli 30 päivää olleet viestit poistetaan automaattisesti.";
+
+/* loco:62665fa13789aa7e8353ad62 */
+"toTitle" = "Vastaanottaja:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "Huomenna aamulla";
+
+/* loco:641db88f88b1f63cb05aad52 */
+"tooManyRecipients" = "Et voi lisätä tätä osoitetta, koska olet saavuttanut vastaanottajien rajan";
+
+/* loco:627e40419151de052d2d3962 */
+"trashFolder" = "Roskakori";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Poista esto";
+
+/* loco:6995af71f61e72e4d4004be2 */
+"unknownDialogTitleExpeditor" = "Tuntematon lähettäjä";
+
+/* loco:6995a57f05da42c3ae0bb253 */
+"unknownDialogTitleRecipient" = "Tuntematon vastaanottaja";
+
+/* loco:62b95774aee47c626b773693 */
+"unknownRecipientTitle" = "(tuntematon)";
+
+/* loco:6995a893d03cfb81d80e25c2 */
+"unknownTag" = "Tuntematon";
+
+/* loco:690387a073a26a6c7a0ca602 */
+"unsubscribeButtonTitle" = "Peruuta tilaus";
+
+/* loco:64257388057ce0235d2c5222 */
+"updateAvailableDescription" = "Saadaksesi parhaan kokemuksen Infomaniak Mailista suosittelemme päivittämään sovelluksesi.";
+
+/* loco:6425728328677e02905abef2 */
+"updateAvailableTitle" = "Päivitys saatavilla!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "Turvallisuutesi ja paremman käyttökokemuksen vuoksi päivitä laitteesi.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Kokemuksesi voi heikentyä, koska laitteesi ei ole ajan tasalla";
+
+/* loco:62b42dc3832cca6d684a4ae2 */
+"urlEntryTitle" = "Luo hyperlinkki";
+
+/* loco:62b4362a0524dc792a0ee634 */
+"urlPlaceholder" = "URL";
+
+/* loco:641d60b6f5c19a18734d9192 */
+"urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Käyttäjänimi";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Tämä tapahtuma on jo ohitettu";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Tämä tapahtuma on peruttu";
+
+/* loco:6481d72ebb3c88db6e002332 */
+"warningNotificationsDisabledButton" = "Ota ne käyttöön asetuksissa";
+
+/* loco:6481d7112f7eca9f7e0ad572 */
+"warningNotificationsDisabledDescription" = "VAROITUS: Push-ilmoitukset on poistettu käytöstä.";
+
+/* loco:635fab674606bd5f944f7784 */
+"workInProgressTitle" = "Saatavilla pian";

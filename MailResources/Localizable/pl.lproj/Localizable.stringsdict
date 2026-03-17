@@ -3,7 +3,7 @@
 <!--
  Loco ios export: Xcode Stringsdict (legacy)
  Project: kMail
- Locale: fr, French
+ Locale: pl, Polish
  Tagged: ios-stringsdict
  Exported by: Philippe Weidmann
  Exported at: Mon, 16 Mar 2026 15:11:46 +0100
@@ -21,9 +21,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d pièce jointe</string>
+        <string>%d załącznik</string>
+        <key>few</key>
+        <string>%d załączniki</string>
+        <key>many</key>
+        <string>%d załączników</string>
         <key>other</key>
-        <string>%d pièces jointes</string>
+        <string>%d załącznika</string>
       </dict>
     </dict>
     <key>encryptedMessageIncompleteUser</key>
@@ -37,9 +41,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataire.</string>
+        <string>Szyfrowanie nie jest obsługiwane przez %d odbiorcę.</string>
+        <key>few</key>
+        <string>Szyfrowanie nie jest obsługiwane przez %d odbiorców.</string>
+        <key>many</key>
+        <string>Szyfrowanie nie jest obsługiwane przez %d odbiorców.</string>
         <key>other</key>
-        <string>Le chiffrement n’est pas pris en charge par %d destinataires.</string>
+        <string>Szyfrowanie nie jest obsługiwane przez %d odbiorców.</string>
       </dict>
     </dict>
     <key>fileQuantity</key>
@@ -53,9 +61,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d fichier envoyé via SwissTransfer</string>
+        <string>%d plik wysłany przez SwissTransfer</string>
+        <key>few</key>
+        <string>%d pliki wysłane przez SwissTransfer</string>
+        <key>many</key>
+        <string>%d plików wysłanych przez SwissTransfer</string>
         <key>other</key>
-        <string>%d fichiers envoyés via SwissTransfer</string>
+        <string>%d plików wysłanych przez SwissTransfer</string>
       </dict>
     </dict>
     <key>lockedMailboxTitle</key>
@@ -69,9 +81,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Adresse mail bloquée</string>
+        <string>Zablokowana skrzynka pocztowa</string>
+        <key>few</key>
+        <string>Zablokowane skrzynki pocztowe</string>
+        <key>many</key>
+        <string>Zablokowanych skrzynek pocztowych</string>
         <key>other</key>
-        <string>Adresses mail bloquées</string>
+        <string>Zablokowanych skrzynek pocztowych</string>
       </dict>
     </dict>
     <key>messageDeletionConfirmationAlertTitle</key>
@@ -85,9 +101,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d message</string>
+        <string>Usuń %d wiadomość</string>
+        <key>few</key>
+        <string>Usuń %d wiadomości</string>
+        <key>many</key>
+        <string>Usuń %d wiadomości</string>
         <key>other</key>
-        <string>Supprimer %d messages</string>
+        <string>Usuń %d wiadomości</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>
@@ -101,9 +121,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d sélectionné</string>
+        <string>Wybrano %d</string>
+        <key>few</key>
+        <string>Wybrano %d</string>
+        <key>many</key>
+        <string>Wybrano %d</string>
         <key>other</key>
-        <string>%d sélectionnés</string>
+        <string>Wybrano %d</string>
       </dict>
     </dict>
     <key>reportPhishingDescription</key>
@@ -117,17 +141,29 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Jeśli ta wiadomość próbuje wykradać wrażliwe informacje (hasło, dane bankowe itp.) i/lub podszywa się pod rozpoznawaną tożsamość, to jest to phishing.
 
-En nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Zgłaszając ją nam, przyspieszasz wykrywanie niebezpiecznych wiadomości dla wszystkich naszych użytkowników.
 
-Le signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.</string>
+Zgłoszenie zostanie wysłane do naszego zespołu bezpieczeństwa w celu analizy i podjęcia działań. Wiadomość zostanie również automatycznie przeniesiona do folderu spam.</string>
+        <key>few</key>
+        <string>Jeśli te wiadomości próbują wykradać wrażliwe informacje (hasła, dane bankowe itp.) i/lub podszywają się pod rozpoznawane tożsamości, to jest to phishing.
+
+Zgłaszając je nam, przyspieszasz wykrywanie niebezpiecznych wiadomości dla wszystkich naszych użytkowników.
+
+Zgłoszenia zostaną wysłane do naszego zespołu bezpieczeństwa w celu analizy i podjęcia działań. Wiadomości zostaną również automatycznie przeniesione do folderu spam.</string>
+        <key>many</key>
+        <string>Jeśli te wiadomości próbują wykradać wrażliwe informacje (hasła, dane bankowe itp.) i/lub podszywają się pod rozpoznawane tożsamości, to jest to phishing.
+
+Zgłaszając je nam, przyspieszasz wykrywanie niebezpiecznych wiadomości dla wszystkich naszych użytkowników.
+
+Zgłoszenia zostaną wysłane do naszego zespołu bezpieczeństwa w celu analizy i podjęcia działań. Wiadomości zostaną również automatycznie przeniesione do folderu spam.</string>
         <key>other</key>
-        <string>Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.
+        <string>Jeśli te wiadomości próbują wykradać wrażliwe informacje (hasła, dane bankowe itp.) i/lub podszywają się pod rozpoznawane tożsamości, to jest to phishing.
 
-En nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.
+Zgłaszając je nam, przyspieszasz wykrywanie niebezpiecznych wiadomości dla wszystkich naszych użytkowników.
 
-Les signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.</string>
+Zgłoszenia zostaną wysłane do naszego zespołu bezpieczeństwa w celu analizy i podjęcia działań. Wiadomości zostaną również automatycznie przeniesione do folderu spam.</string>
       </dict>
     </dict>
     <key>snackbarSenderBlacklisted</key>
@@ -141,9 +177,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Expéditeur blacklisté avec succès</string>
+        <string>Nadawca pomyślnie dodany do czarnej listy</string>
+        <key>few</key>
+        <string>Nadawcy pomyślnie dodani do czarnej listy</string>
+        <key>many</key>
+        <string>Nadawców pomyślnie dodanych do czarnej listy</string>
         <key>other</key>
-        <string>Expéditeurs blacklistés avec succès</string>
+        <string>Nadawców pomyślnie dodanych do czarnej listy</string>
       </dict>
     </dict>
     <key>snackbarThreadDeletedPermanently</key>
@@ -157,9 +197,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Conversation supprimée</string>
+        <string>Konwersacja usunięta</string>
+        <key>few</key>
+        <string>Konwersacje usunięte</string>
+        <key>many</key>
+        <string>Konwersacji usuniętych</string>
         <key>other</key>
-        <string>Conversations supprimées</string>
+        <string>Konwersacji usuniętych</string>
       </dict>
     </dict>
     <key>snackbarUnsnoozeSuccess</key>
@@ -173,9 +217,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Rappel annulé. Votre message est revenu dans votre boîte de réception</string>
+        <string>Przypomnienie anulowane. Twoja wiadomość wróciła do skrzynki odbiorczej</string>
+        <key>few</key>
+        <string>Przypomnienia anulowane. Twoje wiadomości wróciły do skrzynki odbiorczej</string>
+        <key>many</key>
+        <string>Przypomnień anulowanych. Twoje wiadomości wróciły do skrzynki odbiorczej</string>
         <key>other</key>
-        <string>Rappels annulés. Vos messages sont revenus dans votre boîte de réception</string>
+        <string>Przypomnień anulowanych. Twoje wiadomości wróciły do skrzynki odbiorczej</string>
       </dict>
     </dict>
     <key>snoozeArchiveConfirmAlertDescription</key>
@@ -189,9 +237,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera archivée</string>
+        <string>Ta konwersacja nie będzie już wstrzymana i zostanie zarchiwizowana</string>
+        <key>few</key>
+        <string>Te konwersacje nie będą już wstrzymane i zostaną zarchiwizowane</string>
+        <key>many</key>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną zarchiwizowane</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront archivées</string>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną zarchiwizowane</string>
       </dict>
     </dict>
     <key>snoozeDeleteConfirmAlertDescription</key>
@@ -205,9 +257,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera supprimée</string>
+        <string>Ta konwersacja nie będzie już wstrzymana i zostanie usunięta</string>
+        <key>few</key>
+        <string>Te konwersacje nie będą już wstrzymane i zostaną usunięte</string>
+        <key>many</key>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną usunięte</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront supprimées</string>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną usunięte</string>
       </dict>
     </dict>
     <key>snoozeMoveConfirmAlertDescription</key>
@@ -221,9 +277,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Cette conversation ne sera plus en attente et sera déplacée</string>
+        <string>Ta konwersacja nie będzie już wstrzymana i zostanie przeniesiona</string>
+        <key>few</key>
+        <string>Te konwersacje nie będą już wstrzymane i zostaną przeniesione</string>
+        <key>many</key>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną przeniesione</string>
         <key>other</key>
-        <string>Ces conversations ne seront plus en attente et seront déplacées</string>
+        <string>Tych konwersacji nie będzie już wstrzymanych i zostaną przeniesione</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertDescription</key>
@@ -237,9 +297,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Êtes-vous sûr de vouloir supprimer cette conversation définitivement ?</string>
+        <string>Czy na pewno chcesz trwale usunąć tę konwersację?</string>
+        <key>few</key>
+        <string>Czy na pewno chcesz trwale usunąć te konwersacje?</string>
+        <key>many</key>
+        <string>Czy na pewno chcesz trwale usunąć te konwersacje?</string>
         <key>other</key>
-        <string>Êtes-vous sûr de vouloir supprimer ces conversations définitivement ?</string>
+        <string>Czy na pewno chcesz trwale usunąć te konwersacje?</string>
       </dict>
     </dict>
     <key>threadListDeletionConfirmationAlertTitle</key>
@@ -253,9 +317,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Supprimer %d conversation</string>
+        <string>Usuń %d konwersację</string>
+        <key>few</key>
+        <string>Usuń %d konwersacje</string>
+        <key>many</key>
+        <string>Usuń %d konwersacji</string>
         <key>other</key>
-        <string>Supprimer %d conversations</string>
+        <string>Usuń %d konwersacji</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>
@@ -269,9 +337,13 @@ Les signalements seront envoyés à notre équipe sécurité pour analyse afin d
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Mon compte</string>
+        <string>Moje konto</string>
+        <key>few</key>
+        <string>Moje konta</string>
+        <key>many</key>
+        <string>Moich kont</string>
         <key>other</key>
-        <string>Mes comptes</string>
+        <string>Moich kont</string>
       </dict>
     </dict>
   </dict>

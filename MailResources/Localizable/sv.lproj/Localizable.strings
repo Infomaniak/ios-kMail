@@ -1,0 +1,1931 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: sv, Swedish
+ * Tagged: ios
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ */
+
+/* loco:62bb154d7513e127cb2e9c94 */
+"accentColorBlueTitle" = "Blå";
+
+/* loco:62bb155aef94e921b059e1c3 */
+"accentColorPinkTitle" = "Rosa";
+
+/* loco:642179d9733cd4523d03dcf2 */
+"accentColorSystemTitle" = "Systemfärg";
+
+/* loco:6936f775de93800154038b75 */
+"acknowledgementMessage" = "Avsändaren har begärt ett läskvitto.";
+
+/* loco:6936f7e6835ef86e27063eb6 */
+"acknowledgementMessageSent" = "Ett läskvitto har skickats till avsändaren.";
+
+/* loco:629f0e2244ac887a51141312 */
+"actionArchive" = "Arkivera";
+
+/* loco:629f0f37ccbf1e53bf0ab752 */
+"actionBlockSender" = "Blockera avsändare";
+
+/* loco:67e690c60b27fb17340e57b2 */
+"actionCancelSnooze" = "Avbryt vänteläge";
+
+/* loco:629f0e12701ef82cde591a62 */
+"actionDelete" = "Ta bort";
+
+/* loco:629f0fe5f3c27b205b282582 */
+"actionEditMenu" = "Redigera meny";
+
+/* loco:6284fd55867ed227676f1743 */
+"actionForward" = "Vidarebefordra";
+
+/* loco:629f0e3e701ef82cde591a65 */
+"actionMarkAsRead" = "Markera som läst";
+
+/* loco:62a1e691ede283161606f7f4 */
+"actionMarkAsUnread" = "Markera som oläst";
+
+/* loco:67e68dbbdfc30429280f7db3 */
+"actionModifySnooze" = "Ändra vänteläge";
+
+/* loco:629f0e49b7fae5715e13e972 */
+"actionMove" = "Flytta";
+
+/* loco:63e22d56403b335b953b0672 */
+"actionMoveToInbox" = "Flytta till inkorg";
+
+/* loco:62ab21e14956e9775f391ca4 */
+"actionNonSpam" = "Rapportera som legitim";
+
+/* loco:629f0f6557b1a86b24759543 */
+"actionPhishing" = "Rapportera nätfiske";
+
+/* loco:629f0f8232570829c53e38e2 */
+"actionPrint" = "Skriv ut";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Byt namn";
+
+/* loco:6284fd413d98060ac31f76d2 */
+"actionReply" = "Svara";
+
+/* loco:62a85b6ad3c793021731f332 */
+"actionReplyAll" = "Svara alla";
+
+/* loco:629f0fd21c251254874665a2 */
+"actionReportDisplayProblem" = "Rapportera visningsproblem";
+
+/* loco:62e13281cd9a910e235d06d2 */
+"actionShortMarkAsRead" = "Läst";
+
+/* loco:62e14b027e61d3640a5bf7e3 */
+"actionShortMarkAsUnread" = "Oläst";
+
+/* loco:64089f358a3d4917a9149802 */
+"actionShortSpam" = "Spam";
+
+/* loco:62e14df023e4fb767e2391a4 */
+"actionShortStar" = "Favoriter";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Sätt i vänteläge";
+
+/* loco:629f0e67a7c8ea4e366cf342 */
+"actionSpam" = "Rapportera som spam";
+
+/* loco:62dfcbfd27c35d15796e01c3 */
+"actionStar" = "Lägg till i favoriter";
+
+/* loco:62dfccb7dfb07663055fc0b2 */
+"actionUnstar" = "Ta bort från favoriter";
+
+/* loco:640070c70e888e3c550040d2 */
+"actionViewInDark" = "Visa i mörkt tema";
+
+/* loco:63fdb9239bfffe2abc3e1c02 */
+"actionViewInLight" = "Visa i ljust tema";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtrering av brevlådor";
+
+/* loco:668cd87ac01614f14603ac92 */
+"addLinkTextPlaceholder" = "Text att visa";
+
+/* loco:63ecf9b0415fc86eea26ec03 */
+"addUnknownRecipientAlreadyUsed" = "E-postadressen används redan";
+
+/* loco:63ecfa898018fd68e85e29a2 */
+"addUnknownRecipientInvalidEmail" = "E-postadressen är ogiltig";
+
+/* loco:63ecd31247f7a57fc228b532 */
+"addUnknownRecipientTitle" = "Lägg till mottagare";
+
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Adressbok: %@";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Infoga";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Förfina";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Försök igen";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Förenkla skrivandet av dina meddelanden med hjälp av artificiell intelligens.";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Skriv dina e-postmeddelanden med Euria";
+
+/* loco:6555e85e5cfcd5053e081e92 */
+"aiErrorContextMaxTokenReached" = "E-postmeddelandet du svarar på är för långt för att AI:n ska kunna generera ett svar.\n\nSammanfatta vad du vill säga för att få hjälp.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Din begäran är för lång, vänligen förkorta den.";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "För många förfrågningar på kort tid. Vänligen vänta.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Ett fel har inträffat. Om felet kvarstår, vänligen kontakta vår support.\nTack för ditt tålamod.";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Redigera min begäran";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Förläng";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Vänligt skrivande";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Generera om ett svar";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Seriöst skrivande";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Förkorta";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Förklara för Euria hur du vill få hjälp att svara på detta e-postmeddelande.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "ett tack-e-post för en välkomstpresent";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "ett e-postmeddelande som bekräftar din hotellbokning";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "ett tack-e-post för en inbjudan till ett evenemang";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "en inbjudan till ett företagsevenemang";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "ett e-postmeddelande för att begära ett möte med en viktig kund";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Euria skriver…";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Berätta för Euria vad du vill skriva. Till exempel \"%@\".";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Euria";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Generera";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Ämnet kommer att bli:\n\n%@";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Ersätt nuvarande ämne med Eurias förslag?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Genom att klicka på \"Ersätt\" kommer befintligt innehåll att förloras.";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Ersätt";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Ersätta befintligt innehåll?";
+
+/* loco:64649a4f09a501c76901b37b */
+"alertBlockedImagesDescription" = "För din säkerhet har vi blockerat vissa innehåll i ditt meddelande.";
+
+/* loco:64649adb0070f636ff04bc12 */
+"alertBlockedImagesDisplayContent" = "Visa innehåll";
+
+/* loco:6481a576efb1d3072f0ede02 */
+"alertNotificationsDisabledButton" = "Visa inställningar";
+
+/* loco:6481a3d9c7a313bee80faa42 */
+"alertNotificationsDisabledDescription" = "Aktivera notiser för Infomaniak Mail **i iOS-inställningarna** för att bli avisad när nya meddelanden tas emot";
+
+/* loco:6481a2d4fdda813a7f0d3662 */
+"alertNotificationsDisabledTitle" = "Notiser inaktiverade";
+
+/* loco:62baa963ab8fce473930eea4 */
+"appSecurityDescription" = "Skydda åtkomsten till din app genom att aktivera din telefons lås.";
+
+/* loco:627e4053e699c44b3f1f9be2 */
+"archiveFolder" = "Arkiverade";
+
+/* loco:6437c60334e2ec004807c7f2 */
+"attachMailboxDescription1" = "Om du redan har en Infomaniak e-postadress, anslut nu";
+
+/* loco:6437c532f51a3257a53fa6f2 */
+"attachMailboxDescription2" = "Endast Infomaniak e-postadresser stöds";
+
+/* loco:6437c70f4234b3111a48be63 */
+"attachMailboxInputHint" = "E-postadress";
+
+/* loco:6437c47e426da35ef96cfc12 */
+"attachMailboxPasswordInputHint" = "Lösenord";
+
+/* loco:6437e8f60dad565a51542b62 */
+"attachMailboxTitle" = "Lägg till e-postadress";
+
+/* loco:62b47ed7bd878067784e6f62 */
+"attachmentActionFile" = "Bifoga en fil";
+
+/* loco:62b47f35c231ca5bb0344262 */
+"attachmentActionPhotoLibrary" = "Skicka ett foto från fotobiblioteket";
+
+/* loco:62b4807d362dbc0bed1eb402 */
+"attachmentActionTitle" = "Lägg till en bilaga";
+
+/* loco:6374f6a12619632e014135d2 */
+"attachmentFileLimitReached" = "Filer som du försöker skicka överstiger gränsen på 25 MB för bilagor";
+
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "Du nämnde en bilaga, men ingen fil har lagts till. Skicka ändå?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Saknad bilaga";
+
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Lista över deltagare (%d)";
+
+/* loco:6266649755d41301973d0c43 */
+"bccTitle" = "Dold kopia:";
+
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Blockera en avsändare";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Blockera %@";
+
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Blockera %d avsändare";
+
+/* loco:62cd641b15742c678d4c30e2 */
+"buttonAccept" = "Acceptera";
+
+/* loco:628216026aae4d7bc05773c3 */
+"buttonAccountDelete" = "Ta bort konto";
+
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Logga ut";
+
+/* loco:6282142ca5e6f61ada1c4014 */
+"buttonAccountSwitch" = "Byt konto";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Aktivera";
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Lägg till ett konto";
+
+/* loco:62cbe10de2840a0cdc2be0d2 */
+"buttonAddEmailAddress" = "Lägg till en e-postadress";
+
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Lägg till reaktion";
+
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Alla";
+
+/* loco:6437c062dd576a7631052413 */
+"buttonAttachMailbox" = "Lägg till denna e-postadress";
+
+/* loco:62b2e09059ff20150b5c1b52 */
+"buttonAttachment" = "Lägg till en bilaga";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Deltagare";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Tillbaka till Mail-appen";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Blockera";
+
+/* loco:62b2d43771635f1d1f0da462 */
+"buttonBold" = "Fet";
+
+/* loco:62b2e3ddf30bc656eb06a442 */
+"buttonCamera" = "Ta ett foto";
+
+/* loco:62a20a5c73b7e9202e05fabe */
+"buttonCancel" = "Avbryt";
+
+/* loco:66f2853e4d75905fd406ea93 */
+"buttonCancelFormatting" = "Avbryt formatering";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Avbryt påminnelse";
+
+/* loco:62befe9ca822415272753592 */
+"buttonClose" = "Stäng";
+
+/* loco:63e391b028b5fa7bab41e292 */
+"buttonConfirm" = "Bekräfta";
+
+/* loco:62bf20b963bddf721324a142 */
+"buttonConfirmRestoreEmails" = "Återställ";
+
+/* loco:64245322f2b3ab37ed1b26b2 */
+"buttonContinue" = "Fortsätt";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Kopiera";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Kopiera lösenord";
+
+/* loco:62b1c2566ff2923a1a5b0832 */
+"buttonCreate" = "Skapa";
+
+/* loco:62b1c0de630e5a572542c032 */
+"buttonCreateFolder" = "Lägg till en mapp";
+
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Anpassat schema";
+
+/* loco:6267af44cf90a405c97af322 */
+"buttonDownload" = "Ladda ner";
+
+/* loco:6267aff571442d3f666a71c2 */
+"buttonDownloadAll" = "Ladda ner alla";
+
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Redigera text";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedback" = "Feedback";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Mappar";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Gå till inställningar";
+
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Hjälp";
+
+/* loco:62b2e44a50f68769a0054863 */
+"buttonHyperlink" = "Lägg till en hyperlänk";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "Jag är klar";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "Importera e-post";
+
+/* loco:62b2d9637708901a27423992 */
+"buttonItalic" = "Kursiv";
+
+/* loco:6425777e2343387912223aa2 */
+"buttonLater" = "Senare";
+
+/* loco:645b485e158c37a429012092 */
+"buttonLoadMore" = "Ladda fler konversationer";
+
+/* loco:62cbe12c9251f174a43c5205 */
+"buttonLogInDifferentAccount" = "Logga in med ett annat konto";
+
+/* loco:628dfebda6add66651161554 */
+"buttonLogin" = "Logga in";
+
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Kanske";
+
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "Ändra";
+
+/* loco:6284fd623d98060ac31f76d5 */
+"buttonMore" = "Mer";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Välj";
+
+/* loco:6267bafe7edebd666d7d6923 */
+"buttonNewMessage" = "Nytt meddelande";
+
+/* loco:66596b6a5fa78a61780e4315 */
+"buttonNewWindow" = "Nytt fönster";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonNo" = "Nej";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Öppna i kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Öppna i min kalender";
+
+/* loco:62cd642815742c678d4c30e4 */
+"buttonRefuse" = "Avböj";
+
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Schemalägg om";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "Återställ e-post";
+
+/* loco:62b2e4a24486732cbc2f04d3 */
+"buttonSchedule" = "Schemalägg e-post för att skicka senare";
+
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Se";
+
+/* loco:626918473e1b2d7fe4329d52 */
+"buttonSelectAll" = "Alla";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Skicka med en annan adress";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Ställ in nu";
+
+/* loco:6267af86c6ebf234e9213012 */
+"buttonShare" = "Dela";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Starta";
+
+/* loco:62b2dd31865d4941c92777d3 */
+"buttonStrikeThrough" = "Genomstruken";
+
+/* loco:62b2d26c5fd79a7b69199b92 */
+"buttonTextOptionsClose" = "Stäng textformatering";
+
+/* loco:62b2cafadce4b504255da0e3 */
+"buttonTextOptionsOpen" = "Öppna textformatering";
+
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Prova";
+
+/* loco:62b2d9af68273c4a783d30d2 */
+"buttonUnderline" = "Understruken";
+
+/* loco:641322a5ac96d1091376a812 */
+"buttonUnlock" = "Lås upp";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Oordnad lista";
+
+/* loco:640adf8cc17f7c5be778c933 */
+"buttonUnselectAll" = "Ingen";
+
+/* loco:642572dc0839911c7350abf2 */
+"buttonUpdate" = "Uppdatera";
+
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Uppgradera";
+
+/* loco:62b42d5d2b411f48ef2eb982 */
+"buttonValid" = "Validera";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonYes" = "Ja";
+
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Hela dagen";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Du är inte inbjuden";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Arrangör)";
+
+/* loco:626664836e30e75f1c390202 */
+"ccTitle" = "Kopia:";
+
+/* loco:64477b57fd06fe11190c1f13 */
+"comingSoon" = "Kommer snart…";
+
+/* loco:62a33e1331304f212d104d43 */
+"commercialFolder" = "Kampanjer";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Skicka ett meddelande med adressen:";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Välj avsändaradress:";
+
+/* loco:63a474bd648cd86d56444012 */
+"confirmLogoutDescription" = "Är du säker på att du vill logga ut från %@?";
+
+/* loco:63a473bcf3bb7f422358cfd2 */
+"confirmLogoutTitle" = "Logga ut";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Alla framtida meddelanden från %@ kommer att flyttas till skräppostmappen.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Alla framtida meddelanden från dessa avsändare flyttas till skräppostmappen.";
+
+/* loco:62737dea7bd28e302301e5c2 */
+"contactActionAddToContacts" = "Lägg till i kontakter";
+
+/* loco:62737e120020a371c709a8e2 */
+"contactActionCopyEmailAddress" = "Kopiera e-postadress";
+
+/* loco:62737d79e632c04950610ed2 */
+"contactActionWriteEmail" = "Skriv ett e-postmeddelande";
+
+/* loco:627cef9a9e08324b604c8612 */
+"contactMe" = "Jag";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Kontakter";
+
+/* loco:628c9d1654bb544229106572 */
+"contentDescriptionButtonBack" = "Tillbaka";
+
+/* loco:6295d8a6be385969441d55f2 */
+"contentDescriptionButtonDeleteDraft" = "Ta bort utkast";
+
+/* loco:642456b7a9f7d62fda3252d2 */
+"contentDescriptionButtonDeleteHistory" = "Ta bort historikpost";
+
+/* loco:62a9d5b4ee7aa537c701dec3 */
+"contentDescriptionButtonExpandAccountSelection" = "Expandera kontoval";
+
+/* loco:62a9d5feeda57b54d242e682 */
+"contentDescriptionButtonExpandCustomFolders" = "Expandera anpassade mappar";
+
+/* loco:64c13b09da352fc751044323 */
+"contentDescriptionButtonExpandFolder" = "Expandera mapp %@";
+
+/* loco:628c9db2c6482c597c115152 */
+"contentDescriptionButtonExpandHeader" = "Expandera rubrik";
+
+/* loco:6422e08598a76c7f98590952 */
+"contentDescriptionButtonExpandRecipients" = "Visa detaljer";
+
+/* loco:628c97c0e21b4a3db5218982 */
+"contentDescriptionButtonFilterSearch" = "Filtrera sökning";
+
+/* loco:628c99d77702e65f5779df32 */
+"contentDescriptionButtonMenu" = "Meny";
+
+/* loco:630c6314609abb40215d6482 */
+"contentDescriptionButtonNext" = "Nästa";
+
+/* loco:64c1409a9dfa82cc110e3252 */
+"contentDescriptionButtonSelectSignature" = "Välj en annan signatur";
+
+/* loco:629f3973a183191c9564a302 */
+"contentDescriptionButtonSettings" = "Inställningar";
+
+/* loco:64380fdd8d050844fe71ae26 */
+"contentDescriptionButtonShowPassword" = "Visa lösenord";
+
+/* loco:642bef2a4b57be636f4d03e2 */
+"contentDescriptionContactAlreadyUsed" = "Kontakt redan använd som mottagare";
+
+/* loco:62864ffe2129f0730a307462 */
+"contentDescriptionIconAttachments" = "Har bilagor";
+
+/* loco:628ca42f2edf27145113fbb3 */
+"contentDescriptionIconCalendar" = "Har kalenderhändelse";
+
+/* loco:62864eec841ea80f560649f2 */
+"contentDescriptionIconFavorite" = "Är favorit";
+
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Vidarebefordrad";
+
+/* loco:628c9f21fe133f61075b64f2 */
+"contentDescriptionIconNewMail" = "Ny";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Svara";
+
+/* loco:62b1d1ee36cd805389679933 */
+"contentDescriptionIconStorage" = "Lagringsstatus";
+
+/* loco:642430a9ce12f43b026e7ef2 */
+"contentDescriptionSelectedItem" = "Vald";
+
+/* loco:64a4240f5579c83f7b070182 */
+"contentDescriptionUnreadPastille" = "Denna mapp innehåller olästa meddelanden";
+
+/* loco:62b9669e0e674b404f5a5212 */
+"contentDescriptionUserAvatar" = "Användaravatar";
+
+/* loco:64787b6c6a6ceb25210556d2 */
+"contentDescriptionWarningIcon" = "Varning";
+
+/* loco:62b1c12cc1df8a35281faba4 */
+"createFolderName" = "Mappens namn";
+
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Välj datum och tid";
+
+/* loco:6294648c19755a1ae9494462 */
+"dateTitle" = "Datum:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "Raderingen av ditt konto blir slutgiltig. Du kommer inte att kunna återaktivera ditt konto.";
+
+/* loco:685a98be5d3b4256930591f2 */
+"deleteFolderDialogDescription" = "Innehållet i mappen %@ kommer att raderas permanent utan att gå via papperskorgen.";
+
+/* loco:685a96cac7aa83dd0a0a4332 */
+"deleteFolderDialogTitle" = "Ta bort mapp";
+
+/* loco:672e3534c133d192fb0acc92 */
+"disabledFeatureFlagDescription" = "Du kommer snart att kunna låsa upp begränsningarna för din ik.me e-postadress\n(lagringsgräns, anpassat schema, sändning och mer…)";
+
+/* loco:672e34e12d859bafeb03be32 */
+"disabledFeatureFlagTitle" = "Behöver du mer lagring och funktioner?";
+
+/* loco:6777dbf1dc5a5d9dbf09db92 */
+"downloadAlertDescription" = "Nedladdningen kan ta en stund.";
+
+/* loco:627e3fa5774ef45bfd4d3b92 */
+"draftFolder" = "Utkast";
+
+/* loco:6364d5ac2e2f281d52389ee2 */
+"draftPrefix" = "(Utkast)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Detta meddelande kommer att flyttas till dina utkast för att skickas när du vill.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Redigera sändning";
+
+/* loco:64243b4a9a9a1f26302e33f3 */
+"emailWithoutSubjectDescription" = "Du är på väg att skicka ett meddelande utan ämne. Vill du fortsätta?";
+
+/* loco:64243b2f0c473e027779afc4 */
+"emailWithoutSubjectTitle" = "Tomt ämne";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Aktiviteter";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Djur och natur";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Flaggor";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Mat och dryck";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objekt";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Personer och kroppar";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Nyligen använda";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys och känslor";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Symboler";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Resor och platser";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Resultat";
+
+/* loco:6348008e331e743e77176522 */
+"emptyStateFolderDescription" = "Det finns inget att se här.";
+
+/* loco:63480020415e160cac510302 */
+"emptyStateFolderTitle" = "Denna mapp är tom";
+
+/* loco:637799775ff1e6190b2cd622 */
+"emptyStateHistoryDescription" = "Sök efter kontakt eller nyckelord";
+
+/* loco:626a51f5e1663d3865426573 */
+"emptyStateInboxDescription" = "Skriv ett nytt e-postmeddelande genom att klicka på \"Nytt meddelande\" längst ner till höger.";
+
+/* loco:626a458f3be3444c205ee892 */
+"emptyStateInboxTitle" = "Du har inga e-postmeddelanden";
+
+/* loco:62a992fdee966e51e955b6d2 */
+"emptyStateNetworkDescription" = "Kontrollera din anslutning eller anslut till internet för att kunna läsa dina e-postmeddelanden.";
+
+/* loco:62a992d5499836193818b633 */
+"emptyStateNetworkTitle" = "Du är inte ansluten till internet";
+
+/* loco:633163748419ac683a189ba2 */
+"emptyStateSearchDescription" = "Vi hittade inga e-postmeddelanden som matchar din sökning.";
+
+/* loco:63316306552e4c217c351c42 */
+"emptyStateSearchTitle" = "Inga resultat";
+
+/* loco:641178c63f22e04fa704c022 */
+"emptyStateTrashDescription" = "Flytta meddelandena till papperskorgen. De kommer att raderas permanent efter 30 dagar.";
+
+/* loco:641178a6902412584c6acf62 */
+"emptyStateTrashTitle" = "Papperskorgen är tom";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Aktivera filter";
+
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Se berörda mottagare";
+
+/* loco:6853c6e1ae6f39008c06cf82 */
+"encryptedMessageAddPasswordButton" = "Skydda med lösenord";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Lösenord krävs endast för mottagare utanför Infomaniak. För dem upphör meddelandet att gälla 30 dagar efter sändning.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Inaktivera kryptering";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageHeader" = "Detta meddelande är krypterat.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Detta meddelande har krypterats och upphör att gälla %@ endast för mottagare som inte kan dra nytta av automatisk kryptering.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Berörda mottagare";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Dela detta lösenord via privat meddelande. Du kommer inte att kunna kopiera det när du väl har skickat det.";
+
+/* loco:6877a03a5b42fa4d5f0f9882 */
+"encryptedMessageSnackbarEncryptionActivated" = "Kryptering har aktiverats";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Krypteringen har inaktiverats";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Skydda";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Schemalagda e-postmeddelanden är inte tillgängliga för krypterade meddelanden";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Ändra lösenord";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Lösenordsskydd";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Skydda ditt meddelande från obehörig åtkomst med Infomaniak-kryptering.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Meddelandets ämne förblir synligt, men innehållet är helt säkert.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Ett lösenord krävs för mottagare utanför Infomaniak.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Kryptera dina konfidentiella meddelanden";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Mottagare med lösenord (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Ditt meddelande är skyddat.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Ett lösenord krävs för att slutföra sändningen.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Delvis";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Kryptering";
+
+/* loco:64a2b5254093e7708d0de5b2 */
+"enterPasswordTitle" = "Ange lösenord";
+
+/* loco:6493f877e4cdab71070ad552 */
+"errorAlreadyLinkedMailbox" = "Denna e-postadress är redan länkad till ditt konto";
+
+/* loco:644928aac87be149bf05d254 */
+"errorAtLeastOneRecipient" = "Minst en mottagare krävs";
+
+/* loco:64940ce4eee54db1a50e44b4 */
+"errorAttachmentNotFound" = "Bilagan kan inte hittas";
+
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Ett fel inträffade när ditt svar skulle skickas";
+
+/* loco:63d14902e3c4eb4832777c42 */
+"errorCancelAttachmentsUploadInProgress" = "Vissa bilagor importeras fortfarande. Om du stänger vyn kommer bilagorna att gå förlorade.";
+
+/* loco:6470516c5a7017daea03dde3 */
+"errorDraftNotFound" = "Utkastet kan inte hittas";
+
+/* loco:6449292ce5f4e56abb063f65 */
+"errorEditScheduledMessage" = "Schemalagda eller skickade meddelanden kan inte redigeras";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Du har redan reagerat med denna reaktion";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Du kan inte reagera på ett utkast";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Du kan inte reagera på ett schemalagt e-postmeddelande";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Du kan inte reagera på ett e-postmeddelande markerat som spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Du kan inte reagera på ett e-postmeddelande i papperskorgen";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Du har nått det maximala antalet reaktioner för detta e-postmeddelande";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Du kan inte reagera på ett e-postmeddelande med fler än 20 mottagare";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "Du kan inte reagera på ett krypterat e-postmeddelande";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Du kan inte reagera på denna typ av e-postmeddelande";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Du kan inte reagera på detta e-postmeddelande";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Endast mottagare och avsändare kan reagera på detta e-postmeddelande";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "Ett fel uppstod när händelsen öppnades i Infomaniak Calendar";
+
+/* loco:6493fd86b3b044cbef0df789 */
+"errorFolderDoesNotExist" = "Mappen existerar inte";
+
+/* loco:645c9dbc8c94de23f7091a42 */
+"errorFolderNotFound" = "Mappen hittades inte";
+
+/* loco:64942b149051a862c5049f03 */
+"errorInvalidAttachment" = "Ogiltig bilaga";
+
+/* loco:643e9d37c9a67764c307d742 */
+"errorInvalidCredentials" = "Ogiltig e-postadress eller lösenord";
+
+/* loco:64aea2c18a9e9776080ee393 */
+"errorInvalidEmailAddress" = "Ogiltig e-postadress";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Detta meddelande kunde inte laddas ner från servern.";
+
+/* loco:628e1ad9d1c6366c8a4e6362 */
+"errorLoginDescription" = "Anslutningen misslyckades.";
+
+/* loco:628e1af711413554dd3010a5 */
+"errorLoginTitle" = "Inloggningsfel";
+
+/* loco:6450d3f93e5fcf13c9037b02 */
+"errorMailboxLocked" = "Denna postlåda är låst";
+
+/* loco:65d4ae8ef9b6570a070b3e92 */
+"errorMailboxUnavailable" = "Den här e-postadressen är inte tillgänglig";
+
+/* loco:680b69620fe68fbfc80ac583 */
+"errorMaxNumberOfScheduledSnoozeReached" = "Du har nått det maximala antalet schemalagda väntelägen";
+
+/* loco:680b8d7f855ff2c2e708b282 */
+"errorMessageCannotBeSnoozed" = "Detta meddelande kan inte sättas i vänteläge";
+
+/* loco:645c9af969688c1b200ad4a2 */
+"errorMessageNotFound" = "Meddelandet hittades inte";
+
+/* loco:680b6895a9a8ec84c3020a73 */
+"errorMessageNotSnoozed" = "Detta meddelande är inte för närvarande i vänteläge";
+
+/* loco:680b692fe83f3ba1df0a2895 */
+"errorMessageSnoozeAlreadyScheduled" = "Ett vänteläge är redan schemalagt för detta meddelande";
+
+/* loco:6494050cd62813225a066fb2 */
+"errorMoveDestinationNotFound" = "Målmappen existerar inte";
+
+/* loco:63ea46d0b146e764dd672ee2 */
+"errorNewFolderAlreadyExists" = "Mappen finns redan";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Mappnamnet innehåller ogiltiga tecken";
+
+/* loco:63fe19a90375095d660d0152 */
+"errorNewFolderNameTooLong" = "Mappnamnet får inte överstiga 255 tecken";
+
+/* loco:64492a1e7d49e1ef190ab465 */
+"errorRefusedRecipients" = "Servern vägrar alla mottagare";
+
+/* loco:649424a6e244ffcc6c011135 */
+"errorRefusedSender" = "Servern vägrar avsändaren";
+
+/* loco:678f61b9f7e8ef480f043962 */
+"errorScheduleDelayTooShort" = "Du kan inte schemalägga ett e-postmeddelande mindre än %d minuter framåt i tiden";
+
+/* loco:67e3ecd6b4a0b7e90d00c382 */
+"errorScheduledSnoozeDelayTooShort" = "Minimitiden för att sätta ett e-postmeddelande i vänteläge är %d minuter";
+
+/* loco:6448ef7a5b39bc7e040ce0b3 */
+"errorSendLimitExceeded" = "Sändningsgränsen nådd";
+
+/* loco:6448e34925a77d88bc0f8ab4 */
+"errorTooManyRecipients" = "För många mottagare";
+
+/* loco:6493ff227390f40cdb06d7d3 */
+"errorUnableToCreateFolder" = "Kunde inte skapa mappen";
+
+/* loco:649400300f4bf580f6093602 */
+"errorUnableToFlushFolder" = "Mappen kan inte tömmas";
+
+/* loco:645c9bbb13c8e41a84040012 */
+"errorUnknown" = "Okänt fel";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Visa meddelande";
+
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "Avsändarens ursprung har autentiserats.";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Jag förstår";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescriptionExpeditor" = "Avsändaren %@ är inte en del av din organisation eller dina kontakter. Var försiktig om du delar känslig information.";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescriptionExpeditor-plural" = "Vissa avsändare är inte en del av din organisation eller dina kontakter. Var försiktig om du delar känslig information.";
+
+/* loco:69b4300348915079af041856 */
+"externalDialogDescriptionExpeditor-plural-2" = "";
+
+/* loco:69b4300348915079af041857 */
+"externalDialogDescriptionExpeditor-plural-3" = "";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "Mottagaren %@ är inte en del av din organisation eller dina kontakter. Var försiktig om du delar känslig information.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Vissa mottagare är inte en del av din organisation eller dina kontakter. Var försiktig om du delar känslig information.";
+
+/* loco:69b4300348915079af041858 */
+"externalDialogDescriptionRecipient-plural-2" = "";
+
+/* loco:69b4300348915079af041859 */
+"externalDialogDescriptionRecipient-plural-3" = "";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Extern avsändare";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Extern mottagare";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Extern";
+
+/* loco:6436aae98d2f282f4c6ba492 */
+"failToOpenDraft" = "Misslyckades med att öppna utkast";
+
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/en/support/faq/admin2/email-service";
+
+/* loco:62a9dbdf0bddbc02ce031ba2 */
+"favoritesFolder" = "Favoriter";
+
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Tillåtna brevlådor";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Tillåt notiser för valda brevlådor.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filtrera brevlådor";
+
+/* loco:62665f7d647475580e06e912 */
+"fromTitle" = "Från:";
+
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Grupp: %@";
+
+/* loco:62c466f080a5557baa2d0d84 */
+"helpChatbot" = "Chatbot";
+
+/* loco:62c466d780a5557baa2d0d82 */
+"helpFAQ" = "FAQ";
+
+/* loco:62c4672bb812405fb22925f2 */
+"helpSubtitle" = "För att hjälpa dig";
+
+/* loco:627a3c64f10f5f31f53e1c02 */
+"inboxFolder" = "Inkorg";
+
+/* loco:689c766a433c6c94c70e1742 */
+"kSuiteProQuotasAlertDescription" = "Din e-postlagring är nästan full. Uppgradera till obegränsad lagring och lås upp nya funktioner.";
+
+/* loco:689c76e6a75a2c10bb0ec9a2 */
+"kSuiteProQuotasAlertFullDescription" = "Din e-postlagring är full. Uppgradera till obegränsad lagring och lås upp nya funktioner.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Din e-postlagring är full";
+
+/* loco:686f61f2208a37e573055822 */
+"lastEventOccurrence" = "Återkommande händelse, senaste förekomsten den";
+
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Senaste valda schemat";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Senare i morse";
+
+/* loco:62c427c7ad522f1ff078a162 */
+"loadingText" = "Laddar…";
+
+/* loco:62baa8f1786752698b4ff2b2 */
+"lockAppTitle" = "Applikationen är låst";
+
+/* loco:6491b5d13be3801fbb056c22 */
+"lockedMailboxBottomSheetDescription" = "Åtkomst till din postlåda är för närvarande blockerad.\nFör mer information, läs FAQ.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Postlådan %@ är blockerad";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "För mer information:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Vissa av dina postlådor är blockerade";
+
+/* loco:67e26d1c96ffb194f70925b2 */
+"macUsageDisclaimerTitle" = "Den här appen fungerar på macOS, men är optimerad för mobil och surfplatta.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Få mer lagring och nya funktioner med din e-postadress.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "För att dra nytta av Premium, ändra ditt erbjudande från ditt webbgränssnitt.";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Ta det till nästa nivå med Premium-planen";
+
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Hantera mina signaturer";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Avancerade åtgärder";
+
+/* loco:62b2f6bcdfa4fa28ad7bb122 */
+"menuDrawerMailboxStorage" = "%1$@ / %2$@ använt";
+
+/* loco:6903874c026e3f7b78066ba2 */
+"messageComesFromDiscussionList" = "Detta meddelande kommer från en diskussionslista.";
+
+/* loco:62df8c27cc288916217bd964 */
+"messageDetailsDateAt" = "%1$@ kl %2$@";
+
+/* loco:62df8aee00dc4d02575d73f2 */
+"messageDetailsYesterday" = "Igår";
+
+/* loco:6294634e9f544121e77de3b2 */
+"messageForwardHeader" = "Vidarebefordrat meddelande";
+
+/* loco:6400bb16c117ec0d866887b5 */
+"messageHideQuotedText" = "Dölj konversationen";
+
+/* loco:628b90d373427778f14fd442 */
+"messageIsDraftOption" = "Utkast";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "Detta meddelande visas i spam-mappen eftersom %@ finns på listan över blockerade avsändare.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "Detta meddelande anses vara spam. För säkerhets skull rekommenderar vi dig att aktivera ditt spamfilter.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "Detta meddelande anses vara spam. Vi rekommenderar dig att flytta det till mappen \"Spam\".";
+
+/* loco:65c35d9e6e00f9b3e60f34d3 */
+"messageMenuTitle" = "Meddelande";
+
+/* loco:628b6d81110f662ac808a165 */
+"messageReplyHeader" = "Den %1$@ skrev %2$@:";
+
+/* loco:6400bafe3dae40636c716ea2 */
+"messageShowQuotedText" = "Visa konversationen";
+
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Måndag eftermiddag";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Måndag morgon";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Mer information";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Flytta till Spam";
+
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "När du har nått denna gräns kommer du inte längre att kunna skicka eller ta emot meddelanden. Frigör utrymme eller uppgradera till my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Frigör utrymme eller uppgradera till my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Mottagning och sändning av meddelanden blockerad";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Lagringsgränsen nästan nådd";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "Det finns inte tillräckligt med lagringsutrymme för att utföra denna åtgärd.";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Min prenumeration";
+
+/* loco:64c21d831dadd3122c0c73f2 */
+"newAccountDescription" = "Kommunicera och lagra dina dokument och foton i ett reklamfritt ekosystem som respekterar din integritet";
+
+/* loco:64c21f7b8b1932323c047792 */
+"newAccountStorageDrive" = "15 GB kDrive-lagring";
+
+/* loco:64c21b867739a75d260c0272 */
+"newAccountStorageMail" = "20 GB gratis e-postlagring";
+
+/* loco:64c2115c61d539e7b80a4f12 */
+"newAccountTitle" = "Skapa din livslånga gratis e-postadress";
+
+/* loco:63c64f5d53fe7b61a46310c3 */
+"newFolderDialogHint" = "Mappnamn";
+
+/* loco:63ee0cbbad127b43f8650242 */
+"newFolderDialogMovePositiveButton" = "Skapa och flytta";
+
+/* loco:63f48eda1e7aec342b70c5a2 */
+"newFolderDialogTitle" = "Ny mapp";
+
+/* loco:6266655afabeeb6bc774c932 */
+"newMessagePlaceholderTitle" = "Skriv ditt meddelande";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Återkommande händelse, nästa förekomst den";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMonday" = "Nästa måndag";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyDescription" = "Detta meddelande är tomt.";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Ingen anslutning";
+
+/* loco:634ea0a369dac5469e1ce6d2 */
+"noConversationSelected" = "Ingen konversation vald i %@";
+
+/* loco:637ce6f461e6ca5762134f53 */
+"noFolderTitle" = "Du har inte någon mapp än…";
+
+/* loco:62cbe0be9251f174a43c5202 */
+"noMailboxDescription" = "Du har ingen e-postadress kopplad till ditt Infomaniak-konto.";
+
+/* loco:62cbdde9f492421f63253c52 */
+"noMailboxTitle" = "Ingen e-postadress kopplad till detta konto";
+
+/* loco:641196a69abab039df3a23f2 */
+"noNetwork" = "Ingen internetanslutning";
+
+/* loco:62b9579b3dfaf347e24071f3 */
+"noSubjectTitle" = "(inget ämne)";
+
+/* loco:6419645b21b6617fba4a8dc2 */
+"noUpdatedAt" = "Aldrig uppdaterad";
+
+/* loco:62baab4c017b586c23177d62 */
+"notificationGeneralChannelName" = "Allmänna aviseringar";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Du kan ha fått nya meddelanden";
+
+/* loco:64ba47ab214bcfcf4c056014 */
+"notificationTitleArchive" = "Arkiverad";
+
+/* loco:6492a96bf71de72ab30e8c02 */
+"notificationTitleCouldNotSaveDraft" = "Utkastet kunde inte sparas";
+
+/* loco:6492a702283a5b8f7e04df72 */
+"notificationTitleCouldNotSendDraft" = "E-postmeddelandet kunde inte skickas";
+
+/* loco:64ba47d60f3176675907c474 */
+"notificationTitleDelete" = "Borttagen";
+
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Denna åtkomst gör att du enkelt kan skriva till dina kontakter från Infomaniak Mail.\nVi respekterar din integritet och dina kontakter kommer inte att användas för något annat ändamål.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Tillåt appen att komma åt dina kontakter";
+
+/* loco:62c2eede5bc8fa0201054443 */
+"onBoardingDescription2" = "Anpassa dina genvägar fritt i appinställningarna.";
+
+/* loco:62c2ef31d501950dff4cbda2 */
+"onBoardingDescription3" = "Arkivera, ta bort, flytta eller favorisera flera meddelanden samtidigt.";
+
+/* loco:62c2ef65c564d9260842db32 */
+"onBoardingDescription4" = "Skapa en gratis adress eller anslut till ett befintligt Infomaniak-konto.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Miss inte några viktiga e-postmeddelanden och svara snabbt genom att aktivera aviseringar.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Aktivera aviseringar";
+
+/* loco:62c2ee73d35f8933bc4b5262 */
+"onBoardingTitle1" = "Välj ditt tema";
+
+/* loco:62c2ee8cfa454b3819243ba2 */
+"onBoardingTitle2" = "Spara tid med svepåtgärder";
+
+/* loco:62c2ef13b664ac09fe4a0762 */
+"onBoardingTitle3" = "Tryck på ett meddelande i några sekunder för att markera flera meddelanden";
+
+/* loco:62c2ef4a24eb9878221dcd63 */
+"onBoardingTitle4" = "Kom igång!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisation: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Annan";
+
+/* loco:62c424189aacc248962d6224 */
+"pickerNoSelection" = "Inget val";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Logga först in i Infomaniak Mail-appen.";
+
+/* loco:68b05985327f49a8eb0936b2 */
+"previewReaction" = "%2$@ %1$@ reagerade";
+
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Alla";
+
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reaktioner";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Läs FAQ";
+
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Senaste sökningar";
+
+/* loco:62baabfc07e6a001ca19e535 */
+"refreshTokenError" = "Du har kopplats bort";
+
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Byt namn på mappen";
+
+/* loco:62cd640724b16d271d296bc2 */
+"reportDisplayProblemDescription" = "Samtycker du till att dela dina data med våra utvecklare så att de kan hjälpa dig med ditt problem?";
+
+/* loco:62cd63dab9cd016ad83df012 */
+"reportDisplayProblemTitle" = "Rapportera ett visningsproblem";
+
+/* loco:62cecdf0413c882ede7451c2 */
+"reportPhishingTitle" = "Rapportera ett nätfiskeförsök";
+
+/* loco:62bf21b31385976cad230b43 */
+"restoreEmailsBackupDate" = "Säkerhetskopieringsdatum";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Ingen säkerhetskopia hittades";
+
+/* loco:62bf1dc26398da30d5675c52 */
+"restoreEmailsText" = "Alla e-postmeddelanden kommer tillbaka till din inkorg.";
+
+/* loco:62bf1d8b38fa643dbc4c8b42 */
+"restoreEmailsTitle" = "Återställ e-post";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Gillar du Infomaniak Mail?";
+
+/* loco:66e2826251d88f0bdc097c12 */
+"saveMailInkDrive" = "Spara i kDrive";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Schemalägg sändning";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "Detta e-postmeddelande kommer att skickas detta datum: %@";
+
+/* loco:62a9db4ae45f1e29371ff802 */
+"scheduledMessagesFolder" = "Schemalagda meddelanden";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Sök";
+
+/* loco:640836aa0f09a82bfa0da572 */
+"searchAllMessages" = "Alla meddelanden";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "Sök e-post";
+
+/* loco:62d5568245072b538b5aeaa2 */
+"searchFilterAttachment" = "Bilagor";
+
+/* loco:62d559f7bd07624399379972 */
+"searchFilterFolder" = "Alla mappar";
+
+/* loco:62d5561a4fa44b4a25143fc2 */
+"searchFilterRead" = "Lästa";
+
+/* loco:62d5563645aa5e5f197eef92 */
+"searchFilterUnread" = "Olästa";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Sök";
+
+/* loco:662f89ba8e8c8321190ae342 */
+"selectSignatureNone" = "Ingen signatur";
+
+/* loco:62ac871d2502053d7b0cbb32 */
+"send" = "Skicka";
+
+/* loco:6936f6d2c3bd045a2001d752 */
+"sendConfirmationAction" = "Skicka bekräftelsen";
+
+/* loco:627e401ec1c7c02de9181292 */
+"sentFolder" = "Skickade meddelanden";
+
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Servrar otillgängliga";
+
+/* loco:657314ba4d64ddc63f074b42 */
+"setAsDefaultAppDescription" = "Välj som standard en säker e-posttjänst som respekterar din integritet och miljön.";
+
+/* loco:65731498b8f6abbd070ce033 */
+"setAsDefaultAppTitle" = "Gör Infomaniak till din standardapp för e-post";
+
+/* loco:62bb144be43a74010f186a22 */
+"settingsAccentColor" = "Accentfärg";
+
+/* loco:62bb14784ae7d90af73a4c93 */
+"settingsAccentColorDescription" = "Välj accentfärg för applikationen";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Kontohantering";
+
+/* loco:627a306b1e32027c033896b2 */
+"settingsAppLock" = "Applås";
+
+/* loco:65b275e7c53c28d1410bf342 */
+"settingsAutoAdvanceDescription" = "Välj vad som ska visas när ett meddelande arkiveras eller tas bort";
+
+/* loco:65b27dc325bc06589501c462 */
+"settingsAutoAdvanceFollowingThreadDescription" = "Visa följande konversation vid arkivering eller borttagning";
+
+/* loco:65b277d399fe1ebac10546a2 */
+"settingsAutoAdvanceFollowingThreadTitle" = "Följande konversation";
+
+/* loco:65b27e2b4f176d33ca06b302 */
+"settingsAutoAdvanceListOfThreadsDescription" = "Visa listan över konversationer vid arkivering eller borttagning";
+
+/* loco:65b2780c2b7256da8b038512 */
+"settingsAutoAdvanceListOfThreadsTitle" = "Lista över konversationer";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Upprepar den senaste åtgärden du utförde";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Väljer automatiskt nästa eller föregående konversation, beroende på din senaste interaktion.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Upprepa senaste åtgärden";
+
+/* loco:65b27d1e0565d99b930ae142 */
+"settingsAutoAdvancePreviousThreadDescription" = "Visa föregående konversation vid arkivering eller borttagning";
+
+/* loco:65b277b504a5c5b4710041f3 */
+"settingsAutoAdvancePreviousThreadTitle" = "Föregående konversation";
+
+/* loco:65b274f8719e4e08b103c7f4 */
+"settingsAutoAdvanceTitle" = "Automatisk avancering";
+
+/* loco:62c693f572adfe66fd2a82b7 */
+"settingsCancellationPeriodDescription" = "Du har möjlighet att avbryta sändningen av ditt e-postmeddelande upp till 30 sekunder";
+
+/* loco:627a53b37b420855254af032 */
+"settingsCancellationPeriodTitle" = "Sändningsavbrottstid";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Datahantering";
+
+/* loco:627a40651c78f22cb67efdd2 */
+"settingsDefault" = "Standard";
+
+/* loco:6295d7b8a080fe0c5d544952 */
+"settingsDelaySeconds" = "%d sekunder";
+
+/* loco:627a40878416713fac6e6c82 */
+"settingsDensityOptionCompact" = "Kompakt";
+
+/* loco:627a40769905e5026f4309f3 */
+"settingsDensityOptionLarge" = "Stor";
+
+/* loco:62cd280d733bbc7d8f42d194 */
+"settingsDensityOptionNormal" = "Normal";
+
+/* loco:6295d75d0ac5a369d16b45c5 */
+"settingsDisabled" = "Inaktiverad";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Aktivera notiser";
+
+/* loco:62c691f711673b15f21d70b4 */
+"settingsEnabled" = "Aktiverad";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Visa externt innehåll";
+
+/* loco:627a329eeeb721567557b3a2 */
+"settingsExternalContentTitle" = "Externt innehåll";
+
+/* loco:627a3cf1cf1b8849996f97c2 */
+"settingsInboxAlias" = "Alias";
+
+/* loco:627a3cdead26c25ce97e94f4 */
+"settingsInboxRedirect" = "Omdirigeringar";
+
+/* loco:627a3c9ce8a52f1aaf66dfb3 */
+"settingsInboxRules" = "Regler";
+
+/* loco:627a3c83ad26c25ce97e94f2 */
+"settingsInboxType" = "Inkorgstyp";
+
+/* loco:627a3be50425fc78766ad173 */
+"settingsMailboxGeneralAutoreply" = "Automatiskt svar";
+
+/* loco:627a3c02e402a4304d327033 */
+"settingsMailboxGeneralFolders" = "Mappinställningar";
+
+/* loco:627a3c1e89de4237021b5622 */
+"settingsMailboxGeneralNotifications" = "Aviseringar";
+
+/* loco:627a3ba7d5f44d600a6f1803 */
+"settingsMailboxGeneralSignature" = "Signaturinställningar";
+
+/* loco:627a418d50aa01240d501ae4 */
+"settingsOptionAlways" = "Alltid";
+
+/* loco:627a419ea4d53353fb587204 */
+"settingsOptionAskMe" = "Fråga mig";
+
+/* loco:627a40fe23cf464d52393803 */
+"settingsOptionDarkTheme" = "Mörk";
+
+/* loco:627a40e8203b0403f20a0db5 */
+"settingsOptionLightTheme" = "Ljus";
+
+/* loco:62cfb94ffe73905627441c62 */
+"settingsOptionSystemTheme" = "System";
+
+/* loco:627a413a4a9b8944955fd206 */
+"settingsOptionThreadModeConversation" = "Konversationer";
+
+/* loco:627a4172023031490409d6b5 */
+"settingsOptionThreadModeMessage" = "Meddelanden";
+
+/* loco:627a3e42e849cb43282bb484 */
+"settingsPrivacyDeleteSearchHistory" = "Radera sökhistorik";
+
+/* loco:627a3e68a068242a09294182 */
+"settingsPrivacyViewLogs" = "Visa loggar";
+
+/* loco:627a30b24e987302322d0f64 */
+"settingsSectionAppearance" = "Utseende";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Data & integritet";
+
+/* loco:627a2ab189bc1f4ea90851c2 */
+"settingsSectionEmailAddresses" = "E-postadresser";
+
+/* loco:627a2ae2fc0dff2fce768ef2 */
+"settingsSectionGeneral" = "Allmänt";
+
+/* loco:627a3e29e849cb43282bb482 */
+"settingsSectionPrivacy" = "Integritet";
+
+/* loco:627a3d03cf1b8849996f97c4 */
+"settingsSectionSecurity" = "Säkerhet";
+
+/* loco:627a3d72da7e600e226ddca2 */
+"settingsSecurityAdsFilter" = "Annons- och sociala nätverksfilter";
+
+/* loco:627a3df94e4a1b1eff6c77a2 */
+"settingsSecurityBlockedRecipients" = "Blockerade / auktoriserade mottagare";
+
+/* loco:627a3daeda7e600e226ddca4 */
+"settingsSecuritySpamFilter" = "Spamfilter";
+
+/* loco:627a409fc889f27ef73a61e2 */
+"settingsSelectDisplayModeDescription" = "Välj visningsläge";
+
+/* loco:627a54238311502e273bbd62 */
+"settingsSendAcknowledgementSubtitle" = "Begär läskvitto för varje skickat meddelande";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Läskvitton";
+
+/* loco:627a5401ba58a853294d57a2 */
+"settingsSendIncludeOriginalMessage" = "Inkludera originalmeddelandet i svaret";
+
+/* loco:627a2f67a6d27d332a2f4926 */
+"settingsSendTitle" = "Sänd";
+
+/* loco:644f6a7bf8a5eec20801ac93 */
+"settingsSignatureDescription" = "Välj en standardsignatur";
+
+/* loco:644b7ef4a60127b0b201ab52 */
+"settingsSignatureTitle" = "Signaturer";
+
+/* loco:6295e9101cbb5020e33ad4d2 */
+"settingsSwipeActionNone" = "Ingen";
+
+/* loco:6295e8f405a6650e5621df92 */
+"settingsSwipeActionQuickActionsMenu" = "Snabbåtgärdsmeny";
+
+/* loco:6295dbd84dc6ed5644064ba2 */
+"settingsSwipeActionReadUnread" = "Läst / oläst";
+
+/* loco:62c2b600d8c4bb2ee63957f2 */
+"settingsSwipeActionToDefine" = "Att definiera";
+
+/* loco:627a323b7f79c0171c37aa42 */
+"settingsSwipeActionsTitle" = "Svepåtgärder";
+
+/* loco:62b017def2354224c578fc12 */
+"settingsSwipeDescription" = "Svep objekt i din inkorg och få snabb åtkomst till dina vanligaste åtgärder";
+
+/* loco:6295d5d7b524ea4e9d4d72d3 */
+"settingsSwipeLongLeft" = "Lång svepning åt vänster";
+
+/* loco:6295d58f35b3260585685212 */
+"settingsSwipeLongRight" = "Lång svepning åt höger";
+
+/* loco:6295d5b6dff6bd5f535fce82 */
+"settingsSwipeShortLeft" = "Kort svepning åt vänster";
+
+/* loco:6295d5650b0ed37f63022fe3 */
+"settingsSwipeShortRight" = "Kort svepning åt höger";
+
+/* loco:627a40cb203b0403f20a0db2 */
+"settingsThemeDescription" = "Temavalg";
+
+/* loco:627a318d0c2fa16955156a22 */
+"settingsThemeTitle" = "Tema";
+
+/* loco:627a317093c0713ccc6df012 */
+"settingsThreadListDensityTitle" = "Konversationslistans täthet";
+
+/* loco:64cca81829e8aeaec602e1c2 */
+"settingsThreadModeTitle" = "Meddelandets visningsläge";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Observera att ändring av detta alternativ kommer att ladda ner alla dina meddelanden igen";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Byta till %@-läge?";
+
+/* loco:627e52f442b7411bfd029f02 */
+"settingsTitle" = "Inställningar";
+
+/* loco:627a54958311502e273bbd74 */
+"settingsTransferAsAttachment" = "Som bilaga";
+
+/* loco:62c6a408b365f734dd2c0d73 */
+"settingsTransferEmailsDescription" = "När du vidarebefordrar ett e-postmeddelande, välj det visningsläge som passar dig bäst";
+
+/* loco:627a53d47b420855254af035 */
+"settingsTransferEmailsTitle" = "Vidarebefordra e-post";
+
+/* loco:627a547ad27ea17771565867 */
+"settingsTransferInBody" = "I meddelandetexten";
+
+/* loco:668cdbc1a27f04dd51065022 */
+"shareEmail" = "Dela e-post";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Uppdatera";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Kontot har raderats";
+
+/* loco:6937d843b9fb15c2510859d2 */
+"snackbarAcknowledgementFailure" = "Kunde inte skicka";
+
+/* loco:6937d715da67a52ff201eed2 */
+"snackbarAcknowledgementSuccess" = "Läskvitto skickat";
+
+/* loco:63f3961e7c16fb607809d632 */
+"snackbarBlockUserConfirmation" = "Avsändaren är nu blockerad";
+
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Svar beaktat";
+
+/* loco:62bc67601f560d734f2fbe58 */
+"snackbarContactSaved" = "Ny kontakt registrerad";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Konversationen finns inte längre";
+
+/* loco:62cd644f5141ee164b494272 */
+"snackbarDisplayProblemReported" = "Visningsproblem rapporterat";
+
+/* loco:62b959dd7994e66bc4719df2 */
+"snackbarDraftDeleted" = "Utkast raderat";
+
+/* loco:62b959afe3c12548284cb282 */
+"snackbarDraftSaved" = "Utkast sparat";
+
+/* loco:646e10cd8b1764c28f0fb3e2 */
+"snackbarDraftSaving" = "Sparar utkast";
+
+/* loco:62bd85a64880c362bd5ece72 */
+"snackbarEmailCopiedToClipboard" = "E-postadress kopierad till urklipp";
+
+/* loco:63c6c6744cd306160719c9c2 */
+"snackbarEmailSending" = "E-post skickas";
+
+/* loco:62a336b8e2b762772773d2c2 */
+"snackbarEmailSent" = "E-post skickad";
+
+/* loco:62b42e39dbeac92077145712 */
+"snackbarInvalidUrl" = "Ogiltig URL";
+
+/* loco:638f5f9440687b206c230e64 */
+"snackbarMessageDeletedPermanently" = "Meddelande raderat";
+
+/* loco:62ab223f0763d104d71437f2 */
+"snackbarMessageMoved" = "Meddelande flyttat till %@";
+
+/* loco:62ab22a33a9b9314d8557222 */
+"snackbarMoveCancelled" = "Flytt avbruten";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Lösenord kopierat";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reaktion %@ skickad";
+
+/* loco:62ab4ae387f65e26e577dd42 */
+"snackbarReportPhishingConfirmation" = "Rapportering genomförd";
+
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "Ett fel uppstod vid rapporteringen, försök igen.";
+
+/* loco:62c2f9feea59c120ad52bc23 */
+"snackbarRestorationLaunched" = "Återställning startas";
+
+/* loco:672b6a80c4e88a09f20598f2 */
+"snackbarSaveInDraft" = "Ditt meddelande har sparats i utkast.";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Meddelandet kommer att skickas %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Meddelandet schemaläggs";
+
+/* loco:67ea70102a2bbfe96e02d072 */
+"snackbarSnoozeSuccess" = "Du kommer att få en påminnelse om detta meddelande %@";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Ämne kopierat till urklipp";
+
+/* loco:62ab221b4956e9775f391ca6 */
+"snackbarThreadMoved" = "Konversationen flyttades till %@";
+
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Konversationerna flyttades till %@";
+
+/* loco:69b4300348915079af04186a */
+"snackbarThreadMoved-plural-2" = "";
+
+/* loco:69b4300348915079af04186b */
+"snackbarThreadMoved-plural-3" = "";
+
+/* loco:699716d77182f3feca0185f2 */
+"snackbarThreadMovedToSpam" = "Konversationen flyttades till skräppost och användaren blockerades";
+
+/* loco:699717487182f3feca0185f4 */
+"snackbarThreadMovedToSpam-plural" = "Konversationerna flyttades till skräppost och användarna blockerades";
+
+/* loco:69b4300348915079af04186c */
+"snackbarThreadMovedToSpam-plural-2" = "";
+
+/* loco:69b4300348915079af04186d */
+"snackbarThreadMovedToSpam-plural-3" = "";
+
+/* loco:6909acad8905a0c64a0747d2 */
+"snackbarUnsubscribeFailure" = "Avregistrering omöjlig";
+
+/* loco:6909abe4583bcfb2d2034ec2 */
+"snackbarUnsubscribeSuccess" = "Avregistrering genomförd";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Uppskjutet till: %@";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "Uppskjutet";
+
+/* loco:62a33e2d0c5ac4438c366a32 */
+"socialNetworksFolder" = "Sociala nätverk";
+
+/* loco:627e40381ad4112c06450102 */
+"spamFolder" = "Skräppost";
+
+/* loco:626664d06926336d9e25c462 */
+"subjectTitle" = "Ämne:";
+
+/* loco:65ba2326ef9447c160013bf2 */
+"superCollapsedBlock" = "Se alla (%d)";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Visa dina kontakter och kalender direkt från din enhet.";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"syncCalendarsAndContactsTitle" = "Kalender- och kontaktsynkronisering";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Kopiera lösenordet, du behöver det för att bekräfta nästa steg.";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Kopiera verifieringslösenord";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "För att ladda ner profilen, klicka på \"Ladda ner\" och godkänn sedan nedladdningen.";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Ladda ner konfigurationsprofil";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "Öppna fliken \"Nedladdad profil\" i dina inställningar och tryck på installera.";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Ange koden: ange telefonens **PIN-kod**.";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Tryck på **Installera**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Ange verifieringslösenordet **två gånger**: en gång för kalendrar och en gång för adressböcker.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Gå tillbaka till din Mail-app.";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Skriv \"Nedladdad profil\" i inställningarnas sökfält för att enkelt hitta fliken!";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Installera profil";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d av %2$d";
+
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "Denna eftermiddag";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "Denna kväll";
+
+/* loco:63eddb9871489a3042032122 */
+"threadListEmptyFolderAlertDescription" = "Är du säker på att du vill radera alla meddelanden i denna mapp permanent?";
+
+/* loco:63ebae36eeb4ae34ef49ba42 */
+"threadListEmptySpamButton" = "Töm skräppost";
+
+/* loco:63ebad842446f5106c0058b2 */
+"threadListEmptyTrashButton" = "Töm papperskorgen";
+
+/* loco:62bc355b27ec7c112e166eb2 */
+"threadListHeaderLastUpdate" = "Uppdaterad %@";
+
+/* loco:62bc35840445497c51137862 */
+"threadListHeaderUnreadCount" = "%@ oläst";
+
+/* loco:62bc35a8de12a01f3a49e022 */
+"threadListHeaderUnreadCount-plural" = "%@ olästa";
+
+/* loco:69b4300348915079af04187a */
+"threadListHeaderUnreadCount-plural-2" = "";
+
+/* loco:69b4300348915079af04187b */
+"threadListHeaderUnreadCount-plural-3" = "";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Hämtning pågår";
+
+/* loco:6267f93e15e2421b9677e212 */
+"threadListSectionLastWeek" = "Förra veckan";
+
+/* loco:62c6b582acc973360733ab94 */
+"threadListSectionThisMonth" = "Denna månad";
+
+/* loco:6267f91723d767283212ffd2 */
+"threadListSectionThisWeek" = "Denna vecka";
+
+/* loco:6267f813a44c1a465c763c92 */
+"threadListSectionToday" = "Idag";
+
+/* loco:63ebacb17b37201ea253d432 */
+"threadListSpamHint" = "Meddelanden som har funnits i skräppostmappen i mer än 30 dagar kommer automatiskt att raderas.";
+
+/* loco:63ebabc469ccbb24d90659c2 */
+"threadListTrashHint" = "Meddelanden som har funnits i papperskorgen i mer än 30 dagar kommer automatiskt att raderas.";
+
+/* loco:62665fa13789aa7e8353ad62 */
+"toTitle" = "Till:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "I morgon bitti";
+
+/* loco:641db88f88b1f63cb05aad52 */
+"tooManyRecipients" = "Du kan inte lägga till denna adress eftersom du har nått gränsen för mottagare";
+
+/* loco:627e40419151de052d2d3962 */
+"trashFolder" = "Papperskorg";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Avblockera";
+
+/* loco:6995af71f61e72e4d4004be2 */
+"unknownDialogTitleExpeditor" = "Okänd avsändare";
+
+/* loco:6995a57f05da42c3ae0bb253 */
+"unknownDialogTitleRecipient" = "Okänd mottagare";
+
+/* loco:62b95774aee47c626b773693 */
+"unknownRecipientTitle" = "(okänd)";
+
+/* loco:6995a893d03cfb81d80e25c2 */
+"unknownTag" = "Okänd";
+
+/* loco:690387a073a26a6c7a0ca602 */
+"unsubscribeButtonTitle" = "Avregistrera";
+
+/* loco:64257388057ce0235d2c5222 */
+"updateAvailableDescription" = "För att få ut det bästa av Infomaniak Mail rekommenderar vi att du uppdaterar din applikation.";
+
+/* loco:6425728328677e02905abef2 */
+"updateAvailableTitle" = "Uppdatering tillgänglig!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "För din säkerhet och för att förbättra din upplevelse, uppdatera din enhet.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Din upplevelse kan försämras eftersom din enhet inte är uppdaterad";
+
+/* loco:62b42dc3832cca6d684a4ae2 */
+"urlEntryTitle" = "Skapa en hyperlänk";
+
+/* loco:62b4362a0524dc792a0ee634 */
+"urlPlaceholder" = "URL";
+
+/* loco:641d60b6f5c19a18734d9192 */
+"urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Användarnamn";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Detta evenemang har redan ägt rum";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Detta evenemang har ställts in";
+
+/* loco:6481d72ebb3c88db6e002332 */
+"warningNotificationsDisabledButton" = "Aktivera dem i inställningarna";
+
+/* loco:6481d7112f7eca9f7e0ad572 */
+"warningNotificationsDisabledDescription" = "VARNING: Pushnotiser är inaktiverade.";
+
+/* loco:635fab674606bd5f944f7784 */
+"workInProgressTitle" = "Tillgängligt snart";

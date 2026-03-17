@@ -1,0 +1,1931 @@
+/*
+ * Loco ios export: Xcode Strings (legacy)
+ * Project: kMail
+ * Locale: nl, Dutch; Flemish
+ * Tagged: ios
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ */
+
+/* loco:62bb154d7513e127cb2e9c94 */
+"accentColorBlueTitle" = "Blauw";
+
+/* loco:62bb155aef94e921b059e1c3 */
+"accentColorPinkTitle" = "Roze";
+
+/* loco:642179d9733cd4523d03dcf2 */
+"accentColorSystemTitle" = "Systeemkleur";
+
+/* loco:6936f775de93800154038b75 */
+"acknowledgementMessage" = "De afzender heeft om een leesbewijs gevraagd.";
+
+/* loco:6936f7e6835ef86e27063eb6 */
+"acknowledgementMessageSent" = "Een leesbewijs is naar de afzender verzonden.";
+
+/* loco:629f0e2244ac887a51141312 */
+"actionArchive" = "Archiveren";
+
+/* loco:629f0f37ccbf1e53bf0ab752 */
+"actionBlockSender" = "Afzender blokkeren";
+
+/* loco:67e690c60b27fb17340e57b2 */
+"actionCancelSnooze" = "Snooze annuleren";
+
+/* loco:629f0e12701ef82cde591a62 */
+"actionDelete" = "Verwijderen";
+
+/* loco:629f0fe5f3c27b205b282582 */
+"actionEditMenu" = "Menu bewerken";
+
+/* loco:6284fd55867ed227676f1743 */
+"actionForward" = "Doorsturen";
+
+/* loco:629f0e3e701ef82cde591a65 */
+"actionMarkAsRead" = "Markeren als gelezen";
+
+/* loco:62a1e691ede283161606f7f4 */
+"actionMarkAsUnread" = "Markeren als ongelezen";
+
+/* loco:67e68dbbdfc30429280f7db3 */
+"actionModifySnooze" = "Snooze wijzigen";
+
+/* loco:629f0e49b7fae5715e13e972 */
+"actionMove" = "Verplaatsen";
+
+/* loco:63e22d56403b335b953b0672 */
+"actionMoveToInbox" = "Verplaatsen naar inbox";
+
+/* loco:62ab21e14956e9775f391ca4 */
+"actionNonSpam" = "Rapporteren als geen spam";
+
+/* loco:629f0f6557b1a86b24759543 */
+"actionPhishing" = "Phishing melden";
+
+/* loco:629f0f8232570829c53e38e2 */
+"actionPrint" = "Afdrukken";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Hernoemen";
+
+/* loco:6284fd413d98060ac31f76d2 */
+"actionReply" = "Beantwoorden";
+
+/* loco:62a85b6ad3c793021731f332 */
+"actionReplyAll" = "Allen beantwoorden";
+
+/* loco:629f0fd21c251254874665a2 */
+"actionReportDisplayProblem" = "Weergaveprobleem melden";
+
+/* loco:62e13281cd9a910e235d06d2 */
+"actionShortMarkAsRead" = "Gelezen";
+
+/* loco:62e14b027e61d3640a5bf7e3 */
+"actionShortMarkAsUnread" = "Ongelezen";
+
+/* loco:64089f358a3d4917a9149802 */
+"actionShortSpam" = "Spam";
+
+/* loco:62e14df023e4fb767e2391a4 */
+"actionShortStar" = "Favorieten";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Snooze";
+
+/* loco:629f0e67a7c8ea4e366cf342 */
+"actionSpam" = "Spam rapporteren";
+
+/* loco:62dfcbfd27c35d15796e01c3 */
+"actionStar" = "Toevoegen aan favorieten";
+
+/* loco:62dfccb7dfb07663055fc0b2 */
+"actionUnstar" = "Uit favorieten verwijderen";
+
+/* loco:640070c70e888e3c550040d2 */
+"actionViewInDark" = "Weergeven in donker thema";
+
+/* loco:63fdb9239bfffe2abc3e1c02 */
+"actionViewInLight" = "Weergeven in licht thema";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Mailboxen filteren";
+
+/* loco:668cd87ac01614f14603ac92 */
+"addLinkTextPlaceholder" = "Weer te geven tekst";
+
+/* loco:63ecf9b0415fc86eea26ec03 */
+"addUnknownRecipientAlreadyUsed" = "Het e-mailadres wordt al gebruikt";
+
+/* loco:63ecfa898018fd68e85e29a2 */
+"addUnknownRecipientInvalidEmail" = "Het e-mailadres is ongeldig";
+
+/* loco:63ecd31247f7a57fc228b532 */
+"addUnknownRecipientTitle" = "Een ontvanger toevoegen";
+
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Adresboek: %@";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Invoegen";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Verfijnen";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Opnieuw proberen";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Vereenvoudig het schrijven van uw berichten met Kunstmatige Intelligentie.";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Schrijf uw e-mails met Euria";
+
+/* loco:6555e85e5cfcd5053e081e92 */
+"aiErrorContextMaxTokenReached" = "De e-mail waarnaar u antwoordt is te lang voor de AI om een reactie te genereren.\n\nVat samen wat u wilt zeggen om hulp te krijgen.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Uw verzoek is te lang, maak het korter.";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Te veel verzoeken in korte tijd. Even geduld.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Er is een fout opgetreden. Als deze fout blijft optreden, neem dan contact op met onze helpdesk.\nBedankt voor uw geduld.";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Mijn verzoek bewerken";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Uitbreiden";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Vriendelijke schrijfstijl";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Een reactie opnieuw genereren";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Serieuze schrijfstijl";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Inkorten";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Leg Euria uit hoe u hulp kunt krijgen bij het beantwoorden van deze e-mail.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "een bedankmail voor een welkomstgeschenk";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "een e-mail met bevestiging van uw hotelreservering";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "een bedankmail voor een uitnodiging voor een evenement";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "een uitnodiging voor een bedrijfsevenement";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "een e-mail met een verzoek om een afspraak met een belangrijke klant";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Euria is aan het schrijven…";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Vertel Euria wat u wilt schrijven. Bijvoorbeeld \"%@\".";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Euria";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Genereren";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Het onderwerp wordt:\n\n%@";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Het huidige onderwerp vervangen door het voorstel van Euria?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Door op \"Vervangen\" te klikken, gaat bestaande inhoud verloren.";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Vervangen";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Bestaande inhoud vervangen?";
+
+/* loco:64649a4f09a501c76901b37b */
+"alertBlockedImagesDescription" = "Voor uw veiligheid zijn bepaalde inhoud van uw bericht geblokkeerd.";
+
+/* loco:64649adb0070f636ff04bc12 */
+"alertBlockedImagesDisplayContent" = "Inhoud weergeven";
+
+/* loco:6481a576efb1d3072f0ede02 */
+"alertNotificationsDisabledButton" = "Instellingen bekijken";
+
+/* loco:6481a3d9c7a313bee80faa42 */
+"alertNotificationsDisabledDescription" = "Schakel meldingen voor Infomaniak Mail **in de iOS-instellingen** in om een melding te ontvangen wanneer nieuwe berichten binnenkomen";
+
+/* loco:6481a2d4fdda813a7f0d3662 */
+"alertNotificationsDisabledTitle" = "Meldingen uitgeschakeld";
+
+/* loco:62baa963ab8fce473930eea4 */
+"appSecurityDescription" = "Bescherm de toegang tot uw app door de vergrendeling van uw telefoon in te schakelen.";
+
+/* loco:627e4053e699c44b3f1f9be2 */
+"archiveFolder" = "Gearchiveerd";
+
+/* loco:6437c60334e2ec004807c7f2 */
+"attachMailboxDescription1" = "Als u al een Infomaniak e-mailadres heeft, log dan nu in";
+
+/* loco:6437c532f51a3257a53fa6f2 */
+"attachMailboxDescription2" = "Alleen Infomaniak e-mailadressen worden ondersteund";
+
+/* loco:6437c70f4234b3111a48be63 */
+"attachMailboxInputHint" = "E-mailadres";
+
+/* loco:6437c47e426da35ef96cfc12 */
+"attachMailboxPasswordInputHint" = "Wachtwoord";
+
+/* loco:6437e8f60dad565a51542b62 */
+"attachMailboxTitle" = "E-mailadres toevoegen";
+
+/* loco:62b47ed7bd878067784e6f62 */
+"attachmentActionFile" = "Een bestand bijvoegen";
+
+/* loco:62b47f35c231ca5bb0344262 */
+"attachmentActionPhotoLibrary" = "Een foto uit de fotobibliotheek versturen";
+
+/* loco:62b4807d362dbc0bed1eb402 */
+"attachmentActionTitle" = "Een bijlage toevoegen";
+
+/* loco:6374f6a12619632e014135d2 */
+"attachmentFileLimitReached" = "De bestanden die u probeert te versturen overschrijden de limiet van 25 MB voor bijlagen";
+
+/* loco:6996f24e1ece4e9c1e0ca755 */
+"attachmentsReminderDescription" = "U heeft een bijlage genoemd, maar er is geen bestand toegevoegd. Toch versturen?";
+
+/* loco:6996f2271ece4e9c1e0ca752 */
+"attachmentsReminderTitle" = "Ontbrekende bijlage";
+
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Lijst van deelnemers (%d)";
+
+/* loco:6266649755d41301973d0c43 */
+"bccTitle" = "Bcc:";
+
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Een afzender blokkeren";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "%@ blokkeren";
+
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "%d afzenders blokkeren";
+
+/* loco:62cd641b15742c678d4c30e2 */
+"buttonAccept" = "Accepteren";
+
+/* loco:628216026aae4d7bc05773c3 */
+"buttonAccountDelete" = "Account verwijderen";
+
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Afmelden";
+
+/* loco:6282142ca5e6f61ada1c4014 */
+"buttonAccountSwitch" = "Account wijzigen";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Activeren";
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Een account toevoegen";
+
+/* loco:62cbe10de2840a0cdc2be0d2 */
+"buttonAddEmailAddress" = "Een e-mailadres toevoegen";
+
+/* loco:683ed907ce58d366270b42a3 */
+"buttonAddReaction" = "Reactie toevoegen";
+
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Alle";
+
+/* loco:6437c062dd576a7631052413 */
+"buttonAttachMailbox" = "Dit e-mailadres toevoegen";
+
+/* loco:62b2e09059ff20150b5c1b52 */
+"buttonAttachment" = "Een bijlage toevoegen";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Deelnemers";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Terug naar de Mail-app";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Blokkeren";
+
+/* loco:62b2d43771635f1d1f0da462 */
+"buttonBold" = "Vet";
+
+/* loco:62b2e3ddf30bc656eb06a442 */
+"buttonCamera" = "Een foto maken";
+
+/* loco:62a20a5c73b7e9202e05fabe */
+"buttonCancel" = "Annuleren";
+
+/* loco:66f2853e4d75905fd406ea93 */
+"buttonCancelFormatting" = "Opmaak annuleren";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Herinnering annuleren";
+
+/* loco:62befe9ca822415272753592 */
+"buttonClose" = "Sluiten";
+
+/* loco:63e391b028b5fa7bab41e292 */
+"buttonConfirm" = "Bevestigen";
+
+/* loco:62bf20b963bddf721324a142 */
+"buttonConfirmRestoreEmails" = "Herstellen";
+
+/* loco:64245322f2b3ab37ed1b26b2 */
+"buttonContinue" = "Doorgaan";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Kopiëren";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Wachtwoord kopiëren";
+
+/* loco:62b1c2566ff2923a1a5b0832 */
+"buttonCreate" = "Maken";
+
+/* loco:62b1c0de630e5a572542c032 */
+"buttonCreateFolder" = "Een map toevoegen";
+
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Aangepast schema";
+
+/* loco:6267af44cf90a405c97af322 */
+"buttonDownload" = "Downloaden";
+
+/* loco:6267aff571442d3f666a71c2 */
+"buttonDownloadAll" = "Alles downloaden";
+
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Tekst bewerken";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedback" = "Feedback";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Mappen";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Naar instellingen";
+
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Help";
+
+/* loco:62b2e44a50f68769a0054863 */
+"buttonHyperlink" = "Een hyperlink toevoegen";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "Ik ben klaar";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "E-mails importeren";
+
+/* loco:62b2d9637708901a27423992 */
+"buttonItalic" = "Cursief";
+
+/* loco:6425777e2343387912223aa2 */
+"buttonLater" = "Later";
+
+/* loco:645b485e158c37a429012092 */
+"buttonLoadMore" = "Meer gesprekken laden";
+
+/* loco:62cbe12c9251f174a43c5205 */
+"buttonLogInDifferentAccount" = "Inloggen met een ander account";
+
+/* loco:628dfebda6add66651161554 */
+"buttonLogin" = "Inloggen";
+
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Misschien";
+
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "Wijzigen";
+
+/* loco:6284fd623d98060ac31f76d5 */
+"buttonMore" = "Meer";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Selecteren";
+
+/* loco:6267bafe7edebd666d7d6923 */
+"buttonNewMessage" = "Nieuw bericht";
+
+/* loco:66596b6a5fa78a61780e4315 */
+"buttonNewWindow" = "Nieuw venster";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonNo" = "Nee";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Openen in kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Openen in mijn agenda";
+
+/* loco:62cd642815742c678d4c30e4 */
+"buttonRefuse" = "Weigeren";
+
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Herschikken";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "E-mails herstellen";
+
+/* loco:62b2e4a24486732cbc2f04d3 */
+"buttonSchedule" = "E-mail plannen om later te versturen";
+
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Bekijken";
+
+/* loco:626918473e1b2d7fe4329d52 */
+"buttonSelectAll" = "Alle";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Versturen met een ander adres";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Nu instellen";
+
+/* loco:6267af86c6ebf234e9213012 */
+"buttonShare" = "Delen";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Starten";
+
+/* loco:62b2dd31865d4941c92777d3 */
+"buttonStrikeThrough" = "Doorhalen";
+
+/* loco:62b2d26c5fd79a7b69199b92 */
+"buttonTextOptionsClose" = "Tekstopmaak sluiten";
+
+/* loco:62b2cafadce4b504255da0e3 */
+"buttonTextOptionsOpen" = "Tekstopmaak openen";
+
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Proberen";
+
+/* loco:62b2d9af68273c4a783d30d2 */
+"buttonUnderline" = "Onderstrepen";
+
+/* loco:641322a5ac96d1091376a812 */
+"buttonUnlock" = "Ontgrendelen";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Ongeordende lijst";
+
+/* loco:640adf8cc17f7c5be778c933 */
+"buttonUnselectAll" = "Geen";
+
+/* loco:642572dc0839911c7350abf2 */
+"buttonUpdate" = "Bijwerken";
+
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Upgraden";
+
+/* loco:62b42d5d2b411f48ef2eb982 */
+"buttonValid" = "Valideren";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonYes" = "Ja";
+
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "De hele dag";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "U bent niet uitgenodigd";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organisator)";
+
+/* loco:626664836e30e75f1c390202 */
+"ccTitle" = "Cc:";
+
+/* loco:64477b57fd06fe11190c1f13 */
+"comingSoon" = "Binnenkort…";
+
+/* loco:62a33e1331304f212d104d43 */
+"commercialFolder" = "Promoties";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Een bericht versturen met het adres:";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Selecteer verzendadres:";
+
+/* loco:63a474bd648cd86d56444012 */
+"confirmLogoutDescription" = "Weet u zeker dat u wilt afmelden bij %@?";
+
+/* loco:63a473bcf3bb7f422358cfd2 */
+"confirmLogoutTitle" = "Afmelden";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Alle toekomstige berichten van %@ worden verplaatst naar de map Ongewenste e-mail.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Alle toekomstige berichten van deze afzenders worden naar de map Ongewenste e-mail verplaatst.";
+
+/* loco:62737dea7bd28e302301e5c2 */
+"contactActionAddToContacts" = "Toevoegen aan contacten";
+
+/* loco:62737e120020a371c709a8e2 */
+"contactActionCopyEmailAddress" = "E-mailadres kopiëren";
+
+/* loco:62737d79e632c04950610ed2 */
+"contactActionWriteEmail" = "Een e-mail schrijven";
+
+/* loco:627cef9a9e08324b604c8612 */
+"contactMe" = "Ik";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Contacten";
+
+/* loco:628c9d1654bb544229106572 */
+"contentDescriptionButtonBack" = "Terug";
+
+/* loco:6295d8a6be385969441d55f2 */
+"contentDescriptionButtonDeleteDraft" = "Concept verwijderen";
+
+/* loco:642456b7a9f7d62fda3252d2 */
+"contentDescriptionButtonDeleteHistory" = "Geschiedenisingang verwijderen";
+
+/* loco:62a9d5b4ee7aa537c701dec3 */
+"contentDescriptionButtonExpandAccountSelection" = "Accountselectie uitklappen";
+
+/* loco:62a9d5feeda57b54d242e682 */
+"contentDescriptionButtonExpandCustomFolders" = "Aangepaste mappen uitklappen";
+
+/* loco:64c13b09da352fc751044323 */
+"contentDescriptionButtonExpandFolder" = "Map %@ uitklappen";
+
+/* loco:628c9db2c6482c597c115152 */
+"contentDescriptionButtonExpandHeader" = "Koptekst uitklappen";
+
+/* loco:6422e08598a76c7f98590952 */
+"contentDescriptionButtonExpandRecipients" = "Details bekijken";
+
+/* loco:628c97c0e21b4a3db5218982 */
+"contentDescriptionButtonFilterSearch" = "Zoekfilter";
+
+/* loco:628c99d77702e65f5779df32 */
+"contentDescriptionButtonMenu" = "Menu";
+
+/* loco:630c6314609abb40215d6482 */
+"contentDescriptionButtonNext" = "Volgende";
+
+/* loco:64c1409a9dfa82cc110e3252 */
+"contentDescriptionButtonSelectSignature" = "Een andere handtekening selecteren";
+
+/* loco:629f3973a183191c9564a302 */
+"contentDescriptionButtonSettings" = "Instellingen";
+
+/* loco:64380fdd8d050844fe71ae26 */
+"contentDescriptionButtonShowPassword" = "Wachtwoord tonen";
+
+/* loco:642bef2a4b57be636f4d03e2 */
+"contentDescriptionContactAlreadyUsed" = "Contact al gebruikt als ontvanger";
+
+/* loco:62864ffe2129f0730a307462 */
+"contentDescriptionIconAttachments" = "Heeft bijlagen";
+
+/* loco:628ca42f2edf27145113fbb3 */
+"contentDescriptionIconCalendar" = "Bevat Agenda-evenement";
+
+/* loco:62864eec841ea80f560649f2 */
+"contentDescriptionIconFavorite" = "Is favoriet";
+
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Doorgestuurd";
+
+/* loco:628c9f21fe133f61075b64f2 */
+"contentDescriptionIconNewMail" = "Nieuw";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Antwoord";
+
+/* loco:62b1d1ee36cd805389679933 */
+"contentDescriptionIconStorage" = "Opslagstatus";
+
+/* loco:642430a9ce12f43b026e7ef2 */
+"contentDescriptionSelectedItem" = "Geselecteerd";
+
+/* loco:64a4240f5579c83f7b070182 */
+"contentDescriptionUnreadPastille" = "Deze map bevat ongelezen berichten";
+
+/* loco:62b9669e0e674b404f5a5212 */
+"contentDescriptionUserAvatar" = "Gebruikersavatar";
+
+/* loco:64787b6c6a6ceb25210556d2 */
+"contentDescriptionWarningIcon" = "Waarschuwing";
+
+/* loco:62b1c12cc1df8a35281faba4 */
+"createFolderName" = "Naam van de map";
+
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Kies een datum en tijd";
+
+/* loco:6294648c19755a1ae9494462 */
+"dateTitle" = "Datum:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "Het verwijderen van uw account is definitief. U kunt uw account niet opnieuw activeren.";
+
+/* loco:685a98be5d3b4256930591f2 */
+"deleteFolderDialogDescription" = "De inhoud van de map %@ wordt definitief verwijderd zonder via de prullenbak te gaan.";
+
+/* loco:685a96cac7aa83dd0a0a4332 */
+"deleteFolderDialogTitle" = "Map verwijderen";
+
+/* loco:672e3534c133d192fb0acc92 */
+"disabledFeatureFlagDescription" = "U kunt binnenkort de limieten van uw ik.me e-mailadres ontgrendelen\n(opslaglimiet, aangepast schema, verzenden en meer…)";
+
+/* loco:672e34e12d859bafeb03be32 */
+"disabledFeatureFlagTitle" = "Meer opslag en functies nodig?";
+
+/* loco:6777dbf1dc5a5d9dbf09db92 */
+"downloadAlertDescription" = "De download kan enige tijd duren.";
+
+/* loco:627e3fa5774ef45bfd4d3b92 */
+"draftFolder" = "Concepten";
+
+/* loco:6364d5ac2e2f281d52389ee2 */
+"draftPrefix" = "(Concept)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Dit bericht wordt naar uw concepten verplaatst om te worden verzonden wanneer u maar wilt.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Verzenden bewerken";
+
+/* loco:64243b4a9a9a1f26302e33f3 */
+"emailWithoutSubjectDescription" = "U staat op het punt een bericht zonder onderwerp te verzenden. Wilt u doorgaan?";
+
+/* loco:64243b2f0c473e027779afc4 */
+"emailWithoutSubjectTitle" = "Leeg onderwerp";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Activiteiten";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Dieren en natuur";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Vlaggen";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Eten en drinken";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objecten";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Mensen en lichaam";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Recent gebruikt";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys en emoties";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Symbolen";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Reizen en plaatsen";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Resultaten";
+
+/* loco:6348008e331e743e77176522 */
+"emptyStateFolderDescription" = "Er is hier niets te zien.";
+
+/* loco:63480020415e160cac510302 */
+"emptyStateFolderTitle" = "Deze map is leeg";
+
+/* loco:637799775ff1e6190b2cd622 */
+"emptyStateHistoryDescription" = "Zoek op contact of trefwoorden";
+
+/* loco:626a51f5e1663d3865426573 */
+"emptyStateInboxDescription" = "Schrijf een nieuwe e-mail door op \"Nieuw bericht\" te klikken in de rechterbenedenhoek.";
+
+/* loco:626a458f3be3444c205ee892 */
+"emptyStateInboxTitle" = "U heeft geen e-mails";
+
+/* loco:62a992fdee966e51e955b6d2 */
+"emptyStateNetworkDescription" = "Controleer uw verbinding of verbind met internet om uw e-mails te bekijken.";
+
+/* loco:62a992d5499836193818b633 */
+"emptyStateNetworkTitle" = "U bent niet verbonden met internet";
+
+/* loco:633163748419ac683a189ba2 */
+"emptyStateSearchDescription" = "We hebben geen e-mails gevonden die overeenkomen met uw zoekopdracht.";
+
+/* loco:63316306552e4c217c351c42 */
+"emptyStateSearchTitle" = "Geen resultaten";
+
+/* loco:641178c63f22e04fa704c022 */
+"emptyStateTrashDescription" = "Verplaats de berichten naar de prullenbak. Ze worden na 30 dagen definitief verwijderd.";
+
+/* loco:641178a6902412584c6acf62 */
+"emptyStateTrashTitle" = "Prullenbak is leeg";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Filter inschakelen";
+
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Betrokken ontvangers bekijken";
+
+/* loco:6853c6e1ae6f39008c06cf82 */
+"encryptedMessageAddPasswordButton" = "Beschermen met wachtwoord";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Een wachtwoord is alleen vereist voor ontvangers buiten Infomaniak. Voor hen verloopt het bericht 30 dagen na verzending.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Versleuteling uitschakelen";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageHeader" = "Dit bericht is versleuteld.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Dit bericht is versleuteld en verloopt op %@ alleen voor ontvangers die niet kunnen profiteren van automatische versleuteling.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Betrokken ontvangers";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Deel dit wachtwoord via een privébericht. U kunt het niet meer kopiëren zodra u het heeft verzonden.";
+
+/* loco:6877a03a5b42fa4d5f0f9882 */
+"encryptedMessageSnackbarEncryptionActivated" = "Versleuteling is geactiveerd";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Versleuteling is uitgeschakeld";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Beschermen";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Geplande e-mails niet beschikbaar voor versleutelde berichten";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Wachtwoord wijzigen";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Wachtwoordbeveiliging";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Bescherm uw bericht tegen ongeautoriseerde toegang met Infomaniak-versleuteling.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Het onderwerp van het bericht blijft zichtbaar, maar de inhoud is volledig beveiligd.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Een wachtwoord is vereist voor ontvangers buiten Infomaniak.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Versleutel uw vertrouwelijke berichten";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Ontvangers met wachtwoord (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Uw bericht is beschermd.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Een wachtwoord is vereist om de verzending te voltooien.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Gedeeltelijk";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Versleuteling";
+
+/* loco:64a2b5254093e7708d0de5b2 */
+"enterPasswordTitle" = "Wachtwoord invoeren";
+
+/* loco:6493f877e4cdab71070ad552 */
+"errorAlreadyLinkedMailbox" = "Dit e-mailadres is al gekoppeld aan uw account";
+
+/* loco:644928aac87be149bf05d254 */
+"errorAtLeastOneRecipient" = "Er is minstens één ontvanger vereist";
+
+/* loco:64940ce4eee54db1a50e44b4 */
+"errorAttachmentNotFound" = "Bijlage niet gevonden";
+
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Er is een fout opgetreden tijdens het verzenden van uw antwoord";
+
+/* loco:63d14902e3c4eb4832777c42 */
+"errorCancelAttachmentsUploadInProgress" = "Sommige bijlagen worden nog geïmporteerd. Als u het venster sluit, gaan de bijlagen verloren.";
+
+/* loco:6470516c5a7017daea03dde3 */
+"errorDraftNotFound" = "Concept niet gevonden";
+
+/* loco:6449292ce5f4e56abb063f65 */
+"errorEditScheduledMessage" = "Geplande of verzonden berichten kunnen niet worden bewerkt";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "U heeft al met deze reactie gereageerd";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "U kunt niet reageren op een concept";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "U kunt niet reageren op een geplande e-mail";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "U kunt niet reageren op een e-mail gemarkeerd als spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "U kunt niet reageren op een e-mail in de prullenbak";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "U heeft het maximum aantal reacties voor deze e-mail bereikt";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "U kunt niet reageren op een e-mail met meer dan 20 ontvangers";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "U kunt niet reageren op een versleutelde e-mail";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "U kunt niet reageren op dit type e-mail";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "U kunt niet reageren op deze e-mail";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Alleen ontvangers en afzenders kunnen reageren op deze e-mail";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "Er is een fout opgetreden bij het openen van het evenement in Infomaniak Calendar";
+
+/* loco:6493fd86b3b044cbef0df789 */
+"errorFolderDoesNotExist" = "De map bestaat niet";
+
+/* loco:645c9dbc8c94de23f7091a42 */
+"errorFolderNotFound" = "Map niet gevonden";
+
+/* loco:64942b149051a862c5049f03 */
+"errorInvalidAttachment" = "Ongeldige bijlage";
+
+/* loco:643e9d37c9a67764c307d742 */
+"errorInvalidCredentials" = "Ongeldige e-mail of wachtwoord";
+
+/* loco:64aea2c18a9e9776080ee393 */
+"errorInvalidEmailAddress" = "Ongeldig adres";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Dit bericht kon niet van de server worden gedownload.";
+
+/* loco:628e1ad9d1c6366c8a4e6362 */
+"errorLoginDescription" = "De verbinding is mislukt.";
+
+/* loco:628e1af711413554dd3010a5 */
+"errorLoginTitle" = "Inlogfout";
+
+/* loco:6450d3f93e5fcf13c9037b02 */
+"errorMailboxLocked" = "Dit mailbox is vergrendeld";
+
+/* loco:65d4ae8ef9b6570a070b3e92 */
+"errorMailboxUnavailable" = "Dit e-mailadres is niet beschikbaar";
+
+/* loco:680b69620fe68fbfc80ac583 */
+"errorMaxNumberOfScheduledSnoozeReached" = "U heeft het maximum aantal geplande snoozes bereikt";
+
+/* loco:680b8d7f855ff2c2e708b282 */
+"errorMessageCannotBeSnoozed" = "Dit bericht kan niet worden gesnoozed";
+
+/* loco:645c9af969688c1b200ad4a2 */
+"errorMessageNotFound" = "Bericht niet gevonden";
+
+/* loco:680b6895a9a8ec84c3020a73 */
+"errorMessageNotSnoozed" = "Dit bericht is momenteel niet gesnoozed";
+
+/* loco:680b692fe83f3ba1df0a2895 */
+"errorMessageSnoozeAlreadyScheduled" = "Er is al een snooze gepland voor dit bericht";
+
+/* loco:6494050cd62813225a066fb2 */
+"errorMoveDestinationNotFound" = "De doelmap bestaat niet";
+
+/* loco:63ea46d0b146e764dd672ee2 */
+"errorNewFolderAlreadyExists" = "De map bestaat al";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "De mapnaam bevat ongeldige tekens";
+
+/* loco:63fe19a90375095d660d0152 */
+"errorNewFolderNameTooLong" = "De mapnaam mag niet meer dan 255 tekens bevatten";
+
+/* loco:64492a1e7d49e1ef190ab465 */
+"errorRefusedRecipients" = "De server weigert alle ontvangers";
+
+/* loco:649424a6e244ffcc6c011135 */
+"errorRefusedSender" = "De server weigert de afzender";
+
+/* loco:678f61b9f7e8ef480f043962 */
+"errorScheduleDelayTooShort" = "U kunt geen e-mail plannen over minder dan %d minuten";
+
+/* loco:67e3ecd6b4a0b7e90d00c382 */
+"errorScheduledSnoozeDelayTooShort" = "De minimale tijd om een e-mail te snoozen is %d minuten";
+
+/* loco:6448ef7a5b39bc7e040ce0b3 */
+"errorSendLimitExceeded" = "Verzendlimiet bereikt";
+
+/* loco:6448e34925a77d88bc0f8ab4 */
+"errorTooManyRecipients" = "Te veel ontvangers";
+
+/* loco:6493ff227390f40cdb06d7d3 */
+"errorUnableToCreateFolder" = "Kan de map niet maken";
+
+/* loco:649400300f4bf580f6093602 */
+"errorUnableToFlushFolder" = "Map kan niet worden geleegd";
+
+/* loco:645c9bbb13c8e41a84040012 */
+"errorUnknown" = "Onbekende fout";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Bericht uitvouwen";
+
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "De herkomst van deze afzender is geauthenticeerd.";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Ik begrijp het";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescriptionExpeditor" = "De afzender %@ maakt geen deel uit van uw organisatie of uw contacten. Wees voorzichtig als u gevoelige informatie deelt.";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescriptionExpeditor-plural" = "Sommige afzenders maken geen deel uit van uw organisatie of uw contacten. Wees voorzichtig als u gevoelige informatie deelt.";
+
+/* loco:69b4300348915079af041856 */
+"externalDialogDescriptionExpeditor-plural-2" = "";
+
+/* loco:69b4300348915079af041857 */
+"externalDialogDescriptionExpeditor-plural-3" = "";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "De ontvanger %@ maakt geen deel uit van uw organisatie of uw contacten. Wees voorzichtig als u gevoelige informatie deelt.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Sommige ontvangers maken geen deel uit van uw organisatie of uw contacten. Wees voorzichtig als u gevoelige informatie deelt.";
+
+/* loco:69b4300348915079af041858 */
+"externalDialogDescriptionRecipient-plural-2" = "";
+
+/* loco:69b4300348915079af041859 */
+"externalDialogDescriptionRecipient-plural-3" = "";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Externe afzender";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Externe ontvanger";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Extern";
+
+/* loco:6436aae98d2f282f4c6ba492 */
+"failToOpenDraft" = "Concept openen mislukt";
+
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/en/support/faq/admin2/email-service";
+
+/* loco:62a9dbdf0bddbc02ce031ba2 */
+"favoritesFolder" = "Favorieten";
+
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Toegestane mailboxen";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Meldingen toestaan voor geselecteerde mailboxen.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Mailboxen filteren";
+
+/* loco:62665f7d647475580e06e912 */
+"fromTitle" = "Van:";
+
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Groep: %@";
+
+/* loco:62c466f080a5557baa2d0d84 */
+"helpChatbot" = "Chatbot";
+
+/* loco:62c466d780a5557baa2d0d82 */
+"helpFAQ" = "FAQ";
+
+/* loco:62c4672bb812405fb22925f2 */
+"helpSubtitle" = "Om u te helpen";
+
+/* loco:627a3c64f10f5f31f53e1c02 */
+"inboxFolder" = "Inbox";
+
+/* loco:689c766a433c6c94c70e1742 */
+"kSuiteProQuotasAlertDescription" = "Uw Mail-opslagruimte is bijna vol. Upgrade naar onbeperkte opslag en ontgrendel nieuwe functies.";
+
+/* loco:689c76e6a75a2c10bb0ec9a2 */
+"kSuiteProQuotasAlertFullDescription" = "Uw Mail-opslagruimte is vol. Upgrade naar onbeperkte opslag en ontgrendel nieuwe functies.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Uw Mail-opslagruimte is vol";
+
+/* loco:686f61f2208a37e573055822 */
+"lastEventOccurrence" = "Terugkerend evenement, laatste keer op";
+
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Laatst geselecteerde schema";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Later deze ochtend";
+
+/* loco:62c427c7ad522f1ff078a162 */
+"loadingText" = "Laden…";
+
+/* loco:62baa8f1786752698b4ff2b2 */
+"lockAppTitle" = "Applicatie vergrendeld";
+
+/* loco:6491b5d13be3801fbb056c22 */
+"lockedMailboxBottomSheetDescription" = "De toegang tot uw mailbox is momenteel geblokkeerd.\nVoor meer informatie, raadpleeg de FAQ.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Mailbox %@ is geblokkeerd";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "Voor meer informatie:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Sommige van uw mailboxen zijn geblokkeerd";
+
+/* loco:67e26d1c96ffb194f70925b2 */
+"macUsageDisclaimerTitle" = "Deze app werkt op macOS, maar is geoptimaliseerd voor gebruik op mobiel en tablet.";
+
+/* loco:6909f6d971628fcfef012f93 */
+"mailPremiumUpgradeDescription" = "Krijg meer opslagruimte en nieuwe functies met uw e-mailadres.";
+
+/* loco:6909f71a6b8c07fca9051053 */
+"mailPremiumUpgradeDetails" = "Om van Premium te profiteren, wijzigt u uw aanbod via uw webinterface.";
+
+/* loco:6909f62d86fa5c10e80515e2 */
+"mailPremiumUpgradeTitle" = "Groei met het Premium-plan";
+
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Mijn handtekeningen beheren";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Geavanceerde acties";
+
+/* loco:62b2f6bcdfa4fa28ad7bb122 */
+"menuDrawerMailboxStorage" = "%1$@ / %2$@ gebruikt";
+
+/* loco:6903874c026e3f7b78066ba2 */
+"messageComesFromDiscussionList" = "Dit bericht komt van een discussielijst.";
+
+/* loco:62df8c27cc288916217bd964 */
+"messageDetailsDateAt" = "%1$@ om %2$@";
+
+/* loco:62df8aee00dc4d02575d73f2 */
+"messageDetailsYesterday" = "Gisteren";
+
+/* loco:6294634e9f544121e77de3b2 */
+"messageForwardHeader" = "Doorgestuurd bericht";
+
+/* loco:6400bb16c117ec0d866887b5 */
+"messageHideQuotedText" = "Gesprek verbergen";
+
+/* loco:628b90d373427778f14fd442 */
+"messageIsDraftOption" = "Concept";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "Dit bericht staat in de spammap omdat %@ op de lijst met geblokkeerde afzenders staat.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "Dit bericht wordt als spam beschouwd. Voor uw veiligheid raden wij u aan uw spamfilter te activeren.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "Dit bericht wordt als spam beschouwd. Wij raden u aan het naar de \"Spam\"-map te verplaatsen.";
+
+/* loco:65c35d9e6e00f9b3e60f34d3 */
+"messageMenuTitle" = "Bericht";
+
+/* loco:628b6d81110f662ac808a165 */
+"messageReplyHeader" = "Op %1$@ schreef %2$@:";
+
+/* loco:6400bafe3dae40636c716ea2 */
+"messageShowQuotedText" = "Gesprek weergeven";
+
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Maandagmiddag";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Maandagochtend";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Meer informatie";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Naar Spam verplaatsen";
+
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Zodra u deze limiet hebt bereikt, kunt u geen berichten meer verzenden of ontvangen. Maak ruimte vrij of upgrade naar my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Maak ruimte vrij of upgrade naar my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Ontvangen en verzenden van berichten geblokkeerd";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Opslaglimiet bijna bereikt";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "Er is niet genoeg opslagruimte om deze actie uit te voeren.";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Mijn abonnement";
+
+/* loco:64c21d831dadd3122c0c73f2 */
+"newAccountDescription" = "Communiceer en sla uw documenten en foto’s op in een advertentievrij ecosysteem dat uw privacy respecteert";
+
+/* loco:64c21f7b8b1932323c047792 */
+"newAccountStorageDrive" = "15 GB kDrive-opslag";
+
+/* loco:64c21b867739a75d260c0272 */
+"newAccountStorageMail" = "20 GB gratis mailopslag";
+
+/* loco:64c2115c61d539e7b80a4f12 */
+"newAccountTitle" = "Maak uw levenslange gratis e-mailadres aan";
+
+/* loco:63c64f5d53fe7b61a46310c3 */
+"newFolderDialogHint" = "Mapnaam";
+
+/* loco:63ee0cbbad127b43f8650242 */
+"newFolderDialogMovePositiveButton" = "Maken en verplaatsen";
+
+/* loco:63f48eda1e7aec342b70c5a2 */
+"newFolderDialogTitle" = "Nieuwe map";
+
+/* loco:6266655afabeeb6bc774c932 */
+"newMessagePlaceholderTitle" = "Typ uw bericht";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Terugkerend evenement, volgende keer op";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMonday" = "Volgende maandag";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyDescription" = "Dit bericht is leeg.";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Geen verbinding";
+
+/* loco:634ea0a369dac5469e1ce6d2 */
+"noConversationSelected" = "Geen gesprek geselecteerd in %@";
+
+/* loco:637ce6f461e6ca5762134f53 */
+"noFolderTitle" = "U heeft nog geen map…";
+
+/* loco:62cbe0be9251f174a43c5202 */
+"noMailboxDescription" = "U heeft geen e-mailadres gekoppeld aan uw Infomaniak-account.";
+
+/* loco:62cbdde9f492421f63253c52 */
+"noMailboxTitle" = "Geen e-mailadres gekoppeld aan dit account";
+
+/* loco:641196a69abab039df3a23f2 */
+"noNetwork" = "Geen internetverbinding";
+
+/* loco:62b9579b3dfaf347e24071f3 */
+"noSubjectTitle" = "(geen onderwerp)";
+
+/* loco:6419645b21b6617fba4a8dc2 */
+"noUpdatedAt" = "Nooit bijgewerkt";
+
+/* loco:62baab4c017b586c23177d62 */
+"notificationGeneralChannelName" = "Algemene meldingen";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "U zou nieuwe berichten kunnen hebben ontvangen";
+
+/* loco:64ba47ab214bcfcf4c056014 */
+"notificationTitleArchive" = "Gearchiveerd";
+
+/* loco:6492a96bf71de72ab30e8c02 */
+"notificationTitleCouldNotSaveDraft" = "Het concept kon niet worden opgeslagen";
+
+/* loco:6492a702283a5b8f7e04df72 */
+"notificationTitleCouldNotSendDraft" = "De e-mail kon niet worden verzonden";
+
+/* loco:64ba47d60f3176675907c474 */
+"notificationTitleDelete" = "Verwijderd";
+
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Met deze toegang kunt u gemakkelijk naar uw contacten schrijven vanuit Infomaniak Mail.\nWe respecteren uw privacy en uw contacten worden niet voor andere doeleinden gebruikt.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "De app toestaan uw contacten te raadplegen";
+
+/* loco:62c2eede5bc8fa0201054443 */
+"onBoardingDescription2" = "Pas uw snelkoppelingen vrij aan in de app-instellingen.";
+
+/* loco:62c2ef31d501950dff4cbda2 */
+"onBoardingDescription3" = "Archiveer, verwijder, verplaats of markeer meerdere berichten tegelijk als favoriet.";
+
+/* loco:62c2ef65c564d9260842db32 */
+"onBoardingDescription4" = "Maak een gratis adres aan of verbind met een bestaand Infomaniak-account.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Mis geen belangrijke e-mails en reageer snel door meldingen te activeren.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Meldingen inschakelen";
+
+/* loco:62c2ee73d35f8933bc4b5262 */
+"onBoardingTitle1" = "Kies uw thema";
+
+/* loco:62c2ee8cfa454b3819243ba2 */
+"onBoardingTitle2" = "Bespaar tijd met veegacties";
+
+/* loco:62c2ef13b664ac09fe4a0762 */
+"onBoardingTitle3" = "Houd een bericht enkele seconden ingedrukt om meerdere berichten te selecteren";
+
+/* loco:62c2ef4a24eb9878221dcd63 */
+"onBoardingTitle4" = "Aan de slag!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisatie: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Andere";
+
+/* loco:62c424189aacc248962d6224 */
+"pickerNoSelection" = "Geen selectie";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Log eerst in op de Infomaniak Mail-app.";
+
+/* loco:68b05985327f49a8eb0936b2 */
+"previewReaction" = "%2$@ %1$@ heeft gereageerd";
+
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Alle";
+
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reacties";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "FAQ raadplegen";
+
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Recente zoekopdrachten";
+
+/* loco:62baabfc07e6a001ca19e535 */
+"refreshTokenError" = "U bent uitgelogd";
+
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "De map hernoemen";
+
+/* loco:62cd640724b16d271d296bc2 */
+"reportDisplayProblemDescription" = "Gaat u akkoord om uw gegevens te delen met onze ontwikkelaars zodat zij u kunnen helpen met uw probleem?";
+
+/* loco:62cd63dab9cd016ad83df012 */
+"reportDisplayProblemTitle" = "Een weergaveprobleem melden";
+
+/* loco:62cecdf0413c882ede7451c2 */
+"reportPhishingTitle" = "Een phishing-poging melden";
+
+/* loco:62bf21b31385976cad230b43 */
+"restoreEmailsBackupDate" = "Back-updatum";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Geen back-up gevonden";
+
+/* loco:62bf1dc26398da30d5675c52 */
+"restoreEmailsText" = "Alle e-mails komen terug in uw inbox.";
+
+/* loco:62bf1d8b38fa643dbc4c8b42 */
+"restoreEmailsTitle" = "Uw e-mails herstellen";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Vindt u Infomaniak Mail leuk?";
+
+/* loco:66e2826251d88f0bdc097c12 */
+"saveMailInkDrive" = "Opslaan in kDrive";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Verzending plannen";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "Deze e-mail wordt verzonden op: %@";
+
+/* loco:62a9db4ae45f1e29371ff802 */
+"scheduledMessagesFolder" = "Geplande berichten";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Zoeken";
+
+/* loco:640836aa0f09a82bfa0da572 */
+"searchAllMessages" = "Alle berichten";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "E-mail zoeken";
+
+/* loco:62d5568245072b538b5aeaa2 */
+"searchFilterAttachment" = "Bijlagen";
+
+/* loco:62d559f7bd07624399379972 */
+"searchFilterFolder" = "Alle mappen";
+
+/* loco:62d5561a4fa44b4a25143fc2 */
+"searchFilterRead" = "Gelezen";
+
+/* loco:62d5563645aa5e5f197eef92 */
+"searchFilterUnread" = "Ongelezen";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Zoeken";
+
+/* loco:662f89ba8e8c8321190ae342 */
+"selectSignatureNone" = "Geen handtekening";
+
+/* loco:62ac871d2502053d7b0cbb32 */
+"send" = "Verzenden";
+
+/* loco:6936f6d2c3bd045a2001d752 */
+"sendConfirmationAction" = "De bevestiging verzenden";
+
+/* loco:627e401ec1c7c02de9181292 */
+"sentFolder" = "Verzonden berichten";
+
+/* loco:685104677354f872000e5882 */
+"serverUnavailable" = "Servers niet beschikbaar";
+
+/* loco:657314ba4d64ddc63f074b42 */
+"setAsDefaultAppDescription" = "Kies standaard voor een veilige e-maildienst die uw privacy en het milieu respecteert.";
+
+/* loco:65731498b8f6abbd070ce033 */
+"setAsDefaultAppTitle" = "Maak van Infomaniak uw standaard Mail-app";
+
+/* loco:62bb144be43a74010f186a22 */
+"settingsAccentColor" = "Accentkleur";
+
+/* loco:62bb14784ae7d90af73a4c93 */
+"settingsAccentColorDescription" = "Kies de accentkleur voor de applicatie";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Accountbeheer";
+
+/* loco:627a306b1e32027c033896b2 */
+"settingsAppLock" = "App-vergrendeling";
+
+/* loco:65b275e7c53c28d1410bf342 */
+"settingsAutoAdvanceDescription" = "Selecteer wat u wilt weergeven wanneer een bericht wordt gearchiveerd of verwijderd";
+
+/* loco:65b27dc325bc06589501c462 */
+"settingsAutoAdvanceFollowingThreadDescription" = "Geef de volgende conversatie weer na archivering of verwijdering";
+
+/* loco:65b277d399fe1ebac10546a2 */
+"settingsAutoAdvanceFollowingThreadTitle" = "Volgende conversatie";
+
+/* loco:65b27e2b4f176d33ca06b302 */
+"settingsAutoAdvanceListOfThreadsDescription" = "Geef de lijst met conversaties weer na archivering of verwijdering";
+
+/* loco:65b2780c2b7256da8b038512 */
+"settingsAutoAdvanceListOfThreadsTitle" = "Lijst van conversaties";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Herhaalt de laatste actie die u heeft uitgevoerd";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Selecteert automatisch de volgende of vorige conversatie, afhankelijk van uw laatste interactie.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Laatste actie herhalen";
+
+/* loco:65b27d1e0565d99b930ae142 */
+"settingsAutoAdvancePreviousThreadDescription" = "Geef de vorige conversatie weer na archivering of verwijdering";
+
+/* loco:65b277b504a5c5b4710041f3 */
+"settingsAutoAdvancePreviousThreadTitle" = "Vorige conversatie";
+
+/* loco:65b274f8719e4e08b103c7f4 */
+"settingsAutoAdvanceTitle" = "Automatisch doorschakelen";
+
+/* loco:62c693f572adfe66fd2a82b7 */
+"settingsCancellationPeriodDescription" = "U heeft de mogelijkheid om het verzenden van uw e-mail tot 30 seconden te annuleren";
+
+/* loco:627a53b37b420855254af032 */
+"settingsCancellationPeriodTitle" = "Annuleringsperiode voor verzenden";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Gegevensbeheer";
+
+/* loco:627a40651c78f22cb67efdd2 */
+"settingsDefault" = "Standaard";
+
+/* loco:6295d7b8a080fe0c5d544952 */
+"settingsDelaySeconds" = "%d seconden";
+
+/* loco:627a40878416713fac6e6c82 */
+"settingsDensityOptionCompact" = "Compact";
+
+/* loco:627a40769905e5026f4309f3 */
+"settingsDensityOptionLarge" = "Groot";
+
+/* loco:62cd280d733bbc7d8f42d194 */
+"settingsDensityOptionNormal" = "Normaal";
+
+/* loco:6295d75d0ac5a369d16b45c5 */
+"settingsDisabled" = "Uitgeschakeld";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Meldingen inschakelen";
+
+/* loco:62c691f711673b15f21d70b4 */
+"settingsEnabled" = "Ingeschakeld";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Externe inhoud weergeven";
+
+/* loco:627a329eeeb721567557b3a2 */
+"settingsExternalContentTitle" = "Externe inhoud";
+
+/* loco:627a3cf1cf1b8849996f97c2 */
+"settingsInboxAlias" = "Alias";
+
+/* loco:627a3cdead26c25ce97e94f4 */
+"settingsInboxRedirect" = "Doorsturingen";
+
+/* loco:627a3c9ce8a52f1aaf66dfb3 */
+"settingsInboxRules" = "Regels";
+
+/* loco:627a3c83ad26c25ce97e94f2 */
+"settingsInboxType" = "Type inbox";
+
+/* loco:627a3be50425fc78766ad173 */
+"settingsMailboxGeneralAutoreply" = "Automatisch antwoord";
+
+/* loco:627a3c02e402a4304d327033 */
+"settingsMailboxGeneralFolders" = "Mapinstellingen";
+
+/* loco:627a3c1e89de4237021b5622 */
+"settingsMailboxGeneralNotifications" = "Meldingen";
+
+/* loco:627a3ba7d5f44d600a6f1803 */
+"settingsMailboxGeneralSignature" = "Handtekeninginstellingen";
+
+/* loco:627a418d50aa01240d501ae4 */
+"settingsOptionAlways" = "Altijd";
+
+/* loco:627a419ea4d53353fb587204 */
+"settingsOptionAskMe" = "Vragen";
+
+/* loco:627a40fe23cf464d52393803 */
+"settingsOptionDarkTheme" = "Donker";
+
+/* loco:627a40e8203b0403f20a0db5 */
+"settingsOptionLightTheme" = "Licht";
+
+/* loco:62cfb94ffe73905627441c62 */
+"settingsOptionSystemTheme" = "Systeem";
+
+/* loco:627a413a4a9b8944955fd206 */
+"settingsOptionThreadModeConversation" = "Discussies";
+
+/* loco:627a4172023031490409d6b5 */
+"settingsOptionThreadModeMessage" = "Berichten";
+
+/* loco:627a3e42e849cb43282bb484 */
+"settingsPrivacyDeleteSearchHistory" = "Zoekgeschiedenis wissen";
+
+/* loco:627a3e68a068242a09294182 */
+"settingsPrivacyViewLogs" = "Logboeken raadplegen";
+
+/* loco:627a30b24e987302322d0f64 */
+"settingsSectionAppearance" = "Weergave";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Gegevens & Privacy";
+
+/* loco:627a2ab189bc1f4ea90851c2 */
+"settingsSectionEmailAddresses" = "E-mailadressen";
+
+/* loco:627a2ae2fc0dff2fce768ef2 */
+"settingsSectionGeneral" = "Algemeen";
+
+/* loco:627a3e29e849cb43282bb482 */
+"settingsSectionPrivacy" = "Privacy";
+
+/* loco:627a3d03cf1b8849996f97c4 */
+"settingsSectionSecurity" = "Beveiliging";
+
+/* loco:627a3d72da7e600e226ddca2 */
+"settingsSecurityAdsFilter" = "Advertentie- en sociale netwerkenfilter";
+
+/* loco:627a3df94e4a1b1eff6c77a2 */
+"settingsSecurityBlockedRecipients" = "Geblokkeerde/geautoriseerde afzenders";
+
+/* loco:627a3daeda7e600e226ddca4 */
+"settingsSecuritySpamFilter" = "Spamfilter";
+
+/* loco:627a409fc889f27ef73a61e2 */
+"settingsSelectDisplayModeDescription" = "Selecteer een weergavemodus";
+
+/* loco:627a54238311502e273bbd62 */
+"settingsSendAcknowledgementSubtitle" = "Vraag een leesbevestiging voor elk verzonden bericht";
+
+/* loco:6936e8442c69152d9b0657b2 */
+"settingsSendAcknowledgementTitle" = "Leesbevestigingen";
+
+/* loco:627a5401ba58a853294d57a2 */
+"settingsSendIncludeOriginalMessage" = "Het originele bericht opnemen in het antwoord";
+
+/* loco:627a2f67a6d27d332a2f4926 */
+"settingsSendTitle" = "Verzenden";
+
+/* loco:644f6a7bf8a5eec20801ac93 */
+"settingsSignatureDescription" = "Selecteer een standaardhandtekening";
+
+/* loco:644b7ef4a60127b0b201ab52 */
+"settingsSignatureTitle" = "Handtekeningen";
+
+/* loco:6295e9101cbb5020e33ad4d2 */
+"settingsSwipeActionNone" = "Geen";
+
+/* loco:6295e8f405a6650e5621df92 */
+"settingsSwipeActionQuickActionsMenu" = "Snelle acties-menu";
+
+/* loco:6295dbd84dc6ed5644064ba2 */
+"settingsSwipeActionReadUnread" = "Gelezen/Ongelezen";
+
+/* loco:62c2b600d8c4bb2ee63957f2 */
+"settingsSwipeActionToDefine" = "In te stellen";
+
+/* loco:627a323b7f79c0171c37aa42 */
+"settingsSwipeActionsTitle" = "Veeg-acties in de e-mailapp";
+
+/* loco:62b017def2354224c578fc12 */
+"settingsSwipeDescription" = "Veeg items in uw inbox en krijg snel toegang tot uw meest voorkomende acties";
+
+/* loco:6295d5d7b524ea4e9d4d72d3 */
+"settingsSwipeLongLeft" = "Lange veeg naar links";
+
+/* loco:6295d58f35b3260585685212 */
+"settingsSwipeLongRight" = "Lange veeg naar rechts";
+
+/* loco:6295d5b6dff6bd5f535fce82 */
+"settingsSwipeShortLeft" = "Korte veeg naar links";
+
+/* loco:6295d5650b0ed37f63022fe3 */
+"settingsSwipeShortRight" = "Korte veeg naar rechts";
+
+/* loco:627a40cb203b0403f20a0db2 */
+"settingsThemeDescription" = "Themakeuze";
+
+/* loco:627a318d0c2fa16955156a22 */
+"settingsThemeTitle" = "Thema";
+
+/* loco:627a317093c0713ccc6df012 */
+"settingsThreadListDensityTitle" = "Dichtheid van de conversatielijst";
+
+/* loco:64cca81829e8aeaec602e1c2 */
+"settingsThreadModeTitle" = "Weergavemodus van berichten";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Let op: als u deze optie wijzigt, worden al uw berichten opnieuw gedownload";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Overschakelen naar %@ modus?";
+
+/* loco:627e52f442b7411bfd029f02 */
+"settingsTitle" = "Instellingen";
+
+/* loco:627a54958311502e273bbd74 */
+"settingsTransferAsAttachment" = "Als bijlage";
+
+/* loco:62c6a408b365f734dd2c0d73 */
+"settingsTransferEmailsDescription" = "Wanneer u een e-mail doorstuurt, kiest u de weergavemodus die het best bij u past";
+
+/* loco:627a53d47b420855254af035 */
+"settingsTransferEmailsTitle" = "E-mails doorsturen";
+
+/* loco:627a547ad27ea17771565867 */
+"settingsTransferInBody" = "In de tekst van het bericht";
+
+/* loco:668cdbc1a27f04dd51065022 */
+"shareEmail" = "E-mail delen";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Vernieuwen";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Account verwijderd";
+
+/* loco:6937d843b9fb15c2510859d2 */
+"snackbarAcknowledgementFailure" = "Verzenden mislukt";
+
+/* loco:6937d715da67a52ff201eed2 */
+"snackbarAcknowledgementSuccess" = "Leesbevestiging verzonden";
+
+/* loco:63f3961e7c16fb607809d632 */
+"snackbarBlockUserConfirmation" = "De afzender is nu geblokkeerd";
+
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Antwoord verwerkt";
+
+/* loco:62bc67601f560d734f2fbe58 */
+"snackbarContactSaved" = "Nieuw contact succesvol geregistreerd";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Het gesprek bestaat niet meer";
+
+/* loco:62cd644f5141ee164b494272 */
+"snackbarDisplayProblemReported" = "Weergaveprobleem gemeld";
+
+/* loco:62b959dd7994e66bc4719df2 */
+"snackbarDraftDeleted" = "Concept verwijderd";
+
+/* loco:62b959afe3c12548284cb282 */
+"snackbarDraftSaved" = "Concept opgeslagen";
+
+/* loco:646e10cd8b1764c28f0fb3e2 */
+"snackbarDraftSaving" = "Concept aan het opslaan";
+
+/* loco:62bd85a64880c362bd5ece72 */
+"snackbarEmailCopiedToClipboard" = "E-mailadres gekopieerd naar het klembord";
+
+/* loco:63c6c6744cd306160719c9c2 */
+"snackbarEmailSending" = "E-mail wordt verzonden";
+
+/* loco:62a336b8e2b762772773d2c2 */
+"snackbarEmailSent" = "E-mail verzonden";
+
+/* loco:62b42e39dbeac92077145712 */
+"snackbarInvalidUrl" = "Ongeldige URL";
+
+/* loco:638f5f9440687b206c230e64 */
+"snackbarMessageDeletedPermanently" = "Bericht verwijderd";
+
+/* loco:62ab223f0763d104d71437f2 */
+"snackbarMessageMoved" = "Bericht verplaatst naar %@";
+
+/* loco:62ab22a33a9b9314d8557222 */
+"snackbarMoveCancelled" = "Verplaatsing geannuleerd";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Wachtwoord gekopieerd";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reactie %@ verzonden";
+
+/* loco:62ab4ae387f65e26e577dd42 */
+"snackbarReportPhishingConfirmation" = "Succesvol gemeld";
+
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "Er is een fout opgetreden bij het melden, probeer het opnieuw.";
+
+/* loco:62c2f9feea59c120ad52bc23 */
+"snackbarRestorationLaunched" = "Het herstel starten";
+
+/* loco:672b6a80c4e88a09f20598f2 */
+"snackbarSaveInDraft" = "Uw bericht is opgeslagen in concepten.";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Het bericht wordt verzonden op %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Het bericht wordt gepland";
+
+/* loco:67ea70102a2bbfe96e02d072 */
+"snackbarSnoozeSuccess" = "U ontvangt een herinnering voor dit bericht %@";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Onderwerp gekopieerd naar het klembord";
+
+/* loco:62ab221b4956e9775f391ca6 */
+"snackbarThreadMoved" = "Conversatie verplaatst naar %@";
+
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Conversaties verplaatst naar %@";
+
+/* loco:69b4300348915079af04186a */
+"snackbarThreadMoved-plural-2" = "";
+
+/* loco:69b4300348915079af04186b */
+"snackbarThreadMoved-plural-3" = "";
+
+/* loco:699716d77182f3feca0185f2 */
+"snackbarThreadMovedToSpam" = "Conversatie verplaatst naar Spam en gebruiker geblokkeerd";
+
+/* loco:699717487182f3feca0185f4 */
+"snackbarThreadMovedToSpam-plural" = "Conversaties verplaatst naar Spam en gebruikers geblokkeerd";
+
+/* loco:69b4300348915079af04186c */
+"snackbarThreadMovedToSpam-plural-2" = "";
+
+/* loco:69b4300348915079af04186d */
+"snackbarThreadMovedToSpam-plural-3" = "";
+
+/* loco:6909acad8905a0c64a0747d2 */
+"snackbarUnsubscribeFailure" = "Afmelden niet mogelijk";
+
+/* loco:6909abe4583bcfb2d2034ec2 */
+"snackbarUnsubscribeSuccess" = "Afmelden voltooid";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Uitgesteld tot: %@";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "Uitgesteld";
+
+/* loco:62a33e2d0c5ac4438c366a32 */
+"socialNetworksFolder" = "Sociale netwerken";
+
+/* loco:627e40381ad4112c06450102 */
+"spamFolder" = "Spam";
+
+/* loco:626664d06926336d9e25c462 */
+"subjectTitle" = "Onderwerp:";
+
+/* loco:65ba2326ef9447c160013bf2 */
+"superCollapsedBlock" = "Alles bekijken (%d)";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Bekijk uw contacten en agenda rechtstreeks vanaf uw apparaat.";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"syncCalendarsAndContactsTitle" = "Synchronisatie van agenda’s en contacten";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Kopieer het wachtwoord, u hebt het nodig om de volgende stap te valideren.";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Validatiewachtwoord kopiëren";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "Klik op \"Download\" om het profiel te downloaden en sta daarna de download toe.";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Configuratieprofiel downloaden";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "Open in uw instellingen het tabblad \"Gedownload profiel\" en klik op installeren.";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Voer de code in: voer de **pincode** van uw telefoon in.";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Klik op **Installeren**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Voer het validatiewachtwoord **twee keer** in: één keer voor agenda’s en één keer voor adresboeken.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Ga terug naar uw Mail-applicatie.";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Typ \"Gedownload profiel\" in de zoekfunctie van uw instellingen om het tabblad gemakkelijk te vinden!";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Profiel installeren";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d van %2$d";
+
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "Vanmiddag";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "Vanavond";
+
+/* loco:63eddb9871489a3042032122 */
+"threadListEmptyFolderAlertDescription" = "Weet u zeker dat u alle berichten in deze map definitief wilt verwijderen?";
+
+/* loco:63ebae36eeb4ae34ef49ba42 */
+"threadListEmptySpamButton" = "Spam leegmaken";
+
+/* loco:63ebad842446f5106c0058b2 */
+"threadListEmptyTrashButton" = "Prullenbak leegmaken";
+
+/* loco:62bc355b27ec7c112e166eb2 */
+"threadListHeaderLastUpdate" = "Bijgewerkt %@";
+
+/* loco:62bc35840445497c51137862 */
+"threadListHeaderUnreadCount" = "%@ ongelezen";
+
+/* loco:62bc35a8de12a01f3a49e022 */
+"threadListHeaderUnreadCount-plural" = "%@ ongelezen";
+
+/* loco:69b4300348915079af04187a */
+"threadListHeaderUnreadCount-plural-2" = "";
+
+/* loco:69b4300348915079af04187b */
+"threadListHeaderUnreadCount-plural-3" = "";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Ophalen bezig";
+
+/* loco:6267f93e15e2421b9677e212 */
+"threadListSectionLastWeek" = "Vorige week";
+
+/* loco:62c6b582acc973360733ab94 */
+"threadListSectionThisMonth" = "Deze maand";
+
+/* loco:6267f91723d767283212ffd2 */
+"threadListSectionThisWeek" = "Deze week";
+
+/* loco:6267f813a44c1a465c763c92 */
+"threadListSectionToday" = "Vandaag";
+
+/* loco:63ebacb17b37201ea253d432 */
+"threadListSpamHint" = "Berichten die langer dan 30 dagen in de spam-map staan, worden automatisch verwijderd.";
+
+/* loco:63ebabc469ccbb24d90659c2 */
+"threadListTrashHint" = "Berichten die langer dan 30 dagen in de prullenbak staan, worden automatisch verwijderd.";
+
+/* loco:62665fa13789aa7e8353ad62 */
+"toTitle" = "Aan:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "Morgenochtend";
+
+/* loco:641db88f88b1f63cb05aad52 */
+"tooManyRecipients" = "U kunt dit adres niet toevoegen omdat u de limiet van ontvangers heeft bereikt";
+
+/* loco:627e40419151de052d2d3962 */
+"trashFolder" = "Prullenbak";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Deblokkeren";
+
+/* loco:6995af71f61e72e4d4004be2 */
+"unknownDialogTitleExpeditor" = "Onbekende afzender";
+
+/* loco:6995a57f05da42c3ae0bb253 */
+"unknownDialogTitleRecipient" = "Onbekende ontvanger";
+
+/* loco:62b95774aee47c626b773693 */
+"unknownRecipientTitle" = "(onbekend)";
+
+/* loco:6995a893d03cfb81d80e25c2 */
+"unknownTag" = "Onbekend";
+
+/* loco:690387a073a26a6c7a0ca602 */
+"unsubscribeButtonTitle" = "Afmelden";
+
+/* loco:64257388057ce0235d2c5222 */
+"updateAvailableDescription" = "Om optimaal van Infomaniak Mail te profiteren, raden we u aan uw applicatie bij te werken.";
+
+/* loco:6425728328677e02905abef2 */
+"updateAvailableTitle" = "Update beschikbaar!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "Voor uw veiligheid en om uw ervaring te verbeteren, werk uw apparaat bij.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Uw ervaring kan minder goed zijn omdat uw apparaat niet up-to-date is";
+
+/* loco:62b42dc3832cca6d684a4ae2 */
+"urlEntryTitle" = "Een hyperlink maken";
+
+/* loco:62b4362a0524dc792a0ee634 */
+"urlPlaceholder" = "URL";
+
+/* loco:641d60b6f5c19a18734d9192 */
+"urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Gebruikersnaam";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Dit evenement is al voorbij";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Dit evenement is geannuleerd";
+
+/* loco:6481d72ebb3c88db6e002332 */
+"warningNotificationsDisabledButton" = "Schakel ze in via de instellingen";
+
+/* loco:6481d7112f7eca9f7e0ad572 */
+"warningNotificationsDisabledDescription" = "WAARSCHUWING: Pushmeldingen zijn uitgeschakeld.";
+
+/* loco:635fab674606bd5f944f7784 */
+"workInProgressTitle" = "Binnenkort beschikbaar";
