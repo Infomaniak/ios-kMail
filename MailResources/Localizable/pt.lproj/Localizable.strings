@@ -4,7 +4,7 @@
  * Locale: pt, Portuguese
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ * Exported at: Tue, 17 Mar 2026 08:10:03 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -32,7 +32,7 @@
 "actionCancelSnooze" = "Cancelar lembrete";
 
 /* loco:629f0e12701ef82cde591a62 */
-"actionDelete" = "Excluir";
+"actionDelete" = "Eliminar";
 
 /* loco:629f0fe5f3c27b205b282582 */
 "actionEditMenu" = "Editar menu";
@@ -1691,7 +1691,7 @@
 "snackbarMoveCancelled" = "Movimento cancelado";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "Senha copiada";
+"snackbarPasswordCopied" = "Palavra-passe";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reação %@ enviada";
