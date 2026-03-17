@@ -7,6 +7,12 @@ on:
 jobs:
   ai-review:
     runs-on: ubuntu-latest
+  
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+          
     steps:
     - name: PR Agent action step
       uses: Codium-ai/pr-agent@main
@@ -17,3 +23,5 @@ jobs:
         github_action_config.auto_review: "true"
         github_action_config.auto_describe: "false"
         github_action_config.auto_improve: "false"
+        github_action_config.pr_actions: '["opened","reopened","ready_for_review","synchronize"]'
+        
