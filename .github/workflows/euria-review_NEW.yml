@@ -17,14 +17,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
     - name: PR Agent action step
-      uses: Codium-ai/pr-agent@main
+      uses: qodo-ai/pr-agent@main  # Updated to qodo-ai
       env:
-        OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
-        OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
-        OPENAI_MODEL: "moonshotai/Kimi-K2.5"
+        OPENAI__KEY: ${{ secrets.EURIA_API_KEY }}
+        OPENAI__API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
+        CONFIG__MODEL: "moonshotai/Kimi-K2.5"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         github_action_config.auto_review: "true"
         github_action_config.auto_describe: "false"
         github_action_config.auto_improve: "false"
         github_action_config.pr_actions: '["opened","reopened","ready_for_review","synchronize"]'
-        
