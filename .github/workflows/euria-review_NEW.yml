@@ -17,7 +17,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
     - name: PR Agent action step
-      uses: qodo-ai/pr-agent@main
+      uses: qodo-ai/pr-agent@1b0609a013f53694c36d457149bde70abf50c048 # V0.32
       env:
         OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
         OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
