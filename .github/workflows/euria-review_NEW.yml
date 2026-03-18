@@ -4,6 +4,14 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   ai-review:
     runs-on: ubuntu-latest
@@ -18,7 +26,7 @@ jobs:
         CONFIG__MODEL: "openai/moonshotai/Kimi-K2.5"
         CONFIG__CUSTOM_MODEL_MAX_TOKENS: 256000
 
-        github_action_config.auto_review: "true" # Global review
-        github_action_config.auto_describe: "false"
-        github_action_config.auto_improve: "true" # Inline review comments
+        github_action_config.auto_review: "true"
+        github_action_config.auto_describe: "true"
+        github_action_config.auto_improve: "true"
         github_action_config.pr_actions: '["opened","reopened","ready_for_review","synchronize"]'
