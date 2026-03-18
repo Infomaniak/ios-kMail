@@ -22,7 +22,7 @@ jobs:
         # OPENAI__KEY: ${{ secrets.EURIA_API_KEY }}
         OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
         OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
-        CONFIG__MODEL: "Kimi-K2.5"
+        CONFIG__MODEL: "moonshotai/Kimi-K2.5"
         CONFIG__FALLBACK_MODELS: '[]'  # Empty array = no fallback
         CONFIG__CUSTOM_MODEL_MAX_TOKENS: "128000"  # Required for custom models
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

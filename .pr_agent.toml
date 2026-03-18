@@ -1,0 +1,11 @@
+[CONFIG]
+model="moonshotai/Kimi-K2.5"
+
+[PR_REVIEWER]
+auto_review=true
+review_on_pr_open=true
+review_on_push=true
+inline_code_comments=true
+
+[PR_CODE_SUGGESTIONS]
+num_code_suggestions=8
