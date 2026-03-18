@@ -7,26 +7,18 @@ on:
 jobs:
   ai-review:
     runs-on: ubuntu-latest
-  
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
           
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
     - name: PR Agent action step
       uses: qodo-ai/pr-agent@1b0609a013f53694c36d457149bde70abf50c048 # V0.32
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OPENAI_KEY: ${{ secrets.EURIA_API_KEY }}
         OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
         CONFIG__MODEL: "openai/moonshotai/Kimi-K2.5"
-        CONFIG__CUSTOM_MODEL_MAX_TOKENS: 128000
-        CONFIG__PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: "true"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CONFIG__CUSTOM_MODEL_MAX_TOKENS: 256000
 
-        github_action_config.auto_review: "true"
+        github_action_config.auto_review: "true" # Global review
         github_action_config.auto_describe: "false"
-        github_action_config.auto_improve: "true"
+        github_action_config.auto_improve: "true" # Inline review comments
         github_action_config.pr_actions: '["opened","reopened","ready_for_review","synchronize"]'
