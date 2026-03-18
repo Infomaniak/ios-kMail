@@ -25,8 +25,12 @@ jobs:
         OPENAI_API_BASE: "https://api.infomaniak.com/2/ai/27/openai/v1"
         CONFIG__MODEL: "openai/moonshotai/Kimi-K2.5"
         CONFIG__CUSTOM_MODEL_MAX_TOKENS: 256000
+        # Enable inline commitable code suggestions
+        PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: "true"
+        # Optional: Configure dual publishing (shows suggestions in both table AND inline)
+        PR_CODE_SUGGESTIONS__DUAL_PUBLISHING_SCORE_THRESHOLD: "7"
 
         github_action_config.auto_review: "true"
-        github_action_config.auto_describe: "true"
+        github_action_config.auto_describe: "false"
         github_action_config.auto_improve: "true"
         github_action_config.pr_actions: '["opened","reopened","ready_for_review","synchronize"]'
