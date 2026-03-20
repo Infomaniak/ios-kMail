@@ -1,1 +1,1 @@
-- Support for new languages
+- Support for new languages.
