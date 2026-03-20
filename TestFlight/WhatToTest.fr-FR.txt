@@ -1,4 +1,1 @@
-- Alerte en cas d'oubli de pièce-jointe
-- Ajout de plusieurs destinataires au collage
-- Correction de problèmes à l'ajout de pièce-jointes
-- Corrections de bugs et améliorations
+- Ajout de nouvelles langues

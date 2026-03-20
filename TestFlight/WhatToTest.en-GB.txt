@@ -1,4 +1,1 @@
-- Alert in case you forgot to add attachments
-- Add multiple recipients on paste
-- Fix issues when adding attachments
-- Bug fixes and improvements
+- Support for new languages
