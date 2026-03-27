@@ -124,6 +124,12 @@ public extension MailApiFetcher {
 
     func summarize(content: String) async throws -> String {
         try await perform(request: authenticatedRequest(.summarize,
+														method: .post,
+                                                        parameters: ["content": content]))
+    }
+
+    func translate(content: String) async throws -> String {
+        try await perform(request: authenticatedRequest(.translate,
                                                         method: .post,
                                                         parameters: ["content": content]))
     }
