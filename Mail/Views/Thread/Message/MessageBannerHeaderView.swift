@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -97,6 +98,21 @@ struct MessageBannerHeaderView: View {
                         message: MailResourcesStrings.Localizable.acknowledgementMessageSent,
                         showBottomSeparator: showBottomSeparator
                     ) {}
+                }
+            case .translated:
+                MessageHeaderActionView(
+                    icon: KSuiteResources.euria.swiftUIImage,
+                    message: "Traduit en français",
+                    showBottomSeparator: showBottomSeparator
+                ) {
+                    Button {
+                        guard let liveMessage = message.thaw() else { return }
+                        try? liveMessage.realm?.write {
+                            liveMessage.isShowingTranslated = false
+                        }
+                    } label: {
+                        Text("Afficher le message original")
+                    }
                 }
             }
         }

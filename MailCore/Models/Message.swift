@@ -198,6 +198,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
     @Persisted public var localSafeDisplay = false
+    @Persisted public var isShowingTranslated = false
 
     @Persisted public var calendarEventResponse: CalendarEventResponse?
 

@@ -281,6 +281,7 @@ public class ActionsManager: ObservableObject {
                 translatedBody.value = response
                 translatedBody.type = message.body?.type
                 liveMessage.translatedBody = translatedBody
+                liveMessage.isShowingTranslated = true
             }
         default:
             break

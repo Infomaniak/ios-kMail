@@ -62,6 +62,10 @@ struct MessageSubHeaderView: View {
             result.append(.acknowledge)
         }
 
+        if message.isShowingTranslated {
+            result.append(.translated)
+        }
+
         return result
     }
 

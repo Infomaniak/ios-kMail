@@ -44,7 +44,8 @@ public enum MessageBodyUtils {
     ]
 
     public static func prepareWithPrintOption(message: Message) async -> PresentableBody? {
-        guard let messageBody = message.body else {
+        guard let messageBody = message.isShowingTranslated ?
+            message.translatedBody : message.body else {
             return nil
         }
 
