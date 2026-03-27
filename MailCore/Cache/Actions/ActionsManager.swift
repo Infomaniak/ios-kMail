@@ -269,10 +269,19 @@ public class ActionsManager: ObservableObject {
             guard let message = messages.first else { return }
             try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
         case .translateMessage:
-            guard let content = messages.first?.body?.value else {
+            guard let message = messages.first,
+                  let content = message.body?.value else {
                 return
             }
             let response = try await mailboxManager.translate(content: content)
+
+            guard let liveMessage = message.thaw() else { return }
+            try? liveMessage.realm?.write {
+                let translatedBody = Body()
+                translatedBody.value = response
+                translatedBody.type = message.body?.type
+                liveMessage.translatedBody = translatedBody
+            }
         default:
             break
         }
