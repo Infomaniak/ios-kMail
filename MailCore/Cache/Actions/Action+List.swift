@@ -126,6 +126,7 @@ extension Action: CaseIterable {
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
             summarize ? .summarize : nil,
+            .translateMessage,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -541,6 +542,12 @@ public extension Action {
         id: "activeMultiselect",
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
+        matomoName: ""
+    )
+    static let translateMessage = Action(
+        id: "translateMessage",
+        title: "traduire",
+        iconResource: MailResourcesAsset.aiWriter,
         matomoName: ""
     )
 }

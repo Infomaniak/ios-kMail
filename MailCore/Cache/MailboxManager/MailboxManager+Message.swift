@@ -239,6 +239,9 @@ public extension MailboxManager {
             }
             throw error
         }
+
+    func translate(content: String) async throws -> String {
+        return try await apiFetcher.translate(content: content)
     }
 
     private func undoAction(

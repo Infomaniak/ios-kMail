@@ -268,6 +268,11 @@ public class ActionsManager: ObservableObject {
         case .summarize:
             guard let message = messages.first else { return }
             try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
+        case .translateMessage:
+            guard let content = messages.first?.body?.value else {
+                return
+            }
+            let response = try await mailboxManager.translate(content: content)
         default:
             break
         }
