@@ -97,8 +97,7 @@ extension MessagesWorker {
     private func prepareBody(of message: Message) async {
         guard !Task.isCancelled else { return }
 
-        guard !hasPresentableBody(messageUid: message.uid),
-              let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
+        guard let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
             return
         }
 

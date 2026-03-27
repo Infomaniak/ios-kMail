@@ -33,6 +33,7 @@ extension EnvironmentValues {
 
 /// Something that can display an email
 struct MessageView: View {
+    @EnvironmentObject private var messagesWorker: MessagesWorker
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -90,6 +91,11 @@ struct MessageView: View {
                         }
                     }
                 }
+            }
+        }
+        .onChange(of: message.isShowingTranslated) { _ in
+            Task {
+                try await messagesWorker.fetchAndProcessIfNeeded(messageUid: message.uid)
             }
         }
         .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
