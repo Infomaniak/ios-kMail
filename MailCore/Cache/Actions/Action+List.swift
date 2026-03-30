@@ -108,6 +108,7 @@ extension Action: CaseIterable {
                                           featureAvailableProvider: FeatureAvailableProvider)
         -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
                                             featureAvailableProvider: featureAvailableProvider)
@@ -124,9 +125,10 @@ extension Action: CaseIterable {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
+        let hasAccessToTranslateFeature = featureAvailableProvider.isAvailable(.translate)
         var tempListActions: [Action?] = [
             summarize ? .summarize : nil,
-            .translateMessage,
+			hasAccessToTranslateFeature ? .translateMessage : nil,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
