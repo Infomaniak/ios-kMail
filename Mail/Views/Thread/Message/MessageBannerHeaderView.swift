@@ -102,13 +102,16 @@ struct MessageBannerHeaderView: View {
             case .translating:
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,
-                    message: "Euria traduit votre email...",
+                    message: MailResourcesStrings.Localizable.euriaTranslateMessage,
                     showBottomSeparator: showBottomSeparator
                 ) {}
             case .translated:
+                let targetLanguageCode = Bundle.main.preferredLocalizations.first
+                let targetLanguage = Locale.current.localizedString(forLanguageCode: targetLanguageCode ?? "") ?? ""
+
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,
-                    message: "Traduit en français",
+                    message: MailResourcesStrings.Localizable.messageTranslatedTitle(targetLanguage),
                     showBottomSeparator: showBottomSeparator
                 ) {
                     Button {
@@ -117,7 +120,7 @@ struct MessageBannerHeaderView: View {
                             liveMessage.isShowingTranslated = false
                         }
                     } label: {
-                        Text("Afficher le message original")
+                        Text(MailResourcesStrings.Localizable.buttonShowOriginal)
                     }
                 }
             }

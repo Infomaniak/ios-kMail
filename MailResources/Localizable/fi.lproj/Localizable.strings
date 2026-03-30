@@ -469,6 +469,9 @@
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Jaa";
 
+/* loco:69ca3f19514796250a0b57a2 */
+"buttonShowOriginal" = "Näytä alkuperäinen viesti";
+
 /* loco:64edf250cb0c86ab3001d1b2 */
 "buttonStart" = "Aloita";
 
@@ -480,6 +483,9 @@
 
 /* loco:62b2cafadce4b504255da0e3 */
 "buttonTextOptionsOpen" = "Avaa tekstin muotoilu";
+
+/* loco:69c657cbaa1a962ca2045675 */
+"buttonTranslate" = "Käännä";
 
 /* loco:651588aec32dc5a9eb0b6c94 */
 "buttonTry" = "Kokeile";
@@ -964,6 +970,9 @@
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Tuntematon virhe";
 
+/* loco:69ca4f4ad7262098b00dd682 */
+"euriaTranslateMessage" = "Euria kääntää viestisi…";
+
 /* loco:66751c058dba7adeaa010912 */
 "expandMessage" = "Näytä viesti";
 
@@ -1146,6 +1155,9 @@
 
 /* loco:69f07faf00857b6e8f0314f2 */
 "messageSummaryLoading" = "Viestin yhteenveto…";
+
+/* loco:69ca51d3ab0a8c7268007f32 */
+"messageTranslatedTitle" = "Käännetty %@";
 
 /* loco:6723980d4062e74f78028152 */
 "mondayAfternoon" = "Maanantai-iltapäivä";
