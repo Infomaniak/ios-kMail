@@ -99,6 +99,12 @@ struct MessageBannerHeaderView: View {
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }
+            case .translating:
+                MessageHeaderActionView(
+                    icon: KSuiteResources.euria.swiftUIImage,
+                    message: "Euria traduit votre email...",
+                    showBottomSeparator: showBottomSeparator
+                ) {}
             case .translated:
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,

@@ -273,6 +273,10 @@ public class ActionsManager: ObservableObject {
                   let content = message.body?.value else {
                 return
             }
+            guard let liveMessage = message.thaw() else { return }
+            try? liveMessage.realm?.write {
+                liveMessage.isTranslating = true
+            }
             let response = try await mailboxManager.translate(content: content)
 
             guard let liveMessage = message.thaw() else { return }
@@ -281,6 +285,7 @@ public class ActionsManager: ObservableObject {
                 translatedBody.value = response
                 translatedBody.type = message.body?.type
                 liveMessage.translatedBody = translatedBody
+                liveMessage.isTranslating = false
                 liveMessage.isShowingTranslated = true
             }
         default:
