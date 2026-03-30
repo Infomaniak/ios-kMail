@@ -270,24 +270,14 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
         case .translateMessage:
             guard let message = messages.first,
-                  let content = message.body?.value else {
+                  let content = message.body?.value,
+                  let liveMessage = message.thaw() else {
                 return
             }
-            guard let liveMessage = message.thaw() else { return }
             try? liveMessage.realm?.write {
                 liveMessage.isTranslating = true
             }
-            let response = try await mailboxManager.translate(content: content)
-
-            guard let liveMessage = message.thaw() else { return }
-            try? liveMessage.realm?.write {
-                let translatedBody = Body()
-                translatedBody.value = response
-                translatedBody.type = message.body?.type
-                liveMessage.translatedBody = translatedBody
-                liveMessage.isTranslating = false
-                liveMessage.isShowingTranslated = true
-            }
+            try await performTranslate(message: message, content: content)
         default:
             break
         }
@@ -536,6 +526,33 @@ public class ActionsManager: ObservableObject {
 
         let uniqueThreads = Set(selectedMessages.uniqueThreadsInFolder(originFolder))
         return uniqueThreads.count == 1
+    }
+
+    private func performTranslate(message: Message, content: String) async throws {
+        guard !isBodyTranslated(message: message) else { return }
+
+        let response = try await mailboxManager.translate(content: content)
+
+        guard let liveMessage = message.thaw() else { return }
+        try? liveMessage.realm?.write {
+            let translatedBody = Body()
+            translatedBody.value = response
+            translatedBody.type = message.body?.type
+            liveMessage.translatedBody = translatedBody
+            liveMessage.isTranslating = false
+            liveMessage.isShowingTranslated = true
+        }
+    }
+
+    private func isBodyTranslated(message: Message) -> Bool {
+        guard let liveMessage = message.thaw(),
+              liveMessage.translatedBody?.value != nil else { return false }
+
+        try? liveMessage.realm?.write {
+            liveMessage.isTranslating = false
+            liveMessage.isShowingTranslated = true
+        }
+        return true
     }
 }
 
