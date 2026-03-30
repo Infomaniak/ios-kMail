@@ -39,68 +39,70 @@ struct CreateAccountView: View {
     @ObservedObject var loginHandler: LoginHandler
 
     var body: some View {
-        VStack(spacing: 0) {
-            CloseButton(size: .medium, dismissAction: dismiss)
-                .padding(.top, IKPadding.onBoardingLogoTop)
-                .padding(.top, value: .micro)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        NavigationStack {
+            VStack(spacing: 0) {
+                accentColor.createAccountImage.swiftUIImage
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.top, value: .large)
+                    .padding(.bottom, value: .giant)
 
-            accentColor.createAccountImage.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .padding(.top, value: .large)
-                .padding(.bottom, value: .giant)
+                Text(MailResourcesStrings.Localizable.newAccountTitle)
+                    .textStyle(.header1)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, value: .large)
 
-            Text(MailResourcesStrings.Localizable.newAccountTitle)
-                .textStyle(.header1)
-                .multilineTextAlignment(.center)
+                HStack {
+                    Text(MailResourcesStrings.Localizable.newAccountStorageMail)
+                        .textStyle(.labelMediumAccent)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(value: .mini)
+                        .background(accentColor.secondary.swiftUIColor)
+                        .clipShape(Capsule())
+                        .multilineTextAlignment(.center)
+                    Text(MailResourcesStrings.Localizable.newAccountStorageDrive)
+                        .textStyle(.labelMediumAccent)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(value: .mini)
+                        .background(accentColor.secondary.swiftUIColor)
+                        .clipShape(Capsule())
+                        .multilineTextAlignment(.center)
+                }
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, value: .large)
 
-            HStack {
-                Text(MailResourcesStrings.Localizable.newAccountStorageMail)
-                    .textStyle(.labelMediumAccent)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(value: .mini)
-                    .background(accentColor.secondary.swiftUIColor)
-                    .clipShape(Capsule())
+                Text(MailResourcesStrings.Localizable.newAccountDescription)
+                    .textStyle(.bodySmallSecondary)
+                    .padding(.bottom, value: .large)
                     .multilineTextAlignment(.center)
-                Text(MailResourcesStrings.Localizable.newAccountStorageDrive)
-                    .textStyle(.labelMediumAccent)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(value: .mini)
-                    .background(accentColor.secondary.swiftUIColor)
-                    .clipShape(Capsule())
-                    .multilineTextAlignment(.center)
+
+                Spacer()
+
+                Button(MailResourcesStrings.Localizable.buttonStart) {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .account, name: "openCreationWebview")
+                    isPresentingCreateAccount = true
+                }
+                .buttonStyle(.ikBorderedProminent)
+                .ikButtonLoading(loginHandler.isLoading)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .padding(.bottom, value: .medium)
             }
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.bottom, value: .large)
-
-            Text(MailResourcesStrings.Localizable.newAccountDescription)
-                .textStyle(.bodySmallSecondary)
-                .padding(.bottom, value: .large)
-                .multilineTextAlignment(.center)
-
-            Spacer()
-
-            Button(MailResourcesStrings.Localizable.buttonStart) {
-                @InjectService var matomo: MatomoUtils
-                matomo.track(eventWithCategory: .account, name: "openCreationWebview")
-                isPresentingCreateAccount = true
+            .padding(.horizontal, value: .large)
+            .sheet(isPresented: $isPresentingCreateAccount) {
+                RegisterView(registrationProcess: .mail) { viewController in
+                    guard let viewController else { return }
+                    loginHandler.loginAfterAccountCreation(from: viewController)
+                }
             }
-            .buttonStyle(.ikBorderedProminent)
-            .ikButtonLoading(loginHandler.isLoading)
-            .ikButtonFullWidth(true)
-            .controlSize(.large)
-            .padding(.bottom, value: .medium)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    CloseButton(size: .medium, dismissAction: dismiss)
+                }
+            }
+            .matomoView(view: [MatomoUtils.View.onboarding.displayName, "CreateAccount"])
         }
-        .padding(.horizontal, value: .large)
-        .sheet(isPresented: $isPresentingCreateAccount) {
-            RegisterView(registrationProcess: .mail) { viewController in
-                guard let viewController else { return }
-                loginHandler.loginAfterAccountCreation(from: viewController)
-            }
-        }
-        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "CreateAccount"])
     }
 }
 
