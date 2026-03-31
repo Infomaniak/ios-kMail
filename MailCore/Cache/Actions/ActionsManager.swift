@@ -274,6 +274,14 @@ public class ActionsManager: ObservableObject {
                   let liveMessage = message.thaw() else {
                 return
             }
+
+            guard !isBodyTranslated(message: message) else {
+                try? liveMessage.realm?.write {
+                    liveMessage.isShowingTranslated = true
+                }
+                return
+            }
+
             try? liveMessage.realm?.write {
                 liveMessage.isTranslating = true
             }
@@ -529,8 +537,6 @@ public class ActionsManager: ObservableObject {
     }
 
     private func performTranslate(message: Message, content: String) async throws {
-        guard !isBodyTranslated(message: message) else { return }
-
         do {
             let response = try await mailboxManager.translate(content: content)
 
@@ -554,14 +560,8 @@ public class ActionsManager: ObservableObject {
     }
 
     private func isBodyTranslated(message: Message) -> Bool {
-        guard let liveMessage = message.thaw(),
-              liveMessage.translatedBody?.value != nil else { return false }
-
-        try? liveMessage.realm?.write {
-            liveMessage.isTranslating = false
-            liveMessage.isShowingTranslated = true
-        }
-        return true
+        guard let liveMessage = message.thaw() else { return false }
+        return liveMessage.translatedBody?.value != nil
     }
 }
 
