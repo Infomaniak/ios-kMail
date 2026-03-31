@@ -78,6 +78,7 @@ struct MessageView: View {
                             displayContentBlockedActionView: $displayContentBlockedActionView,
                             initialContentLoading: $initialContentLoading,
                             isRemoteContentBlocked: isRemoteContentBlocked,
+                            isShowingTranslated: message.isShowingTranslated,
                             messageUid: message.uid
                         )
 

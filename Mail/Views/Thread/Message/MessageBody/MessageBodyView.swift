@@ -30,6 +30,7 @@ struct MessageBodyView: View {
     @Binding var initialContentLoading: Bool
 
     let isRemoteContentBlocked: Bool
+    let isShowingTranslated: Bool
     let messageUid: String
 
     var body: some View {
@@ -43,7 +44,7 @@ struct MessageBodyView: View {
                 MessageBodyContentView(
                     displayContentBlockedActionView: $displayContentBlockedActionView,
                     initialContentLoading: $initialContentLoading,
-                    presentableBody: messagesWorker.presentableBodies[messageUid],
+                    presentableBody: messagesWorker.presentableBody(for: messageUid, isShowingTranslated: isShowingTranslated),
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid
                 )
@@ -66,6 +67,7 @@ struct MessageBodyView: View {
         displayContentBlockedActionView: .constant(false),
         initialContentLoading: .constant(false),
         isRemoteContentBlocked: false,
+        isShowingTranslated: false,
         messageUid: PreviewHelper.sampleMessage.uid
     )
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
