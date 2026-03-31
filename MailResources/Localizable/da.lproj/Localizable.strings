@@ -1036,6 +1036,9 @@
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "Fra:";
 
+/* loco:69cb80232b32abb97a0c8863 */
+"genericMessageTranslated" = "Besked oversat";
+
 /* loco:6784cd82593faaee6e0cb7b2 */
 "groupContactsTitle" = "Gruppe: %@";
 

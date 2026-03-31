@@ -106,12 +106,18 @@ struct MessageBannerHeaderView: View {
                     showBottomSeparator: showBottomSeparator
                 ) {}
             case .translated:
-                let targetLanguageCode = Bundle.main.preferredLocalizations.first
-                let targetLanguage = Locale.current.localizedString(forLanguageCode: targetLanguageCode ?? "") ?? ""
+                let bannerMessage = {
+                    let targetLanguageCode = Bundle.main.preferredLocalizations.first
+                    guard let targetLanguage = Locale.current.localizedString(forLanguageCode: targetLanguageCode ?? "") else {
+                        return MailResourcesStrings.Localizable.genericMessageTranslated
+                    }
+
+                    return MailResourcesStrings.Localizable.messageTranslatedTitle(targetLanguage)
+                }()
 
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.messageTranslatedTitle(targetLanguage),
+                    message: bannerMessage,
                     showBottomSeparator: showBottomSeparator
                 ) {
                     Button {
