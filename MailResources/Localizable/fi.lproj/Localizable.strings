@@ -1918,6 +1918,9 @@
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "Et voi lisätä tätä osoitetta, koska olet saavuttanut vastaanottajien rajan";
 
+/* loco:69cb6ac1b93b3cd4af04c302 */
+"translationTargetSameAsSource" = "Tämä viesti on jo omalla kielelläsi";
+
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Roskakori";
 

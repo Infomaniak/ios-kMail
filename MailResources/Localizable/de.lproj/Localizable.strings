@@ -1918,6 +1918,9 @@
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "Sie können diese Adresse nicht hinzufügen, da Sie die Höchstzahl an Empfängern erreicht haben";
 
+/* loco:69cb6ac1b93b3cd4af04c302 */
+"translationTargetSameAsSource" = "Diese Nachricht ist bereits in Ihrer Sprache";
+
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Papierkorb";
 

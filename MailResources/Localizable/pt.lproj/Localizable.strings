@@ -1918,6 +1918,9 @@
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "Não pode adicionar este endereço pois atingiu o limite de destinatários";
 
+/* loco:69cb6ac1b93b3cd4af04c302 */
+"translationTargetSameAsSource" = "Esta mensagem já está na sua língua";
+
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Lixo";
 

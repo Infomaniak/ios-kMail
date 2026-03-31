@@ -531,16 +531,25 @@ public class ActionsManager: ObservableObject {
     private func performTranslate(message: Message, content: String) async throws {
         guard !isBodyTranslated(message: message) else { return }
 
-        let response = try await mailboxManager.translate(content: content)
+        do {
+            let response = try await mailboxManager.translate(content: content)
 
-        guard let liveMessage = message.thaw() else { return }
-        try? liveMessage.realm?.write {
-            let translatedBody = Body()
-            translatedBody.value = response
-            translatedBody.type = message.body?.type
-            liveMessage.translatedBody = translatedBody
-            liveMessage.isTranslating = false
-            liveMessage.isShowingTranslated = true
+            guard let liveMessage = message.thaw() else { return }
+            try? liveMessage.realm?.write {
+                let translatedBody = Body()
+                translatedBody.value = response
+                translatedBody.type = message.body?.type
+                liveMessage.translatedBody = translatedBody
+                liveMessage.isTranslating = false
+                liveMessage.isShowingTranslated = true
+            }
+        } catch {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            guard let liveMessage = message.thaw() else { return }
+            try? liveMessage.realm?.write {
+                liveMessage.isTranslating = false
+            }
+            snackbarPresenter.show(message: error.localizedDescription)
         }
     }
 

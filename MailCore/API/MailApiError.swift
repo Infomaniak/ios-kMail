@@ -266,7 +266,14 @@ public class MailApiError: MailError {
         emojiReactionRecipientNotAllowed,
         emojiReactionMessageInReplyToEncrypted,
         emojiReactionMaxReactionReached,
-        emojiReactionAlreadyUsed
+        emojiReactionAlreadyUsed,
+
+        // Mail translation
+        MailApiError(
+            code: "translation__target_same_as_source",
+            localizedDescription: MailResourcesStrings.Localizable.translationTargetSameAsSource,
+            shouldDisplay: true
+        )
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {
