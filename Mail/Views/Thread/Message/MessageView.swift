@@ -33,9 +33,9 @@ extension EnvironmentValues {
 
 /// Something that can display an email
 struct MessageView: View {
-    @EnvironmentObject private var messagesWorker: MessagesWorker
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
+    @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var displayContentBlockedActionView = false
@@ -95,7 +95,7 @@ struct MessageView: View {
         }
         .onChange(of: message.isShowingTranslated) { _ in
             Task {
-                try await messagesWorker.fetchAndProcessIfNeeded(messageUid: message.uid)
+                try? await messagesWorker.fetchAndProcessIfNeeded(messageUid: message.uid)
             }
         }
         .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
@@ -114,6 +114,7 @@ struct MessageView: View {
         message: PreviewHelper.sampleMessage
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
