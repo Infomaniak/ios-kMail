@@ -31,6 +31,11 @@ extension MessagesWorker {
     struct PresentableBodyCacheKey: Hashable {
         let messageUid: String
         let isShowingTranslated: Bool
+
+        init(messageUid: String, isShowingTranslated: Bool) {
+            self.messageUid = messageUid
+            self.isShowingTranslated = isShowingTranslated
+        }
     }
 }
 
@@ -150,7 +155,10 @@ extension MessagesWorker {
     ) async {
         guard !Task.isCancelled else { return }
 
-        let cacheKey = PresentableBodyCacheKey(messageUid: frozenMessage.uid, isShowingTranslated: frozenMessage.isShowingTranslated)
+        let cacheKey = PresentableBodyCacheKey(
+            messageUid: frozenMessage.uid,
+            isShowingTranslated: frozenMessage.isShowingTranslated
+        )
         guard let presentableBody = presentableBodies[cacheKey] else { return }
 
         let base64Images = await bodyImageProcessor.fetchBase64Images(attachments, mailboxManager: mailboxManager)
