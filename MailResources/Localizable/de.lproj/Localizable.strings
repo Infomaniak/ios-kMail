@@ -1427,13 +1427,13 @@
 "settingsAutoAdvancePreviousThreadTitle" = "Voriges Thema";
 
 /* loco:65b274f8719e4e08b103c7f4 */
-"settingsAutoAdvanceTitle" = "Autovorschuss";
+"settingsAutoAdvanceTitle" = "Automatisches Fortfahren";
 
 /* loco:62c693f572adfe66fd2a82b7 */
 "settingsCancellationPeriodDescription" = "Sie haben die Möglichkeit, den Versand Ihrer E-Mail bis zu 30 Sekunden abzubrechen";
 
 /* loco:627a53b37b420855254af032 */
-"settingsCancellationPeriodTitle" = "Kündigungsfrist senden";
+"settingsCancellationPeriodTitle" = "Sendeverzögerung";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Verwaltung der Daten";
@@ -1466,7 +1466,7 @@
 "settingsExternalContentDescription" = "Externe Inhalte anzeigen";
 
 /* loco:627a329eeeb721567557b3a2 */
-"settingsExternalContentTitle" = "Externer Inhalte";
+"settingsExternalContentTitle" = "Externe Inhalte";
 
 /* loco:627a3cf1cf1b8849996f97c2 */
 "settingsInboxAlias" = "Alias";
@@ -1604,7 +1604,7 @@
 "settingsThemeTitle" = "Thema";
 
 /* loco:627a317093c0713ccc6df012 */
-"settingsThreadListDensityTitle" = "Dichte der Fadenliste";
+"settingsThreadListDensityTitle" = "Zeilendichte";
 
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Modus der Nachrichtenanzeige";
