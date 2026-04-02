@@ -549,7 +549,7 @@ public extension Action {
     static let translateMessage = Action(
         id: "translateMessage",
         title: MailResourcesStrings.Localizable.buttonTranslate,
-        iconResource: MailResourcesAsset.aiWriter,
+        iconResource: MailResourcesAsset.translate,
         matomoName: ""
     )
 }
