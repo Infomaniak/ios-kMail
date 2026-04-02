@@ -61,18 +61,26 @@ public struct CloseButton: View {
     }
 
     public var body: some View {
-        Button(action: dismissHandler) {
-            Label {
-                Text(MailResourcesStrings.Localizable.buttonClose)
-            } icon: {
-                Image(systemName: "xmark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: size?.rawValue, height: size?.rawValue)
+        if #available(iOS 26.0, *) {
+            Button(role: .close) {
+                dismissHandler()
             }
+            .labelStyle(.iconOnly)
+            .keyboardShortcut(.cancelAction)
+        } else {
+            Button(action: dismissHandler) {
+                Label {
+                    Text(MailResourcesStrings.Localizable.buttonClose)
+                } icon: {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: size?.rawValue, height: size?.rawValue)
+                }
+            }
+            .labelStyle(.iconOnly)
+            .keyboardShortcut(.cancelAction)
         }
-        .labelStyle(.iconOnly)
-        .keyboardShortcut(.cancelAction)
     }
 }
 
