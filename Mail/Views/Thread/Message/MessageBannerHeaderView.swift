@@ -121,9 +121,8 @@ struct MessageBannerHeaderView: View {
                     showBottomSeparator: showBottomSeparator
                 ) {
                     Button {
-                        guard let liveMessage = message.thaw() else { return }
-                        try? liveMessage.realm?.write {
-                            liveMessage.isShowingTranslated = false
+                        withAnimation {
+                            $message.isShowingTranslated.wrappedValue = false
                         }
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonShowOriginal)
