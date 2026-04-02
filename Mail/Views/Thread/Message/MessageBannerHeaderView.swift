@@ -102,6 +102,7 @@ struct MessageBannerHeaderView: View {
             case .translating:
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,
+                    animationView: EuriaAnimationView(),
                     message: MailResourcesStrings.Localizable.euriaTranslateMessage,
                     showBottomSeparator: showBottomSeparator
                 ) {}
@@ -117,6 +118,7 @@ struct MessageBannerHeaderView: View {
 
                 MessageHeaderActionView(
                     icon: KSuiteResources.euria.swiftUIImage,
+                    animationView: EuriaAnimationView(),
                     message: bannerMessage,
                     showBottomSeparator: showBottomSeparator
                 ) {

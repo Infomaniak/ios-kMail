@@ -34,6 +34,7 @@ struct MessageHeaderDivider: View {
 struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
+    var animationView: (any View)?
     let message: String
     var showTopSeparator = true
     let showBottomSeparator: Bool
@@ -65,12 +66,18 @@ struct MessageHeaderActionView<Content: View>: View {
 
             VStack(alignment: .leading) {
                 HStack(spacing: IKPadding.small) {
-                    icon
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: iconSize)
-                        .foregroundStyle(iconColor)
-                        .accessibilityHidden(true)
+                    if let animationView {
+                        AnyView(animationView)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: iconSize)
+                    } else {
+                        icon
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: iconSize)
+                            .foregroundStyle(iconColor)
+							.accessibilityHidden(true)
+                    }
 
                     Text(message)
                         .font(MailTextStyle.label.font)
