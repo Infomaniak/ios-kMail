@@ -65,7 +65,7 @@ let package = Package(
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "17.0.1")),
-        .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "18.10.1")),
+        .package(url: "https://github.com/Infomaniak/ios-core", branch: "chore/upgrade-realm"),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "24.10.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "23.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.5")),
@@ -83,7 +83,7 @@ let package = Package(
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
         .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
         .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
-        .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.41.0")),
+        .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "20.0.4")),
         .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "26.0.0")),
         .package(url: "https://github.com/exyte/SVGView", .upToNextMajor(from: "1.0.6"))
     ]

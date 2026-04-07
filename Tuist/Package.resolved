@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "e938f8c66708e7352fc7e3512647fa54255b267a",
-        "version" : "5.11.2"
+        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
+        "version" : "5.12.0"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "2ccbbaa031f11090c8d39b70daaf6a0d4484819d",
-        "version" : "1.34.0"
+        "revision" : "5d9828a3a92e0410ecc89580ebbd912737b9e9fd",
+        "version" : "1.35.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "4da95f56273cff9a12097502c315031bae9498d7",
-        "version" : "18.10.1"
+        "branch" : "chore/upgrade-realm",
+        "revision" : "7bd4fbfceac6387f0546b646e1b8bd5341a1049c"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43",
-        "version" : "14.14.0"
+        "revision" : "4cc46f8607516226e5465062fdacd088fbd94552",
+        "version" : "20.1.4"
       }
     },
     {
@@ -176,8 +176,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "1c105d34f25af7851c5a3ff146be006de247a6b4",
-        "version" : "10.54.6"
+        "revision" : "600e187711e5fa4e8e2c0429cacee27e8e44f112",
+        "version" : "20.0.4"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "a49e7c2148ac9e38bd35ef4f13bc9d6ea3ff0b81",
-        "version" : "9.11.0"
+        "revision" : "54d5fbcdea46c37a5de01bab5fef48dc78baec84",
+        "version" : "9.12.1"
       }
     },
     {
