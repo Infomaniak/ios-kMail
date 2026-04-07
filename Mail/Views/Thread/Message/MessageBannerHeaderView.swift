@@ -101,11 +101,11 @@ struct MessageBannerHeaderView: View {
                 }
             case .translating:
                 MessageHeaderActionView(
-                    icon: KSuiteResources.euria.swiftUIImage,
-                    animationView: EuriaAnimationView(),
                     message: MailResourcesStrings.Localizable.euriaTranslateMessage,
-                    showBottomSeparator: showBottomSeparator
-                ) {}
+                    showBottomSeparator: showBottomSeparator,
+                    animationView: { EuriaAnimationView() },
+                    actions: {}
+                )
             case .translated:
                 let bannerMessage = {
                     let targetLanguageCode = Bundle.main.preferredLocalizations.first
@@ -117,19 +117,19 @@ struct MessageBannerHeaderView: View {
                 }()
 
                 MessageHeaderActionView(
-                    icon: KSuiteResources.euria.swiftUIImage,
-                    animationView: EuriaAnimationView(),
                     message: bannerMessage,
-                    showBottomSeparator: showBottomSeparator
-                ) {
-                    Button {
-                        withAnimation {
-                            $message.isShowingTranslated.wrappedValue = false
+                    showBottomSeparator: showBottomSeparator,
+                    animationView: { EuriaAnimationView() },
+                    actions: {
+                        Button {
+                            withAnimation {
+                                $message.isShowingTranslated.wrappedValue = false
+                            }
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonShowOriginal)
                         }
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonShowOriginal)
                     }
-                }
+                )
             }
         }
     }

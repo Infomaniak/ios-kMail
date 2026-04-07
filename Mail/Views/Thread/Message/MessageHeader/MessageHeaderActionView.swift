@@ -31,18 +31,59 @@ struct MessageHeaderDivider: View {
     }
 }
 
-struct MessageHeaderActionView<Content: View>: View {
+struct MessageHeaderActionView<AnimationView: View, Content: View>: View {
     let iconSize: CGFloat = 16
-    let icon: Image
-    var animationView: (any View)?
+    let icon: Image?
+    let animationView: AnimationView
     let message: String
-    var showTopSeparator = true
+    let showTopSeparator: Bool
     let showBottomSeparator: Bool
-    var iconColor = MailResourcesAsset.textSecondaryColor.swiftUIColor
-    var textColor = MailResourcesAsset.textSecondaryColor.swiftUIColor
-    var shouldDisplayActions = true
+    let iconColor: Color
+    let textColor: Color
+    let shouldDisplayActions: Bool
+    let actions: () -> Content
 
-    @ViewBuilder var actions: () -> Content
+    init(
+        icon: Image,
+        message: String,
+        showTopSeparator: Bool = true,
+        showBottomSeparator: Bool,
+        iconColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor,
+        textColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor,
+        shouldDisplayActions: Bool = true,
+        @ViewBuilder actions: @escaping () -> Content
+    ) where AnimationView == EmptyView {
+        self.icon = icon
+        self.message = message
+        self.showTopSeparator = showTopSeparator
+        self.showBottomSeparator = showBottomSeparator
+        self.iconColor = iconColor
+        self.textColor = textColor
+        self.shouldDisplayActions = shouldDisplayActions
+        animationView = EmptyView()
+        self.actions = actions
+    }
+
+    init(
+        message: String,
+        showTopSeparator: Bool = true,
+        showBottomSeparator: Bool,
+        iconColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor,
+        textColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor,
+        shouldDisplayActions: Bool = true,
+        @ViewBuilder animationView: () -> AnimationView,
+        @ViewBuilder actions: @escaping () -> Content
+    ) {
+        icon = nil
+        self.message = message
+        self.showTopSeparator = showTopSeparator
+        self.showBottomSeparator = showBottomSeparator
+        self.iconColor = iconColor
+        self.textColor = textColor
+        self.shouldDisplayActions = shouldDisplayActions
+        self.animationView = animationView()
+        self.actions = actions
+    }
 
     private var topPadding: CGFloat {
         guard showTopSeparator || showBottomSeparator else {
@@ -66,17 +107,17 @@ struct MessageHeaderActionView<Content: View>: View {
 
             VStack(alignment: .leading) {
                 HStack(spacing: IKPadding.small) {
-                    if let animationView {
-                        AnyView(animationView)
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: iconSize)
-                    } else {
+                    if let icon {
                         icon
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: iconSize)
                             .foregroundStyle(iconColor)
 							.accessibilityHidden(true)
+                    } else {
+                        animationView
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: iconSize)
                     }
 
                     Text(message)
