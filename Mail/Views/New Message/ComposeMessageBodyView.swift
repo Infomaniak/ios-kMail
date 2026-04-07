@@ -56,6 +56,14 @@ struct ComposeMessageBodyView: View {
         #endif
     }
 
+    private var autoCorrectEnabled: Bool {
+        #if targetEnvironment(macCatalyst)
+        return false
+        #else
+        return true
+        #endif
+    }
+
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
     }
@@ -71,7 +79,9 @@ struct ComposeMessageBodyView: View {
             )
             #endif
             AttachmentsHeaderView()
-            RichHTMLEditor(html: $draftBody, textAttributes: textAttributes, spellCheckEnabled: spellCheckEnabled)
+            RichHTMLEditor(html: $draftBody, textAttributes: textAttributes,
+                           spellCheckEnabled: spellCheckEnabled,
+                           autoCorrectEnabled: autoCorrectEnabled)
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
                 .editorCSS(Self.customCSS)
