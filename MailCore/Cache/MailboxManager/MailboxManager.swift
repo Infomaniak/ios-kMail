@@ -40,6 +40,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     public let contactManager: ContactManageable
 
+    public let featureFlagsManager: FeatureFlagsManageable
+
     enum ErrorDomain: Error {
         case missingFolder
         case missingDraft
@@ -73,6 +75,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager
+        self.featureFlagsManager = FeatureFlagsManager()
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
