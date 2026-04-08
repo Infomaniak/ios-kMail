@@ -108,7 +108,6 @@ extension Action: CaseIterable {
                                           featureAvailableProvider: FeatureAvailableProvider)
         -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
                                             featureAvailableProvider: featureAvailableProvider)

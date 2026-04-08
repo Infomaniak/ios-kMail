@@ -549,7 +549,7 @@ public class ActionsManager: ObservableObject {
                 try? liveMessage.realm?.write {
                     let translatedBody = Body()
                     translatedBody.value = response
-                    translatedBody.type = message.body?.type
+                    translatedBody.type = liveMessage.body?.type
                     liveMessage.translatedBody = translatedBody
                     liveMessage.isTranslating = false
                     liveMessage.isShowingTranslated = true
@@ -557,10 +557,11 @@ public class ActionsManager: ObservableObject {
             }
         } catch {
             @InjectService var snackbarPresenter: IKSnackBarPresentable
-            guard let liveMessage = message.thaw() else { return }
-            withAnimation {
-                try? liveMessage.realm?.write {
-                    liveMessage.isTranslating = false
+            if let liveMessage = message.thaw() {
+                withAnimation {
+                    try? liveMessage.realm?.write {
+                        liveMessage.isTranslating = false
+                    }
                 }
             }
             snackbarPresenter.show(message: error.localizedDescription)
