@@ -77,7 +77,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager
-        featureFlagsManager = FeatureFlagsManager()
+        featureFlagsManager = FeatureFlagsManager(mailboxUUID: mailbox.uuid, apiFetcher: apiFetcher)
         featureAvailableProvider = FeatureAvailableService(featureFlagManageable: featureFlagsManager)
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
