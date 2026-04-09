@@ -141,7 +141,10 @@ extension Action: CaseIterable {
         return (Action.quickActions, listActions)
     }
 
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String, mailboxManager: MailboxManager)
+    private static func actionsForMessagesInDifferentThreads(_ messages: [Message],
+                                                             originFolder: Folder?,
+                                                             userEmail: String,
+                                                             mailboxManager: MailboxManager)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
@@ -186,7 +189,10 @@ extension Action: CaseIterable {
         return (quickActions, listActions)
     }
 
-    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String, mailboxManager: MailboxManager)
+    private static func actionsForMessagesInSameThreads(_ messages: [Message],
+                                                        originFolder: Folder?,
+                                                        userEmail: String,
+                                                        mailboxManager: MailboxManager)
         -> (quickActions: [Action], listActions: [Action]) {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
@@ -246,11 +252,14 @@ extension Action: CaseIterable {
         if messages.contains(where: { $0.isDraft }) {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail, mailboxManager: mailboxManager)
+            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
+                                     userEmail: userEmail, mailboxManager: mailboxManager)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail, mailboxManager: mailboxManager)
+            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
+                                                        userEmail: userEmail, mailboxManager: mailboxManager)
         } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail, mailboxManager: mailboxManager)
+            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder,
+                                                   userEmail: userEmail, mailboxManager: mailboxManager)
         }
     }
 }
