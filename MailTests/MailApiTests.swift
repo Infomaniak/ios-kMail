@@ -97,10 +97,6 @@ final class MailApiTests: XCTestCase {
 
     // MARK: - Common API Tests
 
-    func testCheckAPIStatus() async throws {
-        _ = try await currentApiFetcher.checkAPIStatus()
-    }
-
     func testThreadsFromResource() async throws {
         let mailbox = try await setUpTest()
         let inboxFolder = try await inboxFolderIn(mailbox: mailbox)

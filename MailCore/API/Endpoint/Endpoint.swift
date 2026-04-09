@@ -81,10 +81,6 @@ public extension Endpoint {
         return .mailHost.appending(path: "/api")
     }
 
-    static var ping: Endpoint {
-        return .base.appending(path: "/ping")
-    }
-
     static var mailboxes: Endpoint {
         return .base.appending(
             path: "/mailbox",

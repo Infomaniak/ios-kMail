@@ -59,6 +59,22 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
         return allStatus
     }()
 
+    public func monitoredPerform<T: Decodable>(request: DataRequest, overrideDecoder: JSONDecoder? = nil) async throws -> T {
+        @InjectService var serverStatusManager: ServerStatusManager
+        do {
+            let result: T = try await perform(request: request, overrideDecoder: overrideDecoder).validApiResponse.data
+            await serverStatusManager.setServerAvailable(true)
+            return result
+        } catch {
+            if (error as? MailServerError)?.httpStatus == 500 {
+                await serverStatusManager.setServerAvailable(false)
+                print("Erreur 500")
+            }
+
+            throw error
+        }
+    }
+
     override public func perform<T: Decodable>(request: DataRequest,
                                                overrideDecoder: JSONDecoder? = nil) async throws -> ValidServerResponse<T> {
         do {
