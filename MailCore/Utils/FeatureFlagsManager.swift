@@ -44,7 +44,7 @@ public enum FeatureFlag: String, Codable {
     }
 }
 
-public final class FeatureFlagsManager: FeatureFlagsManageable {
+public final class FeatureFlagsManager: FeatureFlagsManageable, @unchecked Sendable {
     let mailboxUUID: String
     let apiFetcher: MailApiFetchable
 

@@ -20,7 +20,7 @@ import Foundation
 import SwiftUI
 
 /// Something that can managed feature flags
-public protocol FeatureFlagsManageable {
+public protocol FeatureFlagsManageable: Sendable {
     typealias MailboxUUID = String
     typealias AppFeatureFlags = [MailboxUUID: [FeatureFlag]]
 
