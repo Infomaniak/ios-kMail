@@ -59,7 +59,7 @@ struct ThreadView: View {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
 
-                let isEmojiReactionAvailable = mailboxManager.featureFlagsManager.isEnabled(.mailEmojiReaction)
+                let isEmojiReactionAvailable = mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
                 MessageListView(
                     messages: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).toArray(),
                     mailboxManager: mailboxManager

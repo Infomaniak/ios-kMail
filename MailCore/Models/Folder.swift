@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakDI
 import MailResources
 import RealmSwift
 import SwiftUI

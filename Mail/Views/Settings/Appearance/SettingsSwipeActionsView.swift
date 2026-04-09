@@ -114,4 +114,5 @@ struct SettingsSwipeActionsView: View {
 
 #Preview {
     SettingsSwipeActionsView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

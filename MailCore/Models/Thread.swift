@@ -220,8 +220,9 @@ public class Thread: Object, Decodable, Identifiable {
         }
     }
 
-    public func lastMessageToExecuteAction(currentMailboxEmail: String, _ isEmojiReactionAvailable: Bool) -> Message? {
-        return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail, isEmojiReactionAvailable)
+    public func lastMessageToExecuteAction(currentMailboxEmail: String, isEmojiReactionAvailable: Bool) -> Message? {
+        return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail,
+                                                   isEmojiReactionAvailable: isEmojiReactionAvailable)
     }
 
     private enum CodingKeys: String, CodingKey {

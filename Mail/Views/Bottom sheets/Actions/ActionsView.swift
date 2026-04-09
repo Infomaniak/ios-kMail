@@ -27,7 +27,6 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    private let mailboxManager: MailboxManager
     private let targetMessages: [Message]
     private let quickActions: [Action]
     private let listActions: [Action]
@@ -43,7 +42,6 @@ struct ActionsView: View {
         isMultipleSelection: Bool,
         completionHandler: ((Action) -> Void)? = nil
     ) {
-        self.mailboxManager = mailboxManager
         let userIsStaff = user.isStaff ?? false
         let actions = Action.actionsForMessages(messages,
                                                 origin: origin,

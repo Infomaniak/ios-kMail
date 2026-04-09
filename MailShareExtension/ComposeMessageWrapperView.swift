@@ -35,8 +35,6 @@ import VersionChecker
 struct ComposeMessageWrapperView: View {
     @InjectService private var accountManager: AccountManager
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @State private var versionStatus: VersionStatus?
 
     let itemProviders: [NSItemProvider]

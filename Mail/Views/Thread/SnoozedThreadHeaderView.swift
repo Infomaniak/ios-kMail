@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
@@ -76,4 +77,5 @@ struct SnoozedThreadHeaderView: View {
 
 #Preview {
     SnoozedThreadHeaderView(date: .now, messages: [], folder: nil)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

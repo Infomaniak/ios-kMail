@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import InfomaniakDI
 
 public enum AppFeature {
     case snooze

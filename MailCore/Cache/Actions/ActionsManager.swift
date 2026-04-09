@@ -34,11 +34,11 @@ extension [Message]: @retroactive Identifiable {
 
 extension RandomAccessCollection where Element == Message {
     /// - Returns: The last message of the list which is not a draft and if possible not from the user's address eg. a reply
-    public func lastMessageToExecuteAction(currentMailboxEmail: String, _ isEmojiReactionAvailable: Bool) -> Message? {
+    public func lastMessageToExecuteAction(currentMailboxEmail: String, isEmojiReactionAvailable: Bool) -> Message? {
         var canExecuteActionAndIsNotFromMe: Message?
         var canExecuteAction: Message?
         for message in self {
-            if message.canExecuteAction(isEmojiReactionAvailable) {
+            if message.canExecuteAction(isEmojiReactionAvailable: isEmojiReactionAvailable) {
                 canExecuteAction = message
                 if !message.fromMe(currentMailboxEmail: currentMailboxEmail) {
                     canExecuteActionAndIsNotFromMe = message
@@ -49,12 +49,15 @@ extension RandomAccessCollection where Element == Message {
         return canExecuteActionAndIsNotFromMe ?? canExecuteAction ?? last
     }
 
-    func lastMessagesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?, isEmojiReactionAvailable: Bool) -> [Message] {
+    func lastMessagesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?,
+                                     isEmojiReactionAvailable: Bool) -> [Message] {
         if isSingleMessage(currentFolder: currentFolder) || currentFolder?.toolType == .search {
             return Array(self)
         } else {
             return uniqueThreadsInFolder(currentFolder)
-                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail, isEmojiReactionAvailable) }
+                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail,
+                                                            isEmojiReactionAvailable: isEmojiReactionAvailable)
+                }
         }
     }
 
@@ -385,8 +388,10 @@ public class ActionsManager: ObservableObject {
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
-        guard let replyingMessage = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email,
-                                                                        mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction))
+        guard let replyingMessage = messages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+        )
         else {
             throw MailError.localMessageNotFound
         }

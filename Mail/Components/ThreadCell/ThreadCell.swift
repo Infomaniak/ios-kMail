@@ -129,7 +129,7 @@ struct ThreadCell: View {
     }
 
     private var isEmojiReactionAvailable: Bool {
-        mailboxManager.featureFlagsManager.isEnabled(.mailEmojiReaction)
+        mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
     }
 
     init(
