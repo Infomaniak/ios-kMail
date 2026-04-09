@@ -84,10 +84,7 @@ extension Action: CaseIterable {
         ].contains(self)
     }
 
-    public static func allAvailableSwipeActions() -> [Action] {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
-
+    public static func allAvailableSwipeActions(_ hasAccessToSnoozeFeature: Bool) -> [Action] {
         let actions: [Action?] = [
             .delete,
             .archive,
@@ -104,10 +101,12 @@ extension Action: CaseIterable {
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
-                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
+                                          userEmail: String,
+                                          mailboxManager: MailboxManager) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
 
-        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
+        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
+        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder, isSnoozeAvailable: isSnoozeAvailable)
 
         let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
         let isInSpamFolder = message.folder?.role == .spam
@@ -142,7 +141,7 @@ extension Action: CaseIterable {
         return (Action.quickActions, listActions)
     }
 
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
+    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String, mailboxManager: MailboxManager)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
@@ -153,7 +152,8 @@ extension Action: CaseIterable {
             .delete
         ]
 
-        let snoozedActions = snoozedActions(messages, folder: originFolder)
+        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
+        let snoozedActions = snoozedActions(messages, folder: originFolder, isSnoozeAvailable: isSnoozeAvailable)
 
         let isSelfThread = isSelfThread(messages, userEmail)
         let isInSpamFolder = originFolder?.role == .spam
@@ -186,7 +186,7 @@ extension Action: CaseIterable {
         return (quickActions, listActions)
     }
 
-    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
+    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String, mailboxManager: MailboxManager)
         -> (quickActions: [Action], listActions: [Action]) {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
@@ -199,7 +199,9 @@ extension Action: CaseIterable {
             return isInSpamFolder ? .nonSpam : .spam
         }
 
-        let snoozedActions = snoozedActions(messages, folder: originFolder)
+        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
+        let snoozedActions = snoozedActions(messages, folder: originFolder, isSnoozeAvailable: isSnoozeAvailable)
+
         let tempListActions: [Action?] = [
             .openMovePanel,
             unread ? .markAsUnread : .markAsRead,
@@ -215,8 +217,8 @@ extension Action: CaseIterable {
         return (Action.quickActions, listActions)
     }
 
-    private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
-        guard folder?.canAccessSnoozeActions == true else { return [] }
+    private static func snoozedActions(_ messages: [Message], folder: Folder?, isSnoozeAvailable: Bool) -> [Action] {
+        guard folder?.canAccessSnoozeActions(isFeatureAvailable: isSnoozeAvailable) == true else { return [] }
 
         let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
         guard !messagesFromFolder.isEmpty else { return [] }
@@ -239,15 +241,16 @@ extension Action: CaseIterable {
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
-                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
+                                          userEmail: String,
+                                          mailboxManager: MailboxManager) -> (quickActions: [Action], listActions: [Action]) {
         if messages.contains(where: { $0.isDraft }) {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
+            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail, mailboxManager: mailboxManager)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
+            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail, mailboxManager: mailboxManager)
         } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
+            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail, mailboxManager: mailboxManager)
         }
     }
 }

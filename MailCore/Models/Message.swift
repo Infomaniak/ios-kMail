@@ -282,9 +282,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !isDraft && !(isScheduledDraft ?? false)
     }
 
-    public var canExecuteAction: Bool {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        if featureAvailableProvider.isAvailable(.emojiReaction) {
+    public func canExecuteAction(_ isEmojiReactionAvailable: Bool) -> Bool {
+        if isEmojiReactionAvailable {
             return !isDraft && isDisplayable
         }
 

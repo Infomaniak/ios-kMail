@@ -152,7 +152,8 @@ struct ThreadListSwipeActions: ViewModifier {
             case .noAction:
                 return false
             case .snooze:
-                return folder?.canAccessSnoozeActions == true
+                let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
+                return folder?.canAccessSnoozeActions(isFeatureAvailable: isSnoozeAvailable) == true
             default:
                 return true
             }

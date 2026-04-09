@@ -26,7 +26,7 @@ import MailResources
 import SwiftUI
 
 struct EditorDesktopToolbarView: View {
-    @InjectService private var featureFlagsManageable: FeatureFlagsManageable
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
@@ -54,7 +54,7 @@ struct EditorDesktopToolbarView: View {
     private var allItems: [[EditorToolbarAction]] {
         var mainItems = [extras, textFormats, textItems]
 
-        featureFlagsManageable.feature(.aiMailComposer, on: {
+        mailboxManager.featureFlagsManager.feature(.aiMailComposer, on: {
             mainItems.insert([.ai], at: 0)
         }, off: nil)
 

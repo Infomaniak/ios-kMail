@@ -42,6 +42,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     public let featureFlagsManager: FeatureFlagsManageable
 
+    public let featureAvailableProvider: FeatureAvailableProvider
+
     enum ErrorDomain: Error {
         case missingFolder
         case missingDraft
@@ -75,7 +77,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager
-        self.featureFlagsManager = FeatureFlagsManager()
+        featureFlagsManager = FeatureFlagsManager()
+        featureAvailableProvider = FeatureAvailableService(featureFlagManageable: featureFlagsManager)
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
@@ -159,6 +162,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
+
+        Task {
+            try? await featureFlagsManager.fetchFlags()
+        }
     }
 
     /// Delete all mailbox data cache for user

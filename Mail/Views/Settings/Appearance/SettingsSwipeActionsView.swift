@@ -45,6 +45,8 @@ struct SettingsSwipeActionsView: View {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var trailing = DefaultPreferences.swipeTrailing
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var fullTrailing = DefaultPreferences.swipeFullTrailing
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView {
@@ -53,9 +55,10 @@ struct SettingsSwipeActionsView: View {
                 ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                     ForEach(section.items, id: \.self) { item in
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
+                            let hasAccessToSnoozeFeature = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
                             SettingsOptionView<Action>(
                                 title: item.title,
-                                values: Action.allAvailableSwipeActions(),
+                                values: Action.allAvailableSwipeActions(hasAccessToSnoozeFeature),
                                 keyPath: item.keyPath,
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,

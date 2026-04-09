@@ -29,7 +29,7 @@ public protocol FeatureAvailableProvider: Sendable {
 }
 
 struct FeatureAvailableService: FeatureAvailableProvider {
-    @LazyInjectService private var featureFlagManageable: FeatureFlagsManageable
+    let featureFlagManageable: FeatureFlagsManageable
 
     func isAvailable(_ feature: AppFeature) -> Bool {
         switch feature {

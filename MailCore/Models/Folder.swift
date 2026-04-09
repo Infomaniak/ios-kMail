@@ -270,9 +270,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return names.reversed().joined(separator: " > ")
     }
 
-    public var canAccessSnoozeActions: Bool {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        let isFeatureAvailable = featureAvailableProvider.isAvailable(.snooze)
+    public func canAccessSnoozeActions(isFeatureAvailable: Bool) -> Bool {
         let isFolderCorrect = role == .inbox || role == .snoozed
 
         return isFeatureAvailable && isFolderCorrect

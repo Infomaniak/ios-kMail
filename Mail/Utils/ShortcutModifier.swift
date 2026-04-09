@@ -89,7 +89,9 @@ struct ShortcutModifier: ViewModifier {
 
         guard !multipleSelectionViewModel.isEnabled,
               let message = mainViewState.selectedThread?
-              .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email) else { return }
+              .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email,
+                                          viewModel.mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction))
+        else { return }
         Task {
             try await actionsManager.performAction(
                 target: [message],

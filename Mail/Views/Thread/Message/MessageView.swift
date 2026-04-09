@@ -33,9 +33,9 @@ extension EnvironmentValues {
 
 /// Something that can display an email
 struct MessageView: View {
-    @LazyInjectService private var featureAvailableProvider: FeatureAvailableProvider
-
     @Environment(\.isMessageInteractive) private var isMessageInteractive
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var displayContentBlockedActionView = false
     @State private var initialContentLoading = true
@@ -80,7 +80,7 @@ struct MessageView: View {
                             messageUid: message.uid
                         )
 
-                        if featureAvailableProvider.isAvailable(.emojiReaction) && !initialContentLoading {
+                        if mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction) && !initialContentLoading {
                             MessageReactionsView(
                                 messageUid: message.uid,
                                 emojiReactionNotAllowedReason: message.emojiReactionNotAllowedReason,
