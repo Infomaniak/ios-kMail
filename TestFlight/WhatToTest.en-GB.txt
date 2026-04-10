@@ -1,1 +1,1 @@
-- Support for new languages.
+Bug fixes and various improvements
