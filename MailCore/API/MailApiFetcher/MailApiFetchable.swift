@@ -28,8 +28,6 @@ public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchabl
 public protocol MailApiCommonFetchable: ApiFetcher {
     func mailboxes() async throws -> [Mailbox]
 
-    func checkAPIStatus() async throws -> Empty
-
     func listBackups(mailbox: Mailbox) async throws -> BackupsList
 
     func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool

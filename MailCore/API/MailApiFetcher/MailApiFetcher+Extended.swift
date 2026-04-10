@@ -85,7 +85,7 @@ public extension MailApiFetcher {
     }
 
     func folders(mailbox: Mailbox) async throws -> [Folder] {
-        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid)))
+        try await performAndMonitor(request: authenticatedRequest(.folders(uuid: mailbox.uuid)))
     }
 
     func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool {

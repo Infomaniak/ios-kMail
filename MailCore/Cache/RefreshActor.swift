@@ -90,15 +90,8 @@ public actor RefreshActor {
         refreshTask = Task {
             await tryOrDisplayError {
                 do {
-                    let serverAvailable = await serverStatusManager.updateStatusIfNeeded(using: mailboxManager)
-                    guard serverAvailable else {
-                        refreshTask = nil
-                        return
-                    }
-
                     try await mailboxManager?.threads(folder: folder)
                 } catch let error as AFErrorWithContext where error.afError.responseCode ?? 0 >= 500 {
-                    await serverStatusManager.updateStatus(using: mailboxManager)
                     throw error
                 }
                 refreshTask = nil

@@ -24,32 +24,7 @@ public final class ServerStatusManager: ObservableObject {
 
     public nonisolated init() {}
 
-    private func setServerAvailable(_ serverAvailable: Bool) {
+    public func setServerAvailable(_ serverAvailable: Bool) {
         self.serverAvailable = serverAvailable
-    }
-
-    public nonisolated func updateStatusIfNeeded(using mailboxManager: MailboxManager?) async -> Bool {
-        guard let mailboxManager else { return true }
-
-        if await serverAvailable {
-            return true
-        } else {
-            return await updateStatus(using: mailboxManager)
-        }
-    }
-
-    @discardableResult
-    public nonisolated func updateStatus(using mailboxManager: MailboxManager?) async -> Bool {
-        guard let mailboxManager else { return true }
-
-        do {
-            try await mailboxManager.apiFetcher.checkAPIStatus()
-
-            await setServerAvailable(true)
-            return true
-        } catch {
-            await setServerAvailable(false)
-            return false
-        }
     }
 }

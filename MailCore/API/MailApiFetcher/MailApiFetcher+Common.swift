@@ -27,16 +27,11 @@ public extension MailApiFetcher {
     // MARK: - API methods
 
     func mailboxes() async throws -> [Mailbox] {
-        try await perform(request: authenticatedRequest(.mailboxes))
+        try await performAndMonitor(request: authenticatedRequest(.mailboxes))
     }
 
     func listBackups(mailbox: Mailbox) async throws -> BackupsList {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
-    }
-
-    @discardableResult
-    func checkAPIStatus() async throws -> Empty {
-        try await perform(request: authenticatedRequest(.ping))
     }
 
     @discardableResult
@@ -74,8 +69,7 @@ public extension MailApiFetcher {
             }
 
             let download = self.authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
-            let messageUrl = try await download.serializingDownloadedFileURL().value
-            return messageUrl
+            return try await download.serializingDownloadedFileURL().value
         }
     }
 
