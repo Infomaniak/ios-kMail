@@ -48,11 +48,11 @@ struct ComposeMessageBodyView: View {
 
     let messageReply: MessageReply?
 
-    private var spellCheckEnabled: Bool {
+    private var isEnvironmentCatalyst: Bool {
         #if targetEnvironment(macCatalyst)
-        return false
-        #else
         return true
+        #else
+        return false
         #endif
     }
 
@@ -71,7 +71,9 @@ struct ComposeMessageBodyView: View {
             )
             #endif
             AttachmentsHeaderView()
-            RichHTMLEditor(html: $draftBody, textAttributes: textAttributes, spellCheckEnabled: spellCheckEnabled)
+            RichHTMLEditor(html: $draftBody, textAttributes: textAttributes,
+                           spellCheckEnabled: !isEnvironmentCatalyst,
+                           autoCorrectEnabled: !isEnvironmentCatalyst)
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
                 .editorCSS(Self.customCSS)
