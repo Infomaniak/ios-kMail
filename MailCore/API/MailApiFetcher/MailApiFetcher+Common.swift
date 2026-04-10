@@ -27,7 +27,7 @@ public extension MailApiFetcher {
     // MARK: - API methods
 
     func mailboxes() async throws -> [Mailbox] {
-        try await monitoredPerform(request: authenticatedRequest(.mailboxes))
+        try await performAndMonitor(request: authenticatedRequest(.mailboxes))
     }
 
     func listBackups(mailbox: Mailbox) async throws -> BackupsList {
