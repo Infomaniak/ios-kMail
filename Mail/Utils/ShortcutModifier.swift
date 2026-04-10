@@ -91,7 +91,7 @@ struct ShortcutModifier: ViewModifier {
               let message = mainViewState.selectedThread?
               .lastMessageToExecuteAction(
                   currentMailboxEmail: viewModel.mailboxManager.mailbox.email,
-                  isEmojiReactionAvailable: viewModel.mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                  featureAvailableProvider: viewModel.mailboxManager.featureAvailableProvider
               )
         else { return }
         Task {

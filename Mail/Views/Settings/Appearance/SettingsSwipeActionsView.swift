@@ -55,10 +55,9 @@ struct SettingsSwipeActionsView: View {
                 ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                     ForEach(section.items, id: \.self) { item in
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
-                            let hasAccessToSnoozeFeature = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
                             SettingsOptionView<Action>(
                                 title: item.title,
-                                values: Action.allAvailableSwipeActions(hasAccessToSnoozeFeature),
+                                values: Action.allAvailableSwipeActions(mailboxManager.featureAvailableProvider),
                                 keyPath: item.keyPath,
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,

@@ -84,7 +84,9 @@ extension Action: CaseIterable {
         ].contains(self)
     }
 
-    public static func allAvailableSwipeActions(_ hasAccessToSnoozeFeature: Bool) -> [Action] {
+    public static func allAvailableSwipeActions(_ featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
+        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
+
         let actions: [Action?] = [
             .delete,
             .archive,
@@ -102,11 +104,11 @@ extension Action: CaseIterable {
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          mailboxManager: MailboxManager) -> (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
 
-        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
-        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder, isSnoozeAvailable: isSnoozeAvailable)
+        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
+                                            featureAvailableProvider: featureAvailableProvider)
 
         let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
         let isInSpamFolder = message.folder?.role == .spam
@@ -144,7 +146,7 @@ extension Action: CaseIterable {
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message],
                                                              originFolder: Folder?,
                                                              userEmail: String,
-                                                             mailboxManager: MailboxManager)
+                                                             featureAvailableProvider: FeatureAvailableProvider)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
@@ -155,8 +157,8 @@ extension Action: CaseIterable {
             .delete
         ]
 
-        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
-        let snoozedActions = snoozedActions(messages, folder: originFolder, isSnoozeAvailable: isSnoozeAvailable)
+        let snoozedActions = snoozedActions(messages, folder: originFolder,
+                                            featureAvailableProvider: featureAvailableProvider)
 
         let isSelfThread = isSelfThread(messages, userEmail)
         let isInSpamFolder = originFolder?.role == .spam
@@ -192,7 +194,7 @@ extension Action: CaseIterable {
     private static func actionsForMessagesInSameThreads(_ messages: [Message],
                                                         originFolder: Folder?,
                                                         userEmail: String,
-                                                        mailboxManager: MailboxManager)
+                                                        featureAvailableProvider: FeatureAvailableProvider)
         -> (quickActions: [Action], listActions: [Action]) {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
@@ -205,8 +207,8 @@ extension Action: CaseIterable {
             return isInSpamFolder ? .nonSpam : .spam
         }
 
-        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
-        let snoozedActions = snoozedActions(messages, folder: originFolder, isSnoozeAvailable: isSnoozeAvailable)
+        let snoozedActions = snoozedActions(messages, folder: originFolder,
+                                            featureAvailableProvider: featureAvailableProvider)
 
         let tempListActions: [Action?] = [
             .openMovePanel,
@@ -223,8 +225,9 @@ extension Action: CaseIterable {
         return (Action.quickActions, listActions)
     }
 
-    private static func snoozedActions(_ messages: [Message], folder: Folder?, isSnoozeAvailable: Bool) -> [Action] {
-        guard folder?.canAccessSnoozeActions(isFeatureAvailable: isSnoozeAvailable) == true else { return [] }
+    private static func snoozedActions(_ messages: [Message], folder: Folder?, featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
+        guard folder?.canAccessSnoozeActions(featureAvailableProvider:
+            featureAvailableProvider) == true else { return [] }
 
         let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
         guard !messagesFromFolder.isEmpty else { return [] }
@@ -253,13 +256,15 @@ extension Action: CaseIterable {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, mailboxManager: mailboxManager)
+                                     userEmail: userEmail, featureAvailableProvider: mailboxManager.featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
-                                                        userEmail: userEmail, mailboxManager: mailboxManager)
+                                                        userEmail: userEmail,
+                                                        featureAvailableProvider: mailboxManager.featureAvailableProvider)
         } else {
             return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder,
-                                                   userEmail: userEmail, mailboxManager: mailboxManager)
+                                                   userEmail: userEmail,
+                                                   featureAvailableProvider: mailboxManager.featureAvailableProvider)
         }
     }
 }

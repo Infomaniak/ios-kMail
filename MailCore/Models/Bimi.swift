@@ -22,7 +22,7 @@ public class Bimi: EmbeddedObject, Codable {
     @Persisted public var svgContent: String
     @Persisted public var isCertified: Bool
 
-    public func shouldDisplayBimi(isBimiEnabled: Bool) -> Bool {
-        return isCertified && isBimiEnabled
+    public func shouldDisplayBimi(featureFlagManager: FeatureFlagsManageable) -> Bool {
+        return isCertified && featureFlagManager.isEnabled(.bimi)
     }
 }

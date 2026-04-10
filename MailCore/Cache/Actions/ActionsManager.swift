@@ -34,11 +34,11 @@ extension [Message]: @retroactive Identifiable {
 
 extension RandomAccessCollection where Element == Message {
     /// - Returns: The last message of the list which is not a draft and if possible not from the user's address eg. a reply
-    public func lastMessageToExecuteAction(currentMailboxEmail: String, isEmojiReactionAvailable: Bool) -> Message? {
+    public func lastMessageToExecuteAction(currentMailboxEmail: String, featureAvailableProvider: FeatureAvailableProvider) -> Message? {
         var canExecuteActionAndIsNotFromMe: Message?
         var canExecuteAction: Message?
         for message in self {
-            if message.canExecuteAction(isEmojiReactionAvailable: isEmojiReactionAvailable) {
+            if message.canExecuteAction(featureAvailableProvider: featureAvailableProvider) {
                 canExecuteAction = message
                 if !message.fromMe(currentMailboxEmail: currentMailboxEmail) {
                     canExecuteActionAndIsNotFromMe = message
@@ -50,13 +50,13 @@ extension RandomAccessCollection where Element == Message {
     }
 
     func lastMessagesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?,
-                                     isEmojiReactionAvailable: Bool) -> [Message] {
+                                     featureAvailableProvider: FeatureAvailableProvider) -> [Message] {
         if isSingleMessage(currentFolder: currentFolder) || currentFolder?.toolType == .search {
             return Array(self)
         } else {
             return uniqueThreadsInFolder(currentFolder)
                 .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail,
-                                                            isEmojiReactionAvailable: isEmojiReactionAvailable)
+                                                            featureAvailableProvider: featureAvailableProvider)
                 }
         }
     }
@@ -68,10 +68,10 @@ extension RandomAccessCollection where Element == Message {
     ///
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?,
-                                                  isEmojiReactionAvailable: Bool) -> [Message] {
+                                                  featureAvailableProvider: FeatureAvailableProvider) -> [Message] {
         let messages = lastMessagesToExecuteAction(currentMailboxEmail: currentMailboxEmail,
                                                    currentFolder: currentFolder,
-                                                   isEmojiReactionAvailable: isEmojiReactionAvailable)
+                                                   featureAvailableProvider: featureAvailableProvider)
         return messages.addingDuplicates()
     }
 
@@ -159,7 +159,7 @@ public class ActionsManager: ObservableObject {
             let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder,
-                isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                featureAvailableProvider: mailboxManager.featureAvailableProvider
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
@@ -174,7 +174,7 @@ public class ActionsManager: ObservableObject {
             let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder,
-                isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                featureAvailableProvider: mailboxManager.featureAvailableProvider
             )
             try await mailboxManager.star(messages: messagesToExecuteAction, starred: true)
         case .unstar:
@@ -245,7 +245,7 @@ public class ActionsManager: ObservableObject {
             let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder,
-                isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                featureAvailableProvider: mailboxManager.featureAvailableProvider
             )
             try await performDeleteSnooze(messages: messagesToExecuteAction)
         default:
@@ -390,7 +390,7 @@ public class ActionsManager: ObservableObject {
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
         guard let replyingMessage = messages.lastMessageToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
-            isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
         else {
             throw MailError.localMessageNotFound
@@ -482,7 +482,7 @@ extension ActionsManager {
         let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
             currentFolder: originFolder,
-            isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
 
         let allMessagesAreSnoozed = messagesToExecuteAction.allSatisfy(\.isSnoozed)

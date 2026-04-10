@@ -164,7 +164,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
         if action == .reply,
            let message = frozenMessages.lastMessageToExecuteAction(
                currentMailboxEmail: mailboxManager.mailbox.email,
-               isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+               featureAvailableProvider: mailboxManager.featureAvailableProvider
            ),
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message

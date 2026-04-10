@@ -118,8 +118,7 @@ public struct RecipientCell: View {
             Text(highlightedAttributedString(from: title))
                 .textStyle(.bodyMedium)
 
-            let isBimiEnabled = mailboxManager.featureFlagsManager.isEnabled(.bimi)
-            if bimi?.shouldDisplayBimi(isBimiEnabled: isBimiEnabled) == true {
+            if bimi?.shouldDisplayBimi(featureFlagManager: mailboxManager.featureFlagsManager) == true {
                 MailResourcesAsset.checkmarkAuthentication
                     .iconSize(.medium)
             }

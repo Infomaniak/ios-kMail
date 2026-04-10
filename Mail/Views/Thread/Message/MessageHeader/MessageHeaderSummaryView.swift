@@ -81,8 +81,8 @@ struct MessageHeaderSummaryView: View {
                                     }
                                 }
 
-                                let isBimiEnabled = mailboxManager.featureFlagsManager.isEnabled(.bimi)
-                                if let bimi = message.bimi, bimi.shouldDisplayBimi(isBimiEnabled: isBimiEnabled) {
+                                if let bimi = message.bimi,
+                                   bimi.shouldDisplayBimi(featureFlagManager: mailboxManager.featureFlagsManager) {
                                     MailResourcesAsset.checkmarkAuthentication
                                         .iconSize(.small)
                                 }

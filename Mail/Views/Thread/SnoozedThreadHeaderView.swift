@@ -37,12 +37,12 @@ struct SnoozedThreadHeaderView: View {
     }
 
     var body: some View {
-        let isSnoozeAvailable = mailboxManager.featureAvailableProvider.isAvailable(.snooze)
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
             showBottomSeparator: true,
-            shouldDisplayActions: folder?.canAccessSnoozeActions(isFeatureAvailable: isSnoozeAvailable) ?? false
+            shouldDisplayActions: folder?.canAccessSnoozeActions(featureAvailableProvider:
+                mailboxManager.featureAvailableProvider) ?? false
         ) {
             HStack {
                 Button(MailResourcesStrings.Localizable.buttonModify, action: edit)

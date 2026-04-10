@@ -281,8 +281,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !isDraft && !(isScheduledDraft ?? false)
     }
 
-    public func canExecuteAction(isEmojiReactionAvailable: Bool) -> Bool {
-        if isEmojiReactionAvailable {
+    public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
             return !isDraft && isDisplayable
         }
 
