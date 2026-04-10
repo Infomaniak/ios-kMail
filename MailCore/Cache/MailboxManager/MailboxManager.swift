@@ -41,7 +41,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let contactManager: ContactManageable
 
     public let featureFlagsManager: FeatureFlagsManageable
-
     public let featureAvailableProvider: FeatureAvailableProvider
 
     enum ErrorDomain: Error {

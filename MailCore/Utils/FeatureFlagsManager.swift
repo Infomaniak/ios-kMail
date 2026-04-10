@@ -44,11 +44,11 @@ public enum FeatureFlag: String, Codable {
     }
 }
 
-public final class FeatureFlagsManager: FeatureFlagsManageable, @unchecked Sendable {
+public final class FeatureFlagsManager: FeatureFlagsManageable {
     let mailboxUUID: String
     let apiFetcher: MailApiFetchable
 
-    private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
+    private let enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
     public init(mailboxUUID: String, apiFetcher: MailApiFetchable) {
         enabledFeatures = SendableDictionary(content: UserDefaults.shared.featureFlags)

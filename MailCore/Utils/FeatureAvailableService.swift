@@ -23,7 +23,7 @@ public enum AppFeature {
     case emojiReaction
 }
 
-public protocol FeatureAvailableProvider: Sendable {
+public protocol FeatureAvailableProvider {
     func isAvailable(_ feature: AppFeature) -> Bool
 }
 
