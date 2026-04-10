@@ -34,7 +34,8 @@ extension [Message]: @retroactive Identifiable {
 
 extension RandomAccessCollection where Element == Message {
     /// - Returns: The last message of the list which is not a draft and if possible not from the user's address eg. a reply
-    public func lastMessageToExecuteAction(currentMailboxEmail: String, featureAvailableProvider: FeatureAvailableProvider) -> Message? {
+    public func lastMessageToExecuteAction(currentMailboxEmail: String,
+                                           featureAvailableProvider: FeatureAvailableProvider) -> Message? {
         var canExecuteActionAndIsNotFromMe: Message?
         var canExecuteAction: Message?
         for message in self {

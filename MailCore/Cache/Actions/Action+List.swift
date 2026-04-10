@@ -104,7 +104,8 @@ extension Action: CaseIterable {
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          featureAvailableProvider: FeatureAvailableProvider) -> (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider)
+        -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
@@ -225,7 +226,8 @@ extension Action: CaseIterable {
         return (Action.quickActions, listActions)
     }
 
-    private static func snoozedActions(_ messages: [Message], folder: Folder?, featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
+    private static func snoozedActions(_ messages: [Message], folder: Folder?,
+                                       featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
         guard folder?.canAccessSnoozeActions(featureAvailableProvider:
             featureAvailableProvider) == true else { return [] }
 

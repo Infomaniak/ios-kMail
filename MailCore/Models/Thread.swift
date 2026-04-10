@@ -220,7 +220,8 @@ public class Thread: Object, Decodable, Identifiable {
         }
     }
 
-    public func lastMessageToExecuteAction(currentMailboxEmail: String, featureAvailableProvider: FeatureAvailableProvider) -> Message? {
+    public func lastMessageToExecuteAction(currentMailboxEmail: String,
+                                           featureAvailableProvider: FeatureAvailableProvider) -> Message? {
         return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail,
                                                    featureAvailableProvider: featureAvailableProvider)
     }
