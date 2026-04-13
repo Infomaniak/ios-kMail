@@ -77,7 +77,7 @@ struct ThreadListCellContextMenu: ViewModifier {
             origin: origin,
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email,
-            mailboxManager: mailboxManager
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
 
         return actions

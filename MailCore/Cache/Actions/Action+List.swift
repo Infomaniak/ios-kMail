@@ -253,20 +253,20 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          mailboxManager: MailboxManager) -> (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) -> (quickActions: [Action], listActions: [Action]) {
         if messages.contains(where: { $0.isDraft }) {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, featureAvailableProvider: mailboxManager.featureAvailableProvider)
+                                     userEmail: userEmail, featureAvailableProvider: featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
                                                         userEmail: userEmail,
-                                                        featureAvailableProvider: mailboxManager.featureAvailableProvider)
+                                                        featureAvailableProvider: featureAvailableProvider)
         } else {
             return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder,
                                                    userEmail: userEmail,
-                                                   featureAvailableProvider: mailboxManager.featureAvailableProvider)
+                                                   featureAvailableProvider: featureAvailableProvider)
         }
     }
 }

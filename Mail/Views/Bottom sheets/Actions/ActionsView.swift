@@ -43,11 +43,13 @@ struct ActionsView: View {
         completionHandler: ((Action) -> Void)? = nil
     ) {
         let userIsStaff = user.isStaff ?? false
-        let actions = Action.actionsForMessages(messages,
-                                                origin: origin,
-                                                userIsStaff: userIsStaff,
-                                                userEmail: user.email,
-                                                mailboxManager: mailboxManager)
+        let actions = Action.actionsForMessages(
+            messages,
+            origin: origin,
+            userIsStaff: userIsStaff,
+            userEmail: user.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        )
         quickActions = actions.quickActions
         listActions = actions.listActions
 
