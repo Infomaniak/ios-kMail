@@ -1276,6 +1276,18 @@
 /* loco:64ca16484dbf65eb9b0ea862 */
 "pleaseLogInFirst" = "Bitte melden Sie sich zuerst in der Infomaniak Mail-App an.";
 
+/* loco:69ce62e334f29a3a090d70d2 */
+"previewMultiReaction" = "%1$s %2$s und %3$s Person haben reagiert";
+
+/* loco:69ce63bb556d7fcef0046932 */
+"previewMultiReaction-plural" = "%1$s %2$s und %3$s Personen haben reagiert";
+
+/* loco:69ce63c8556d7fcef0046935 */
+"previewMultiReaction-plural-2" = "";
+
+/* loco:69ce63d0f62a638389017405 */
+"previewMultiReaction-plural-3" = "";
+
 /* loco:68b05985327f49a8eb0936b2 */
 "previewReaction" = "%2$@ %1$@ reagierte";
 
