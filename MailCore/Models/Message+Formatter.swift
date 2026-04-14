@@ -50,8 +50,9 @@ public extension Message {
             }
 
             if let originalMessageId = message.inReplyTo?.parseMessageIds().first,
-               let message = message.realm?.objects(Message.self).first(where: { $0.messageId == originalMessageId }) {
-                let reactionAuthors: Set<String> = Set(message.reactions.flatMap(\.authors).compactMap(\.recipient?.email))
+               let originalMessage = message.realm?.objects(Message.self).first(where: { $0.messageId == originalMessageId }) {
+                let reactionAuthors: Set<String> = Set(originalMessage.reactions.flatMap(\.authors)
+                    .compactMap(\.recipient?.email))
                 if reactionAuthors.count == 2 {
                     return MailResourcesStrings.Localizable.previewMultiReaction(
                         emojiReaction,

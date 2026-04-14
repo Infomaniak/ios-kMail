@@ -295,7 +295,14 @@ public enum NotificationsHelper {
         )
 
         let body = await getMessagePreview(from: message, mailboxManager: mailboxManager)
-        let subtitle = message.formattedSubject
+        let subtitle: String
+        if message.isReaction, let originalMessageId = message.inReplyTo?.parseMessageIds().first,
+           let originalMessage = message.realm?.objects(Message.self).first(where: { $0.messageId == originalMessageId }) {
+            subtitle = originalMessage.formattedSubject
+        } else {
+            subtitle = message.formattedSubject
+        }
+
         incompleteNotification.body = body
 
         let intent = INSendMessageIntent(
