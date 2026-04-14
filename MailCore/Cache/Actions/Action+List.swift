@@ -253,7 +253,8 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          featureAvailableProvider: FeatureAvailableProvider) -> (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) ->
+        (quickActions: [Action], listActions: [Action]) {
         if messages.contains(where: { $0.isDraft }) {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
