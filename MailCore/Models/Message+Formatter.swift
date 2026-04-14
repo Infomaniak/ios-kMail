@@ -54,9 +54,9 @@ public extension Message {
                 let reactionAuthors: Set<String> = Set(message.reactions.flatMap(\.authors).compactMap(\.recipient?.email))
                 if reactionAuthors.count >= 2 {
                     return MailResourcesStrings.Localizable.previewMultiReaction(
-                        name,
                         emojiReaction,
-                        "\(reactionAuthors.count - 1)"
+                        name,
+                        reactionAuthors.count - 1
                     )
                 }
             }
