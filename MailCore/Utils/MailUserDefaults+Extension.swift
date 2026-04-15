@@ -29,7 +29,6 @@ public protocol SettingsOptionEnum {
 public extension UserDefaults.Keys {
     static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
     static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
-    static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
     static let appLock = UserDefaults.Keys(rawValue: "appLock")
     static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
     static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
@@ -59,6 +58,9 @@ public extension UserDefaults.Keys {
     static let hasDismissedMacDisclaimerView = UserDefaults.Keys(rawValue: "hasDismissedMacDisclaimerView")
     static let lastCustomScheduledDraftDate = UserDefaults.Keys(rawValue: "lastCustomScheduledDraftDate")
     static let lastCustomSnoozeDate = UserDefaults.Keys(rawValue: "lastCustomSnoozeDate")
+    static func notificationsEnabled(userId: Int) -> UserDefaults.Keys {
+        return UserDefaults.Keys(rawValue: "notificationsEnabled-\(userId)")
+    }
 }
 
 public extension UserDefaults {
@@ -82,16 +84,15 @@ public extension UserDefaults {
         }
     }
 
-    var isNotificationEnabled: Bool {
-        get {
-            if object(forKey: key(.notificationsEnabled)) == nil {
-                set(DefaultPreferences.notificationsEnabled, forKey: key(.notificationsEnabled))
-            }
-            return bool(forKey: key(.notificationsEnabled))
+    func getNotificationEnabled(userId: Int) -> Bool {
+        if object(forKey: key(.notificationsEnabled(userId: userId))) == nil {
+            set(DefaultPreferences.notificationsEnabled, forKey: key(.notificationsEnabled(userId: userId)))
         }
-        set {
-            set(newValue, forKey: key(.notificationsEnabled))
-        }
+        return bool(forKey: key(.notificationsEnabled(userId: userId)))
+    }
+
+    func setNotificationEnabled(_ newValue: Bool, userId: Int) {
+        set(newValue, forKey: key(.notificationsEnabled(userId: userId)))
     }
 
     var isAppLockEnabled: Bool {

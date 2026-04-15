@@ -35,8 +35,7 @@ struct SettingsNotificationsView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
-        .notificationsEnabled
+    @State private var notificationsEnabled = false
     @State private var subscribedTopics: [Topic]?
 
     @ModalState(context: ContextKeys.settings) private var showAlertNotification = false
@@ -68,13 +67,8 @@ struct SettingsNotificationsView: View {
                 SettingsSectionTitleView(title: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String)
                     .settingsCell()
 
-                SettingsToggleCell(
-                    title: MailResourcesStrings.Localizable.settingsEnableNotifications,
-                    userDefaults: \.isNotificationEnabled,
-                    matomoCategory: .settingsNotifications,
-                    matomoName: "allNotifications"
-                )
-                .settingsCell()
+                SettingsNotificationToggleCell(userId: currentUser.value.id, toggleIsOn: $notificationsEnabled)
+                    .settingsCell()
 
                 if subscribedTopics != nil && notificationsEnabled {
                     IKDivider()
