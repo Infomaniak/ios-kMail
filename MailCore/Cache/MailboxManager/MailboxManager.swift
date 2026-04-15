@@ -161,10 +161,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
-
-        Task {
-            try? await featureFlagsManager.fetchFlags()
-        }
     }
 
     /// Delete all mailbox data cache for user

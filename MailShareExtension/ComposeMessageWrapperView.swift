@@ -88,6 +88,9 @@ struct ComposeMessageWrapperView: View {
                 .environment(\.dismissModal) {
                     dismissHandler(())
                 }
+                .task {
+                    try? await mailboxManager.featureFlagsManager.fetchFlags()
+                }
             } else {
                 PleaseLoginView(tapHandler: dismissHandler)
             }

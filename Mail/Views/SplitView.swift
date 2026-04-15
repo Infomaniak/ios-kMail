@@ -238,6 +238,9 @@ struct SplitView: View {
             Task {
                 await checkTwoFAChallenges()
             }
+            Task {
+                try await mailboxManager.featureFlagsManager.fetchFlags()
+            }
 
             guard !platformDetector.isDebug else { return }
             mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : await shouldShowSync()
