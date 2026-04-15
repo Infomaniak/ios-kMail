@@ -47,10 +47,6 @@ public enum NotificationsHelper {
         public static let messageUid = "message_uid"
     }
 
-    public static var isNotificationEnabled: Bool {
-        return UserDefaults.shared.isNotificationEnabled
-    }
-
     public static func askForPermissions() async {
         let options: UNAuthorizationOptions = [.alert, .sound, .badge, .providesAppNotificationSettings]
         do {
