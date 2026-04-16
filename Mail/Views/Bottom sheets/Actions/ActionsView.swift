@@ -34,13 +34,22 @@ struct ActionsView: View {
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
 
-    init(user: UserProfile,
-         target messages: [Message],
-         origin: ActionOrigin,
-         isMultipleSelection: Bool,
-         completionHandler: ((Action) -> Void)? = nil) {
+    init(
+        mailboxManager: MailboxManager,
+        user: UserProfile,
+        target messages: [Message],
+        origin: ActionOrigin,
+        isMultipleSelection: Bool,
+        completionHandler: ((Action) -> Void)? = nil
+    ) {
         let userIsStaff = user.isStaff ?? false
-        let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
+        let actions = Action.actionsForMessages(
+            messages,
+            origin: origin,
+            userIsStaff: userIsStaff,
+            userEmail: user.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        )
         quickActions = actions.quickActions
         listActions = actions.listActions
 
@@ -88,6 +97,7 @@ struct ActionsView: View {
 
 #Preview {
     ActionsView(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
         origin: .toolbar(originFolder: nil),

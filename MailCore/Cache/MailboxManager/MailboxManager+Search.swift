@@ -104,7 +104,6 @@ public extension MailboxManager {
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
         try? writeTransaction { writableRealm in
             guard let searchFolder = searchFolder?.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)

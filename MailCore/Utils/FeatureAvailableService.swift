@@ -17,19 +17,18 @@
  */
 
 import Foundation
-import InfomaniakDI
 
 public enum AppFeature {
     case snooze
     case emojiReaction
 }
 
-public protocol FeatureAvailableProvider: Sendable {
+public protocol FeatureAvailableProvider {
     func isAvailable(_ feature: AppFeature) -> Bool
 }
 
 struct FeatureAvailableService: FeatureAvailableProvider {
-    @LazyInjectService private var featureFlagManageable: FeatureFlagsManageable
+    let featureFlagManageable: FeatureFlagsManageable
 
     func isAvailable(_ feature: AppFeature) -> Bool {
         switch feature {

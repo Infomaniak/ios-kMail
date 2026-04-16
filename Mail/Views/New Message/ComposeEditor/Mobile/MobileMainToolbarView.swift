@@ -37,27 +37,25 @@ struct MobileMainToolbarView: View {
     let draft: Draft
     let isEditorFocused: Bool
 
-    private let leadingActions: [EditorToolbarAction] = {
+    private var leadingActions: [EditorToolbarAction] {
         var availableOptions: [EditorToolbarAction] = [.editText, .addAttachment]
 
-        @InjectService var featureFlagsManager: FeatureFlagsManageable
-        if featureFlagsManager.isEnabled(.aiMailComposer) {
+        if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer) {
             availableOptions.append(.ai)
         }
 
         return availableOptions
-    }()
+    }
 
-    private let trailingActions: [EditorToolbarAction] = {
+    private var trailingActions: [EditorToolbarAction] {
         var availableOptions: [EditorToolbarAction] = []
 
-        @InjectService var featureFlagsManager: FeatureFlagsManageable
-        if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+        if mailboxManager.featureFlagsManager.isEnabled(.mailComposeEncrypted) {
             availableOptions.append(.encryption)
         }
 
         return availableOptions
-    }()
+    }
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {

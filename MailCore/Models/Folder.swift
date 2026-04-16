@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakDI
 import MailResources
 import RealmSwift
 import SwiftUI
@@ -270,8 +269,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return names.reversed().joined(separator: " > ")
     }
 
-    public var canAccessSnoozeActions: Bool {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+    public func canAccessSnoozeActions(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
         let isFeatureAvailable = featureAvailableProvider.isAvailable(.snooze)
         let isFolderCorrect = role == .inbox || role == .snoozed
 

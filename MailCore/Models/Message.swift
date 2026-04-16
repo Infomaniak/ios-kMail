@@ -19,7 +19,6 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
-import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
@@ -282,8 +281,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !isDraft && !(isScheduledDraft ?? false)
     }
 
-    public var canExecuteAction: Bool {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+    public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
         if featureAvailableProvider.isAvailable(.emojiReaction) {
             return !isDraft && isDisplayable
         }

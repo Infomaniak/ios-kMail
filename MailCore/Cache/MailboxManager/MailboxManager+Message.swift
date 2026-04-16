@@ -131,7 +131,6 @@ public extension MailboxManager {
     ) async throws -> UndoAction {
         await markMovedLocallyIfNecessary(true, messages: messages, folder: origin)
 
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
         let alsoMoveReactions = featureAvailableProvider.isAvailable(.emojiReaction)
 
         let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
@@ -150,7 +149,6 @@ public extension MailboxManager {
     }
 
     func delete(messages: [Message]) async throws {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
         let alsoMoveReactions = featureAvailableProvider.isAvailable(.emojiReaction)
 
         try await apiFetcher.delete(mailbox: mailbox, messages: messages, alsoMoveReactions: alsoMoveReactions)

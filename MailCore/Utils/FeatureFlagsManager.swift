@@ -45,19 +45,21 @@ public enum FeatureFlag: String, Codable {
 }
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
-    @LazyInjectService private var accountManager: AccountManager
+    let mailboxUUID: String
+    let apiFetcher: MailApiFetchable
 
-    private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
+    private let enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
-    public init() {
+    public init(mailboxUUID: String, apiFetcher: MailApiFetchable) {
         enabledFeatures = SendableDictionary(content: UserDefaults.shared.featureFlags)
+        self.mailboxUUID = mailboxUUID
+        self.apiFetcher = apiFetcher
     }
 
     public func isEnabled(_ feature: FeatureFlag) -> Bool {
         guard isEnabledLocally(feature) else { return false }
 
-        guard let mailboxUUID = accountManager.currentMailboxManager?.mailbox.uuid,
-              let userFeatures = enabledFeatures.value(for: mailboxUUID) else { return false }
+        guard let userFeatures = enabledFeatures.value(for: mailboxUUID) else { return false }
 
         return userFeatures.contains(feature)
     }
@@ -76,14 +78,11 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func fetchFlags() async throws {
-        guard let currentMailboxManager = accountManager.currentMailboxManager else { return }
-
-        let mailboxUUID = currentMailboxManager.mailbox.uuid
         if enabledFeatures.value(for: mailboxUUID) == nil {
             enabledFeatures.setValue(Constants.defaultFeatureFlags, for: mailboxUUID)
         }
 
-        let enabledFlags = try await currentMailboxManager.apiFetcher.featureFlag(mailboxUUID)
+        let enabledFlags = try await apiFetcher.featureFlag(mailboxUUID)
 
         enabledFeatures.setValue(enabledFlags, for: mailboxUUID)
         UserDefaults.shared.featureFlags[mailboxUUID] = enabledFlags

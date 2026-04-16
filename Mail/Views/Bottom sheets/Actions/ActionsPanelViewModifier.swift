@@ -101,6 +101,7 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $messages, style: panelStyle,
                               popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
+                mailboxManager: mailboxManager,
                 user: currentUser.value,
                 target: messages,
                 origin: origin,

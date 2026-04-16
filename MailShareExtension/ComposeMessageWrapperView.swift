@@ -34,7 +34,6 @@ import VersionChecker
 
 struct ComposeMessageWrapperView: View {
     @InjectService private var accountManager: AccountManager
-    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @State private var versionStatus: VersionStatus?
 
@@ -90,7 +89,7 @@ struct ComposeMessageWrapperView: View {
                     dismissHandler(())
                 }
                 .task {
-                    try? await featureFlagsManager.fetchFlags()
+                    try? await mailboxManager.featureFlagsManager.fetchFlags()
                 }
             } else {
                 PleaseLoginView(tapHandler: dismissHandler)

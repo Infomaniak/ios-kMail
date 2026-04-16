@@ -75,9 +75,8 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
-    public var displayMessages: List<Message> {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        if featureAvailableProvider.isAvailable(.emojiReaction) {
+    public func displayMessages(isEmojiReactionAvailable: Bool) -> List<Message> {
+        if isEmojiReactionAvailable {
             return messagesToDisplay
         } else {
             return messages
@@ -221,8 +220,10 @@ public class Thread: Object, Decodable, Identifiable {
         }
     }
 
-    public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
-        return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
+    public func lastMessageToExecuteAction(currentMailboxEmail: String,
+                                           featureAvailableProvider: FeatureAvailableProvider) -> Message? {
+        return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail,
+                                                   featureAvailableProvider: featureAvailableProvider)
     }
 
     private enum CodingKeys: String, CodingKey {

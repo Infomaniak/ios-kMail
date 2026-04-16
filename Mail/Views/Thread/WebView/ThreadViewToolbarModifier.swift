@@ -162,7 +162,10 @@ struct ThreadViewToolbarModifier: ViewModifier {
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
         if action == .reply,
-           let message = frozenMessages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email),
+           let message = frozenMessages.lastMessageToExecuteAction(
+               currentMailboxEmail: mailboxManager.mailbox.email,
+               featureAvailableProvider: mailboxManager.featureAvailableProvider
+           ),
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
             return

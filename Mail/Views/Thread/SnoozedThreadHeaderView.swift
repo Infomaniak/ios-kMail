@@ -17,12 +17,14 @@
  */
 
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var messagesToSnooze: [Message]?
 
@@ -39,7 +41,8 @@ struct SnoozedThreadHeaderView: View {
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
             showBottomSeparator: true,
-            shouldDisplayActions: folder?.canAccessSnoozeActions ?? false
+            shouldDisplayActions: folder?.canAccessSnoozeActions(featureAvailableProvider:
+                mailboxManager.featureAvailableProvider) ?? false
         ) {
             HStack {
                 Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
@@ -74,4 +77,5 @@ struct SnoozedThreadHeaderView: View {
 
 #Preview {
     SnoozedThreadHeaderView(date: .now, messages: [], folder: nil)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

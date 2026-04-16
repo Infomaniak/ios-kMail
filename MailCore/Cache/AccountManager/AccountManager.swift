@@ -41,7 +41,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var notificationService: InfomaniakNotifications
     @LazyInjectService var matomo: MatomoUtils
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
-    @LazyInjectService var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService var myKSuiteStore: MyKSuiteStore
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
@@ -310,9 +309,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             Task {
                 _ = try? await self.myKSuiteStore.updateMyKSuite(with: apiFetcher, id: userId)
             }
-        }
-        Task {
-            try? await self.featureFlagsManager.fetchFlags()
         }
     }
 

@@ -76,7 +76,6 @@ struct EditorPositionPreferenceKey: PreferenceKey {
 
 struct ComposeMessageView: View {
     @InjectService private var platformDetector: PlatformDetectable
-    @InjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
@@ -232,13 +231,13 @@ struct ComposeMessageView: View {
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                if platformDetector.isMac && featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+                if platformDetector.isMac && mailboxManager.featureFlagsManager.isEnabled(.mailComposeEncrypted) {
                     EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
                 }
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                if featureFlagsManager.isEnabled(.scheduleSendDraft) {
+                if mailboxManager.featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
                         if draft.encrypted {
                             snackbarPresenter
@@ -332,7 +331,7 @@ struct ComposeMessageView: View {
             )
             initialAttachments = []
 
-            if featureFlagsManager.isEnabled(.aiMailComposer)
+            if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer)
                 && UserDefaults.shared.shouldPresentAIFeature
                 && !platformDetector.isRunningUITests {
                 aiModel.isShowingDiscovery = true

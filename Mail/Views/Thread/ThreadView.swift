@@ -59,7 +59,11 @@ struct ThreadView: View {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
 
-                MessageListView(messages: thread.displayMessages.toArray(), mailboxManager: mailboxManager)
+                let isEmojiReactionAvailable = mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                MessageListView(
+                    messages: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).toArray(),
+                    mailboxManager: mailboxManager
+                )
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
