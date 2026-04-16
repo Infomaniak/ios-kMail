@@ -192,6 +192,9 @@ struct SplitView: View {
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchFolders()
         }
+        .task(id: mailboxManager.mailbox.objectId) {
+            try? await mailboxManager.featureFlagsManager.fetchFlags()
+        }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)
@@ -239,7 +242,7 @@ struct SplitView: View {
                 await checkTwoFAChallenges()
             }
             Task {
-                try await mailboxManager.featureFlagsManager.fetchFlags()
+                try? await mailboxManager.featureFlagsManager.fetchFlags()
             }
 
             guard !platformDetector.isDebug else { return }
