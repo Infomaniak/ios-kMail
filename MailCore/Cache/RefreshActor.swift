@@ -35,8 +35,6 @@ class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
 }
 
 public actor RefreshActor {
-    @InjectService private var serverStatusManager: ServerStatusManager
-
     weak var mailboxManager: MailboxManager?
 
     private var refreshTask: Task<Void, Never>?
