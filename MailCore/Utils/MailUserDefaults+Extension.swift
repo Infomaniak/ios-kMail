@@ -61,6 +61,9 @@ public extension UserDefaults.Keys {
     static func notificationsEnabled(userId: Int) -> UserDefaults.Keys {
         return UserDefaults.Keys(rawValue: "notificationsEnabled-\(userId)")
     }
+
+    // Legacy keys — migration only, do not use
+    static let legacyNotificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
 }
 
 public extension UserDefaults {
@@ -85,9 +88,7 @@ public extension UserDefaults {
     }
 
     func getNotificationEnabled(userId: Int) -> Bool {
-        if object(forKey: key(.notificationsEnabled(userId: userId))) == nil {
-            set(DefaultPreferences.notificationsEnabled, forKey: key(.notificationsEnabled(userId: userId)))
-        }
+        migrateNotificationEnabledIfNeeded(userId: userId)
         return bool(forKey: key(.notificationsEnabled(userId: userId)))
     }
 
@@ -376,6 +377,22 @@ public extension UserDefaults {
         }
         set {
             set(newValue.timeIntervalSince1970, forKey: key(.lastCustomSnoozeDate))
+        }
+    }
+}
+
+// MARK: - Migration
+
+extension UserDefaults {
+    func migrateNotificationEnabledIfNeeded(userId: Int) {
+        if object(forKey: key(.notificationsEnabled(userId: userId))) == nil {
+            let baseValue: Bool
+            if object(forKey: key(.legacyNotificationsEnabled)) != nil {
+                baseValue = bool(forKey: key(.legacyNotificationsEnabled))
+            } else {
+                baseValue = DefaultPreferences.notificationsEnabled
+            }
+            set(baseValue, forKey: key(.notificationsEnabled(userId: userId)))
         }
     }
 }
