@@ -23,29 +23,30 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationToggleCell: View {
-    private let title = MailResourcesStrings.Localizable.settingsEnableNotifications
-
-    let userId: Int
     @Binding var toggleIsOn: Bool
 
+    let userId: Int
+
+    init(userId: Int, toggleIsOn: Binding<Bool>) {
+        self.userId = userId
+        _toggleIsOn = toggleIsOn
+    }
+
     var body: some View {
-        Toggle(isOn: Binding(get: {
-            toggleIsOn
-        }, set: { newValue in
-            toggleIsOn = newValue
-            UserDefaults.shared.setNotificationEnabled(newValue, userId: userId)
-
-            @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .settingsNotifications, name: "allNotifications", value: newValue)
-
-        })) {
-            Text(title)
+        Toggle(isOn: $toggleIsOn) {
+            Text(MailResourcesStrings.Localizable.settingsEnableNotifications)
                 .textStyle(.body)
         }
         .tint(.accentColor)
         .settingsItem()
         .onAppear {
             toggleIsOn = UserDefaults.shared.getNotificationEnabled(userId: userId)
+        }
+        .onChange(of: toggleIsOn) { newValue in
+            UserDefaults.shared.setNotificationEnabled(newValue, userId: userId)
+
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .settingsNotifications, name: "allNotifications", value: newValue)
         }
     }
 }
