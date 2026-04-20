@@ -45,6 +45,7 @@ struct EditorMobileToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
+    @Binding var selectedText: String
 
     let draft: Draft
     let isEditorFocused: Bool
@@ -71,6 +72,7 @@ struct EditorMobileToolbarView: View {
             if isShowingFormattingOptions {
                 MobileFormattingToolbarView(
                     textAttributes: textAttributes,
+                    selectedText: $selectedText,
                     isShowingClassicOptions: $isShowingClassicOptions,
                     isShowingFormattingOptions: $isShowingFormattingOptions
                 )
@@ -96,6 +98,7 @@ struct EditorMobileToolbarView: View {
         isShowingMyKSuitePanel: .constant(false),
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
+        selectedText: .constant(""),
         draft: Draft(),
         isEditorFocused: true
     )

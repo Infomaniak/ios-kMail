@@ -27,6 +27,8 @@ import SwiftRegex
 import SwiftUI
 
 struct AddLinkView: View {
+    let selectionLink: SelectionLink
+
     @State private var text = ""
     @State private var url = ""
 
@@ -70,6 +72,7 @@ struct AddLinkView: View {
         }
         .onAppear {
             firstFieldIsFocused = true
+            getValues()
         }
     }
 
@@ -90,8 +93,19 @@ struct AddLinkView: View {
 
         actionHandler?(url, text)
     }
+    
+    private func getValues() {
+        switch selectionLink {
+        case .url(let url):
+            self.url = url.absoluteString
+        case .title(let string):
+            text = string
+        case .empty:
+            return
+        }
+    }
 }
 
 #Preview {
-    AddLinkView()
+    AddLinkView(selectionLink: .empty)
 }
