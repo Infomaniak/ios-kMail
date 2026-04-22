@@ -21,12 +21,6 @@ import MailResources
 import SwiftSoup
 
 public enum MessageWebViewUtils {
-    public enum MessageTheme: String {
-        case light
-        case dark
-        case auto = "light dark"
-    }
-
     public enum WebViewTarget {
         case message(theme: MessageTheme)
         case editor

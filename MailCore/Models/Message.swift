@@ -162,6 +162,12 @@ public enum MessageTranslatedState {
     }
 }
 
+public enum MessageTheme: String, PersistableEnum {
+    case light
+    case dark
+    case auto = "light dark"
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -238,6 +244,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var reactionMessages: List<Message>
 
     @Persisted public var summary: String?
+    @Persisted public var theme: MessageTheme = .auto
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
