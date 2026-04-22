@@ -44,6 +44,7 @@ extension View {
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -108,6 +109,7 @@ struct ActionsPanelViewModifier: ViewModifier {
                 target: messages,
                 origin: origin,
                 isMultipleSelection: isMultipleSelection,
+                colorScheme: colorScheme,
                 completionHandler: completionHandler
             )
         }

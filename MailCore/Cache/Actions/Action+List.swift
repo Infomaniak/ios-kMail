@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import MailResources
+import SwiftUI
 
 extension Action: CaseIterable {
     public struct MessageActions {
@@ -66,6 +67,8 @@ extension Action: CaseIterable {
         .snooze,
         .modifySnooze,
         .cancelSnooze,
+        .forceDarkMode,
+        .forceLightMode,
         .summarize
     ]
 
@@ -129,6 +132,7 @@ extension Action: CaseIterable {
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
+                                          colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider)
         -> MessageActions {
         @LazyInjectService var platformDetector: PlatformDetectable
@@ -152,6 +156,7 @@ extension Action: CaseIterable {
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
             euriaActions.isEmpty ? nil : .showEuriaActions,
+            themeAction(message: message, colorScheme: colorScheme),
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -291,6 +296,15 @@ extension Action: CaseIterable {
         )
     }
 
+    private static func themeAction(message: Message, colorScheme: ColorScheme) -> Action? {
+        guard colorScheme == .dark else { return nil }
+        if message.theme == .auto || message.theme == .dark {
+            return .forceLightMode
+        } else {
+            return .forceDarkMode
+        }
+    }
+
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
     }
@@ -304,7 +318,8 @@ extension Action: CaseIterable {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, featureAvailableProvider: featureAvailableProvider)
+                                     userEmail: userEmail, colorScheme: colorScheme,
+                                     featureAvailableProvider: featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
                                                         userEmail: userEmail,
@@ -568,6 +583,18 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
+    )
+    static let forceLightMode = Action(
+        id: "forceLightMode",
+        title: MailResourcesStrings.Localizable.actionViewInLight,
+        iconResource: MailResourcesAsset.viewInLight,
+        matomoName: ""
+    )
+    static let forceDarkMode = Action(
+        id: "forceDarkMode",
+        title: MailResourcesStrings.Localizable.actionViewInDark,
+        iconResource: MailResourcesAsset.viewInLight,
+        matomoName: ""
     )
 
     // MARK: Account Actions

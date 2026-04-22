@@ -40,6 +40,7 @@ struct ActionsView: View {
         target messages: [Message],
         origin: ActionOrigin,
         isMultipleSelection: Bool,
+        colorScheme: ColorScheme,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         let userIsStaff = user.isStaff ?? false
@@ -48,6 +49,7 @@ struct ActionsView: View {
             origin: origin,
             userIsStaff: userIsStaff,
             userEmail: user.email,
+            colorScheme: colorScheme,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
         quickActions = actions.quickActions
