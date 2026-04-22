@@ -275,6 +275,13 @@ public class ActionsManager: ObservableObject {
         case .showEuriaActions:
             Task { @MainActor in
                 origin.messagesToProcessWithEuria?.wrappedValue = messages
+			}
+        case .forceDarkMode, .forceLightMode:
+            guard let message = messages.first else { return }
+            let theme: MessageTheme = action == .forceDarkMode ? .dark : .light
+            guard let realm = message.realm?.thaw(), let liveMessage = message.fresh(using: realm) else { return }
+            try? realm.write {
+                liveMessage.theme = theme
             }
         default:
             break

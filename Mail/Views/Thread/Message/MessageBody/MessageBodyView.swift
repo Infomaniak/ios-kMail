@@ -33,6 +33,7 @@ struct MessageBodyView: View {
     let isRemoteContentBlocked: Bool
     let isShowingTranslated: Bool
     let messageUid: String
+    let messageTheme: MessageTheme
 
     private var translatedPresentableBody: PresentableBody? {
         messagesWorker.presentableBody(for: messageUid, isShowingTranslated: true)
@@ -61,7 +62,8 @@ struct MessageBodyView: View {
                     initialContentLoading: $initialContentLoading,
                     presentableBody: messagesWorker.presentableBody(for: messageUid, isShowingTranslated: isShowingTranslated),
                     blockRemoteContent: isRemoteContentBlocked,
-                    messageUid: messageUid
+                    messageUid: messageUid,
+                    messageTheme: messageTheme
                 )
             }
         }

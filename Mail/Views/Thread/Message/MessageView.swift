@@ -83,6 +83,7 @@ struct MessageView: View {
                             isShowingTranslated: message.isShowingTranslated,
                             messageUid: message.uid
                         )
+                        .id(message.theme.rawValue)
 
                         if mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction) && !initialContentLoading {
                             MessageReactionsView(

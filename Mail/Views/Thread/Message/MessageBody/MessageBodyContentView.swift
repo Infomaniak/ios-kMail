@@ -25,16 +25,37 @@ import SwiftSoup
 import SwiftUI
 
 struct MessageBodyContentView: View {
-    @StateObject private var model = WebViewModel()
+    @StateObject private var model: WebViewModel
 
-    @Binding var displayContentBlockedActionView: Bool
-    @Binding var initialContentLoading: Bool
+    @Binding private var displayContentBlockedActionView: Bool
+    @Binding private var initialContentLoading: Bool
 
-    let presentableBody: PresentableBody?
-    let blockRemoteContent: Bool
-    let messageUid: String
+    private let presentableBody: PresentableBody?
+    private let blockRemoteContent: Bool
+    private let messageUid: String
+    private let messageTheme: MessageTheme
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
+
+    init(
+        displayContentBlockedActionView: Binding<Bool>,
+        initialContentLoading: Binding<Bool>,
+        presentableBody: PresentableBody?,
+        blockRemoteContent: Bool,
+        messageUid: String,
+        messageTheme: MessageTheme
+    ) {
+        _displayContentBlockedActionView = displayContentBlockedActionView
+        _initialContentLoading = initialContentLoading
+        self.presentableBody = presentableBody
+        self.blockRemoteContent = blockRemoteContent
+        self.messageUid = messageUid
+        self.messageTheme = messageTheme
+
+        let viewModel = WebViewModel()
+        viewModel.theme = messageTheme
+        _model = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         ZStack {
@@ -115,6 +136,7 @@ struct MessageBodyContentView: View {
         initialContentLoading: .constant(false),
         presentableBody: PreviewHelper.samplePresentableBody,
         blockRemoteContent: false,
-        messageUid: "message_uid"
+        messageUid: "message_uid",
+        messageTheme: .auto
     )
 }
