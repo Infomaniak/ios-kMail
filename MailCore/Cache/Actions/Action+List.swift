@@ -125,7 +125,7 @@ extension Action: CaseIterable {
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
-            isFromMe || isInSpamFolder ? nil : .phishing,
+            isFromMe ? nil : .phishing,
             isFromMe || isInSpamFolder ? nil : .blockList,
             .shareMailLink,
             archive ? .archive : .moveToInbox,
@@ -171,7 +171,7 @@ extension Action: CaseIterable {
 
         var tempListActions: [Action?] = [
             spamAction,
-            isSelfThread || isInSpamFolder ? nil : .phishing,
+            isSelfThread ? nil : .phishing,
             isSelfThread || isInSpamFolder ? nil : .blockList,
             star ? .unstar : .star,
             .saveThreadInkDrive
@@ -215,7 +215,7 @@ extension Action: CaseIterable {
             .openMovePanel,
             unread ? .markAsUnread : .markAsRead,
             spamAction,
-            isSelfThread || isInSpamFolder ? nil : .phishing,
+            isSelfThread ? nil : .phishing,
             isSelfThread || isInSpamFolder ? nil : .blockList,
             archive ? .archive : .moveToInbox,
             showUnstar ? .unstar : .star,
