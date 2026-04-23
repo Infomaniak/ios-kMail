@@ -140,12 +140,13 @@ struct MobileFormattingToolbarView: View {
                 if selectedText.isEmpty {
                     isShowingLink = .empty
                 } else {
-                    if Regex(pattern: MobileFormattingToolbarView.urlRegex)?.numberOfMatches(in: selectedText) == 1 {
-                        if let url = URL(string: selectedText) {
+                    let trimmedText = selectedText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if Regex(pattern: MobileFormattingToolbarView.urlRegex)?.numberOfMatches(in: trimmedText) == 1 {
+                        if let url = URL(string: trimmedText) {
                             isShowingLink = .url(url)
                         }
                     } else {
-                        isShowingLink = .title(selectedText)
+                        isShowingLink = .title(trimmedText)
                     }
                 }
             }
