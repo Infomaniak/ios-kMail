@@ -40,14 +40,18 @@ struct TxtToTextAttachment: HTMLAttachable {
                 return (nil, nil)
             }
 
-            guard let textData = NSData(contentsOf: textAttachment.url) else {
+            guard let data = try? Data(contentsOf: textAttachment.url) else {
                 return (nil, nil)
             }
 
-            let textString = String(decoding: textData, as: UTF8.self)
+            var body: String
+            if let unarchivedText = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String {
+                body = unarchivedText
+            } else {
+                body = String(decoding: data, as: UTF8.self)
+            }
 
-            /// The `txt` file name is generated, so not useful for an email subject, discarding it
-            return TextAttachment(title: nil, body: textString)
+            return TextAttachment(title: nil, body: body)
         }
     }
 
