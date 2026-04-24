@@ -62,6 +62,7 @@ struct MessageHeaderDetailView: View {
             HStack {
                 MailResourcesAsset.calendar
                     .iconSize(.medium)
+                    .frame(width: labelWidth, alignment: .leading)
                 Text(message.date.formatted(date: .long, time: .shortened))
             }
             .textStyle(.bodySmallSecondary)
