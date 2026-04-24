@@ -98,16 +98,15 @@ struct RecipientLabel: View {
                         ContactActionsMenuView(recipient: recipient, bimi: bimi) {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
-                                .lineLimit(1)
+                                .multilineTextAlignment(.leading)
                                 .layoutPriority(1)
                         }
                         .environmentObject(mailboxManager)
                         .environment(\.currentUser, currentUser)
 
-                        if !recipient.name.isEmpty {
+                        if !recipient.name.isEmpty && recipient.name != recipient.email {
                             Text(recipient.email)
                                 .textStyle(.labelSecondary)
-                                .lineLimit(1)
                         }
                     }
                 }
