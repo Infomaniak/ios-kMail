@@ -34,38 +34,35 @@ struct MessageHeaderDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.mini) {
-            RecipientLabel(
-                labelWidth: $labelWidth,
-                title: MailResourcesStrings.Localizable.fromTitle,
-                recipients: message.from,
-                bimi: message.bimi
-            )
-            RecipientLabel(
-                labelWidth: $labelWidth,
-                title: MailResourcesStrings.Localizable.toTitle,
-                recipients: message.to
-            )
-            if !message.cc.isEmpty {
+            Grid(alignment: .leading) {
                 RecipientLabel(
-                    labelWidth: $labelWidth,
-                    title: MailResourcesStrings.Localizable.ccTitle,
-                    recipients: message.cc
+                    title: MailResourcesStrings.Localizable.fromTitle,
+                    recipients: message.from,
+                    bimi: message.bimi
                 )
-            }
-            if !message.bcc.isEmpty {
                 RecipientLabel(
-                    labelWidth: $labelWidth,
-                    title: MailResourcesStrings.Localizable.bccTitle,
-                    recipients: message.bcc
+                    title: MailResourcesStrings.Localizable.toTitle,
+                    recipients: message.to
                 )
+                if !message.cc.isEmpty {
+                    RecipientLabel(
+                        title: MailResourcesStrings.Localizable.ccTitle,
+                        recipients: message.cc
+                    )
+                }
+                if !message.bcc.isEmpty {
+                    RecipientLabel(
+                        title: MailResourcesStrings.Localizable.bccTitle,
+                        recipients: message.bcc
+                    )
+                }
+                GridRow {
+                    MailResourcesAsset.calendar
+                        .iconSize(.medium)
+                    Text(message.date.formatted(date: .long, time: .shortened))
+                }
+                .textStyle(.bodySmallSecondary)
             }
-            HStack {
-                MailResourcesAsset.calendar
-                    .iconSize(.medium)
-                    .frame(width: labelWidth, alignment: .leading)
-                Text(message.date.formatted(date: .long, time: .shortened))
-            }
-            .textStyle(.bodySmallSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onPreferenceChange(ViewWidthKey.self) {
@@ -82,17 +79,15 @@ struct RecipientLabel: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @Binding var labelWidth: CGFloat
     let title: String
     let recipients: RealmSwift.List<Recipient>
     var bimi: Bimi?
 
     var body: some View {
-        HStack(alignment: .top) {
+        GridRow {
             Text(title)
                 .textStyle(.bodySmallSecondary)
                 .background(ViewGeometry(key: ViewWidthKey.self, property: \.size.width))
-                .frame(width: labelWidth, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in
                     FlowLayout(alignment: .leading, horizontalSpacing: IKPadding.micro) {
