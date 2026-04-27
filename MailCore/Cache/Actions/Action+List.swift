@@ -124,7 +124,8 @@ extension Action: CaseIterable {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
-        let hasAccessToTranslateFeature = featureAvailableProvider.isAvailable(.translate)
+        let hasAccessToTranslateFeature = featureAvailableProvider.isAvailable(.translate) &&
+            origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
             summarize ? .summarize : nil,
 			hasAccessToTranslateFeature ? .translateMessage : nil,
