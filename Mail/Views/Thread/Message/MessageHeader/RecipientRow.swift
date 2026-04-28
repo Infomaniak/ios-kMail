@@ -32,7 +32,7 @@ struct RecipientRow: View {
     var bimi: Bimi?
 
     var body: some View {
-        GridRow {
+        GridRow(alignment: .top) {
             Text(title)
                 .textStyle(.bodySmallSecondary)
 

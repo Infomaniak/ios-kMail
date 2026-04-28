@@ -31,7 +31,7 @@ struct MessageHeaderDetailView: View {
     @ObservedRealmObject var message: Message
 
     var body: some View {
-        Grid(alignment: .leading, horizontalSpacing: IKPadding.mini, verticalSpacing: IKPadding.micro) {
+        Grid(alignment: .leading, horizontalSpacing: IKPadding.mini, verticalSpacing: IKPadding.mini) {
             RecipientRow(
                 title: MailResourcesStrings.Localizable.fromTitle,
                 recipients: message.from,
