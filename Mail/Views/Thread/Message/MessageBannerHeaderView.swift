@@ -130,6 +130,19 @@ struct MessageBannerHeaderView: View {
                         }
                     }
                 )
+            case .targetSameAsSource:
+                MessageHeaderActionView(
+                    message: MailResourcesStrings.Localizable.translationTargetSameAsSource,
+                    showBottomSeparator: showBottomSeparator,
+                    animationView: { EuriaAnimationView() },
+                    actions: {
+                        Button {
+                            $message.targetSameAsSource.wrappedValue = false
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonClose)
+                        }
+                    }
+                )
             }
         }
     }

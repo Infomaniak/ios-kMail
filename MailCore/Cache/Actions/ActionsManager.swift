@@ -556,15 +556,14 @@ public class ActionsManager: ObservableObject {
                 }
             }
         } catch {
-            @InjectService var snackbarPresenter: IKSnackBarPresentable
             if let liveMessage = message.thaw() {
                 withAnimation {
                     try? liveMessage.realm?.write {
                         liveMessage.isTranslating = false
+                        liveMessage.targetSameAsSource = true
                     }
                 }
             }
-            snackbarPresenter.show(message: error.localizedDescription)
         }
     }
 

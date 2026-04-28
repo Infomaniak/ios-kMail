@@ -37,7 +37,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return "unsubscribeLink"
         case .acknowledge:
             return "acknowledge"
-        case .translating, .translated:
+        case .translating, .translated, .targetSameAsSource:
             return ""
         }
     }
@@ -50,6 +50,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case acknowledge
     case translating
     case translated
+    case targetSameAsSource
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -69,6 +70,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return true
         case (.translated, .translated):
             return true
+        case (.targetSameAsSource, .targetSameAsSource):
+            return true
         default:
             return false
         }
@@ -84,7 +87,8 @@ public extension [MessageBanner] {
             return !(contains(.displayContent) || contains(.encrypted))
         case .displayContent:
             return !contains(.encrypted)
-        case .unsubscribeLink, .acknowledge, .translating, .translated:
+        case .unsubscribeLink, .acknowledge, .translating,
+             .translated, .targetSameAsSource:
             return true
         default:
             return false

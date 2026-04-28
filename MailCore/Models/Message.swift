@@ -200,6 +200,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var localSafeDisplay = false
     @Persisted public var isShowingTranslated = false
     @Persisted public var isTranslating = false
+    @Persisted public var targetSameAsSource = false
 
     @Persisted public var calendarEventResponse: CalendarEventResponse?
 

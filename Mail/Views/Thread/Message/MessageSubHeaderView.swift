@@ -70,6 +70,10 @@ struct MessageSubHeaderView: View {
             result.append(.translated)
         }
 
+        if message.targetSameAsSource {
+            result.append(.targetSameAsSource)
+        }
+
         return result
     }
 
