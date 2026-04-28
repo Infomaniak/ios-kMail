@@ -156,7 +156,6 @@ extension Action: CaseIterable {
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
             euriaActions.isEmpty ? nil : .showEuriaActions,
-            themeAction(message: message, colorScheme: colorScheme),
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -166,6 +165,7 @@ extension Action: CaseIterable {
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
+            themeAction(message: message, colorScheme: colorScheme),
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
