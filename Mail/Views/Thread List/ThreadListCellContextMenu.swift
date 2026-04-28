@@ -35,7 +35,7 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var actionsManager: ActionsManager
