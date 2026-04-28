@@ -23,7 +23,7 @@ import QuickLookThumbnailing
 import SwiftUI
 import UniformTypeIdentifiers
 
-public struct AttachmentHelper {
+public struct AttachmentHelper: Sendable {
     public let type: String
     public let fileExtension: String?
 
