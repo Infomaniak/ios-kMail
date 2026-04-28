@@ -151,6 +151,10 @@ public class Thread: Object, Decodable, Identifiable {
         messages.allSatisfy(\.isMovable)
     }
 
+    public var containsScheduledDraft: Bool {
+        return numberOfScheduledDraft > 0
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messagesAndDuplicates.filter { !$0.seen }.count
     }

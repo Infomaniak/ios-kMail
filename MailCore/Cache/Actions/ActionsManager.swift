@@ -138,6 +138,10 @@ public class ActionsManager: ObservableObject {
                 await showWarningDeleteSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
                 return
             }
+            guard !messagesWithDuplicates.contains(where: { $0.isScheduledDraft == true }) else {
+                await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                return
+            }
 
             try await performDelete(messages: messagesWithDuplicates, originFolder: origin.frozenFolder)
         case .reply:
@@ -387,6 +391,25 @@ public class ActionsManager: ObservableObject {
         ) {
             tryOrDisplayError {
                 origin.nearestMessagesToMoveSheet?.wrappedValue = messages
+            }
+        }
+    }
+
+    @MainActor
+    private func showWarningDeleteScheduleAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+            type: .deleteSchedule(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+        ) {
+            await tryOrDisplayError { [weak self] in
+                let scheduledMessages = messagesWithDuplicates.filter { $0.isScheduledDraft == true }
+                try await self?.performDelete(messages: scheduledMessages, originFolder: origin.frozenFolder)
+
+                let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
+                    .filter { $0.isScheduledDraft != true }
+                try await self?.performDelete(
+                    messages: messagesFromFolder,
+                    originFolder: origin.frozenFolder
+                )
             }
         }
     }
