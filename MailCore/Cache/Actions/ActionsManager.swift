@@ -164,12 +164,13 @@ public class ActionsManager: ObservableObject {
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
             guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
-                await showWarningMoveSnoozeAlert(origin: origin, messagesWithDuplicates: messages)
+                await showWarningMoveSnoozeAlert(origin: origin, messagesWithDuplicates: messagesFromFolder)
                 return
             }
             Task { @MainActor in
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messages
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesFromFolder
             }
         case .star:
             let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
@@ -188,7 +189,8 @@ public class ActionsManager: ObservableObject {
                 nc.post(name: Notification.Name.printNotification, object: message)
             }
         case .moveToInbox, .nonSpam:
-            try await performMove(messages: messages, from: origin.frozenFolder, to: .inbox)
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
+            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
@@ -201,8 +203,9 @@ public class ActionsManager: ObservableObject {
                 try await self.mailboxManager.reportSpam(messages: messages, origin: originFolder)
             }
         case .phishing:
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messages
+                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesFromFolder
             }
         case .reportDisplayProblem:
             Task { @MainActor in
