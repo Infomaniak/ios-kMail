@@ -1645,6 +1645,9 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Läskvitto skickat";
 
+/* loco:69f0b852d1c96c96d10453c2 */
+"snackbarAdminDisabledMessageSending" = "En administratör har inaktiverat meddelandesändning";
+
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "Avsändaren är nu blockerad";
 
