@@ -1687,6 +1687,9 @@
 /* loco:62ab223f0763d104d71437f2 */
 "snackbarMessageMoved" = "Messaggio spostato a %@";
 
+/* loco:69ef28ef082d72278000d9c2 */
+"snackbarMessageMovedToSpam" = "Messaggio spostato nello spam e utente bloccato";
+
 /* loco:62ab22a33a9b9314d8557222 */
 "snackbarMoveCancelled" = "Spostamento annullato";
 

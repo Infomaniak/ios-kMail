@@ -1687,6 +1687,9 @@
 /* loco:62ab223f0763d104d71437f2 */
 "snackbarMessageMoved" = "Το μήνυμα μετακινήθηκε στο %@";
 
+/* loco:69ef28ef082d72278000d9c2 */
+"snackbarMessageMovedToSpam" = "Το μήνυμα μεταφέρθηκε στα spam και ο χρήστης εμποδίστηκε";
+
 /* loco:62ab22a33a9b9314d8557222 */
 "snackbarMoveCancelled" = "Η μετακίνηση ακυρώθηκε";
 
