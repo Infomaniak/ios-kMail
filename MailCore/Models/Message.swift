@@ -215,6 +215,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var summary: String?
 
+    @Persisted public var cancelResource: String?
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -420,6 +422,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case emojiReactionNotAllowedReason
         case headers
         case acknowledge
+        case cancelResource
     }
 
     override init() {
@@ -501,6 +504,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
+        cancelResource = try values.decodeIfPresent(String.self, forKey: .cancelResource)
     }
 
     public convenience init(

@@ -76,11 +76,13 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func displayMessages(isEmojiReactionAvailable: Bool) -> List<Message> {
+        let toDisplay: List<Message>
         if isEmojiReactionAvailable {
-            return messagesToDisplay
+            toDisplay = messagesToDisplay
         } else {
-            return messages
+            toDisplay = messages
         }
+        return toDisplay.filter { $0.cancelResource == nil }.toRealmList()
     }
 
     public var lastAction: ThreadLastAction? {
