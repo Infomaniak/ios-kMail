@@ -31,6 +31,9 @@
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Snooze annuleren";
 
+/* loco:69f0b13d3bfb114bb806c253 */
+"actionCloseSummaryWindow" = "Samenvattingsvenster sluiten";
+
 /* loco:629f0e12701ef82cde591a62 */
 "actionDelete" = "Verwijderen";
 
@@ -96,6 +99,9 @@
 
 /* loco:62dfcbfd27c35d15796e01c3 */
 "actionStar" = "Toevoegen aan favorieten";
+
+/* loco:69f07a4e87050b68480038b7 */
+"actionSummarize" = "Samenvatten";
 
 /* loco:62dfccb7dfb07663055fc0b2 */
 "actionUnstar" = "Uit favorieten verwijderen";
@@ -594,6 +600,9 @@
 
 /* loco:64380fdd8d050844fe71ae26 */
 "contentDescriptionButtonShowPassword" = "Wachtwoord tonen";
+
+/* loco:69f1bf6ac8c38c90970d0713 */
+"contentDescriptionButtonWarning" = "Waarschuwing";
 
 /* loco:642bef2a4b57be636f4d03e2 */
 "contentDescriptionContactAlreadyUsed" = "Contact al gebruikt als ontvanger";
@@ -1125,6 +1134,15 @@
 
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Gesprek weergeven";
+
+/* loco:69f07dc4616835272207edd2 */
+"messageSummary" = "Samenvatting van het bericht";
+
+/* loco:69f09de42dd56d99c000c725 */
+"messageSummaryErrorRetry" = "Euria kon dit bericht niet samenvatten. Probeer het opnieuw.";
+
+/* loco:69f07faf00857b6e8f0314f2 */
+"messageSummaryLoading" = "Samenvatting van het bericht…";
 
 /* loco:6723980d4062e74f78028152 */
 "mondayAfternoon" = "Maandagmiddag";
