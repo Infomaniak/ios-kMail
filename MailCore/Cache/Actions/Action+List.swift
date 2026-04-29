@@ -59,7 +59,8 @@ extension Action: CaseIterable {
         .quickActionPanel,
         .snooze,
         .modifySnooze,
-        .cancelSnooze
+        .cancelSnooze,
+        .summarize
     ]
 
     public var refreshSearchResult: Bool {
@@ -122,6 +123,7 @@ extension Action: CaseIterable {
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
+            .summarize,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -505,6 +507,12 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
+    )
+    static let summarize = Action(
+        id: "summarize",
+        title: MailResourcesStrings.Localizable.actionSummarize,
+        iconResource: MailResourcesAsset.paragraphShorten,
+        matomoName: "summarize"
     )
 
     // MARK: Account Actions
