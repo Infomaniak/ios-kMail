@@ -129,17 +129,15 @@ public class ActionsManager: ObservableObject {
 
         switch action {
         case .delete:
+            for message in messagesWithDuplicates {
+                if message.isSnoozed {
+                    await showWarningDeleteSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                } else if message.isScheduledDraft == true {
+                    await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                }
+            }
             guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
                 await showWarningDeletionAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
-                return
-            }
-
-            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
-                await showWarningDeleteSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
-                return
-            }
-            guard !messagesWithDuplicates.contains(where: { $0.isScheduledDraft == true }) else {
-                await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
                 return
             }
 
@@ -402,7 +400,7 @@ public class ActionsManager: ObservableObject {
         ) {
             await tryOrDisplayError { [weak self] in
                 let scheduledMessages = messagesWithDuplicates.filter { $0.isScheduledDraft == true }
-                try await self?.performDelete(messages: scheduledMessages, originFolder: origin.frozenFolder)
+                try await self!.mailboxManager.delete(draftMessages: scheduledMessages)
 
                 let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
                     .filter { $0.isScheduledDraft != true }

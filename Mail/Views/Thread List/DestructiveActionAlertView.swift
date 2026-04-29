@@ -83,8 +83,8 @@ extension DestructiveActionAlertState {
             }
             return attributedDescription
 
-        case .deleteSchedule(let impactedMessages):
-            return AttributedString(MailResourcesStrings.Localizable.scheduleDeleteConfirmAlertDescription(impactedMessages))
+        case .deleteSchedule(let impactedThreadCount):
+            return AttributedString(MailResourcesStrings.Localizable.scheduleDeleteConfirmAlertDescription(impactedThreadCount))
         }
     }
 }

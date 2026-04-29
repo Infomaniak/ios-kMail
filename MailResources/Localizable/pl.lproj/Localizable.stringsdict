@@ -180,6 +180,10 @@ Zgłoszenia zostaną wysłane do naszego zespołu bezpieczeństwa w celu analizy
         <string>Ta rozmowa zostanie usunięta, a wszystkie zaplanowane dostawy zostaną anulowane.</string>
         <key>few</key>
         <string>Te rozmowy zostaną usunięte, a wszystkie zaplanowane dostawy zostaną anulowane.</string>
+        <key>many</key>
+        <string>Te rozmowy zostaną usunięte, a wszystkie zaplanowane dostawy zostaną anulowane.</string>
+        <key>other</key>
+        <string>Te rozmowy zostaną usunięte, a wszystkie zaplanowane dostawy zostaną anulowane.</string>
       </dict>
     </dict>
     <key>snackbarSenderBlacklisted</key>
