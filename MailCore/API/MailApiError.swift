@@ -224,6 +224,11 @@ public class MailApiError: MailError {
 
         // Message
         MailApiError(code: "message__uid_is_not_valid"),
+        MailApiError(
+            code: "message__cannot_send_message",
+            localizedDescription: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending,
+            shouldDisplay: true
+        ),
 
         // Signatures / Identity
         apiIdentityNotFound,
