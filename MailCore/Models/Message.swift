@@ -158,7 +158,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var bcc: List<Recipient>
     @Persisted public var replyTo: List<Recipient>
     @Persisted public var body: Body?
-    @Persisted public var translatedBody: Body?
+    @Persisted public var translatedBody: TranslatedBody?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var dkimStatus: MessageDKIM
     @Persisted public var attachmentsResources: String?

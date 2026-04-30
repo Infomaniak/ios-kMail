@@ -545,11 +545,13 @@ public class ActionsManager: ObservableObject {
             let response = try await mailboxManager.translate(content: content)
 
             guard let liveMessage = message.thaw() else { return }
+            let currentLanguage = Bundle.main.preferredLocalizations.first
             withAnimation {
                 try? liveMessage.realm?.write {
-                    let translatedBody = Body()
+                    let translatedBody = TranslatedBody()
                     translatedBody.value = response
                     translatedBody.type = liveMessage.body?.type
+                    translatedBody.language = currentLanguage
                     liveMessage.translatedBody = translatedBody
                     liveMessage.isTranslating = false
                     liveMessage.isShowingTranslated = true
@@ -569,7 +571,9 @@ public class ActionsManager: ObservableObject {
 
     private func isBodyTranslated(message: Message) -> Bool {
         guard let liveMessage = message.thaw() else { return false }
-        return liveMessage.translatedBody?.value != nil
+        let currentLanguage = Bundle.main.preferredLocalizations.first
+        return liveMessage.translatedBody?.value != nil &&
+            liveMessage.translatedBody?.language == currentLanguage
     }
 }
 

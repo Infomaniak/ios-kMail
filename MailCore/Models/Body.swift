@@ -85,7 +85,7 @@ final class ProxyBody: Codable {
 }
 
 @frozen public struct PresentableBody: Equatable {
-    public let body: Body?
+    public let body: BodyContent?
     public let compactBody: String?
     public let quotes: [String]
 
@@ -95,7 +95,7 @@ final class ProxyBody: Codable {
         quotes = []
     }
 
-    public init(body: Body?, compactBody: String?, quotes: [String]) {
+    public init(body: BodyContent?, compactBody: String?, quotes: [String]) {
         self.body = body
         self.compactBody = compactBody
         self.quotes = quotes
@@ -105,6 +105,16 @@ final class ProxyBody: Codable {
         body = nil
         compactBody = nil
         quotes = []
+    }
+
+    public var subBody: List<SubBody>? {
+        if let body = body as? Body {
+            return body.subBody
+        }
+        if let translated = body as? TranslatedBody {
+            return translated.subBody
+        }
+        return nil
     }
 }
 
@@ -176,4 +186,11 @@ final class ProxySubBody: Codable {
             partId = try values.decodeIfPresent(String.self, forKey: .partId) ?? ""
         }
     }
+}
+
+// MARK: - TranslatedBody
+
+public final class TranslatedBody: BodyContent {
+    @Persisted public var subBody: List<SubBody>
+    @Persisted public var language: String?
 }
