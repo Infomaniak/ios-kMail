@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import UniformTypeIdentifiers
 
 public extension MailboxManager {
     func calendarEvent(from messageUid: String) async throws {
@@ -63,7 +64,7 @@ extension MailboxManager {
     }
 
     private func getFrozenCalendarAttachment(from message: Message) -> Attachment? {
-        return message.attachments.first { AttachmentHelper(type: $0.mimeType).uti?.conforms(to: .calendarEvent) == true }?
+        return message.attachments.first { UTType(mimeType: $0.mimeType)?.conforms(to: .calendarEvent) == true }?
             .freezeIfNeeded()
     }
 

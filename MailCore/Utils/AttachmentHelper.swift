@@ -23,43 +23,68 @@ import QuickLookThumbnailing
 import SwiftUI
 import UniformTypeIdentifiers
 
-public struct AttachmentHelper {
-    public var type: String
+public struct AttachmentHelper: Sendable {
+    public let type: String
+    public let fileExtension: String?
 
-    public var uti: UTType? {
-        UTType(mimeType: type, conformingTo: .data)
+    public init(type: String, fileExtension: String? = nil) {
+        self.type = type
+        self.fileExtension = fileExtension
     }
 
     public var icon: MailResourcesImages {
-        guard let uti else { return MailResourcesAsset.unknownFile }
+        if let utiFromType = UTType(mimeType: type, conformingTo: .data),
+           let icon = guessIcon(forUTType: utiFromType) {
+            return icon
+        }
 
+        if let fileExtension,
+           let utiFromExtension = UTType(filenameExtension: fileExtension),
+           let icon = guessIcon(forUTType: utiFromExtension) {
+            return icon
+        }
+
+        return MailResourcesAsset.unknownFile
+    }
+
+    private func guessIcon(forUTType uti: UTType) -> MailResourcesImages? {
         if uti.conforms(to: .pdf) {
             return MailResourcesAsset.pdfFile
-        } else if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
+        }
+        if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
             return MailResourcesAsset.icsFile
-        } else if uti.conforms(to: .vCard) {
+        }
+        if uti.conforms(to: .vCard) {
             return MailResourcesAsset.vcardFile
-        } else if uti.conforms(to: .image) {
+        }
+        if uti.conforms(to: .image) {
             return MailResourcesAsset.imageFile
-        } else if uti.conforms(to: .audio) {
+        }
+        if uti.conforms(to: .audio) {
             return MailResourcesAsset.audioFile
-        } else if uti.conforms(to: .movie) {
+        }
+        if uti.conforms(to: .movie) {
             return MailResourcesAsset.videoFile
-        } else if uti.conforms(to: .spreadsheet) {
+        }
+        if uti.conforms(to: .spreadsheet) {
             return MailResourcesAsset.gridFile
-        } else if uti.conforms(to: .presentation) {
+        }
+        if uti.conforms(to: .presentation) {
             return MailResourcesAsset.pointFile
-        } else if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
+        }
+        if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
             return MailResourcesAsset.codeFile
-        } else if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
+        }
+        if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
             || uti.conforms(to: .wordDoc) || uti.conforms(to: .wordDocm) || uti.conforms(to: .wordDocx) {
             return MailResourcesAsset.docFile
-        } else if uti.conforms(to: .archive) {
-            return MailResourcesAsset.archiveFile
-        } else if uti.conforms(to: .font) {
-            return MailResourcesAsset.fontFile
-        } else {
-            return MailResourcesAsset.unknownFile
         }
+        if uti.conforms(to: .archive) {
+            return MailResourcesAsset.archiveFile
+        }
+        if uti.conforms(to: .font) {
+            return MailResourcesAsset.fontFile
+        }
+        return nil
     }
 }

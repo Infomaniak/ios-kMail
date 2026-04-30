@@ -41,7 +41,7 @@ public class Attachment: EmbeddedObject, Codable, ObjectKeyIdentifiable {
     }
 
     public var icon: MailResourcesImages {
-        return AttachmentHelper(type: mimeType).icon
+        return AttachmentHelper(type: mimeType, fileExtension: URL(filePath: name).pathExtension).icon
     }
 
     private enum CodingKeys: String, CodingKey {
