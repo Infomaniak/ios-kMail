@@ -1646,7 +1646,7 @@
 "snackbarAcknowledgementSuccess" = "Lesebekreftelse sendt";
 
 /* loco:69f0b852d1c96c96d10453c2 */
-"snackbarAdminDisabledMessageSending" = "En administrator har deaktivert meldingsendring";
+"snackbarAdminDisabledMessageSending" = "En administrator har deaktivert sending av meldinger";
 
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "Avsender er nå blokkert";
