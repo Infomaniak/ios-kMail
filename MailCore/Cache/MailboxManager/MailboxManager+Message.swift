@@ -212,6 +212,10 @@ public extension MailboxManager {
         try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
+    func summarize(content: String) async throws -> String {
+        return try await apiFetcher.summarize(content: content)
+    }
+
     private func undoAction(
         for cancellableResponses: [UndoResponse],
         messages: [Message],

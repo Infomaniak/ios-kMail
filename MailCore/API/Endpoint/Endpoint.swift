@@ -350,4 +350,8 @@ public extension Endpoint {
     static func acknowledge(resource: String) -> Endpoint {
         return .resource(resource).appending(path: "/acknowledge")
     }
+
+    static var summarize: Endpoint {
+        return .base.appending(path: "/resume")
+    }
 }
