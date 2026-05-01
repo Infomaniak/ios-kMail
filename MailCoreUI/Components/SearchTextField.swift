@@ -95,6 +95,7 @@ public struct SearchTextField: View {
                 MailResourcesAsset.search
                     .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
+                    .accessibilityLabel(MailResourcesStrings.Localizable.searchAction)
             }
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
                 .overlay {
@@ -119,6 +120,7 @@ public struct SearchTextField: View {
                 MailResourcesAsset.remove
                     .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
+                    .accessibilityLabel(MailResourcesStrings.Localizable.actionDelete)
             }
             .opacity(value.isEmpty ? 0 : 1)
         }

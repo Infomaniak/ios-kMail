@@ -61,6 +61,7 @@ struct SearchFilterFolderCell: View {
             if isSelected {
                 MailResourcesAsset.check
                     .iconSize(.small)
+                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionSelectedItem)
             }
             Text(selectedFolderName)
                 .font(MailTextStyle.bodyMedium.font)

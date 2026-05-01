@@ -51,6 +51,7 @@ struct SettingsThreadDensityOptionView: View {
                 .scaledToFit()
                 .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 0)
                 .padding(.horizontal, value: .medium)
+                .accessibilityHidden(true)
 
             Spacer()
         }

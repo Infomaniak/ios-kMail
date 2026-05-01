@@ -88,6 +88,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             .swiftUIImage
                     }
                     .tint(flaggedTint)
+                    .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
+                        .Localizable.actionStar)
                 }
             }
             .toolbar {

@@ -66,6 +66,7 @@ struct MailboxesManagementButtonView: View {
                 if mailbox.isLocked && style != .locked {
                     MailResourcesAsset.warningFill.swiftUIImage
                         .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
+                        .accessibilityHidden(true)
                 } else {
                     switch style {
                     case .menuDrawer:

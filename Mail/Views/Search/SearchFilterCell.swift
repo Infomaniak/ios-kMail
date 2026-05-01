@@ -33,6 +33,7 @@ struct SearchFilterCell: View {
             if isSelected {
                 MailResourcesAsset.check
                     .iconSize(.small)
+                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionSelectedItem)
             }
             Text(title)
                 .font(MailTextStyle.bodyMedium.font)

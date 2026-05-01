@@ -46,6 +46,7 @@ struct LockedAppView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: UIConstants.onboardingLogoHeight)
+                    .accessibilityHidden(true)
 
                 Spacer()
 

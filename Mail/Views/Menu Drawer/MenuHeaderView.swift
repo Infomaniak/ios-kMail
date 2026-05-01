@@ -52,6 +52,7 @@ struct MenuHeaderViewModifier: ViewModifier {
                                 .padding(2)
                         } else {
                             logoImage(Image(uiImage: MailResourcesAsset.logoText.image))
+                                .accessibilityHidden(true)
                         }
                     }
 
@@ -64,6 +65,7 @@ struct MenuHeaderViewModifier: ViewModifier {
                 HStack {
                     logoImage(MailResourcesAsset.logoText.swiftUIImage)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityHidden(true)
 
                     settingsButton
                 }

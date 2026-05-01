@@ -48,6 +48,7 @@ struct UnavailableMailboxesView: View {
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
                             .padding(.vertical, IKPadding.onBoardingLogoTop)
+                            .accessibilityHidden(true)
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,

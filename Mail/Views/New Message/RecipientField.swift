@@ -98,6 +98,7 @@ struct RecipientField: View {
                     MailResourcesAsset.remove
                         .iconSize(.medium)
                         .padding(value: .medium)
+                        .accessibilityLabel(MailResourcesStrings.Localizable.actionDelete)
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .alignmentGuide(.iconAndTextFieldAlignment) { d in

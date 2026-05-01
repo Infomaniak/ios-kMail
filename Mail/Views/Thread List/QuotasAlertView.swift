@@ -54,6 +54,7 @@ struct QuotasAlertView: View {
                 MailResourcesAsset.warningFill.swiftUIImage
                     .iconSize(.medium)
                     .foregroundStyle(type.iconColor)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
                     Text(type.title)
