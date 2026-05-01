@@ -165,8 +165,8 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
             let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
-            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
-                await showWarningMoveSnoozeAlert(origin: origin, messagesWithDuplicates: messagesFromFolder)
+            guard !messagesFromFolder.contains(where: { $0.isSnoozed }) else {
+                await showWarningMoveSnoozeAlert(origin: origin, messages: messagesFromFolder)
                 return
             }
             Task { @MainActor in
@@ -381,12 +381,12 @@ public class ActionsManager: ObservableObject {
     }
 
     @MainActor
-    private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+    private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messages: [Message]) {
         origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
-            type: .moveSnooze(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+            type: .moveSnooze(messages.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             tryOrDisplayError {
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messages
             }
         }
     }
