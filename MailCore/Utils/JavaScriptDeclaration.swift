@@ -33,6 +33,7 @@ public enum JavaScriptDeclaration {
     case removeAllProperties
     case documentReadyState
     case setScaleCompensation(Double)
+    case setContentSize(Double)
 
     public var invocation: String {
         switch self {
@@ -44,6 +45,8 @@ public enum JavaScriptDeclaration {
             return "document.readyState"
         case .setScaleCompensation(let factor):
             return "setScaleCompensation(\(factor))"
+        case .setContentSize(let size):
+            return "setContentSize(\(size))"
         }
     }
 }

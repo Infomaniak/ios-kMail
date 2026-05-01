@@ -23,7 +23,8 @@ const PREFERENCES = {
     mungeTables: true,
     minimumEffectiveRatio: 0.7,
     undoPreviousChanges: true,
-    scaleCompensation: 1.0
+    scaleCompensation: 1.0,
+    contentSize: 0.0
 };
 
 /**
@@ -47,6 +48,19 @@ function setScaleCompensation(factor) {
         logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`)
     } else {
         logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`)
+    }
+}
+
+/**
+ * Sets the global content size used during normalization.
+ * @param size Double of the size to set
+ */
+function setContentSize(size) {
+    if (size > 0) {
+        PREFERENCES.contentSize = size
+        logInfo(`contentSize set to ${PREFERENCES.contentSize}.`)
+    } else {
+        logInfo(`Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`)
     }
 }
 
@@ -101,12 +115,19 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         element.style.width = originalWidth;
 
         if (PREFERENCES.normalizeMessageWidths) {
-            if (PREFERENCES.scaleCompensation !== 1) {
+            const fontSize = PREFERENCES.contentSize !== 0
+            ? `${PREFERENCES.contentSize}px`
+            : `${PREFERENCES.scaleCompensation * 100}%`;
+
+            if (PREFERENCES.scaleCompensation !== 1 || PREFERENCES.contentSize !== 0) {
+                element.style.wordBreak = 'break-word';
+
                 element
                 .querySelectorAll("*:not(a)")
                 .forEach(el => {
                     if (hasDirectText(el) || (el.querySelector(':scope > a'))) {
-                        el.style.fontSize = `${PREFERENCES.scaleCompensation * 100}%`;
+                        el.style.fontSize = fontSize;
+                        el.style.lineHeight = 'normal';
                     }
                 });
             }
