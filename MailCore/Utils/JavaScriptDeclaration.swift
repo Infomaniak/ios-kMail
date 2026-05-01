@@ -32,6 +32,7 @@ public enum JavaScriptDeclaration {
     case normalizeMessageWidth(CGFloat, String)
     case removeAllProperties
     case documentReadyState
+    case setScaleCompensation(Double)
 
     public var invocation: String {
         switch self {
@@ -41,6 +42,8 @@ public enum JavaScriptDeclaration {
             return "removeAllProperties()"
         case .documentReadyState:
             return "document.readyState"
+        case .setScaleCompensation(let factor):
+            return "setScaleCompensation(\(factor))"
         }
     }
 }

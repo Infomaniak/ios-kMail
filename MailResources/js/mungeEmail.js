@@ -22,7 +22,8 @@ const PREFERENCES = {
     mungeImages: true,
     mungeTables: true,
     minimumEffectiveRatio: 0.7,
-    undoPreviousChanges: true
+    undoPreviousChanges: true,
+    scaleCompensation: 1.0
 };
 
 /**
@@ -35,6 +36,19 @@ const PREFERENCES = {
 let actionsLog = {};
 
 // Functions
+
+/**
+ * Sets the global text scaling compensation factor used during normalization.
+ * @param factor Double of the compensation to set
+ */
+function setScaleCompensation(factor) {
+    if (factor > 0) {
+        PREFERENCES.scaleCompensation = factor
+        logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`)
+    } else {
+        logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`)
+    }
+}
 
 /**
  * Normalize the width of the mail displayed
@@ -87,6 +101,16 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         element.style.width = originalWidth;
 
         if (PREFERENCES.normalizeMessageWidths) {
+            if (PREFERENCES.scaleCompensation !== 1) {
+                element
+                .querySelectorAll("*:not(a)")
+                .forEach(el => {
+                    if (hasDirectText(el) || (el.querySelector(':scope > a'))) {
+                        el.style.fontSize = `${PREFERENCES.scaleCompensation * 100}%`;
+                    }
+                });
+            }
+
             const newZoom = documentWidth / element.scrollWidth;
             logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
             element.style.zoom = newZoom;
@@ -98,6 +122,20 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         }
     }
 }
+
+/**
+ * Browse an element to check if it has at least one direct non-empty text node child.
+ * @param element Element to browse
+ * @returns true if a direct non-empty text node is present
+ */
+function hasDirectText(element) {
+  return Array.from(element.childNodes).some(
+    (node) =>
+      node.nodeType === Node.TEXT_NODE &&
+      node.textContent.trim().length > 0
+  );
+}
+
 
 /**
  * Transform the content of a DOM element to munge its children if they are too wide
