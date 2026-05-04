@@ -123,6 +123,13 @@ public final class MessageReaction: EmbeddedObject {
     }
 }
 
+public final class MessageSummary: EmbeddedObject {
+    @Persisted public var isLoading = false
+    @Persisted public var isShowing = false
+    @Persisted public var content: String?
+    @Persisted public var error: String?
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -195,6 +202,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var reactions: List<MessageReaction>
     @Persisted public var reactionMessages: List<Message>
+
+    @Persisted public var summary: MessageSummary?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
