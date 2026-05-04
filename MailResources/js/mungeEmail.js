@@ -35,6 +35,7 @@ const PREFERENCES = {
  * }
  */
 let actionsLog = {};
+let originalBaseFontSize = null;
 
 // Functions
 
@@ -129,9 +130,11 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
             }
 
             if (PREFERENCES.scaleCompensation !== 1) {
-                const baseFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize)
-                convertPxFontSizesToRem(document, baseFontSize);
-                zoomBaseFontSize(PREFERENCES.scaleCompensation, baseFontSize);
+                if (originalBaseFontSize === null) {
+                    originalBaseFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+                }
+                convertPxFontSizesToRem(document, originalBaseFontSize);
+                zoomBaseFontSize(PREFERENCES.scaleCompensation, originalBaseFontSize);
             }
 
             const newZoom = documentWidth / element.scrollWidth;
