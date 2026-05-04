@@ -27,7 +27,7 @@ import InfomaniakNotifications
 import InterAppLogin
 import MailCore
 
-open class CommonAppAndShareTargetAssembly: TargetAssembly {
+open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
     override open class func getTargetServices() -> [Factory] {
         return [
             Factory(type: CacheManageable.self) { _, _ in

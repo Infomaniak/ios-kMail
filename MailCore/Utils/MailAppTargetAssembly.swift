@@ -35,8 +35,9 @@ extension [Factory] {
     }
 }
 
-/// Each target should subclass `TargetAssembly` and override `getTargetServices` to provide additional, target related, services.
-open class TargetAssembly {
+/// Each target should subclass `MailAppTargetAssembly` and override `getTargetServices` to provide additional, target related,
+/// services.
+open class MailAppTargetAssembly: TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .prod
     private static let realmRootPath = "mailboxes"
     private static let appGroupIdentifier = "group.\(bundleId)"
@@ -49,18 +50,18 @@ open class TargetAssembly {
         accessType: nil
     )
 
-    public init() {
+    override public init() {
         // Setup debug stack early
         Logging.initLogging()
         ApiEnvironment.current = Self.apiEnvironment
 
         // setup DI ASAP
-        Self.setupDI()
+        TargetAssembly.setupDI()
 
         SVGImageDecoder.register()
     }
 
-    open class func getCommonServices() -> [Factory] {
+    override open class func getCommonServices() -> [Factory] {
         return [
             Factory(type: MailboxInfosManager.self) { _, _ in
                 MailboxInfosManager()
@@ -156,12 +157,8 @@ open class TargetAssembly {
         ]
     }
 
-    open class func getTargetServices() -> [Factory] {
+    override open class func getTargetServices() -> [Factory] {
         Logger.general.error("targetServices is not implemented in subclass ? Did you forget to override ?")
         return []
-    }
-
-    public static func setupDI() {
-        (getCommonServices() + getTargetServices()).registerFactoriesInDI()
     }
 }

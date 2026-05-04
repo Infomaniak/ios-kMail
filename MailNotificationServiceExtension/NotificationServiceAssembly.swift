@@ -24,4 +24,4 @@ import InfomaniakNotifications
 import MailCore
 
 // periphery:ignore - Used by DI
-class NotificationServiceTargetAssembly: TargetAssembly {}
+class NotificationServiceTargetAssembly: MailAppTargetAssembly {}
