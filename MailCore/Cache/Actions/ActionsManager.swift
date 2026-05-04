@@ -130,12 +130,17 @@ public class ActionsManager: ObservableObject {
         switch action {
         case .delete:
             for message in messagesWithDuplicates {
+                if message.isScheduledDraft == true {
+                    await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                    return
+                }
+
                 if message.isSnoozed {
                     await showWarningDeleteSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
-                } else if message.isScheduledDraft == true {
-                    await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                    return
                 }
             }
+
             guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
                 await showWarningDeletionAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
                 return
