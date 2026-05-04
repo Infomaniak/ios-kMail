@@ -29,12 +29,6 @@ import MyKSuite
 import Nuke
 import OSLog
 
-extension [Factory] {
-    func registerFactoriesInDI() {
-        forEach { SimpleResolver.sharedResolver.store(factory: $0) }
-    }
-}
-
 /// Each target should subclass `MailAppTargetAssembly` and override `getTargetServices` to provide additional, target related,
 /// services.
 open class MailAppTargetAssembly: TargetAssembly {
@@ -55,8 +49,7 @@ open class MailAppTargetAssembly: TargetAssembly {
         Logging.initLogging()
         ApiEnvironment.current = Self.apiEnvironment
 
-        // setup DI ASAP
-        TargetAssembly.setupDI()
+        super.init()
 
         SVGImageDecoder.register()
     }
