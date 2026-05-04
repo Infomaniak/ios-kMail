@@ -115,26 +115,28 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         element.style.width = originalWidth;
 
         if (PREFERENCES.normalizeMessageWidths) {
-            const fontSize = PREFERENCES.contentSize !== 0
-            ? `${PREFERENCES.contentSize}px`
-            : `${PREFERENCES.scaleCompensation * 100}%`;
-
-            if (PREFERENCES.scaleCompensation !== 1 || PREFERENCES.contentSize !== 0) {
-                element.style.wordBreak = 'break-word';
+            if (PREFERENCES.contentSize !== 0) {
+                element.style.wordBreak = `break-word`;
 
                 element
                 .querySelectorAll("*:not(a)")
                 .forEach(el => {
                     if (hasDirectText(el) || (el.querySelector(':scope > a'))) {
-                        el.style.fontSize = fontSize;
-                        el.style.lineHeight = 'normal';
+                        el.style.fontSize = `${PREFERENCES.contentSize}px`;
+                        el.style.lineHeight = `normal`;
                     }
                 });
             }
 
+            if (PREFERENCES.scaleCompensation !== 1) {
+                const baseFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize)
+                convertPxFontSizesToRem(document, baseFontSize);
+                zoomBaseFontSize(PREFERENCES.scaleCompensation, baseFontSize);
+            }
+
             const newZoom = documentWidth / element.scrollWidth;
             logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
-            element.style.zoom = newZoom;
+            element.style.zoom = newZoom * PREFERENCES.scaleCompensation;
         }
 
         if (document.documentElement.scrollWidth > document.documentElement.clientWidth) {
@@ -142,6 +144,20 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
             reportOverScroll(document.documentElement.clientWidth, document.documentElement.scrollWidth, messageUid);
         }
     }
+}
+
+function convertPxFontSizesToRem(root, baseFontSize) {
+    root.querySelectorAll("*").forEach(el => {
+        if (!el.style.fontSize.endsWith("px")) return;
+
+        const px = parseFloat(el.style.fontSize);
+        if (Number.isNaN(px)) return;
+        el.style.fontSize = `${px / baseFontSize}rem`;
+  });
+}
+
+function zoomBaseFontSize(scale, baseFontSize) {
+    document.documentElement.style.fontSize = `${baseFontSize * scale}px`;
 }
 
 /**
