@@ -159,7 +159,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 MessageHeaders.self,
                 BookableResource.self,
                 MessageReaction.self,
-                ReactionAuthor.self
+                ReactionAuthor.self,
+                MessageSummary.self
             ]
         )
 
