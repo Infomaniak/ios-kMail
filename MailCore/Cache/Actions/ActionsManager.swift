@@ -263,6 +263,9 @@ public class ActionsManager: ObservableObject {
                 featureAvailableProvider: mailboxManager.featureAvailableProvider
             )
             try await performDeleteSnooze(messages: messagesToExecuteAction)
+        case .summarize:
+            guard let message = messages.first else { return }
+            try await mailboxManager.summarize(message: message)
         default:
             break
         }

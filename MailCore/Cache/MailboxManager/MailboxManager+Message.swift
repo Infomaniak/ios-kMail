@@ -212,8 +212,24 @@ public extension MailboxManager {
         try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
-    func summarize(content: String) async throws -> String {
-        return try await apiFetcher.summarize(content: content)
+    func summarize(message: Message) async throws {
+        guard let body = message.body?.value else { return }
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+            if message.summary == nil {
+                liveMessage.summaryIsLoading = true
+            }
+            liveMessage.summaryIsShowing = true
+        }
+
+        guard message.summary == nil else { return }
+
+        let summary = try await apiFetcher.summarize(content: body)
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+            liveMessage.summary = summary
+            liveMessage.summaryIsLoading = false
+        }
     }
 
     private func undoAction(
