@@ -62,6 +62,10 @@ struct MessageSubHeaderView: View {
             result.append(.acknowledge)
         }
 
+        if message.summaryIsShowing {
+            result.append(.summarize)
+        }
+
         return result
     }
 

@@ -98,6 +98,13 @@ struct MessageBannerHeaderView: View {
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }
+            case .summarize:
+                MessageEuriaContentView(isLoading: message.summaryIsLoading, content: message.summary) {
+                    guard let liveMessage = message.thaw() else { return }
+                    try? liveMessage.realm?.write {
+                        liveMessage.summaryIsShowing = false
+                    }
+                }
             }
         }
     }
