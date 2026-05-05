@@ -36,12 +36,13 @@ const PREFERENCES = {
  */
 let actionsLog = {};
 let originalBaseFontSize = null;
+let isRemConversionDone = false;
 
 // Functions
 
 /**
  * Sets the global text scaling compensation factor used during normalization.
- * @param factor Double of the compensation to set
+ * @param factor CGFloat of the compensation to set
  */
 function setScaleCompensation(factor) {
     if (factor > 0) {
@@ -54,7 +55,7 @@ function setScaleCompensation(factor) {
 
 /**
  * Sets the global content size used during normalization.
- * @param size Double of the size to set
+ * @param size CGFloat of the size to set
  */
 function setContentSize(size) {
     if (size > 0) {
@@ -133,7 +134,10 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
                 if (originalBaseFontSize === null) {
                     originalBaseFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
                 }
-                convertPxFontSizesToRem(document, originalBaseFontSize);
+                if (!isRemConversionDone) {
+                    convertPxFontSizesToRem(document, originalBaseFontSize);
+                    isRemConversionDone = true;
+                }
                 zoomBaseFontSize(PREFERENCES.scaleCompensation, originalBaseFontSize);
             }
 
