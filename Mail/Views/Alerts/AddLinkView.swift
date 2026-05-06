@@ -93,7 +93,7 @@ struct AddLinkView: View {
 
         actionHandler?(url, text)
     }
-    
+
     private func getValues() {
         switch selectionLink {
         case .url(let url):

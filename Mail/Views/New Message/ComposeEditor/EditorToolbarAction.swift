@@ -38,7 +38,9 @@ enum EditorToolbarAction: Identifiable {
     case takePhoto
     case encryption
 
-    var id: Self { self }
+    var id: Self {
+        self
+    }
 
     var icon: MailResourcesImages {
         switch self {

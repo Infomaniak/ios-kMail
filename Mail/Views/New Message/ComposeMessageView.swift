@@ -324,7 +324,7 @@ struct ComposeMessageView: View {
                     }
                     group.addTask {
                         await attachmentsManager.processHTMLAttachments(htmlAttachments, draftContentManager:
-                        draftContentManager)
+                            draftContentManager)
                     }
                 }
 

@@ -35,7 +35,7 @@ struct ComposeMessageBodyView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
-    @ModalState(context: ContextKeys.compose) private var isShowingLink: SelectionLink? = nil
+    @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingLink: SelectionLink?
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
 
     @ObservedObject var textAttributes: TextAttributes
@@ -71,14 +71,15 @@ struct ComposeMessageBodyView: View {
                 isShowingAI: $isShowingAI,
                 textAttributes: textAttributes
             )
+            .onJavaScriptFunctionFail(perform: reportJavaScriptError)
+            .mailCustomAlert(isPresented: $isShowingLinkAlert) {
+                AddLinkView(selectionLink: .empty, actionHandler: didCreateLink)
+            }
             #endif
             AttachmentsHeaderView()
             RichHTMLEditor(html: $draftBody, selection: $selectedText, textAttributes: textAttributes,
                            spellCheckEnabled: !isEnvironmentCatalyst,
                            autoCorrectEnabled: !isEnvironmentCatalyst)
-                .onChange(of: selectedText) { newValue in
-                    print("newValue: \(newValue)")
-                }
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
                 .editorCSS(Self.customCSS)
@@ -87,6 +88,7 @@ struct ComposeMessageBodyView: View {
                 .mailCustomAlert(item: $isShowingLink) { link in
                     AddLinkView(selectionLink: link, actionHandler: didCreateLink)
                 }
+
                 .sheet(isPresented: $isShowingFileSelection) {
                     DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
                         .ignoresSafeArea()

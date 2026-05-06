@@ -26,26 +26,8 @@ import SwiftModalPresentation
 import SwiftRegex
 import SwiftUI
 
-enum SelectionLink: Identifiable {
-    case url(URL)
-    case title(String)
-    case empty
-
-    var id: String {
-        switch self {
-        case .url(let url):
-            return url.absoluteString
-        case .title(let string):
-            return string
-        case .empty:
-            return "empty"
-        }
-    }
-}
-
 struct MobileFormattingToolbarView: View {
-    @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
-    @ModalState(context: ContextKeys.compose) private var isShowingLink: SelectionLink? = nil
+    @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingLink: SelectionLink?
 
     @ObservedObject var textAttributes: TextAttributes
 
@@ -92,9 +74,9 @@ struct MobileFormattingToolbarView: View {
                                 ) {
                                     formatText(for: action)
                                 }
-                                .mailCustomAlert(item: $isShowingLink) { link in
-                                    AddLinkView(selectionLink: link, actionHandler: textAttributes.addLink)
-                                }
+                            }
+                            .mailCustomAlert(item: $isShowingLink) { link in
+                                AddLinkView(selectionLink: link, actionHandler: textAttributes.addLink)
                             }
                         }
                     }
