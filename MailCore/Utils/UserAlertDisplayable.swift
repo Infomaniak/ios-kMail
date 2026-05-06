@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreUIKit
 import InfomaniakDI
 import OSLog
 import UserNotifications

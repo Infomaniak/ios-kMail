@@ -19,6 +19,7 @@
 import Alamofire
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUIResources
 import MailResources
 
 extension ApiError: @retroactive CustomStringConvertible {}
@@ -54,7 +55,7 @@ public class MailError: LocalizedError, Encodable, ErrorWithCode {
     public static let unknownError = MailError(code: "unknownError", shouldDisplay: true)
     public static let noToken = MailError(
         code: "noToken",
-        localizedDescription: MailResourcesStrings.Localizable.refreshTokenError,
+        localizedDescription: CoreUILocalizable.youHaveBeenDisconnectedLabel,
         shouldDisplay: true
     )
     public static let keychainUnavailable = MailError(code: "keychainUnavailable", shouldDisplay: false)

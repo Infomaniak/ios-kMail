@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fi, Finnish
  * Tagged: ios
- * Exported by: Killian Mathias
- * Exported at: Wed, 06 May 2026 10:50:00 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 06 May 2026 10:50:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Näytä asetukset";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Salli ilmoitukset Infomaniak Mailille **järjestelmäasetuksissa**, jotta saat ilmoituksen uusista viesteistä";
+"alertNotificationsDisabledDescription" = "Salli ilmoitukset Infomaniak Mailille **iOS-asetuksissa**, jotta saat ilmoituksen uusista viesteistä";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Ilmoitukset poistettu käytöstä";
@@ -898,9 +898,6 @@
 /* loco:628e1ad9d1c6366c8a4e6362 */
 "errorLoginDescription" = "Yhteyden muodostaminen epäonnistui.";
 
-/* loco:628e1af711413554dd3010a5 */
-"errorLoginTitle" = "Kirjautumisvirhe";
-
 /* loco:6450d3f93e5fcf13c9037b02 */
 "errorMailboxLocked" = "Tämä sähköpostilaatikko on lukittu";
 
@@ -1296,9 +1293,6 @@
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Viimeisimmät haut";
-
-/* loco:62baabfc07e6a001ca19e535 */
-"refreshTokenError" = "Sinut on kirjattu ulos";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Nimeä kansio uudelleen";
