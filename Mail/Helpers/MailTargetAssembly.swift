@@ -21,6 +21,7 @@ import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreUIKit
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications

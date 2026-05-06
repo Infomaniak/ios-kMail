@@ -20,6 +20,7 @@ import Atlantis
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreUIKit
 import InfomaniakDI
 import InfomaniakNotifications
 import Intents
@@ -226,11 +227,10 @@ public enum NotificationsHelper {
            ) {
             return communicationNotification
         } else {
-            let normalNotification = await generateNotificationFor(
+            return await generateNotificationFor(
                 message: fetchedMessage, mailboxManager: mailboxManager,
                 incompleteNotification: incompleteNotification
             )
-            return normalNotification
         }
     }
 
@@ -313,8 +313,7 @@ public enum NotificationsHelper {
 
         do {
             try await interaction.donate()
-            let updatedContent = try incompleteNotification.updating(from: intent)
-            return updatedContent
+            return try incompleteNotification.updating(from: intent)
         } catch {
             return nil
         }
@@ -361,8 +360,6 @@ public enum NotificationsHelper {
 
     private static func compactBody(from body: String) -> String? {
         guard let regex = Regex(pattern: #"\s+"#) else { return nil }
-        let cleanedText = regex.replaceMatches(in: body, with: " ").trimmedAndWithoutNewlines
-
-        return cleanedText
+        return regex.replaceMatches(in: body, with: " ").trimmedAndWithoutNewlines
     }
 }
