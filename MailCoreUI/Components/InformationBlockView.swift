@@ -60,6 +60,7 @@ public struct InformationBlockView: View {
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]
                 }
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: IKPadding.small) {
                 VStack(alignment: .leading, spacing: IKPadding.small) {

@@ -37,6 +37,7 @@ struct EmptyStateView: View {
         VStack(spacing: 0) {
             image
                 .padding(.bottom, value: .large)
+                .accessibilityHidden(true)
 
             Text(title)
                 .textStyle(.header2)

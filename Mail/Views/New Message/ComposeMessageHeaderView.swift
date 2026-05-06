@@ -61,7 +61,7 @@ struct ComposeMessageHeaderView: View {
                 areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty,
                 isRecipientLimitExceeded: isRecipientLimitExceeded
             )
-            .accessibilityLabel(MailResourcesStrings.Localizable.toTitle)
+            .accessibilityElement(children: .contain)
 
             if showRecipientsFields {
                 ComposeMessageCellRecipients(

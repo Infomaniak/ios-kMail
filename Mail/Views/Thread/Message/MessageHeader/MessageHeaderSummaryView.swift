@@ -121,6 +121,7 @@ struct MessageHeaderSummaryView: View {
                     Button(action: replyToMessage) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
+                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
@@ -129,6 +130,7 @@ struct MessageHeaderSummaryView: View {
                     ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .message) {
                         MailResourcesAsset.plusActions
                             .iconSize(.large)
+                            .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
                     }
                 }
                 .padding(.leading, value: .mini)
