@@ -164,12 +164,13 @@ public class ActionsManager: ObservableObject {
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
-            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
-                await showWarningMoveSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
+            guard !messagesFromFolder.contains(where: { $0.isSnoozed }) else {
+                await showWarningMoveSnoozeAlert(origin: origin, messages: messagesFromFolder)
                 return
             }
             Task { @MainActor in
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesFromFolder
             }
         case .star:
             let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
@@ -188,21 +189,23 @@ public class ActionsManager: ObservableObject {
                 nc.post(name: Notification.Name.printNotification, object: message)
             }
         case .moveToInbox, .nonSpam:
-            try await performMove(messages: messagesWithDuplicates, from: origin.frozenFolder, to: .inbox)
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
+            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
-            let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
 
             try await performCancelableMove(messages: messagesFromFolder, from: origin.frozenFolder,
                                             to: .spam) { messages, _, originFolder in
                 try await self.mailboxManager.reportSpam(messages: messages, origin: originFolder)
             }
         case .phishing:
+            let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesWithDuplicates
+                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesFromFolder
             }
         case .reportDisplayProblem:
             Task { @MainActor in
@@ -378,12 +381,12 @@ public class ActionsManager: ObservableObject {
     }
 
     @MainActor
-    private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+    private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messages: [Message]) {
         origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
-            type: .moveSnooze(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+            type: .moveSnooze(messages.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             tryOrDisplayError {
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messages
             }
         }
     }
