@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreUIKit
+import InfomaniakCoreUIResources
 import InfomaniakDI
 import InfomaniakNotifications
 import Intents
@@ -157,8 +158,8 @@ public enum NotificationsHelper {
 
     public static func sendDisconnectedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = MailResourcesStrings.Localizable.errorLoginTitle
-        content.body = MailResourcesStrings.Localizable.refreshTokenError
+        content.title = CoreUILocalizable.errorLoginTitle
+        content.body = CoreUILocalizable.youHaveBeenDisconnectedLabel
         content.categoryIdentifier = CategoryIdentifier.general
         content.sound = .default
         sendImmediately(notification: content, id: NotificationIdentifier.disconnected)

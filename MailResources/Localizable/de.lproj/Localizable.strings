@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Killian Mathias
- * Exported at: Wed, 06 May 2026 10:50:00 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 06 May 2026 10:50:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -898,9 +898,6 @@
 /* loco:628e1ad9d1c6366c8a4e6362 */
 "errorLoginDescription" = "Die Verbindung ist fehlgeschlagen.";
 
-/* loco:628e1af711413554dd3010a5 */
-"errorLoginTitle" = "Login-Fehler";
-
 /* loco:6450d3f93e5fcf13c9037b02 */
 "errorMailboxLocked" = "Diese Mailbox ist gesperrt";
 
@@ -1296,9 +1293,6 @@
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Letzte Suchen";
-
-/* loco:62baabfc07e6a001ca19e535 */
-"refreshTokenError" = "Sie wurden abgemeldet";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Benennen Sie den Ordner um";
