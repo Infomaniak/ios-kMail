@@ -17,7 +17,6 @@
  */
 
 import InfomaniakCoreUIKit
-import MailCore
 import UIKit
 
 public struct ApplicationState: ApplicationStatable {
