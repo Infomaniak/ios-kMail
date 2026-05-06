@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: pl, Polish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ * Exported by: Killian Mathias
+ * Exported at: Wed, 06 May 2026 10:50:00 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Zobacz ustawienia";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Włącz powiadomienia dla Infomaniak Mail **w ustawieniach iOS**, aby otrzymywać powiadomienia o nowych wiadomościach";
+"alertNotificationsDisabledDescription" = "Włącz powiadomienia dla Infomaniak Mail **w ustawieniach systemowych**, aby otrzymywać powiadomienia o nowych wiadomościach";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Powiadomienia wyłączone";

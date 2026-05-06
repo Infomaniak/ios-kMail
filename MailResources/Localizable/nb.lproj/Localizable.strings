@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: nb, Norwegian Bokmål
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 16 Mar 2026 15:11:45 +0100
+ * Exported by: Killian Mathias
+ * Exported at: Wed, 06 May 2026 10:50:00 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Se innstillinger";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Vennligst aktiver varsler for Infomaniak Mail **i iOS-innstillingene** for å bli varslet når nye meldinger mottas";
+"alertNotificationsDisabledDescription" = "Vennligst aktiver varsler for Infomaniak Mail **i systeminnstillingene** for å bli varslet når nye meldinger mottas";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Varsler deaktivert";
