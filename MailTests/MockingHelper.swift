@@ -43,7 +43,7 @@ public enum MockingHelper {
 
         switch configuration {
         case .realApp:
-            factories += TargetAssembly.getTargetServices() + TargetAssembly.getCommonServices() +
+            factories += MailAppTargetAssembly.getTargetServices() + MailAppTargetAssembly.getCommonServices() +
                 MailTargetAssembly.getTargetServices() +
                 CommonAppAndShareTargetAssembly.getCommonServices()
 
@@ -80,11 +80,10 @@ public enum MockingHelper {
         let apiFetcher = MailApiFetcher(token: token, delegate: MCKTokenDelegate())
         let contactManager = ContactManager(userId: Env.userId, apiFetcher: MailApiFetcher())
 
-        let mailboxManager = MailboxManager(
+        return MailboxManager(
             mailbox: mailbox,
             apiFetcher: apiFetcher,
             contactManager: contactManager
         )
-        return mailboxManager
     }
 }
