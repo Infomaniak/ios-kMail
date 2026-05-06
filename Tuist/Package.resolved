@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "branch" : "feat/better-app-assembly-sharing",
-        "revision" : "9f996525983dfeb70f683246a15c21ee1fd43d6b"
+        "revision" : "4da95f56273cff9a12097502c315031bae9498d7",
+        "version" : "18.10.1"
       }
     },
     {
