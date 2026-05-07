@@ -118,11 +118,18 @@ struct QuickActionView: View {
     let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
+    private static let sendEmailActions: Set<Action> = [.reply, .replyAll, .forward]
+
+    private var isActionInactive: Bool {
+        Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails
+    }
+
     var body: some View {
         Button(action: didTapButton) {
             VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(accentColor.secondary.swiftUIColor)
+                    .fill(isActionInactive ? MailResourcesAsset.hoverMenuBackground.swiftUIColor : accentColor.secondary
+                        .swiftUIColor)
                     .frame(maxWidth: 56, maxHeight: 56)
                     .aspectRatio(1, contentMode: .fit)
                     .overlay {
@@ -130,10 +137,14 @@ struct QuickActionView: View {
                             .resizable()
                             .scaledToFit()
                             .padding(value: .medium)
+                            .foregroundStyle(isActionInactive ? MailResourcesAsset.grayActionColor.swiftUIColor : accentColor
+                                .primary.swiftUIColor)
                     }
 
                 let title = action.shortTitle ?? action.title
                 Text(title)
+                    .foregroundStyle(isActionInactive ? MailResourcesAsset.grayActionColor.swiftUIColor : accentColor.primary
+                        .swiftUIColor)
                     .textStyle(.labelMediumAccent)
                     .lineLimit(title.split(separator: " ").count > 1 ? nil : 1)
             }
