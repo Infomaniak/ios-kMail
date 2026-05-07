@@ -72,15 +72,13 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     private var actions: (quickActions: [Action], listActions: [Action]) {
-        let actions = Action.actionsForMessages(
+        return Action.actionsForMessages(
             thread.messages.toArray(),
             origin: origin,
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
-
-        return actions
     }
 
     private var initialSnoozedDate: Date? {

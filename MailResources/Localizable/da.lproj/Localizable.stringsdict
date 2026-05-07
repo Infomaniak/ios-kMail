@@ -5,8 +5,8 @@
  Project: kMail
  Locale: da, Danish
  Tagged: ios-stringsdict
- Exported by: Philippe Weidmann
- Exported at: Mon, 16 Mar 2026 15:11:46 +0100
+ Exported by: Killian Mathias
+ Exported at: Tue, 28 Apr 2026 09:55:42 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -128,6 +128,22 @@ Rapporten vil blive sendt til vores sikkerhedshold til analyse og handling. E-ma
 Ved at rapportere dem til os fremskynder du opdagelsen af farlige beskeder for alle vores brugere.
 
 Rapporterne vil blive sendt til vores sikkerhedshold til analyse og handling. E-mailene vil også automatisk blive flyttet til din spam-mappe.</string>
+      </dict>
+    </dict>
+    <key>scheduleDeleteConfirmAlertDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Denne samtale vil blive slettet, og alle planlagte leveringer vil blive annulleret.</string>
+        <key>other</key>
+        <string>Disse samtaler vil blive slettet, og alle planlagte leveringer vil blive annulleret.</string>
       </dict>
     </dict>
     <key>snackbarSenderBlacklisted</key>

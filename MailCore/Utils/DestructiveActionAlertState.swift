@@ -25,6 +25,7 @@ public enum DestructiveActionAlertType {
     case archiveSnooze(Int)
     case moveSnooze(Int)
     case deleteFolder(Folder)
+    case deleteSchedule(Int)
 }
 
 public struct DestructiveActionAlertState: Identifiable, Equatable {

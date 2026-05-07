@@ -51,6 +51,9 @@ extension DestructiveActionAlertState {
 
         case .deleteFolder:
             return MailResourcesStrings.Localizable.deleteFolderDialogTitle
+
+        case .deleteSchedule:
+            return MailResourcesStrings.Localizable.actionDelete
         }
     }
 
@@ -79,6 +82,9 @@ extension DestructiveActionAlertState {
                 attributedDescription[range].font = MailTextStyle.bodyMedium.font
             }
             return attributedDescription
+
+        case .deleteSchedule(let impactedThreadCount):
+            return AttributedString(MailResourcesStrings.Localizable.scheduleDeleteConfirmAlertDescription(impactedThreadCount))
         }
     }
 }

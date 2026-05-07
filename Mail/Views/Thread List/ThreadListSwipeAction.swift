@@ -147,7 +147,7 @@ struct ThreadListSwipeActions: ViewModifier {
 
     private func filterAvailableActions(_ actions: [Action]) -> [Action] {
         let realActions = actions.map { $0.inverseActionIfNeeded(for: thread) }
-        let availableActions = realActions.filter { action in
+        return realActions.filter { action in
             switch action {
             case .noAction:
                 return false
@@ -158,8 +158,6 @@ struct ThreadListSwipeActions: ViewModifier {
                 return true
             }
         }
-
-        return availableActions
     }
 }
 
