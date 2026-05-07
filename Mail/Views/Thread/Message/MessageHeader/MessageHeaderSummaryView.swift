@@ -43,6 +43,10 @@ struct MessageHeaderSummaryView: View {
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
 
+    private var canSendEmails: Bool {
+        mailboxManager.mailbox.permissions?.canSendEmails ?? true
+    }
+
     let deleteDraftTapped: () -> Void
 
     var body: some View {
@@ -121,6 +125,7 @@ struct MessageHeaderSummaryView: View {
                     Button(action: replyToMessage) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
+                            .foregroundStyle(canSendEmails ? .accentColor : MailResourcesAsset.grayActionColor.swiftUIColor)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
@@ -141,6 +146,12 @@ struct MessageHeaderSummaryView: View {
 
     private func replyToMessage() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
+        guard canSendEmails else {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
+
         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
         } else {
