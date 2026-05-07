@@ -39,6 +39,7 @@ struct MessageHeaderSummaryView: View {
     @ObservedRealmObject var message: Message
 
     @State private var replyOrReplyAllMessage: Message?
+    @State private var cannotReply = false
 
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
@@ -127,7 +128,11 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
-                    Button(action: replyToMessage) {
+                    Button { NoReplyAlertView.verifySenders(message: message, cannotReply: $cannotReply)
+                        if !cannotReply {
+                            replyToMessage()
+                        }
+                    } label: {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
@@ -147,6 +152,11 @@ struct MessageHeaderSummaryView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .mailCustomAlert(isPresented: $cannotReply) {
+            NoReplyAlertView {
+                replyToMessage()
+            }
+        }
     }
 
     private func replyToMessage() {

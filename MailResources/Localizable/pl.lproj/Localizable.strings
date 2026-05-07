@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Powiadomienia wyłączone";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Uwaga, nadawca tej wiadomości e-mail wydaje się nie oczekiwać odpowiedzi.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Chroń dostęp do aplikacji, włączając blokadę telefonu.";
 

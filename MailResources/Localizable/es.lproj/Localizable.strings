@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notificaciones desactivadas";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Atención, el remitente de este correo electrónico parece no querer una respuesta.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Protege el acceso a tu aplicación activando el bloqueo del teléfono.";
 
