@@ -255,7 +255,7 @@ extension Action: CaseIterable {
                                           userEmail: String,
                                           featureAvailableProvider: FeatureAvailableProvider) ->
         (quickActions: [Action], listActions: [Action]) {
-        if messages.contains(where: { $0.isDraft }) {
+        if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
