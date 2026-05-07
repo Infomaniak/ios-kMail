@@ -24,13 +24,16 @@ import RealmSwift
 import SwiftUI
 
 struct MessageEuriaContentView: View {
-    let isLoading: Bool
+    let state: Message.SummaryState?
     let content: String?
+    let retryAction: () -> Void
     let dismissAction: () -> Void
 
     private var title: String {
-        if isLoading {
+        if state == .isLoading {
             return MailResourcesStrings.Localizable.messageSummaryLoading
+        } else if state == .error {
+            return MailResourcesStrings.Localizable.messageSummaryErrorRetry
         }
         return MailResourcesStrings.Localizable.messageSummary
     }
@@ -38,7 +41,14 @@ struct MessageEuriaContentView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.small) {
             HStack(spacing: 6) {
-                EuriaAnimationView(size: .medium)
+                if state == .error {
+                    MailResourcesAsset.warningFill.swiftUIImage
+                        .iconSize(.medium)
+                        .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
+                } else {
+                    EuriaAnimationView(size: .medium)
+                }
+
                 Text(title)
                     .textStyle(.bodySmallMedium)
 
@@ -47,7 +57,14 @@ struct MessageEuriaContentView: View {
                 CloseButton(size: .medium) { dismissAction() }
             }
 
-            if let content {
+            if state == .error {
+                Button {
+                    retryAction()
+                } label: {
+                    Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                }
+
+            } else if let content {
                 Text(content)
                     .textStyle(.bodySmall)
             }
@@ -63,5 +80,5 @@ struct MessageEuriaContentView: View {
 }
 
 #Preview {
-    MessageEuriaContentView(isLoading: false, content: "") {}
+    MessageEuriaContentView(state: .isLoading, content: "") {} dismissAction: {}
 }

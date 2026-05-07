@@ -213,22 +213,30 @@ public extension MailboxManager {
     }
 
     func summarize(message: Message) async throws {
-        guard let body = message.body?.value else { return }
-        try? writeTransaction { writableRealm in
-            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-            if message.summary == nil {
-                liveMessage.summaryIsLoading = true
+        do {
+            guard let body = message.body?.value else { return }
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                if message.summary == nil {
+                    liveMessage.summaryState = .isLoading
+                }
+                liveMessage.summaryIsShowing = true
             }
-            liveMessage.summaryIsShowing = true
-        }
 
-        guard message.summary == nil else { return }
+            guard message.summary == nil else { return }
 
-        let summary = try await apiFetcher.summarize(content: body)
-        try? writeTransaction { writableRealm in
-            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-            liveMessage.summary = summary
-            liveMessage.summaryIsLoading = false
+            let summary = try await apiFetcher.summarize(content: body)
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.summary = summary
+                liveMessage.summaryState = nil
+            }
+        } catch {
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.summaryState = .error
+            }
+            throw error
         }
     }
 

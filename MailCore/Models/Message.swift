@@ -198,7 +198,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var summary: String?
     @Persisted public var summaryIsShowing = false
-    @Persisted public var summaryIsLoading = false
+    @Persisted public var summaryState: SummaryState?
+
+    public enum SummaryState: String, PersistableEnum {
+        case isLoading
+        case error
+    }
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))

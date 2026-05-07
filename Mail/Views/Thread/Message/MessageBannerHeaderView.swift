@@ -99,7 +99,11 @@ struct MessageBannerHeaderView: View {
                     ) {}
                 }
             case .summarize:
-                MessageEuriaContentView(isLoading: message.summaryIsLoading, content: message.summary) {
+                MessageEuriaContentView(state: message.summaryState, content: message.summary) {
+                    Task {
+                        try await mailboxManager.summarize(message: message)
+                    }
+                } dismissAction: {
                     guard let liveMessage = message.thaw() else { return }
                     try? liveMessage.realm?.write {
                         liveMessage.summaryIsShowing = false
