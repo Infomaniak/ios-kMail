@@ -1,3 +1,1 @@
-- Meilleure détection du type de fichier pour l'icône d'une pièce jointe
-- Amélioration de l'affichage de l'en-tête d'un e-mail
-- Gestion de l'erreur lors de l'envoi bloqué
+- Correction de bugs et améliorations

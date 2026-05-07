@@ -1,3 +1,1 @@
-- Improved file type detection for attachment icons
-- Improved display of email headers
-- Error handling for blocked messages
+- Bug fixes and improvements
