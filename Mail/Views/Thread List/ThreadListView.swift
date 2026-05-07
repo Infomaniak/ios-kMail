@@ -213,7 +213,8 @@ struct ThreadListView: View {
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,
-                              isExtended: scrollObserver.scrollDirection != .bottom) {
+                              isExtended: scrollObserver.scrollDirection != .bottom,
+                              isInactive: viewModel.mailboxManager.mailbox.permissions?.canSendEmails == false) {
             @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
