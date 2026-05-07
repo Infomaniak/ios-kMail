@@ -418,6 +418,10 @@ public class ActionsManager: ObservableObject {
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
+        guard let permissions = mailboxManager.mailbox.permissions, permissions.canSendEmails else {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
         guard let replyingMessage = messages.lastMessageToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
