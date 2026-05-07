@@ -88,6 +88,12 @@ final class SelectComposeMailboxViewModel: ObservableObject {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorMailboxUnavailable)
             return
         }
+
+        guard mailbox.permissions?.canSendEmails != false else {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
+
         selectedMailbox = SelectableComposeMailbox(user: user, mailbox: mailbox, mailboxManager: mailboxManager)
         selectionMade = true
     }
@@ -96,6 +102,11 @@ final class SelectComposeMailboxViewModel: ObservableObject {
         guard let mailbox = selectedMailbox,
               let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            return
+        }
+
+        guard mailbox.permissions?.canSendEmails != false else {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
             return
         }
 
