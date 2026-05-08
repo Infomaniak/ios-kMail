@@ -413,9 +413,6 @@ public extension Draft {
     }
 
     var shouldBeSaved: Bool {
-        guard !hasAttachments, isEmptyOfUserChanges, isSignatureUnchanged else {
-            return false
-        }
-        return true
+        return hasAttachments || !isEmptyOfUserChanges || !isSignatureUnchanged
     }
 }

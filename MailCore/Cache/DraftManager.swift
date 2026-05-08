@@ -346,7 +346,7 @@ public final class DraftManager {
     /// Present a message with a `delete draft`  action
     @discardableResult
     private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
-        guard !draft.shouldBeSaved else {
+        guard draft.shouldBeSaved else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
