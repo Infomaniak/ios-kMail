@@ -338,11 +338,8 @@ class MailUITests: XCTestCase {
         let composeBodyView = app.webViews.firstMatch
         _ = composeBodyView.waitForExistence(timeout: defaultTimeOut)
 
-        let toTextField = app.textFields.firstMatch
-        _ = toTextField.waitForExistence(timeout: defaultTimeOut)
-        toTextField.tap()
-        toTextField.typeText(Env.testAccountEmail)
-        toTextField.typeText("\n")
+        app.typeText(Env.testAccountEmail)
+        app.typeText("\r")
 
         let subjectTextField = app.textFields[MailResourcesStrings.Localizable.subjectTitle].firstMatch
         subjectTextField.tap()
