@@ -379,9 +379,14 @@ public extension Draft {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
-    /// Check if once the signature, the reply quote and the forward quote nodes removed, we still have content
     var isEmptyOfUserChanges: Bool {
-        isEmpty(removeAllElements: true)
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
+
+        for itemToExtract in Self.appendedHTMLElements {
+            _ = try? document.getElementsByClass(itemToExtract).remove()
+        }
+
+        return !document.hasText()
     }
 
     /// Check if the Signature has changes or not
@@ -408,22 +413,9 @@ public extension Draft {
     }
 
     var shouldBeSaved: Bool {
-        guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
+        guard !hasAttachments, isEmptyOfUserChanges, isSignatureUnchanged else {
             return false
         }
         return true
-    }
-
-    /// Check if once the signature node is removed, as well as the reply and forward quotes if `removeAllElements` is true, we
-    /// still have content
-    private func isEmpty(removeAllElements: Bool) -> Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
-
-        let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
-        for itemToExtract in itemsToExtract {
-            _ = try? document.getElementsByClass(itemToExtract).remove()
-        }
-
-        return !document.hasText()
     }
 }
