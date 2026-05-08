@@ -83,6 +83,9 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
             },
             Factory(type: ConnectedAccountManagerable.self) { _, _ in
                 ConnectedAccountManager(currentAppKeychainIdentifier: AppIdentifierBuilder.mailKeychainIdentifier)
+            },
+            Factory(type: IKSnackBarPresentable.self) { _, _ in
+                SnackBarPresenter()
             }
         ]
     }

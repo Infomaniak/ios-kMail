@@ -90,9 +90,6 @@ open class MailAppTargetAssembly: TargetAssembly {
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()
             },
-            Factory(type: IKSnackBarPresentable.self) { _, _ in
-                SnackBarPresenter()
-            },
             Factory(type: UserAlertDisplayable.self) { _, _ in
                 UserAlertDisplayer()
             },

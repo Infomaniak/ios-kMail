@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2023 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,19 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import InfomaniakCore
 import InfomaniakCoreCommonUI
-import InfomaniakDI
-import InfomaniakLogin
-import InfomaniakNotifications
-import MailCore
+import SnackBar
+import UIKit
 
-// periphery:ignore - Used by DI
-class NotificationServiceTargetAssembly: MailAppTargetAssembly {
-    override class func getTargetServices() -> [Factory] {
-        return [
-            Factory(type: IKSnackBarPresentable.self) { _, _ in
-                EmptySnackBarPresenter()
-            }
-        ]
-    }
+struct EmptySnackBarPresenter: IKSnackBarPresentable {
+    func show(message: String) {}
+
+    func show(message: String, action: IKSnackBar.Action?) {}
+
+    func show(
+        message: String,
+        duration: SnackBar.Duration,
+        action: IKSnackBar.Action?,
+        contextView: UIView?
+    ) {}
 }
