@@ -236,7 +236,7 @@
 "alertNotificationsDisabledTitle" = "Notifications désactivées";
 
 /* loco:69fc99576244242e970744a2 */
-"alertSenderNoReply" = "Attention, l'expéditeur de cet e-mail semble ne pas vouloir de réponse.";
+"alertSenderNoReply" = "Attention, l’expéditeur de cet e-mail semble ne pas vouloir de réponse.";
 
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Protégez l’accès à votre application en activant le verrouillage de votre téléphone.";

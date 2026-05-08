@@ -119,6 +119,8 @@ struct QuickActionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @State private var cannotReply = false
+
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
@@ -156,9 +158,28 @@ struct QuickActionView: View {
         }
         .disabled(isActionInactive)
         .accessibilityIdentifier(action.accessibilityIdentifier)
+        .mailCustomAlert(isPresented: $cannotReply) {
+            NoReplyAlertView {
+                doAction()
+            }
+        }
     }
 
     private func didTapButton() {
+        switch action {
+        case .reply, .replyAll:
+            guard let lastMessage = targetMessages.last else { return }
+            NoReplyAlert.verifySenders(message: lastMessage, cannotReply: $cannotReply)
+
+            if !cannotReply {
+                doAction()
+            }
+        default:
+            doAction()
+        }
+    }
+
+    private func doAction() {
         dismiss()
 
         Task {

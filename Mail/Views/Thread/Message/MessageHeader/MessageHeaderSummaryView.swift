@@ -128,7 +128,7 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
-                    Button { NoReplyAlertView.verifySenders(message: message, cannotReply: $cannotReply)
+                    Button { NoReplyAlert.verifySenders(message: message, cannotReply: $cannotReply)
                         if !cannotReply {
                             replyToMessage()
                         }

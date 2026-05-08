@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2025 Infomaniak Network SA
@@ -17,34 +16,45 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import SwiftUI
 
-let noReplyPrefix = ["no-reply", "noreply", "postmaster", "catchall"]
+enum NoReplyAlert {
+    static let noReplyPrefixes = ["no-reply", "noreply", "postmaster", "catchall"]
+
+    private static func isNoReply(email: String) -> Bool {
+        let normalizedEmail = email.lowercased()
+        let localPart = normalizedEmail.split(separator: "@", maxSplits: 1).first.map(String.init) ?? normalizedEmail
+        return noReplyPrefixes.contains { prefix in
+            localPart.hasPrefix(prefix)
+        }
+    }
+
+    static func verifySenders(message: Message, cannotReply: Binding<Bool>) {
+        let noReply = message.from.contains { sender in
+            isNoReply(email: sender.email)
+        }
+
+        cannotReply.wrappedValue = noReply
+    }
+}
 
 struct NoReplyAlertView: View {
     let action: () -> Void
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.alertSenderNoReply)
+                .textStyle(.bodyMedium)
+                .padding(.bottom, IKPadding.alertTitleBottom)
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose
             ) {
                 action()
-            }
-        }
-    }
-
-    static func verifySenders(message: Message, cannotReply: Binding<Bool>) {
-        for prefix in noReplyPrefix {
-            for sender in message.from {
-                if sender.email.contains(prefix) {
-                    cannotReply.wrappedValue = true
-                }
             }
         }
     }
