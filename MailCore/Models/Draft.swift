@@ -17,9 +17,7 @@
  */
 
 import Foundation
-import InfomaniakCoreDB
 import RealmSwift
-import SwiftSoup
 import UniformTypeIdentifiers
 
 extension String {

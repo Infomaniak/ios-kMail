@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCoreDB
-import RealmSwift
 import SwiftSoup
 
 public struct DraftContentDiffHelper {
