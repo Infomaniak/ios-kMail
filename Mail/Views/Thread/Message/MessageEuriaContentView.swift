@@ -23,25 +23,23 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct MessageEuriaContentView: View {
-    let state: Message.SummaryState?
-    let content: String?
-    let retryAction: () -> Void
-    let dismissAction: () -> Void
+struct MessageEuriaContentView<Content: View>: View {
+    private let title: String
+    private let isError: Bool
+    private let content: Content?
+    private let dismissAction: () -> Void
 
-    private var title: String {
-        if state == .isLoading {
-            return MailResourcesStrings.Localizable.messageSummaryLoading
-        } else if state == .error {
-            return MailResourcesStrings.Localizable.messageSummaryErrorRetry
-        }
-        return MailResourcesStrings.Localizable.messageSummary
+    init(title: String, isError: Bool, @ViewBuilder content: () -> Content?, dismiss: @escaping () -> Void) {
+        self.title = title
+        self.isError = isError
+        self.content = content()
+        dismissAction = dismiss
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.small) {
             HStack(spacing: 6) {
-                if state == .error {
+                if isError {
                     MailResourcesAsset.warningFill.swiftUIImage
                         .iconSize(.medium)
                         .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
@@ -57,16 +55,8 @@ struct MessageEuriaContentView: View {
                 CloseButton(size: .medium) { dismissAction() }
             }
 
-            if state == .error {
-                Button {
-                    retryAction()
-                } label: {
-                    Text(MailResourcesStrings.Localizable.aiButtonRetry)
-                }
-
-            } else if let content {
-                Text(content)
-                    .textStyle(.bodySmall)
+            if let content {
+                content
             }
         }
         .padding(value: .small)
@@ -75,10 +65,9 @@ struct MessageEuriaContentView: View {
                 .foregroundStyle(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
         }
         .padding(value: .medium)
-        .animation(.default, value: content)
     }
 }
 
 #Preview {
-    MessageEuriaContentView(state: .isLoading, content: "") {} dismissAction: {}
+    MessageEuriaContentView(title: "Title", isError: false) {} dismiss: {}
 }

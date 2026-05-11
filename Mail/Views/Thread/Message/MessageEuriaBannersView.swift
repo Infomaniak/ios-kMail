@@ -18,6 +18,7 @@
 
 import MailCore
 import MailCoreUI
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -27,15 +28,27 @@ struct MessageEuriaBannersView: View {
     @ObservedRealmObject var message: Message
 
     var body: some View {
-        if message.summaryIsShowing {
-            MessageEuriaContentView(state: message.summaryState, content: message.summary) {
-                Task {
-                    try await mailboxManager.summarize(message: message)
+        if let state = message.summaryState {
+            MessageEuriaContentView(title: state.title, isError: message.summaryState == .error) {
+                if let summary = message.summary {
+                    Text(summary)
+                        .textStyle(.bodySmall)
+                } else if message.summaryState == .error {
+                    Button {
+                        Task {
+                            try await mailboxManager.summarize(message: message)
+                        }
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                    }
+                    .padding(.leading, 22)
                 }
-            } dismissAction: {
+            } dismiss: {
                 guard let liveMessage = message.thaw() else { return }
                 try? liveMessage.realm?.write {
-                    liveMessage.summaryIsShowing = false
+                    liveMessage.summaryState = nil
                 }
             }
         }

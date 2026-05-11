@@ -219,8 +219,9 @@ public extension MailboxManager {
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 if message.summary == nil {
                     liveMessage.summaryState = .isLoading
+                } else {
+                    liveMessage.summaryState = .summary
                 }
-                liveMessage.summaryIsShowing = true
             }
 
             guard message.summary == nil else { return }
@@ -229,7 +230,7 @@ public extension MailboxManager {
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 liveMessage.summary = summary
-                liveMessage.summaryState = nil
+                liveMessage.summaryState = .summary
             }
         } catch {
             try? writeTransaction { writableRealm in

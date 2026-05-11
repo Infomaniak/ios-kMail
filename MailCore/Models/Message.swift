@@ -197,12 +197,23 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var reactionMessages: List<Message>
 
     @Persisted public var summary: String?
-    @Persisted public var summaryIsShowing = false
     @Persisted public var summaryState: SummaryState?
 
     public enum SummaryState: String, PersistableEnum {
+        case summary
         case isLoading
         case error
+
+        public var title: String {
+            switch self {
+            case .summary:
+                return MailResourcesStrings.Localizable.messageSummary
+            case .isLoading:
+                return MailResourcesStrings.Localizable.messageSummaryLoading
+            case .error:
+                return MailResourcesStrings.Localizable.messageSummaryErrorRetry
+            }
+        }
     }
 
     public var shortUid: Int? {
