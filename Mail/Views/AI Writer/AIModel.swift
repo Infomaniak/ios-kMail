@@ -284,7 +284,7 @@ extension AIModel {
 
     private func shouldOverrideBody() -> Bool {
         guard let liveDraft = getLiveDraft() else { return false }
-        return !liveDraft.isEmptyOfUserChanges
+        return DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
     }
 
     private func getRecipientsList() -> String? {

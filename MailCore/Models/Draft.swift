@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import RealmSwift
 import SwiftSoup
 import UniformTypeIdentifiers
@@ -344,8 +345,7 @@ public extension Draft {
     var availableAttachmentsSlots: Int {
         let maxBound = 96
         let offset = min(attachments.count, maxBound)
-        let available = max(maxBound - offset, 0)
-        return available
+        return max(maxBound - offset, 0)
     }
 }
 
@@ -377,42 +377,5 @@ public extension Draft {
     /// Check that the draft has some Attachments of not
     var hasAttachments: Bool {
         return !attachments.filter { $0.contentId == nil }.isEmpty
-    }
-
-    var isEmptyOfUserChanges: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
-
-        for itemToExtract in Self.appendedHTMLElements {
-            _ = try? document.getElementsByClass(itemToExtract).remove()
-        }
-
-        return !document.hasText()
-    }
-
-    /// Check if the Signature has changes or not
-    var isSignatureUnchanged: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
-            return true
-        }
-
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
-            return true
-        }
-
-        // We check if the signature was changed, the user might also have written within the signature div without knowing.
-        let signatureNodeText = try? signatureNode.text()
-        guard let rawSignature,
-              let signatureNodeText,
-              let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
-              let rawSignatureText = try? rawSignatureDocument.text(),
-              rawSignatureText.trimmed == signatureNodeText.trimmed else {
-            return false
-        }
-
-        return true
-    }
-
-    var shouldBeSaved: Bool {
-        return hasAttachments || !isEmptyOfUserChanges || !isSignatureUnchanged
     }
 }
