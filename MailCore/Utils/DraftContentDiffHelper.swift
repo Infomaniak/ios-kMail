@@ -46,54 +46,58 @@ public struct DraftContentDiffHelper {
     }
 
     private func signatureHasChanged() -> Bool {
-        guard !draft.body.isEmpty, let document = try? SwiftSoup.parse(draft.body) else {
+        guard let savedSignature = draft.rawSignature else {
             return false
         }
 
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
+        guard !draft.body.isEmpty, let parsedDraftBody = try? SwiftSoup.parse(draft.body) else {
             return false
         }
 
-        let signatureNodeText = (try? signatureNode.text()) ?? ""
-        guard let rawSignature = draft.rawSignature,
-              let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
-              let rawSignatureText = try? rawSignatureDocument.text() else {
-            return false
+        guard let signatureNode = try? parsedDraftBody.getElementsByClass(Constants.signatureHTMLClass).first() else {
+            return true
         }
 
-        return rawSignatureText.trimmed == signatureNodeText.trimmed
+        let draftSignatureText = (try? signatureNode.text()) ?? ""
+        guard let parsedSavedSignature = try? SwiftSoup.parse(savedSignature),
+              let savedSignatureText = try? parsedSavedSignature.text()
+        else { return true }
+
+        return savedSignatureText.trimmed != draftSignatureText.trimmed
     }
 
     private func replyOrForwardQuoteHasChanged() -> Bool {
-        if let inReplyToUid = draft.inReplyToUid,
-           let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: draft.inReplyToUid),
+        if let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: draft.inReplyToUid),
            let replyBody = message.body?.value?.trimmed {
             let draftDocument = try? SwiftSoup.parse(draft.body)
-            let replyQuote = try? draftDocument?.select(".\(Constants.replyQuoteHTMLClass) > blockquote").first()?.text().trimmed
+            let replyQuote = try? draftDocument?.select(quoteSelector(forCSSClass: Constants.replyQuoteHTMLClass)).first()?.text().trimmed
 
             let replyDocument = try? SwiftSoup.parse(replyBody)
             let replyText = try? replyDocument?.text().trimmed
 
             if replyText != replyQuote {
-                return false
+                return true
             }
         }
 
-        if let forwardedUid = draft.forwardedUid,
-           let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: forwardedUid),
+        if let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: draft.forwardedUid),
            let forwardBody = message.body?.value?.trimmed {
             let draftDocument = try? SwiftSoup.parse(draft.body)
-            let forwardQuote = try? draftDocument?.select(".\(Constants.forwardQuoteHTMLClass) > blockquote").first()?.text()
+            let forwardQuote = try? draftDocument?.select(quoteSelector(forCSSClass: Constants.forwardQuoteHTMLClass)).first()?.text()
                 .trimmed
 
             let forwardDocument = try? SwiftSoup.parse(forwardBody)
             let forwardText = try? forwardDocument?.text().trimmed
 
             if forwardText != forwardQuote {
-                return false
+                return true
             }
         }
 
-        return true
+        return false
+    }
+
+    private func quoteSelector(forCSSClass cssClass: String) -> String {
+        return ".\(cssClass) > blockquote"
     }
 }
