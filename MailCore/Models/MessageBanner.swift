@@ -37,8 +37,6 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return "unsubscribeLink"
         case .acknowledge:
             return "acknowledge"
-        case .summarize:
-            return "summarize"
         }
     }
 
@@ -48,7 +46,6 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case encrypted
     case unsubscribeLink
     case acknowledge
-    case summarize
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -63,8 +60,6 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
         case (.unsubscribeLink, .unsubscribeLink):
             return true
         case (.acknowledge, .acknowledge):
-            return true
-        case (.summarize, .summarize):
             return true
         default:
             return false

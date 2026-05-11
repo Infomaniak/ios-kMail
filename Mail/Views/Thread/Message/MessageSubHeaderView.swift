@@ -62,10 +62,6 @@ struct MessageSubHeaderView: View {
             result.append(.acknowledge)
         }
 
-        if message.summaryIsShowing {
-            result.append(.summarize)
-        }
-
         return result
     }
 
@@ -81,6 +77,8 @@ struct MessageSubHeaderView: View {
                 message: message,
                 mailbox: mailboxManager.mailbox
             )
+
+            MessageEuriaBannersView(message: message)
 
             if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
                 CalendarView(event: event)
