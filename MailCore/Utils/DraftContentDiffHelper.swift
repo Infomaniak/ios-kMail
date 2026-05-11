@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import InfomaniakCoreDB
 import SwiftSoup
 
@@ -67,34 +66,43 @@ public struct DraftContentDiffHelper {
     }
 
     private func replyOrForwardQuoteHasChanged() -> Bool {
-        if let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: draft.inReplyToUid),
-           let replyBody = message.body?.value?.trimmed {
-            let draftDocument = try? SwiftSoup.parse(draft.body)
-            let replyQuote = try? draftDocument?.select(quoteSelector(forCSSClass: Constants.replyQuoteHTMLClass)).first()?.text().trimmed
-
-            let replyDocument = try? SwiftSoup.parse(replyBody)
-            let replyText = try? replyDocument?.text().trimmed
-
-            if replyText != replyQuote {
+        if let inReplyToUid = draft.inReplyToUid {
+            if embeddedMessageHasChanged(
+                messagePrimaryKey: inReplyToUid,
+                cssSelector: quoteSelector(forCSSClass: Constants.replyQuoteHTMLClass)
+            ) {
                 return true
             }
         }
 
-        if let message = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: draft.forwardedUid),
-           let forwardBody = message.body?.value?.trimmed {
-            let draftDocument = try? SwiftSoup.parse(draft.body)
-            let forwardQuote = try? draftDocument?.select(quoteSelector(forCSSClass: Constants.forwardQuoteHTMLClass)).first()?.text()
-                .trimmed
-
-            let forwardDocument = try? SwiftSoup.parse(forwardBody)
-            let forwardText = try? forwardDocument?.text().trimmed
-
-            if forwardText != forwardQuote {
+        if let forwardedUid = draft.forwardedUid {
+            if embeddedMessageHasChanged(
+                messagePrimaryKey: forwardedUid,
+                cssSelector: quoteSelector(forCSSClass: Constants.forwardQuoteHTMLClass)
+            ) {
                 return true
             }
         }
 
         return false
+    }
+
+    private func embeddedMessageHasChanged(messagePrimaryKey: String, cssSelector: String) -> Bool {
+        guard let fetchedMessage = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: messagePrimaryKey) else {
+            return false
+        }
+
+        guard let parsedDraft = try? SwiftSoup.parse(draft.body),
+              let parsedEmbeddedMessage = try? parsedDraft.select(cssSelector).first(),
+              let parsedEmbeddedMessageText = try? parsedEmbeddedMessage.text()
+        else { return false }
+
+        guard let fetchedMessageBody = fetchedMessage.body?.value,
+              let parsedFetchedMessage = try? SwiftSoup.parse(fetchedMessageBody),
+              let parsedFetchedMessageText = try? parsedFetchedMessage.text()
+        else { return false }
+
+        return parsedFetchedMessageText.trimmed != parsedEmbeddedMessageText.trimmed
     }
 
     private func quoteSelector(forCSSClass cssClass: String) -> String {
