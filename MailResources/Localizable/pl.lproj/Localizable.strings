@@ -4,7 +4,7 @@
  * Locale: pl, Polish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Zobacz ustawienia";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Włącz powiadomienia dla Infomaniak Mail **w ustawieniach iOS**, aby otrzymywać powiadomienia o nowych wiadomościach";
+"alertNotificationsDisabledDescription" = "Włącz powiadomienia dla Infomaniak Mail **w ustawieniach systemowych**, aby otrzymywać powiadomienia o nowych wiadomościach";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Powiadomienia wyłączone";
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Przywróć e-maile";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Zaplanuj wysłanie e-maila";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Zobacz";

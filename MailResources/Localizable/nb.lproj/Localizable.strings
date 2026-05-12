@@ -4,7 +4,7 @@
  * Locale: nb, Norwegian Bokmål
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Se innstillinger";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Vennligst aktiver varsler for Infomaniak Mail **i iOS-innstillingene** for å bli varslet når nye meldinger mottas";
+"alertNotificationsDisabledDescription" = "Vennligst aktiver varsler for Infomaniak Mail **i systeminnstillingene** for å bli varslet når nye meldinger mottas";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Varsler deaktivert";
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Gjenopprett e-poster";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Planlegg e-post til senere sending";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Se";

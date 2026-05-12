@@ -4,7 +4,7 @@
  * Locale: da, Danish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Gendan e-mails";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Planlæg e-mail til senere afsendelse";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Se";

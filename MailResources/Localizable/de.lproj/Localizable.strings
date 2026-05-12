@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "E-Mails wiederherstellen";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Planen Sie den Versand von E-Mails für einen späteren Zeitpunkt";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Siehe";
@@ -929,7 +926,7 @@
 "errorNewFolderInvalidCharacter" = "Der Ordnername enthält ungültige Zeichen";
 
 /* loco:63fe19a90375095d660d0152 */
-"errorNewFolderNameTooLong" = "Der Ordnername sollte nicht länger als 255 Zeichen sein.";
+"errorNewFolderNameTooLong" = "Der Ordnername sollte nicht länger als 255 Zeichen sein";
 
 /* loco:64492a1e7d49e1ef190ab465 */
 "errorRefusedRecipients" = "Der Server lehnt alle Empfänger ab";

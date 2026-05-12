@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -65,10 +65,10 @@
 "actionPrint" = "Imprimir";
 
 /* loco:67247bd43e094b31a70e2272 */
-"actionRename" = "Cambie el nombre de";
+"actionRename" = "Renombrar";
 
 /* loco:6284fd413d98060ac31f76d2 */
-"actionReply" = "Respuesta";
+"actionReply" = "Responder";
 
 /* loco:62a85b6ad3c793021731f332 */
 "actionReplyAll" = "Responder a todos";
@@ -125,7 +125,7 @@
 "addressBookTitle" = "Libreta de direcciones: %@";
 
 /* loco:65081b4d5787de874c0dec32 */
-"aiButtonInsert" = "Inserte";
+"aiButtonInsert" = "Insertar";
 
 /* loco:65081ae6a237c4d16909e463 */
 "aiButtonRefine" = "Afinar";
@@ -197,7 +197,7 @@
 "aiPromptTitle" = "Euria";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
-"aiPromptValidateButton" = "Genere";
+"aiPromptValidateButton" = "Generar";
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "El tema será:\n\n%@";
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Ver los parámetros";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Por favor, activa las notificaciones para Infomaniak Mail **en los ajustes de iOS** para ser notificado cuando recibas nuevos mensajes";
+"alertNotificationsDisabledDescription" = "Por favor, activa las notificaciones para Infomaniak Mail **en la configuración del sistema** para ser notificado cuando recibas nuevos mensajes";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notificaciones desactivadas";
@@ -260,7 +260,7 @@
 "attachmentActionTitle" = "Añadir un archivo adjunto";
 
 /* loco:6374f6a12619632e014135d2 */
-"attachmentFileLimitReached" = "Los archivos que está intentando enviar superan el límite de archivos adjuntos de 25 MB.";
+"attachmentFileLimitReached" = "Los archivos que está intentando enviar superan el límite de archivos adjuntos de 25 MB";
 
 /* loco:6996f24e1ece4e9c1e0ca755 */
 "attachmentsReminderDescription" = "Ha mencionado un archivo adjunto, pero no se ha añadido ningún archivo. ¿Lo envía de todos modos?";
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Restaurar correos electrónicos";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Programar un correo electrónico para enviarlo más tarde";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Véase";
@@ -1820,7 +1817,7 @@
 "threadListEmptyFolderAlertDescription" = "¿Estás seguro de que quieres borrar definitivamente todos los mensajes de esta carpeta?";
 
 /* loco:63ebae36eeb4ae34ef49ba42 */
-"threadListEmptySpamButton" = "Spam vacío";
+"threadListEmptySpamButton" = "Vaciar spam";
 
 /* loco:63ebad842446f5106c0058b2 */
 "threadListEmptyTrashButton" = "Vaciar la papelera";
