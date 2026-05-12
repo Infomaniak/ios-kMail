@@ -4,7 +4,7 @@
  * Locale: pt, Portuguese
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Ver definições";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Ative as notificações para o Infomaniak Mail **nas definições do iOS** para ser alertado quando novas mensagens forem recebidas";
+"alertNotificationsDisabledDescription" = "Ative as notificações para o Infomaniak Mail **nas definições do sistema** para ser alertado quando novas mensagens forem recebidas";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notificações desativadas";
@@ -287,7 +287,7 @@
 "buttonAccept" = "Aceitar";
 
 /* loco:628216026aae4d7bc05773c3 */
-"buttonAccountDelete" = "Excluir conta";
+"buttonAccountDelete" = "Eliminar conta";
 
 /* loco:66d057655e6c36f415058842 */
 "buttonAccountLogOut" = "Terminar sessão";
@@ -448,9 +448,6 @@
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Restaurar e-mails";
 
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Programar envio do e-mail";
-
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Ver";
 
@@ -560,7 +557,7 @@
 "contentDescriptionButtonBack" = "Voltar";
 
 /* loco:6295d8a6be385969441d55f2 */
-"contentDescriptionButtonDeleteDraft" = "Excluir rascunho";
+"contentDescriptionButtonDeleteDraft" = "Eliminar o rascunho";
 
 /* loco:642456b7a9f7d62fda3252d2 */
 "contentDescriptionButtonDeleteHistory" = "Eliminar entrada do histórico";
@@ -1691,7 +1688,7 @@
 "snackbarMoveCancelled" = "Movimento cancelado";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "Palavra-passe";
+"snackbarPasswordCopied" = "Palavra-passe copiada";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reação %@ enviada";

@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -14,7 +14,7 @@
 "accentColorPinkTitle" = "Pink";
 
 /* loco:642179d9733cd4523d03dcf2 */
-"accentColorSystemTitle" = "System color";
+"accentColorSystemTitle" = "System colour";
 
 /* loco:6936f775de93800154038b75 */
 "acknowledgementMessage" = "The sender requested a read receipt.";
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "View settings";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Please enable notifications for Infomaniak Mail **in iOS settings** to be alerted whenever new messages are received";
+"alertNotificationsDisabledDescription" = "Please enable notifications for Infomaniak Mail **in system settings** to be alerted whenever new messages are received";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notifications disabled";
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Restore emails";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Schedule email to send later";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "See";
@@ -1379,7 +1376,7 @@
 "setAsDefaultAppTitle" = "Make Infomaniak your default Mail app";
 
 /* loco:62bb144be43a74010f186a22 */
-"settingsAccentColor" = "Accent color";
+"settingsAccentColor" = "Accent colour";
 
 /* loco:62bb14784ae7d90af73a4c93 */
 "settingsAccentColorDescription" = "Choose the accent colour for the application";

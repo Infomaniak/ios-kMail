@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 06 May 2026 10:50:32 +0200
+ * Exported at: Tue, 12 May 2026 08:56:03 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -224,7 +224,7 @@
 "alertNotificationsDisabledButton" = "Vedi i parametri";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Attiva le notifiche per Infomaniak Mail **nelle impostazioni di iOS** per essere avvisati quando si ricevono nuovi messaggi";
+"alertNotificationsDisabledDescription" = "Attiva le notifiche per Infomaniak Mail **nelle impostazioni di sistema** per essere avvisati quando si ricevono nuovi messaggi";
 
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notifiche disabilitate";
@@ -260,7 +260,7 @@
 "attachmentActionTitle" = "Aggiungere un allegato";
 
 /* loco:6374f6a12619632e014135d2 */
-"attachmentFileLimitReached" = "I file che si sta tentando di inviare superano il limite di 25 MB per gli allegati.";
+"attachmentFileLimitReached" = "I file che si sta tentando di inviare superano il limite di 25 MB per gli allegati";
 
 /* loco:6996f24e1ece4e9c1e0ca755 */
 "attachmentsReminderDescription" = "Hai menzionato un allegato, ma non è stato aggiunto alcun file. Si può inviare lo stesso?";
@@ -447,9 +447,6 @@
 
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Ripristino delle e-mail";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Programmare l’invio di un’e-mail in un secondo momento";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Vedi";
@@ -1424,7 +1421,7 @@
 "settingsAutoAdvanceTitle" = "Avanzamento automatico";
 
 /* loco:62c693f572adfe66fd2a82b7 */
-"settingsCancellationPeriodDescription" = "Hai la possibilità di annullare l’invio delle email fino a 30 secondi.";
+"settingsCancellationPeriodDescription" = "Hai la possibilità di annullare l’invio delle email fino a 30 secondi";
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Periodo di cancellazione dell’invio";
@@ -1577,7 +1574,7 @@
 "settingsSwipeActionsTitle" = "Azioni di scorrimento";
 
 /* loco:62b017def2354224c578fc12 */
-"settingsSwipeDescription" = "Scorri gli elementi nella tua casella di posta e accedi rapidamente alle azioni più frequenti.";
+"settingsSwipeDescription" = "Scorri gli elementi nella tua casella di posta e accedi rapidamente alle azioni più frequenti";
 
 /* loco:6295d5d7b524ea4e9d4d72d3 */
 "settingsSwipeLongLeft" = "Passaggio lungo a sinistra";
@@ -1616,7 +1613,7 @@
 "settingsTransferAsAttachment" = "Come allegato";
 
 /* loco:62c6a408b365f734dd2c0d73 */
-"settingsTransferEmailsDescription" = "Quando si inoltra un’e-mail, scegliere la modalità di visualizzazione più adatta.";
+"settingsTransferEmailsDescription" = "Quando si inoltra un’e-mail, scegliere la modalità di visualizzazione più adatta";
 
 /* loco:627a53d47b420855254af035 */
 "settingsTransferEmailsTitle" = "Trasferimento di e-mail";
