@@ -29,7 +29,7 @@ public struct DraftContentDiffHelper {
     }
 
     public func containsUserEdition() -> Bool {
-        return userBodyContainsUserEdition() || signatureHasChanged() || replyOrForwardQuoteHasChanged()
+        return userBodyContainsUserEdition() || signatureHasChanged() || replyQuoteHasChanged()
     }
 
     public func userBodyContainsUserEdition() -> Bool {
@@ -62,29 +62,18 @@ public struct DraftContentDiffHelper {
               let savedSignatureText = try? parsedSavedSignature.text()
         else { return true }
 
-        return savedSignatureText.trimmed != draftSignatureText.trimmed
+        return savedSignatureText.normalizedReturns.trimmed != draftSignatureText.normalizedReturns.trimmed
     }
 
-    private func replyOrForwardQuoteHasChanged() -> Bool {
-        if let inReplyToUid = draft.inReplyToUid {
-            if embeddedMessageHasChanged(
-                messagePrimaryKey: inReplyToUid,
-                cssSelector: quoteSelector(forCSSClass: Constants.replyQuoteHTMLClass)
-            ) {
-                return true
-            }
+    private func replyQuoteHasChanged() -> Bool {
+        guard let inReplyToUid = draft.inReplyToUid else {
+            return false
         }
 
-        if let forwardedUid = draft.forwardedUid {
-            if embeddedMessageHasChanged(
-                messagePrimaryKey: forwardedUid,
-                cssSelector: quoteSelector(forCSSClass: Constants.forwardQuoteHTMLClass)
-            ) {
-                return true
-            }
-        }
-
-        return false
+        return embeddedMessageHasChanged(
+            messagePrimaryKey: inReplyToUid,
+            cssSelector: ".\(Constants.replyQuoteHTMLClass) > blockquote"
+        )
     }
 
     private func embeddedMessageHasChanged(messagePrimaryKey: String, cssSelector: String) -> Bool {
@@ -97,15 +86,20 @@ public struct DraftContentDiffHelper {
               let parsedEmbeddedMessageText = try? parsedEmbeddedMessage.text()
         else { return false }
 
-        guard let fetchedMessageBody = fetchedMessage.body?.value,
-              let parsedFetchedMessage = try? SwiftSoup.parse(fetchedMessageBody),
-              let parsedFetchedMessageText = try? parsedFetchedMessage.text()
-        else { return false }
+        guard let fetchedMessageBody = fetchedMessage.body?.value else {
+            return false
+        }
 
-        return parsedFetchedMessageText.trimmed != parsedEmbeddedMessageText.trimmed
-    }
+        var parsedFetchedMessageText: String? = fetchedMessageBody
+        if fetchedMessage.body?.type == .textHtml {
+            let parsedFetchedMessage = try? SwiftSoup.parse(fetchedMessageBody)
+            parsedFetchedMessageText = try? parsedFetchedMessage?.text()
+        }
 
-    private func quoteSelector(forCSSClass cssClass: String) -> String {
-        return ".\(cssClass) > blockquote"
+        guard let parsedFetchedMessageText else {
+            return false
+        }
+
+        return parsedFetchedMessageText.normalizedReturns.trimmed != parsedEmbeddedMessageText.normalizedReturns.trimmed
     }
 }

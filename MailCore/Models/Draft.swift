@@ -25,6 +25,10 @@ extension String {
         let whiteSpaceSet = NSCharacterSet.whitespacesAndNewlines
         return trimmingCharacters(in: whiteSpaceSet)
     }
+
+    var normalizedReturns: String {
+        return replacingOccurrences(of: "\r\n", with: "\n")
+    }
 }
 
 public enum SaveDraftOption: String, Codable, PersistableEnum {
