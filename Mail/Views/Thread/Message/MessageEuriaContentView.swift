@@ -38,7 +38,7 @@ struct MessageEuriaContentView<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.small) {
-            HStack(spacing: 6) {
+            HStack(spacing: IKPadding.mini) {
                 if isError {
                     MailResourcesAsset.warningFill.swiftUIImage
                         .iconSize(.medium)
@@ -64,7 +64,6 @@ struct MessageEuriaContentView<Content: View>: View {
             RoundedRectangle(cornerRadius: IKRadius.medium)
                 .foregroundStyle(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
         }
-        .padding(value: .medium)
     }
 }
 

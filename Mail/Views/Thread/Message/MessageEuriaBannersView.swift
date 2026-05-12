@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
@@ -28,30 +29,33 @@ struct MessageEuriaBannersView: View {
     @ObservedRealmObject var message: Message
 
     var body: some View {
-        if let state = message.summaryState {
-            MessageEuriaContentView(title: state.title, isError: message.summaryState == .error) {
-                if let summary = message.summary {
-                    Text(summary)
-                        .textStyle(.bodySmall)
-                } else if message.summaryState == .error {
-                    Button {
-                        Task {
-                            try await mailboxManager.summarize(message: message)
+        VStack(spacing: IKPadding.medium) {
+            if let state = message.summaryState {
+                MessageEuriaContentView(title: state.title, isError: message.summaryState == .error) {
+                    if let summary = message.summary {
+                        Text(summary)
+                            .textStyle(.bodySmall)
+                    } else if message.summaryState == .error {
+                        Button {
+                            Task {
+                                try await mailboxManager.summarize(message: message)
+                            }
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                                .font(MailTextStyle.body.font)
+                                .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
                         }
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
-                            .font(MailTextStyle.body.font)
-                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                        .padding(.leading, 22)
                     }
-                    .padding(.leading, 22)
-                }
-            } dismiss: {
-                guard let liveMessage = message.thaw() else { return }
-                try? liveMessage.realm?.write {
-                    liveMessage.summaryState = nil
+                } dismiss: {
+                    guard let liveMessage = message.thaw() else { return }
+                    try? liveMessage.realm?.write {
+                        liveMessage.summaryState = nil
+                    }
                 }
             }
         }
+        .padding(value: .medium)
     }
 }
 
