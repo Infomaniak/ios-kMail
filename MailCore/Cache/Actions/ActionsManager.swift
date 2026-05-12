@@ -196,8 +196,8 @@ public class ActionsManager: ObservableObject {
             guard let message = messages.first else { return }
             // Needed to be sure that the bottomView is dismissed before we try to show the printPanel
             DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
-                let nc = NotificationCenter.default
-                nc.post(name: Notification.Name.printNotification, object: message)
+                let notificationCenter = NotificationCenter.default
+                notificationCenter.post(name: Notification.Name.printNotification, object: message)
             }
         case .moveToInbox, .nonSpam:
             let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
