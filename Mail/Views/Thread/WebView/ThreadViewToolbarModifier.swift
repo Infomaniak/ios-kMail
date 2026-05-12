@@ -38,6 +38,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
 
@@ -80,7 +82,18 @@ struct ThreadViewToolbarModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
+        let itemPlacementTrailling: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarTrailing
+        let itemPlacementLeading: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarLeading
+
         content
+            .toolbar {
+                ToolbarItem(placement: itemPlacementTrailling) {
+                    if showMoreButton {
+                        moreButton
+                    }
+                }
+            }
+            .toolbarSpacer(placement: itemPlacementTrailling)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: didTapFlag) {
@@ -93,15 +106,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    if showMoreButton {
-                        moreButton
-                    }
-                }
-            }
-            .toolbarSpacer(placement: .bottomBar)
-            .toolbar {
-                ToolbarItemGroup(placement: .bottomBar) {
+                ToolbarItemGroup(placement: itemPlacementLeading) {
                     ForEach(toolbarActions) { action in
                         if action == .reply {
                             Button {
