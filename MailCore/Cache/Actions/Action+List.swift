@@ -118,12 +118,13 @@ extension Action: CaseIterable {
             guard !isFromMe else { return nil }
             return isInSpamFolder ? .nonSpam : .spam
         }
+        let summarize = origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
-            .summarize,
+            summarize ? .summarize : nil,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
