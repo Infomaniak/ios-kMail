@@ -23,7 +23,7 @@ let packageSettings = PackageSettings(
         "InfomaniakCoreUIResources": .framework,
         "InfomaniakCore": .framework,
         "InfomaniakCreateAccount": .framework,
-        "InfomaniakDeviceCheck": .staticFramework,
+        "InfomaniakDeviceCheck": .framework,
         "InfomaniakDI": .framework,
         "InfomaniakLogin": .framework,
         "InfomaniakNotifications": .framework,
