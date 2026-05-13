@@ -38,15 +38,13 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private static let moveStandardActions: [Action] = [.snooze, .archive, .openMovePanel, .delete]
     private static let moveArchiveActions: [Action] = [.snooze, .moveToInbox, .openMovePanel, .delete]
     private static let reportActions: [Action] = [.block, .spam, .phishing]
-    private static let otherNoReadActions: [Action] = [.markAsRead, .saveThreadInkDrive]
-    private static let otherReadActions: [Action] = [.markAsUnread, .saveThreadInkDrive]
+    private static let otherNoReadActions: [Action] = [.markAsRead, .shareMailLink, .saveThreadInkDrive]
+    private static let otherReadActions: [Action] = [.markAsUnread, .shareMailLink, .saveThreadInkDrive]
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @Environment(\.isCompactWindow) private var isCompactWindow
-
-    @State private var replyOrReplyAllMessage: Message?
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -63,8 +61,6 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private let isFlagged: Bool
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
-
-    var completionHandler: ((Action) -> Void)?
 
     private var toolbarActions: [Action] {
         if frozenThread.containsOnlyScheduledDrafts {
@@ -129,12 +125,12 @@ struct ThreadViewToolbarModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        let itemPlacementTrailling: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarTrailing
+        let itemPlacementTrailing: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarTrailing
         let itemPlacementLeading: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarLeading
 
         content
             .toolbar {
-                ToolbarItemGroup(placement: itemPlacementTrailling) {
+                ToolbarItemGroup(placement: itemPlacementTrailing) {
                     if showMoreButton {
                         if isCompactWindow {
                             moreButton
@@ -151,7 +147,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
 
-            .toolbarSpacer(placement: itemPlacementTrailling)
+            .toolbarSpacer(placement: itemPlacementTrailing)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: didTapFlag) {
@@ -193,7 +189,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         ToolbarSpacer(.fixed, placement: .topBarTrailing)
                     }
 
-                    ToolbarItemGroup(placement: itemPlacementTrailling) {
+                    ToolbarItemGroup(placement: itemPlacementTrailing) {
                         ForEach(ThreadViewToolbarModifier.reportActions) { action in
                             Button {
                                 didTap(action: action)
@@ -210,32 +206,11 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 } else {
                     ToolbarItemGroup(placement: itemPlacementLeading) {
                         ForEach(toolbarActions) { action in
-                            if action == .reply {
-                                Button {
-                                    didTap(action: action)
-                                } label: {
-                                    Label(action.title, asset: action.icon)
-                                }
-                                .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
-                                    ReplyActionsView(message: message)
-                                }
-                            } else {
-                                Button {
-                                    didTap(action: action)
-                                } label: {
-                                    Label(action.title, asset: action.icon)
-                                }
-                                .sheet(item: $messagesToMove) { messages in
-                                    MoveEmailView(
-                                        mailboxManager: mailboxManager,
-                                        movedMessages: messages,
-                                        originFolder: frozenFolder
-                                    )
-                                    .sheetViewStyle()
-                                }
-                                .modifier(BottomToolbarSnackBarAvoider())
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
                             }
-
                             if action != toolbarActions.last || showMoreButton {
                                 LegacyToolbarSpacer()
                             }
@@ -251,7 +226,6 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     mailboxManager: mailboxManager,
                     movedMessages: messages,
                     originFolder: frozenFolder,
-                    completion: completionHandler
                 )
                 .sheetViewStyle()
             }
@@ -276,8 +250,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
             ) { messages in
                 ReportPhishingView(
                     messagesWithDuplicates: messages,
-                    distinctMessageCount: messages.count,
-                    completionHandler: completionHandler
+                    distinctMessageCount: messages.count
                 )
             }
             .mailCustomAlert(item: $messagesToDownload) { messages in
@@ -291,8 +264,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
             .snoozedFloatingPanel(
                 messages: messagesToSnooze,
                 initialDate: initialSnoozedDate,
-                folder: frozenFolder?.freezeIfNeeded(),
-                completionHandler: completionHandler
+                folder: frozenFolder?.freezeIfNeeded()
             )
     }
 
