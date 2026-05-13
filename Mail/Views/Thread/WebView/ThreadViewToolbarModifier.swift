@@ -34,6 +34,12 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
     private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
     private static let scheduleActions: [Action] = [.delete]
+    private static let replyActions: [Action] = [.reply, .forward, .replyAll]
+    private static let moveStandardActions: [Action] = [.snooze, .archive, .openMovePanel, .delete]
+    private static let moveArchiveActions: [Action] = [.snooze, .moveToInbox, .openMovePanel, .delete]
+    private static let reportActions: [Action] = [.block, .spam, .phishing]
+    private static let otherNoReadActions: [Action] = [.markAsRead, .saveThreadInkDrive]
+    private static let otherReadActions: [Action] = [.markAsUnread, .saveThreadInkDrive]
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -41,15 +47,24 @@ struct ThreadViewToolbarModifier: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @State private var replyOrReplyAllMessage: Message?
-    @State private var messagesToMove: [Message]?
 
+    @ModalState private var reportedForDisplayProblemMessage: Message?
+    @ModalState private var reportedForPhishingMessages: [Message]?
+    @ModalState private var blockSenderAlert: BlockRecipientAlertState?
+    @ModalState private var blockSendersList: BlockRecipientState?
+    @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
+    @ModalState private var shareMailLink: ShareMailLinkResult?
+    @ModalState private var messagesToSnooze: [Message]?
+    @ModalState private var messagesToDownload: [Message]?
 
     private let frozenThread: Thread
 
     private let isFlagged: Bool
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
+
+    var completionHandler: ((Action) -> Void)?
 
     private var toolbarActions: [Action] {
         if frozenThread.containsOnlyScheduledDrafts {
@@ -59,6 +74,14 @@ struct ThreadViewToolbarModifier: ViewModifier {
         } else {
             return Self.standardActions
         }
+    }
+
+    private var toolbarActionsForOther: [Action] {
+        frozenMessages.contains(where: \.seen) ? Self.otherReadActions : Self.otherNoReadActions
+    }
+
+    private var toolbarActionsForMove: [Action] {
+        frozenFolder?.role == .archive ? Self.moveArchiveActions : Self.moveStandardActions
     }
 
     private var showMoreButton: Bool {
@@ -71,6 +94,30 @@ struct ThreadViewToolbarModifier: ViewModifier {
         } else {
             return isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor
         }
+    }
+
+    private var initialSnoozedDate: Date? {
+        guard let messagesToSnooze,
+              let initialDate = messagesToSnooze.first?.snoozeEndDate,
+              messagesToSnooze.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
+        else { return nil }
+
+        return initialDate
+    }
+
+    private var origin: ActionOrigin {
+        .toolbar(
+            originFolder: frozenFolder,
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload
+        )
     }
 
     init(frozenThread: Thread) {
@@ -87,12 +134,23 @@ struct ThreadViewToolbarModifier: ViewModifier {
 
         content
             .toolbar {
-                ToolbarItem(placement: itemPlacementTrailling) {
+                ToolbarItemGroup(placement: itemPlacementTrailling) {
                     if showMoreButton {
-                        moreButton
+                        if isCompactWindow {
+                            moreButton
+                        } else {
+                            ForEach(toolbarActionsForOther) { action in
+                                Button {
+                                    didTap(action: action)
+                                } label: {
+                                    Label(action.title, asset: action.icon)
+                                }
+                            }
+                        }
                     }
                 }
             }
+
             .toolbarSpacer(placement: itemPlacementTrailling)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -106,34 +164,81 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .toolbar {
-                ToolbarItemGroup(placement: itemPlacementLeading) {
-                    ForEach(toolbarActions) { action in
-                        if action == .reply {
+                if !isCompactWindow {
+                    ToolbarItemGroup(placement: itemPlacementLeading) {
+                        ForEach(ThreadViewToolbarModifier.replyActions) { action in
                             Button {
                                 didTap(action: action)
                             } label: {
                                 Label(action.title, asset: action.icon)
                             }
-                            .disabled(!canPerformAction(action))
-                            .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
-                                ReplyActionsView(message: message)
-                            }
-                        } else {
-                            Button {
-                                didTap(action: action)
-                            } label: {
-                                Label(action.title, asset: action.icon)
-                            }
-                            .sheet(item: $messagesToMove) { messages in
-                                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
-                                    .sheetViewStyle()
-                            }
-                            .disabled(!canPerformAction(action))
-                            .modifier(BottomToolbarSnackBarAvoider())
                         }
+                    }
 
-                        if action != toolbarActions.last || showMoreButton {
-                            LegacyToolbarSpacer()
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarLeading)
+                    }
+
+                    ToolbarItemGroup(placement: itemPlacementLeading) {
+                        ForEach(toolbarActionsForMove) { action in
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                        }
+                    }
+
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+
+                    ToolbarItemGroup(placement: itemPlacementTrailling) {
+                        ForEach(ThreadViewToolbarModifier.reportActions) { action in
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                        }
+                    }
+
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+
+                } else {
+                    ToolbarItemGroup(placement: itemPlacementLeading) {
+                        ForEach(toolbarActions) { action in
+                            if action == .reply {
+                                Button {
+                                    didTap(action: action)
+                                } label: {
+                                    Label(action.title, asset: action.icon)
+                                }
+                                .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
+                                    ReplyActionsView(message: message)
+                                }
+                            } else {
+                                Button {
+                                    didTap(action: action)
+                                } label: {
+                                    Label(action.title, asset: action.icon)
+                                }
+                                .sheet(item: $messagesToMove) { messages in
+                                    MoveEmailView(
+                                        mailboxManager: mailboxManager,
+                                        movedMessages: messages,
+                                        originFolder: frozenFolder
+                                    )
+                                    .sheetViewStyle()
+                                }
+                                .modifier(BottomToolbarSnackBarAvoider())
+                            }
+
+                            if action != toolbarActions.last || showMoreButton {
+                                LegacyToolbarSpacer()
+                            }
                         }
                     }
                 }
@@ -141,6 +246,54 @@ struct ThreadViewToolbarModifier: ViewModifier {
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
+            .sheet(item: $messagesToMove) { messages in
+                MoveEmailView(
+                    mailboxManager: mailboxManager,
+                    movedMessages: messages,
+                    originFolder: frozenFolder,
+                    completion: completionHandler
+                )
+                .sheetViewStyle()
+            }
+            .mailFloatingPanel(item: $blockSendersList,
+                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+            }
+            .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
+                ConfirmationBlockRecipientView(
+                    recipients: blockSenderState.recipients,
+                    reportedMessages: blockSenderState.messages,
+                    origin: origin
+                )
+            }
+            .mailCustomAlert(
+                item: $reportedForDisplayProblemMessage
+            ) { message in
+                ReportDisplayProblemView(message: message)
+            }
+            .mailCustomAlert(
+                item: $reportedForPhishingMessages
+            ) { messages in
+                ReportPhishingView(
+                    messagesWithDuplicates: messages,
+                    distinctMessageCount: messages.count,
+                    completionHandler: completionHandler
+                )
+            }
+            .mailCustomAlert(item: $messagesToDownload) { messages in
+                ConfirmationSaveThreadInKdrive(targetMessages: messages)
+            }
+            .sheet(item: $shareMailLink) { shareMailLinkResult in
+                ActivityView(activityItems: [shareMailLinkResult.url])
+                    .ignoresSafeArea(edges: [.bottom])
+                    .presentationDetents([.medium, .large])
+            }
+            .snoozedFloatingPanel(
+                messages: messagesToSnooze,
+                initialDate: initialSnoozedDate,
+                folder: frozenFolder?.freezeIfNeeded(),
+                completionHandler: completionHandler
+            )
     }
 
     private var moreButton: some View {
@@ -170,26 +323,12 @@ struct ThreadViewToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
-        if action == .reply,
-           let message = frozenMessages.lastMessageToExecuteAction(
-               currentMailboxEmail: mailboxManager.mailbox.email,
-               featureAvailableProvider: mailboxManager.featureAvailableProvider
-           ),
-           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
-            replyOrReplyAllMessage = message
-            return
-        }
-
-        if action == .openMovePanel {
-            messagesToMove = frozenMessages
-        }
-
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: action,
-                    origin: .toolbar(originFolder: frozenFolder, nearestDestructiveAlert: $destructiveAlert)
+                    origin: origin
                 )
             }
         }

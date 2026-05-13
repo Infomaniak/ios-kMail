@@ -77,9 +77,31 @@ public struct ActionOrigin {
         self.messagesToDownload = messagesToDownload
     }
 
-    public static func toolbar(originFolder: Folder? = nil,
-                               nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .toolbar, folder: originFolder, nearestDestructiveAlert: nearestDestructiveAlert)
+    public static func toolbar(
+        originFolder: Folder? = nil,
+        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
+        nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
+        nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
+        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
+        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
+        messagesToDownload: Binding<[Message]?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(
+            type: .toolbar,
+            folder: originFolder,
+            nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            nearestBlockSenderAlert: nearestBlockSenderAlert,
+            nearestBlockSendersList: nearestBlockSendersList,
+            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
+            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
+            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
+            nearestMessagesToSnooze: nearestMessagesToSnooze,
+            messagesToDownload: messagesToDownload
+        )
     }
 
     public static func floatingPanel(source: FloatingPanelSource,
