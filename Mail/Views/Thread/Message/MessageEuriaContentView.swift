@@ -43,6 +43,7 @@ struct MessageEuriaContentView<Content: View>: View {
                     MailResourcesAsset.warningFill.swiftUIImage
                         .iconSize(.medium)
                         .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
+                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonWarning)
                 } else {
                     EuriaAnimationView(size: .medium)
                 }
