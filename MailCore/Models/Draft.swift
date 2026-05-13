@@ -18,13 +18,16 @@
 
 import Foundation
 import RealmSwift
-import SwiftSoup
 import UniformTypeIdentifiers
 
 extension String {
     var trimmed: String {
         let whiteSpaceSet = NSCharacterSet.whitespacesAndNewlines
         return trimmingCharacters(in: whiteSpaceSet)
+    }
+
+    var normalizedReturns: String {
+        return replacingOccurrences(of: "\r\n", with: "\n")
     }
 }
 
@@ -344,8 +347,7 @@ public extension Draft {
     var availableAttachmentsSlots: Int {
         let maxBound = 96
         let offset = min(attachments.count, maxBound)
-        let available = max(maxBound - offset, 0)
-        return available
+        return max(maxBound - offset, 0)
     }
 }
 
@@ -377,53 +379,5 @@ public extension Draft {
     /// Check that the draft has some Attachments of not
     var hasAttachments: Bool {
         return !attachments.filter { $0.contentId == nil }.isEmpty
-    }
-
-    /// Check if once the signature, the reply quote and the forward quote nodes removed, we still have content
-    var isEmptyOfUserChanges: Bool {
-        isEmpty(removeAllElements: true)
-    }
-
-    /// Check if the Signature has changes or not
-    var isSignatureUnchanged: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
-            return true
-        }
-
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
-            return true
-        }
-
-        // We check if the signature was changed, the user might also have written within the signature div without knowing.
-        let signatureNodeText = try? signatureNode.text()
-        guard let rawSignature,
-              let signatureNodeText,
-              let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
-              let rawSignatureText = try? rawSignatureDocument.text(),
-              rawSignatureText.trimmed == signatureNodeText.trimmed else {
-            return false
-        }
-
-        return true
-    }
-
-    var shouldBeSaved: Bool {
-        guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
-            return false
-        }
-        return true
-    }
-
-    /// Check if once the signature node is removed, as well as the reply and forward quotes if `removeAllElements` is true, we
-    /// still have content
-    private func isEmpty(removeAllElements: Bool) -> Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
-
-        let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
-        for itemToExtract in itemsToExtract {
-            _ = try? document.getElementsByClass(itemToExtract).remove()
-        }
-
-        return !document.hasText()
     }
 }
