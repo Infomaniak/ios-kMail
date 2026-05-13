@@ -1636,6 +1636,9 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Lesebekreftelse sendt";
 
+/* loco:6a046811c87ca471ce0aa9c4 */
+"snackbarAdminDisabledEmailSendingFromAddress" = "En administrator har deaktivert e-postsending fra denne adressen";
+
 /* loco:69f0b852d1c96c96d10453c2 */
 "snackbarAdminDisabledMessageSending" = "En administrator har deaktivert sending av meldinger";
 
