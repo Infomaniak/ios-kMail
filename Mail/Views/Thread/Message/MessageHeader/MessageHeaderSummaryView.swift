@@ -128,10 +128,14 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
-                    Button { NoReplyAlert.verifySenders(message: message, cannotReply: $cannotReply)
-                        if !cannotReply {
+                    Button {
+                        let action: Action = message
+                            .canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) ? .replyAll : .reply
+                        guard NoReplyAlert.verifySenders(message: message, action: action) else {
                             replyToMessage()
+                            return
                         }
+                        cannotReply = true
                     } label: {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
@@ -179,9 +183,7 @@ struct MessageHeaderSummaryView: View {
             contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         )
-        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-
-        return contact
+        return CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
     }
 }
 

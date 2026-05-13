@@ -169,11 +169,12 @@ struct QuickActionView: View {
         switch action {
         case .reply, .replyAll:
             guard let lastMessage = targetMessages.last else { return }
-            NoReplyAlert.verifySenders(message: lastMessage, cannotReply: $cannotReply)
-
-            if !cannotReply {
+            guard NoReplyAlert.verifySenders(message: lastMessage, action: action) else {
                 doAction()
+                return
             }
+            cannotReply = true
+
         default:
             doAction()
         }

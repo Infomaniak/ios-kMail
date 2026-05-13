@@ -33,12 +33,12 @@ enum NoReplyAlert {
         }
     }
 
-    static func verifySenders(message: Message, cannotReply: Binding<Bool>) {
-        let noReply = message.from.contains { sender in
+    static func verifySenders(message: Message, action: Action) -> Bool {
+        let recipientsToCheck = action == .reply ? message.from : (message.from.toArray() + message.cc.toArray()).toRealmList()
+
+        return recipientsToCheck.contains { sender in
             isNoReply(email: sender.email)
         }
-
-        cannotReply.wrappedValue = noReply
     }
 }
 
