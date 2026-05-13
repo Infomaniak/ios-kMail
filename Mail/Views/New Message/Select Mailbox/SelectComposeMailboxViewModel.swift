@@ -90,7 +90,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
         }
 
         guard mailbox.permissions?.canSendEmails != false else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
             return
         }
 
@@ -106,7 +106,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
         }
 
         guard mailbox.permissions?.canSendEmails != false else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
             return
         }
 
