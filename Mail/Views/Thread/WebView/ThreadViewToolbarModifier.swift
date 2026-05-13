@@ -211,6 +211,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             } label: {
                                 Label(action.title, asset: action.icon)
                             }
+                            .modifier(BottomToolbarSnackBarAvoider())
                             if action != toolbarActions.last || showMoreButton {
                                 LegacyToolbarSpacer()
                             }
