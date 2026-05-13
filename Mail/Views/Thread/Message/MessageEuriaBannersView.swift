@@ -51,7 +51,7 @@ struct MessageEuriaBannersView: View {
                                 .font(MailTextStyle.body.font)
                                 .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
                         }
-                        .padding(.leading, 22)
+                        .padding(.leading, value: .large)
                     }
                 } dismiss: {
                     self.summaryState = nil
