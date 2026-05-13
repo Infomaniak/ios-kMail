@@ -60,6 +60,10 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
+        guard let permission = mailboxManager.mailbox.permissions, permission.canSendEmails else {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
         mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
     }
 
