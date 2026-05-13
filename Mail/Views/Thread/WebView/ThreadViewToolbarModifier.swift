@@ -125,8 +125,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        let itemPlacementTrailing: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarTrailing
-        let itemPlacementLeading: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .navigationBarLeading
+        let itemPlacementTrailing: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .topBarTrailing
+        let itemPlacementLeading: ToolbarItemPlacement = isCompactWindow ? .bottomBar : .topBarLeading
 
         content
             .toolbar {
@@ -149,7 +149,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
 
             .toolbarSpacer(placement: itemPlacementTrailing)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: didTapFlag) {
                         (isFlagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
                             .swiftUIImage
