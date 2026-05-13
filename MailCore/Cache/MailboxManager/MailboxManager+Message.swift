@@ -213,29 +213,34 @@ public extension MailboxManager {
     }
 
     func summarize(message: Message) async throws {
-        do {
-            guard let body = message.body?.value else { return }
-            try? writeTransaction { writableRealm in
-                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                if message.summary == nil {
-                    liveMessage.summaryState = .isLoading
-                } else {
-                    liveMessage.summaryState = .summary
-                }
+        let notificationCenter = NotificationCenter.default
+        DispatchQueue.main.async {
+            notificationCenter.post(name: Notification.Name.summaryNotification, object: MessageSummaryState.showContent)
+        }
+
+        guard message.summary == nil else { return }
+        guard let body = message.body?.value else {
+            DispatchQueue.main.async {
+                notificationCenter.post(
+                    name: Notification.Name.summaryNotification,
+                    object: MessageSummaryState.showError
+                )
             }
+            return
+        }
 
-            guard message.summary == nil else { return }
-
+        do {
             let summary = try await apiFetcher.summarize(content: body)
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 liveMessage.summary = summary
-                liveMessage.summaryState = .summary
             }
         } catch {
-            try? writeTransaction { writableRealm in
-                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                liveMessage.summaryState = .error
+            DispatchQueue.main.async {
+                notificationCenter.post(
+                    name: Notification.Name.summaryNotification,
+                    object: MessageSummaryState.showError
+                )
             }
             throw error
         }

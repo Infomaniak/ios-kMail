@@ -28,14 +28,20 @@ struct MessageEuriaBannersView: View {
 
     @ObservedRealmObject var message: Message
 
+    private let summaryNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.summaryNotification)
+    @State private var summaryState: MessageSummaryState?
+
     var body: some View {
-        VStack(spacing: IKPadding.medium) {
-            if let state = message.summaryState {
-                MessageEuriaContentView(title: state.title, isError: message.summaryState == .error) {
+        Group {
+            if let summaryState {
+                MessageEuriaContentView(
+                    title: summaryState.title(contentLoaded: message.summary != nil),
+                    isError: summaryState == .showError
+                ) {
                     if let summary = message.summary {
                         Text(summary)
                             .textStyle(.bodySmall)
-                    } else if message.summaryState == .error {
+                    } else if summaryState == .showError {
                         Button {
                             Task {
                                 try await mailboxManager.summarize(message: message)
@@ -48,14 +54,16 @@ struct MessageEuriaBannersView: View {
                         .padding(.leading, 22)
                     }
                 } dismiss: {
-                    guard let liveMessage = message.thaw() else { return }
-                    try? liveMessage.realm?.write {
-                        liveMessage.summaryState = nil
-                    }
+                    self.summaryState = nil
                 }
             }
         }
-        .padding(value: .medium)
+        .padding(.horizontal, value: .medium)
+        .onReceive(summaryNotificationPublisher) { notification in
+            if let newState = notification.object as? MessageSummaryState {
+                summaryState = newState
+            }
+        }
     }
 }
 

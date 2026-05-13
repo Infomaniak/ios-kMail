@@ -25,4 +25,5 @@ public extension Notification.Name {
     static let openNotificationSettings = Notification.Name(rawValue: "openNotificationSettings")
     static let printNotification = Notification.Name(rawValue: "printNotification")
     static let userPerformedHomeScreenShortcut = Notification.Name(rawValue: "userPerformedHomeScreenShortcut")
+    static let summaryNotification = Notification.Name(rawValue: "summaryNotification")
 }
