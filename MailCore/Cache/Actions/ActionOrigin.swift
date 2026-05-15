@@ -77,7 +77,7 @@ public struct ActionOrigin {
         self.messagesToDownload = messagesToDownload
     }
 
-    public static func toolbar(
+    public static func toolbarLarge(
         originFolder: Folder? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
@@ -101,6 +101,17 @@ public struct ActionOrigin {
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
             messagesToDownload: messagesToDownload
+        )
+    }
+
+    public static func toolbarCompact(
+        originFolder: Folder? = nil,
+        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(
+            type: .toolbar,
+            folder: originFolder,
+            nearestDestructiveAlert: nearestDestructiveAlert
         )
     }
 

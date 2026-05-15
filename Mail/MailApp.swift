@@ -43,5 +43,8 @@ struct MailApp: App {
         ComposeMessageScene()
 
         DisplayThreadScene()
+            .commands {
+                ToolbarCommands()
+            }
     }
 }
