@@ -44,7 +44,7 @@ struct MessageEuriaBannersView: View {
                     } else if summaryState == .showError {
                         Button {
                             Task {
-                                try await mailboxManager.summarize(message: message)
+                                try await mailboxManager.summarize(message: message.freezeIfNeeded())
                             }
                         } label: {
                             Text(MailResourcesStrings.Localizable.aiButtonRetry)
