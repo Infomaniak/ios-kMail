@@ -31,18 +31,12 @@ extension View {
 }
 
 struct ThreadViewToolbarModifier: ViewModifier {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var actionsManager: ActionsManager
-
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     private let frozenThread: Thread
-    private let frozenFolder: Folder?
 
     init(frozenThread: Thread) {
         self.frozenThread = frozenThread
-
-        frozenFolder = frozenThread.folder
     }
 
     func body(content: Content) -> some View {

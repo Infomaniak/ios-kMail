@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2025 Infomaniak Network SA
@@ -75,7 +74,8 @@ struct CompactToolbarModifier: ViewModifier {
     private var origin: ActionOrigin {
         .toolbarCompact(
             originFolder: frozenFolder,
-            nearestDestructiveAlert: $destructiveAlert
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove
         )
     }
 
@@ -99,7 +99,9 @@ struct CompactToolbarModifier: ViewModifier {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: didTapFlag) {
                         Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
-                            .actionStar, asset: isFlagged ? Action.unstar.icon : Action.star.icon)
+                            .actionStar,
+                            asset: isFlagged ? MailResourcesAsset.starFull.swiftUIImage : MailResourcesAsset.star
+                                .swiftUIImage)
                     }
                     .tint(flaggedTint)
                     .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
@@ -132,7 +134,6 @@ struct CompactToolbarModifier: ViewModifier {
                 )
                 .sheetViewStyle()
             }
-            .modifier(BottomToolbarSnackBarAvoider())
             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                 ReplyActionsView(message: message)
             }

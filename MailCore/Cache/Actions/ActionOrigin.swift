@@ -106,12 +106,14 @@ public struct ActionOrigin {
 
     public static func toolbarCompact(
         originFolder: Folder? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil
+        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar,
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert
+            nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
         )
     }
 

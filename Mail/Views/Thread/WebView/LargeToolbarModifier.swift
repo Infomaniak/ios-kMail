@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2025 Infomaniak Network SA
@@ -45,18 +44,12 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
 
-    private let frozenThread: Thread
-
     private let isFlagged: Bool
     private let isRead: Bool
     private let isArchive: Bool
 
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
-
-    private var showMoreButton: Bool {
-        return frozenFolder?.role != .scheduledDrafts
-    }
 
     private var flaggedTint: Color {
         if #available(iOS 26.0, *) {
@@ -91,8 +84,6 @@ struct LargeToolbarModifier: ViewModifier {
     }
 
     init(frozenThread: Thread) {
-        self.frozenThread = frozenThread
-
         isFlagged = frozenThread.flagged
         isRead = frozenThread.messages.allSatisfy { $0.seen }
         isArchive = frozenThread.folder?.role == .archive
@@ -220,7 +211,8 @@ struct LargeToolbarModifier: ViewModifier {
 
                 Button(action: didTapFlag) {
                     Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
-                        .actionStar, asset: isFlagged ? Action.unstar.icon : Action.star.icon)
+                        .actionStar,
+                        asset: isFlagged ? MailResourcesAsset.starFull.swiftUIImage : MailResourcesAsset.star.swiftUIImage)
                 }
                 .tint(flaggedTint)
                 .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
@@ -259,7 +251,8 @@ struct LargeToolbarModifier: ViewModifier {
         ToolbarItem(id: "thread.other.star", placement: .secondaryAction) {
             Button(action: didTapFlag) {
                 Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
-                    .actionStar, asset: isFlagged ? Action.unstar.icon : Action.star.icon)
+                    .actionStar,
+                    asset: isFlagged ? MailResourcesAsset.starFull.swiftUIImage : MailResourcesAsset.star.swiftUIImage)
             }
             .tint(flaggedTint)
             .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
