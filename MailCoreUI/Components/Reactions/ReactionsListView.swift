@@ -90,6 +90,12 @@ public struct ReactionsListView: View {
         let eventName = reaction.hasUserReacted ? "alreadyUsedReaction" : "addReactionFromChip"
         matomo.track(eventWithCategory: .emojiReactions, name: eventName)
 
+        guard canSendEmails else {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
+
         addReaction(reaction.emoji)
     }
 
