@@ -23,6 +23,7 @@ import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 struct ComposeMessageIntentView: View, IntentViewable {
@@ -89,6 +90,12 @@ struct ComposeMessageIntentView: View, IntentViewable {
               let currentUser = await accountManager.userProfileStore.getUserProfile(id: userId) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
+            return
+        }
+
+        guard let permission = mailboxManager.mailbox.permissions, permission.canSendEmails else {
+            dismiss()
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
             return
         }
 
