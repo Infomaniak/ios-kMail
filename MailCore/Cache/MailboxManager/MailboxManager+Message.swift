@@ -212,20 +212,13 @@ public extension MailboxManager {
         try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
-    func summarize(message: Message) async throws {
-        let notificationCenter = NotificationCenter.default
-        DispatchQueue.main.async {
-            notificationCenter.post(name: Notification.Name.summaryNotification, object: MessageSummaryState.showContent)
-        }
+    @MainActor
+    func summarize(message: Message, threadViewState: ThreadViewState) async throws {
+        threadViewState.summaries[message.uid] = .showContent
 
         guard message.summary == nil else { return }
         guard let body = message.body?.value else {
-            DispatchQueue.main.async {
-                notificationCenter.post(
-                    name: Notification.Name.summaryNotification,
-                    object: MessageSummaryState.showError
-                )
-            }
+            threadViewState.summaries[message.uid] = .showError
             return
         }
 
@@ -236,12 +229,7 @@ public extension MailboxManager {
                 liveMessage.summary = summary
             }
         } catch {
-            DispatchQueue.main.async {
-                notificationCenter.post(
-                    name: Notification.Name.summaryNotification,
-                    object: MessageSummaryState.showError
-                )
-            }
+            threadViewState.summaries[message.uid] = .showError
             throw error
         }
     }

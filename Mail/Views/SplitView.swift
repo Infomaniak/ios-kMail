@@ -70,6 +70,7 @@ struct SplitView: View {
 
     @StateObject private var navigationDrawerState = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
+    @StateObject private var threadViewState = ThreadViewState()
 
     let mailboxManager: MailboxManager
 
@@ -222,7 +223,12 @@ struct SplitView: View {
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerState)
         .environmentObject(mailboxManager)
-        .environmentObject(ActionsManager(mailboxManager: mailboxManager, mainViewState: mainViewState))
+        .environmentObject(threadViewState)
+        .environmentObject(ActionsManager(
+            mailboxManager: mailboxManager,
+            mainViewState: mainViewState,
+            threadViewState: threadViewState
+        ))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 

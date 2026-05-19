@@ -50,14 +50,17 @@ struct OpenThreadIntentView: View, IntentViewable {
                 for: resolvedIntent.mailboxManager,
                 initialFolder: resolvedIntent.currentFolder
             )
+            let threadViewState = ThreadViewState()
 
             ThreadView(thread: resolvedIntent.thread)
                 .environmentObject(resolvedIntent.mailboxManager)
                 .environmentObject(ActionsManager(
                     mailboxManager: resolvedIntent.mailboxManager,
-                    mainViewState: mainViewState
+                    mainViewState: mainViewState,
+                    threadViewState: threadViewState
                 ))
                 .environmentObject(mainViewState)
+                .environmentObject(threadViewState)
                 .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.user))
         } else {
             ProgressView()

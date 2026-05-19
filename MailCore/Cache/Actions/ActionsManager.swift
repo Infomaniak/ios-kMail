@@ -114,14 +114,16 @@ public class ActionsManager: ObservableObject {
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
+    private let threadViewState: ThreadViewState
 
-    public var canSendEmails: Bool {
+ 	public var canSendEmails: Bool {
         mailboxManager.mailbox.permissions?.canSendEmails ?? true
     }
 
-    public init(mailboxManager: MailboxManager, mainViewState: MainViewState?) {
+    public init(mailboxManager: MailboxManager, mainViewState: MainViewState?, threadViewState: ThreadViewState) {
         self.mailboxManager = mailboxManager
         self.mainViewState = mainViewState
+        self.threadViewState = threadViewState
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
@@ -265,7 +267,7 @@ public class ActionsManager: ObservableObject {
             try await performDeleteSnooze(messages: messagesToExecuteAction)
         case .summarize:
             guard let message = messages.first else { return }
-            try await mailboxManager.summarize(message: message)
+            try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
         default:
             break
         }

@@ -25,15 +25,13 @@ import SwiftUI
 
 struct MessageEuriaBannersView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @ObservedRealmObject var message: Message
 
-    private let summaryNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.summaryNotification)
-    @State private var summaryState: MessageSummaryState?
-
     var body: some View {
         Group {
-            if let summaryState {
+            if let summaryState = threadViewState.summaries[message.uid] {
                 MessageEuriaContentView(
                     title: summaryState.title(contentLoaded: message.summary != nil),
                     isError: summaryState == .showError
@@ -44,7 +42,10 @@ struct MessageEuriaBannersView: View {
                     } else if summaryState == .showError {
                         Button {
                             Task {
-                                try await mailboxManager.summarize(message: message.freezeIfNeeded())
+                                try await mailboxManager.summarize(
+                                    message: message.freezeIfNeeded(),
+                                    threadViewState: threadViewState
+                                )
                             }
                         } label: {
                             Text(MailResourcesStrings.Localizable.aiButtonRetry)
@@ -54,16 +55,11 @@ struct MessageEuriaBannersView: View {
                         .padding(.leading, value: .large)
                     }
                 } dismiss: {
-                    self.summaryState = nil
+                    threadViewState.summaries[message.uid] = nil
                 }
             }
         }
         .padding(.horizontal, value: .medium)
-        .onReceive(summaryNotificationPublisher) { notification in
-            if let newState = notification.object as? MessageSummaryState {
-                summaryState = newState
-            }
-        }
     }
 }
 
