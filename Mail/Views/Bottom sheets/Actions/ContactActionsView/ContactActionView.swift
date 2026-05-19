@@ -42,6 +42,7 @@ struct ContactActionView: View {
                 action.icon
             }
         }
+        .disabled(action == .writeEmailAction && mailboxManager.mailbox.permissions?.canSendEmails == false)
     }
 
     // MARK: - Actions
@@ -60,10 +61,6 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        guard mailboxManager.mailbox.permissions?.canSendEmails != false else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
-            return
-        }
         mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
     }
 

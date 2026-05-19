@@ -109,6 +109,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             } label: {
                                 Label(action.title, asset: action.icon)
                             }
+                            .disabled(!actionsManager.canSendEmails)
                             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                                 ReplyActionsView(message: message)
                             }
@@ -122,6 +123,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
                                     .sheetViewStyle()
                             }
+                            .disabled(action == .forward && !actionsManager.canSendEmails)
                             .modifier(BottomToolbarSnackBarAvoider())
                         }
 

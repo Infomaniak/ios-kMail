@@ -63,6 +63,7 @@ public struct ReactionsListView: View {
                 } didLongPressButton: {
                     didLongPressReaction(reaction)
                 }
+                .disabled(!canSendEmails)
             }
 
             Button(action: openEmojiPicker) {
@@ -75,7 +76,8 @@ public struct ReactionsListView: View {
                 .labelStyle(.iconOnly)
                 .padding(value: .micro)
             }
-            .tint(emojiPickerButtonIsDisabled || !canSendEmails ? MailResourcesAsset.textTertiaryColor.swiftUIColor : Color
+            .disabled(!canSendEmails)
+            .tint(emojiPickerButtonIsDisabled ? MailResourcesAsset.textTertiaryColor.swiftUIColor : Color
                 .accentColor)
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
@@ -89,12 +91,6 @@ public struct ReactionsListView: View {
         @InjectService var matomo: MatomoUtils
         let eventName = reaction.hasUserReacted ? "alreadyUsedReaction" : "addReactionFromChip"
         matomo.track(eventWithCategory: .emojiReactions, name: eventName)
-
-        guard canSendEmails else {
-            @InjectService var snackbarPresenter: IKSnackBarPresentable
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
-            return
-        }
 
         addReaction(reaction.emoji)
     }

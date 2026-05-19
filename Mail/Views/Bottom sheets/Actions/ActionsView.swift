@@ -137,8 +137,6 @@ struct QuickActionView: View {
                             .resizable()
                             .scaledToFit()
                             .padding(value: .medium)
-                            .foregroundStyle(isActionInactive ? MailResourcesAsset.grayActionColor.swiftUIColor : accentColor
-                                .primary.swiftUIColor)
                     }
 
                 let title = action.shortTitle ?? action.title
@@ -149,6 +147,7 @@ struct QuickActionView: View {
                     .lineLimit(title.split(separator: " ").count > 1 ? nil : 1)
             }
         }
+        .disabled(isActionInactive)
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 

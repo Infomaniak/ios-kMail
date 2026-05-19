@@ -125,9 +125,9 @@ struct MessageHeaderSummaryView: View {
                     Button(action: replyToMessage) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
-                            .foregroundStyle(canSendEmails ? .accentColor : MailResourcesAsset.grayActionColor.swiftUIColor)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
                     }
+                    .disabled(!canSendEmails)
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
@@ -146,11 +146,6 @@ struct MessageHeaderSummaryView: View {
 
     private func replyToMessage() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
-        guard canSendEmails else {
-            @InjectService var snackbarPresenter: IKSnackBarPresentable
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
-            return
-        }
 
         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
