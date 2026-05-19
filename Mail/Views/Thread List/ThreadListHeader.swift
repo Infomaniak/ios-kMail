@@ -159,6 +159,7 @@ struct ThreadListHeader: View {
 
                 UnreadToggle(unreadFilterOn: $unreadFilterOn, unreadCount: folderObserver.unreadCount)
                     .opacity(0)
+                    .accessibilityHidden(true)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
