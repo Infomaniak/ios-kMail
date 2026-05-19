@@ -150,6 +150,7 @@ struct ThreadListHeader: View {
                         .textStyle(.bodySmallSecondary)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             ZStack {
                 if isShowingToggle {
@@ -158,8 +159,8 @@ struct ThreadListHeader: View {
 
                 UnreadToggle(unreadFilterOn: $unreadFilterOn, unreadCount: folderObserver.unreadCount)
                     .opacity(0)
+                    .accessibilityHidden(true)
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, value: .micro)
