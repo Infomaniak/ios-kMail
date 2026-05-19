@@ -44,7 +44,7 @@ public enum MessageWebViewUtils {
             if case .message(let theme) = target {
                 variables.append("""
                 :root {
-                    color-scheme: \(theme.rawValue);
+                    color-scheme: \(theme.cssProperty);
                 }
                 """)
             }

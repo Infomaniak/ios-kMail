@@ -165,7 +165,18 @@ public enum MessageTranslatedState {
 public enum MessageTheme: String, PersistableEnum {
     case light
     case dark
-    case auto = "light dark"
+    case auto
+
+    public var cssProperty: String {
+        switch self {
+        case .light:
+            "light"
+        case .dark:
+            "dark"
+        case .auto:
+            "light dark"
+        }
+    }
 }
 
 /// A Message has :
