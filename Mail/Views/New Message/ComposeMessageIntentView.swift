@@ -93,7 +93,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
             return
         }
 
-        guard let permission = mailboxManager.mailbox.permissions, permission.canSendEmails else {
+        guard mailboxManager.mailbox.permissions?.canSendEmails != false else {
             dismiss()
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
             return

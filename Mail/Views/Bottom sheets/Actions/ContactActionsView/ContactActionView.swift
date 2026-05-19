@@ -60,7 +60,7 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        guard let permission = mailboxManager.mailbox.permissions, permission.canSendEmails else {
+        guard mailboxManager.mailbox.permissions?.canSendEmails != false else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
             return
         }
