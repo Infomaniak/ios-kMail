@@ -128,10 +128,12 @@ public enum MessageSummaryState: CaseIterable {
     case showError
 
     public func title(contentLoaded: Bool) -> String {
+        if contentLoaded {
+            return MailResourcesStrings.Localizable.messageSummary
+        }
         switch self {
         case .showContent:
-            return contentLoaded ? MailResourcesStrings.Localizable.messageSummary : MailResourcesStrings.Localizable
-                .messageSummaryLoading
+            return MailResourcesStrings.Localizable.messageSummaryLoading
         case .showError:
             return MailResourcesStrings.Localizable.messageSummaryErrorRetry
         }
