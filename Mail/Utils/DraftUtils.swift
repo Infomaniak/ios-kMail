@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 @MainActor
@@ -30,6 +31,7 @@ enum DraftUtils {
         composeMessageIntent: Binding<ComposeMessageIntent?>
     ) {
         guard let message = thread.messages.first else { return }
+        guard canSendEmails(mailboxManager: mailboxManager) else { return }
 
         DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
     }
@@ -39,6 +41,7 @@ enum DraftUtils {
         mailboxManager: MailboxManageable,
         composeMessageIntent: Binding<ComposeMessageIntent?>
     ) {
+        guard canSendEmails(mailboxManager: mailboxManager) else { return }
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             matomoOpenDraft(isLoadedRemotely: false)
@@ -58,12 +61,23 @@ enum DraftUtils {
         mailboxManager: MailboxManageable,
         composeMessageIntent: Binding<ComposeMessageIntent?>
     ) {
+        guard canSendEmails(mailboxManager: mailboxManager) else { return }
+
         let draftDetached = draft.detached()
         matomoOpenDraft(isLoadedRemotely: false)
         composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(
             draft: draftDetached,
             originMailboxManager: mailboxManager
         )
+    }
+
+    private static func canSendEmails(mailboxManager: MailboxManageable) -> Bool {
+        guard mailboxManager.mailbox.permissions?.canSendEmails != false else {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
+            return false
+        }
+        return true
     }
 
     private static func matomoOpenDraft(isLoadedRemotely: Bool) {
