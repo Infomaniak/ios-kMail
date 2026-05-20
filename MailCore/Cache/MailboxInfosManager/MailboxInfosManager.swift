@@ -26,7 +26,7 @@ import RealmSwift
 extension MailboxInfosManager: RealmConfigurable {}
 
 public final class MailboxInfosManager {
-    private static let currentDbVersion: UInt64 = 17
+    private static let currentDbVersion: UInt64 = 18
     private let dbName = "MailboxInfos.realm"
 
     public let realmConfiguration: Realm.Configuration
