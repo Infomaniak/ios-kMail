@@ -374,7 +374,7 @@ public final class DraftManager {
                     because the sending process is not synchronous
                  */
                 let delay = latestSendDate.timeIntervalSinceNow
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(delay), 1.5)))
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * (max(Double(delay), 0) + Double(Constants.gracePeriod))))
                 await mailboxManager.refreshFolderContent(draftFolder)
             }
 
