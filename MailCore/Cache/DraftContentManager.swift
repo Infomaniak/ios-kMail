@@ -175,16 +175,7 @@ extension DraftContentManager {
             .freeze()
         else { throw MailError.localMessageNotFound }
 
-        let remoteDraft = try await mailboxManager.apiFetcher.draft(from: associatedMessage)
-
-        remoteDraft.localUUID = incompleteDraft.localUUID
-        remoteDraft.action = .save
-        remoteDraft.delay = incompleteDraft.delay
-
-        let detachedDraft = remoteDraft.detached()
-        try mailboxManager.writeTransaction { writableRealm in
-            writableRealm.add(detachedDraft, update: .modified)
-        }
+        let remoteDraft = try await mailboxManager.loadRemotely(fromMessage: associatedMessage, incompleteDraft: incompleteDraft)
 
         return remoteDraft.body
     }

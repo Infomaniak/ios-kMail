@@ -26,12 +26,16 @@ import SwiftUI
 struct AttachmentsHeaderView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
+    private var notInlinedAttachments: [Attachment] {
+        attachmentsManager.liveAttachments.filter { !$0.isInline }
+    }
+
     var body: some View {
         ZStack {
-            if !attachmentsManager.liveAttachments.isEmpty {
+            if !notInlinedAttachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: IKPadding.mini) {
-                        ForEach(attachmentsManager.liveAttachments) { attachment in
+                        ForEach(notInlinedAttachments) { attachment in
                             AttachmentUploadCell(
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
                                 attachment: attachment
