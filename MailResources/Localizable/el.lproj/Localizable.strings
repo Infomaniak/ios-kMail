@@ -1117,6 +1117,9 @@
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Πρόχειρο";
 
+/* loco:6a0d6887dd219f4ee50112d2 */
+"messageIsSending" = "Αποστολή…";
+
 /* loco:67dbe703eca211f5e507ba93 */
 "messageIsSpamBecauseSenderIsBlocked" = "Αυτό το μήνυμα εμφανίζεται στον φάκελο ανεπιθύμητης αλληλογραφίας επειδή ο %@ βρίσκεται στη λίστα αποκλεισμένων αποστολέων.";
 
