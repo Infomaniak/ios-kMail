@@ -174,8 +174,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var isDraft: Bool
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
-    @Persisted public var scheduled: Bool
-    @Persisted public var isScheduledDraft: Bool?
+    @Persisted public var scheduled: Bool // Message is beeing sent (max 30sec delay)
+    @Persisted public var isScheduledDraft: Bool? // Message is scheduled
     @Persisted public var scheduleDate: Date?
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
@@ -422,7 +422,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case emojiReactionNotAllowedReason
         case headers
         case acknowledge
-        case cancelResource
     }
 
     override init() {
@@ -504,7 +503,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
-        cancelResource = try values.decodeIfPresent(String.self, forKey: .cancelResource)
     }
 
     public convenience init(
@@ -601,7 +599,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             internalDate: internalDate,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasDrafts: !(draftResource?.isEmpty ?? true),
+            hasDrafts: !(draftResource?.isEmpty ?? true) && !scheduled,
+            hasDraftsSending: !(draftResource?.isEmpty ?? true) && scheduled,
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,

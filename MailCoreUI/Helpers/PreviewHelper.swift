@@ -89,6 +89,7 @@ public enum PreviewHelper {
                                             date: SentryDebug.knownDebugDate,
                                             hasAttachments: true,
                                             hasDrafts: false,
+                                            hasDraftsSending: false,
                                             flagged: true,
                                             answered: true,
                                             forwarded: true)

@@ -53,7 +53,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
 
     private var shouldDisableArchiveButton: Bool {
         return multipleSelectionViewModel.selectedItems.values.contains {
-            $0.numberOfScheduledDraft > 0 || $0.hasDrafts
+            $0.numberOfScheduledDraft > 0 || $0.hasDrafts || $0.hasDraftsSending
         }
     }
 

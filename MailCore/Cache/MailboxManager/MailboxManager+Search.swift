@@ -168,7 +168,8 @@ public extension MailboxManager {
                     internalDate: newMessage.internalDate,
                     date: newMessage.date,
                     hasAttachments: newMessage.hasAttachments,
-                    hasDrafts: newMessage.isDraft,
+                    hasDrafts: newMessage.isDraft && !newMessage.scheduled,
+                    hasDraftsSending: newMessage.isDraft && newMessage.scheduled,
                     flagged: newMessage.flagged,
                     answered: newMessage.answered,
                     forwarded: newMessage.forwarded
