@@ -1747,6 +1747,9 @@
 /* loco:6729d83e9f7d15aea0033402 */
 "snackbarScheduling" = "Meddelandet schemaläggs";
 
+/* loco:6a0c63ebaabc71a8f60875a6 */
+"snackbarSendCancelled" = "Sändning avbruten";
+
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Du kommer att få en påminnelse om detta meddelande %@";
 

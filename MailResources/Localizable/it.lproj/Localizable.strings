@@ -1747,6 +1747,9 @@
 /* loco:6729d83e9f7d15aea0033402 */
 "snackbarScheduling" = "Il messaggio è in fase di programmazione";
 
+/* loco:6a0c63ebaabc71a8f60875a6 */
+"snackbarSendCancelled" = "Invio annullato";
+
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Riceverai un promemoria per questo messaggio %@";
 

@@ -442,6 +442,7 @@ public final class DraftManager {
             action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
                     try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+                    self.alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarSendCancelled)
                 }
             }
         }
