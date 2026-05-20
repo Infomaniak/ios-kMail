@@ -48,6 +48,8 @@ struct ComposeMessageBodyView: View {
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
 
+    @State private var inlineAttachmentHandler: InlineAttachmentHandler?
+
     @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
