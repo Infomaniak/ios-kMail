@@ -370,8 +370,7 @@ public final class DraftManager {
 
             if let latestSendDate {
                 /*
-                    We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
-                    because the sending process is not synchronous
+                    We need to refresh the draft folder after the mail is sent to make it disappear, using a small delay to account for the asynchronous sending process
                  */
                 let delay = latestSendDate.timeIntervalSinceNow
                 try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * (max(Double(delay), 0) + Double(Constants.gracePeriod))))
