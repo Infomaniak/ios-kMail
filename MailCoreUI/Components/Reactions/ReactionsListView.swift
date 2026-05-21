@@ -137,4 +137,5 @@ public struct ReactionsListView: View {
 
 #Preview {
     ReactionsListView(reactions: PreviewHelper.uiReactions, emojiPickerButtonIsDisabled: false) { _ in }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
