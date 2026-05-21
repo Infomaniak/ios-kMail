@@ -443,6 +443,10 @@ public final class DraftManager {
                 Task {
                     try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
                     self.alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarSendCancelled)
+
+                    if let draftFolder = mailboxManager.getFolder(with: .draft)?.freezeIfNeeded() {
+                        await mailboxManager.refreshFolderContent(draftFolder)
+                    }
                 }
             }
         }
