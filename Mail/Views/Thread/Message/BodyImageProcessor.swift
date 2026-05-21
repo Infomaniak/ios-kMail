@@ -115,23 +115,33 @@ struct BodyImageProcessor {
         return workingBody
     }
 
-    func addContentIdAttributesInBody(body: String?, attachments: ArraySlice<Attachment>) async -> String? {
+    func addContentIdAttributesInBody(body: String?, attachments: [Attachment]) async -> String? {
         guard let body, !body.isEmpty else {
             return nil
         }
 
-        let htmlBody = try? await SwiftSoup.parse(body)
+        guard let htmlBody = try? await SwiftSoup.parse(body), let imageElements = try? await htmlBody.select("img[src]") else {
+            return nil
+        }
 
         for attachment in attachments {
             guard let contentId = attachment.contentId else {
                 continue
             }
-
-            let element = try? await htmlBody?.select("[src=\"cid:\(contentId)\"]")
-            _ = try? element?.attr("data-cid", contentId)
+            let expectedSource = "cid:\(contentId)"
+            for imageElement in imageElements.array() {
+                guard (try? imageElement.attr("src")) == expectedSource else {
+                    continue
+                }
+                _ = try? imageElement.attr("data-cid", contentId)
+            }
         }
 
-        return try? htmlBody?.outerHtml()
+        guard let updatedBody = try? htmlBody.outerHtml(), (try? await SwiftSoup.parse(updatedBody)) != nil else {
+            return nil
+        }
+
+        return updatedBody
     }
 }
 

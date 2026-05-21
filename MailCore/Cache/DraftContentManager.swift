@@ -162,12 +162,10 @@ extension DraftContentManager {
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
         guard replyMode == .forward else { return [] }
-        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+        return try await mailboxManager.apiFetcher.attachmentsToForward(
             mailbox: mailboxManager.mailbox,
             message: message
         ).attachments
-
-        return attachments
     }
 
     private func loadCompleteDraftIfNeeded(incompleteDraft: Draft) async throws -> String {
@@ -186,9 +184,9 @@ extension DraftContentManager {
             return nil
         }
 
-        let hmtlBody = try? await SwiftSoup.parse(body)
+        let htmlBody = try? await SwiftSoup.parse(body)
 
-        let attachments = try? await hmtlBody?.select("[data-cid]")
+        let attachments = try? await htmlBody?.select("[data-cid]")
 
         guard let attachments, !attachments.isEmpty else {
             return body
@@ -204,7 +202,7 @@ extension DraftContentManager {
             _ = try? attachment.removeAttr("data-cid")
         }
 
-        return try? hmtlBody?.outerHtml()
+        return try? htmlBody?.outerHtml()
     }
 }
 
@@ -389,8 +387,7 @@ extension DraftContentManager {
         let styleElementsFromHead = try head.getElementsByTag("style").array()
         try body.insertChildren(0, styleElementsFromHead)
 
-        let bodyHTML = try body.html()
-        return bodyHTML
+        return try body.html()
     }
 }
 
