@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -54,6 +55,8 @@ struct ThreadListCellContextMenu: ViewModifier {
     let thread: Thread
     let originFolder: Folder?
     let multipleSelectionViewModel: MultipleSelectionViewModel
+
+    private static let sendEmailActions: Set<Action> = [.reply, .replyAll, .forward]
 
     private var origin: ActionOrigin {
         .floatingPanel(
@@ -97,7 +100,12 @@ struct ThreadListCellContextMenu: ViewModifier {
 
                 ControlGroup {
                     ForEach(computedActions.quickActions) { action in
-                        ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
+                        ContextMenuActionButtonView(
+                            action: action,
+                            role: isDestructiveAction(action),
+                            disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
+                            onClick: performAction
+                        )
                     }
                 }
                 .controlGroupStyle(.compactMenu)
@@ -107,7 +115,12 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
 
                 ForEach(computedActions.listActions) { action in
-                    ContextMenuActionButtonView(action: action, role: isDestructiveAction(action), onClick: performAction)
+                    ContextMenuActionButtonView(
+                        action: action,
+                        role: isDestructiveAction(action),
+                        disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
+                        onClick: performAction
+                    )
                 }
             }
             .sheet(item: $messagesToMove) { messages in
@@ -161,6 +174,12 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     private func performAction(for action: Action) {
+        if Self.sendEmailActions.contains(action), !actionsManager.canSendEmails {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
+            return
+        }
+
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
