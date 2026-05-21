@@ -54,6 +54,7 @@ struct ComposeMessageBodyView: View {
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
 
     let messageReply: MessageReply?
+    let mailboxManager: MailboxManager
 
     private var isEnvironmentCatalyst: Bool {
         #if targetEnvironment(macCatalyst)
@@ -132,6 +133,7 @@ struct ComposeMessageBodyView: View {
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
             editorBox.editor = editor
+            await replaceInlineAttachments()
         }
     }
 
@@ -190,6 +192,34 @@ struct ComposeMessageBodyView: View {
         editor.webView.loadUserScript(.observeMention)
         editor.webView.loadUserScript(.observeMentionDeletion)
         editor.webView.loadUserScript(.insertMention)
+	}
+
+    private func replaceInlineAttachments() async {
+        let attachmentsArray = draft.attachments.filter { $0.contentId != nil }.toArray()
+        guard !attachmentsArray.isEmpty else {
+            return
+        }
+
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+        for attachments in chunks {
+            let base64attachments = await bodyImageProcessor.fetchBase64Images(
+                attachments,
+                mailboxManager: mailboxManager
+            )
+
+            var body = await bodyImageProcessor.addContentIdAttributesInBody(body: draftBody, attachments: attachments)
+
+            body = await bodyImageProcessor.injectImagesInBody(
+                body: body,
+                attachments: attachments,
+                base64Images: base64attachments
+            )
+            guard let body, !body.isEmpty else {
+                return
+            }
+
+            draftBody = body
+        }
     }
 }
 
@@ -205,7 +235,8 @@ struct ComposeMessageBodyView: View {
         draft: draft,
         aliases: [],
         editorBox: EditorBox(),
-        messageReply: nil
+        messageReply: nil,
+		mailboxManager: PreviewHelper.sampleMailboxManager
     )
     .environmentObject(AttachmentsManager(
         draftLocalUUID: draft.localUUID,

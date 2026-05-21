@@ -19,13 +19,18 @@
 observeInlineAttachmentsDeletion();
 
 function observeInlineAttachmentsDeletion() {
-    const addRemovedCids = (removedNode, removedCids) => {
-        const isCidImage = (img) => img.src.startsWith("cid:");
+    const CID_PREFIX = "cid:";
 
-        if (removedNode.tagName.toLowerCase() === "img") {
-            if (isCidImage(removedNode)) removedCids.push(removedNode.src);
+    const isCidImage = (img) => img.src.startsWith(CID_PREFIX);
+    const isDataCidImage = (img) => img.hasAttribute("data-cid");
+
+    const getKey = (img) => img.dataset.cid ?? img.src.replace(CID_PREFIX, "");
+
+    const collectCidImages = (node, result) => {
+        if (node.tagName?.toLowerCase() === "img") {
+            if (isCidImage(node) || isDataCidImage(node)) result.push(node);
         } else {
-            removedCids.push(...[...removedNode.getElementsByTagName("img")].filter(isCidImage).map((img) => img.src));
+            result.push(...[...node.getElementsByTagName("img")].filter((img) => isCidImage(img) || isDataCidImage(img)));
         }
     };
 
@@ -37,19 +42,36 @@ function observeInlineAttachmentsDeletion() {
         let debounceTimer = null;
 
         const mutationObserver = new MutationObserver((mutationRecords) => {
-            const removedCids = mutationRecords
-                .flatMap(({ removedNodes }) => [...removedNodes])
-                .filter((node) => node.nodeType === Node.ELEMENT_NODE)
-                .reduce((cids, node) => {
-                    addRemovedCids(node, cids);
-                    return cids;
-                }, []);
+            const removedImgs = [];
+            const addedKeys = new Set();
 
-            removedCids.forEach((cid) => pendingCids.add(cid));
+            for (const { removedNodes, addedNodes } of mutationRecords) {
+                for (const node of addedNodes) {
+                    if (node.nodeType !== Node.ELEMENT_NODE) continue;
+                    const imgs = [];
+                    collectCidImages(node, imgs);
+                    imgs.forEach((img) => addedKeys.add(getKey(img)));
+                }
+                for (const node of removedNodes) {
+                    if (node.nodeType !== Node.ELEMENT_NODE) continue;
+                    collectCidImages(node, removedImgs);
+                }
+            }
+
+            for (const img of removedImgs) {
+                const key = getKey(img);
+                if (!addedKeys.has(key)) {
+                    pendingCids.add(key);
+                }
+            }
 
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                const actuallyRemovedCids = [...pendingCids].filter((cid) => !document.querySelector(`img[src="${cid}"]`));
+                const actuallyRemovedCids = [...pendingCids].filter((key) => {
+                    const byCid = document.querySelector(`img[src="cid:${key}"]`);
+                    const byDataCid = document.querySelector(`img[data-cid="${key}"]`);
+                    return !byCid && !byDataCid;
+                });
                 pendingCids.clear();
 
                 if (actuallyRemovedCids.length > 0) {
@@ -60,6 +82,7 @@ function observeInlineAttachmentsDeletion() {
 
         mutationObserver.observe(rootElement, { childList: true, subtree: true });
     };
+
     if (document.body) {
         setupObserver();
     } else {
@@ -69,7 +92,6 @@ function observeInlineAttachmentsDeletion() {
 
 function onInlineImagesDeleted(cids) {
     const handler = window.webkit.messageHandlers.inlineAttachmentDelete;
-
     if (handler) {
         handler.postMessage(cids);
     } else {
