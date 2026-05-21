@@ -94,11 +94,6 @@ struct ThreadListCell: View {
             viewModel: viewModel,
             multipleSelectionViewModel: multipleSelectionViewModel
         )
-        .actionsContextMenu(
-            thread: thread,
-            originFolder: viewModel.frozenFolder,
-            multipleSelectionViewModel: multipleSelectionViewModel
-        )
     }
 
     private func didTapCell() {

@@ -25,11 +25,9 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread,
-                            originFolder: Folder,
+    func actionsContextMenu(originFolder: Folder,
                             multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         modifier(ThreadListCellContextMenu(
-            thread: thread,
             originFolder: originFolder,
             multipleSelectionViewModel: multipleSelectionViewModel
         ))
@@ -52,7 +50,6 @@ struct ThreadListCellContextMenu: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
 
-    let thread: Thread
     let originFolder: Folder?
     let multipleSelectionViewModel: MultipleSelectionViewModel
 
@@ -74,7 +71,7 @@ struct ThreadListCellContextMenu: ViewModifier {
         )
     }
 
-    private var actions: (quickActions: [Action], listActions: [Action]) {
+    private func actions(for thread: Thread) -> (quickActions: [Action], listActions: [Action]) {
         return Action.actionsForMessages(
             thread.messages.toArray(),
             origin: origin,
@@ -95,32 +92,36 @@ struct ThreadListCellContextMenu: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .contextMenu {
-                let computedActions = actions // Capture actions to avoid re-computation
+            .contextMenu(forSelectionType: Thread.self) { selectedThreads in
+                if let myThread = selectedThreads.first {
+                    let computedActions = actions(for: myThread) // Capture actions to avoid re-computation
 
-                ControlGroup {
-                    ForEach(computedActions.quickActions) { action in
+                    ControlGroup {
+                        ForEach(computedActions.quickActions) { action in
+                            ContextMenuActionButtonView(
+                                action: action,
+                                role: isDestructiveAction(action, of: myThread),
+                                thread: myThread,
+                                disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
+                                onClick: performAction
+                            )
+                        }
+                    }
+                    .controlGroupStyle(.compactMenu)
+
+                    ContextMenuActionButtonView(action: .activeMultiselect, role: nil, thread: myThread) { _, _ in
+                        multipleSelectionViewModel.toggleMultipleSelection(of: myThread, withImpact: false)
+                    }
+
+                    ForEach(computedActions.listActions) { action in
                         ContextMenuActionButtonView(
                             action: action,
-                            role: isDestructiveAction(action),
+                            role: isDestructiveAction(action, of: myThread),
+                            thread: myThread,
                             disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
                             onClick: performAction
                         )
                     }
-                }
-                .controlGroupStyle(.compactMenu)
-
-                ContextMenuActionButtonView(action: .activeMultiselect, role: nil) { _ in
-                    multipleSelectionViewModel.toggleMultipleSelection(of: thread, withImpact: false)
-                }
-
-                ForEach(computedActions.listActions) { action in
-                    ContextMenuActionButtonView(
-                        action: action,
-                        role: isDestructiveAction(action),
-                        disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
-                        onClick: performAction
-                    )
                 }
             }
             .sheet(item: $messagesToMove) { messages in
@@ -173,10 +174,11 @@ struct ThreadListCellContextMenu: ViewModifier {
             )
     }
 
-    private func performAction(for action: Action) {
+    private func performAction(for action: Action, thread: Thread) {
         if Self.sendEmailActions.contains(action), !actionsManager.canSendEmails {
             @InjectService var snackbarPresenter: IKSnackBarPresentable
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
+            snackbarPresenter
+                .show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledEmailSendingFromAddress)
             return
         }
 
@@ -191,7 +193,7 @@ struct ThreadListCellContextMenu: ViewModifier {
         }
     }
 
-    private func isDestructiveAction(_ action: Action) -> ButtonRole? {
+    private func isDestructiveAction(_ action: Action, of thread: Thread) -> ButtonRole? {
         guard action != .archive else {
             return nil
         }
