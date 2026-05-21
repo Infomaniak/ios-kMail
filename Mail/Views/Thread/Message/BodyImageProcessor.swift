@@ -19,6 +19,7 @@
 import Foundation
 import MailCore
 import OSLog
+import SwiftSoup
 import UIKit
 
 struct BodyImageProcessor {
@@ -112,6 +113,25 @@ struct BodyImageProcessor {
             )
         }
         return workingBody
+    }
+
+    func addContentIdAttributesInBody(body: String?, attachments: ArraySlice<Attachment>) async -> String? {
+        guard let body, !body.isEmpty else {
+            return nil
+        }
+
+        let htmlBody = try? await SwiftSoup.parse(body)
+
+        for attachment in attachments {
+            guard let contentId = attachment.contentId else {
+                continue
+            }
+
+            let element = try? await htmlBody?.select("[src=\"cid:\(contentId)\"]")
+            _ = try? element?.attr("data-cid", contentId)
+        }
+
+        return try? htmlBody?.outerHtml()
     }
 }
 

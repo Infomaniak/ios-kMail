@@ -49,10 +49,12 @@ struct ComposeMessageBodyView: View {
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
+    @State private var bodyImageProcessor = BodyImageProcessor()
 
     @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
+    let mailboxManager: MailboxManager
 
     private var isEnvironmentCatalyst: Bool {
         #if targetEnvironment(macCatalyst)
@@ -128,6 +130,8 @@ struct ComposeMessageBodyView: View {
                 self.editor = editor
             }
             #endif
+
+            await replaceInlineAttachments()
         }
     }
 
@@ -167,6 +171,34 @@ struct ComposeMessageBodyView: View {
             ])
         }
     }
+
+    private func replaceInlineAttachments() async {
+        let attachmentsArray = draft.attachments.filter { $0.contentId != nil }.toArray()
+        guard !attachmentsArray.isEmpty else {
+            return
+        }
+
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+        for attachments in chunks {
+            let base64attachments = await bodyImageProcessor.fetchBase64Images(
+                attachments,
+                mailboxManager: mailboxManager
+            )
+
+            var body = await bodyImageProcessor.addContentIdAttributesInBody(body: draftBody, attachments: attachments)
+
+            body = await bodyImageProcessor.injectImagesInBody(
+                body: body,
+                attachments: attachments,
+                base64Images: base64attachments
+            )
+            guard let body, !body.isEmpty else {
+                return
+            }
+
+            draftBody = body
+        }
+    }
 }
 
 #Preview {
@@ -179,7 +211,8 @@ struct ComposeMessageBodyView: View {
         isShowingAI: .constant(false),
         selectedText: .constant(""),
         editor: .init(wrappedValue: nil),
-        messageReply: nil
+        messageReply: nil,
+        mailboxManager: PreviewHelper.sampleMailboxManager
     )
     .environmentObject(AttachmentsManager(
         draftLocalUUID: draft.localUUID,
