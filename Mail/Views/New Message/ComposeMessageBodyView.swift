@@ -173,19 +173,23 @@ struct ComposeMessageBodyView: View {
     }
 
     private func replaceInlineAttachments() async {
-        let attachmentsArray = draft.attachments.filter { $0.contentId != nil }.toArray()
+        let attachmentsArray = draft.attachments.filter {
+            guard let contentId = $0.contentId else { return false }
+            return !contentId.isEmpty
+        }.toArray()
         guard !attachmentsArray.isEmpty else {
             return
         }
 
+        var body = await bodyImageProcessor.addContentIdAttributesInBody(body: draftBody, attachments: attachmentsArray)
+
         let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+
         for attachments in chunks {
             let base64attachments = await bodyImageProcessor.fetchBase64Images(
                 attachments,
                 mailboxManager: mailboxManager
             )
-
-            var body = await bodyImageProcessor.addContentIdAttributesInBody(body: draftBody, attachments: attachments)
 
             body = await bodyImageProcessor.injectImagesInBody(
                 body: body,
