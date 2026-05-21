@@ -103,6 +103,8 @@ struct CalendarAttendeesView: View {
             title: MailResourcesStrings.Localizable.attendeesListTitle(attendees.count)
         ) {
             CalendarAllAttendeesView(attendees: attendees)
+                .environment(\.currentUser, currentUser)
+                .environmentObject(mailboxManager)
         }
     }
 }

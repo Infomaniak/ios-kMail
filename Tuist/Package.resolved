@@ -42,7 +42,7 @@
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
         "branch" : "chore/upgrade-realm",
-        "revision" : "7bd4fbfceac6387f0546b646e1b8bd5341a1049c"
+        "revision" : "d9c14f63978ce9f5cf18eb068fcc1822ccfe626e"
       }
     },
     {
