@@ -440,10 +440,11 @@ public final class DraftManager {
         if let cancelResource {
             action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
-                    try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
-                    self.alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarSendCancelled)
-
-                    try await self.refreshDraftFolder(latestSendDate: nil, mailboxManager: mailboxManager)
+                    await tryOrDisplayError {
+                        try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+                        self.alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarSendCancelled)
+                        try await self.refreshDraftFolder(latestSendDate: nil, mailboxManager: mailboxManager)
+                    }
                 }
             }
         }
