@@ -30,16 +30,16 @@ struct ExtendedFAB: View {
     let title: String
     let icon: MailResourcesImages
     let isExtended: Bool
-    let isInactive: Bool
+    let inactiveReason: String?
     let action: () -> Void
 
     var body: some View {
         Button {
             didTapButton.toggle()
 
-            if isInactive {
+            if let inactiveReason {
                 @InjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+                snackbarPresenter.show(message: inactiveReason)
             } else {
                 action()
             }
@@ -55,7 +55,7 @@ struct ExtendedFAB: View {
                     .clipped()
             }
         }
-        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended, isInactive: isInactive))
+        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended, isInactive: inactiveReason != nil))
         .ikSensoryFeedback(.impact(weight: .heavy), trigger: didTapButton)
     }
 }
@@ -65,7 +65,7 @@ struct ExtendedFAB: View {
         title: MailResourcesStrings.Localizable.buttonNewMessage,
         icon: MailResourcesAsset.pencil,
         isExtended: true,
-        isInactive: false
+        inactiveReason: nil
     ) {
         /* Preview */
     }
