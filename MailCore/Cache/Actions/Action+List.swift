@@ -163,7 +163,7 @@ extension Action: CaseIterable {
             spamAction,
             isFromMe ? nil : .phishing,
             isFromMe || isInSpamFolder ? nil : .blockList,
-            .shareMailLink,
+            userLocalPack == .myKSuiteFree ? nil : .shareMailLink,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,

@@ -33,6 +33,9 @@ struct ActionsView: View {
     private let origin: ActionOrigin
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
+    private let userLocalPack: LocalPack?
+
+    @Binding var isShowingMyKSuiteUpgrade: Bool
 
     init(
         mailboxManager: MailboxManager,
@@ -54,6 +57,8 @@ struct ActionsView: View {
             colorScheme: colorScheme,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
+
+        _isShowingMyKSuiteUpgrade = isShowingMyKSuiteUpgrade
         quickActions = actions.quickActions
         listActions = actions.listActions
 
@@ -61,6 +66,7 @@ struct ActionsView: View {
         self.isMultipleSelection = isMultipleSelection
         self.origin = origin
         self.completionHandler = completionHandler
+        userLocalPack = mailboxManager.mailbox.pack
     }
 
     var body: some View {
@@ -90,7 +96,9 @@ struct ActionsView: View {
                         action: action,
                         origin: origin,
                         isMultipleSelection: isMultipleSelection,
-                        completionHandler: completionHandler
+                        completionHandler: completionHandler,
+                        userLocalPack: userLocalPack,
+                        isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade
                     )
                 }
             }
@@ -191,16 +199,30 @@ struct MessageActionView: View {
     let origin: ActionOrigin
     let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
+    let userLocalPack: LocalPack?
+
+    @Binding var isShowingMyKSuiteUpgrade: Bool
+
+    private var isShowingMyKSuiteBadge: Bool {
+        userLocalPack == .myKSuiteFree && action == .shareMailLink
+    }
 
     var body: some View {
         Button(action: didTapButton) {
-            ActionButtonLabel(action: action)
+            ActionButtonLabel(action: action, isShowingMyKSuiteBadge: isShowingMyKSuiteBadge)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 
     private func didTapButton() {
         dismiss()
+
+        if userLocalPack == .myKSuiteFree && action == .shareMailLink {
+            isShowingMyKSuiteUpgrade = true
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "shareMailLink")
+            return
+        }
 
         Task {
             await tryOrDisplayError {
@@ -226,6 +248,12 @@ struct MessageActionView: View {
 
 struct ActionButtonLabel: View {
     let action: Action
+    let isShowingMyKSuiteBadge: Bool
+
+    init(action: Action, isShowingMyKSuiteBadge: Bool = false) {
+        self.action = action
+        self.isShowingMyKSuiteBadge = isShowingMyKSuiteBadge
+    }
 
     var iconColor: MailResourcesColors {
         switch action {
@@ -254,10 +282,15 @@ struct ActionButtonLabel: View {
             action.icon
                 .iconSize(.large)
                 .foregroundStyle(iconColor)
+
             Text(action.title)
                 .foregroundStyle(titleColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            if isShowingMyKSuiteBadge {
+                MyKSuitePlusChip()
+            }
         }
         .padding(value: .medium)
     }
