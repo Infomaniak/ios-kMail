@@ -33,8 +33,13 @@ enum NoReplyAlert {
         }
     }
 
-    static func verifySenders(message: Message, action: Action) -> Bool {
-        let recipientsToCheck = action == .reply ? message.from : (message.from.toArray() + message.cc.toArray()).toRealmList()
+    static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
+        var recipientHolder = message.recipientsForReplyTo(replyAll: false, currentMailboxEmail: currentMailboxEmail)
+        if action == .replyAll {
+            recipientHolder = message.recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail)
+        }
+
+        let recipientsToCheck = recipientHolder.cc + recipientHolder.to
 
         return recipientsToCheck.contains { sender in
             isNoReply(email: sender.email)

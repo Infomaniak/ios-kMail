@@ -131,7 +131,7 @@ struct MessageHeaderSummaryView: View {
                     Button {
                         let action: Action = message
                             .canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) ? .replyAll : .reply
-                        guard NoReplyAlert.verifySenders(message: message, action: action) else {
+                        guard NoReplyAlert.verifySenders(message: message, action: action, currentMailboxEmail: mailboxManager.mailbox.email) else {
                             replyToMessage()
                             return
                         }
@@ -143,7 +143,7 @@ struct MessageHeaderSummaryView: View {
                     }
                     .disabled(!canSendEmails)
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                        ReplyActionsView(message: message)
+                        ReplyActionsView(message: message, currentMailboxEmail: mailboxManager.mailbox.email)
                     }
 
                     ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .message) {

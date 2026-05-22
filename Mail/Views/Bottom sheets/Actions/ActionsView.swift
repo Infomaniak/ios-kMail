@@ -34,6 +34,7 @@ struct ActionsView: View {
     private let origin: ActionOrigin
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
+    private let currentMailboxEmail: String
 
     init(
         mailboxManager: MailboxManager,
@@ -62,6 +63,7 @@ struct ActionsView: View {
         self.isMultipleSelection = isMultipleSelection
         self.origin = origin
         self.completionHandler = completionHandler
+        currentMailboxEmail = mailboxManager.mailbox.email
     }
 
     var body: some View {
@@ -73,7 +75,8 @@ struct ActionsView: View {
                         action: action,
                         origin: origin,
                         isMultipleSelection: isMultipleSelection,
-                        completionHandler: completionHandler
+                        completionHandler: completionHandler,
+                        currentMailboxEmail: currentMailboxEmail
                     )
                     .frame(maxWidth: .infinity)
                 }
@@ -126,6 +129,7 @@ struct QuickActionView: View {
     let origin: ActionOrigin
     let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
+    let currentMailboxEmail: String
 
     private static let sendEmailActions: Set<Action> = [.reply, .replyAll, .forward]
 
@@ -169,7 +173,8 @@ struct QuickActionView: View {
         switch action {
         case .reply, .replyAll:
             guard let lastMessage = targetMessages.last else { return }
-            guard NoReplyAlert.verifySenders(message: lastMessage, action: action) else {
+            guard NoReplyAlert.verifySenders(message: lastMessage, action: action, currentMailboxEmail: currentMailboxEmail)
+            else {
                 doAction()
                 return
             }
