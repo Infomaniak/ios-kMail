@@ -29,6 +29,7 @@ public struct MyKSuitePlusChip: View {
             .padding(.vertical, value: .micro)
             .background(MailResourcesAsset.myKSuiteBackgroundColor.swiftUIColor)
             .clipShape(Capsule())
+            .accessibilityHidden(true)
     }
 }
 
