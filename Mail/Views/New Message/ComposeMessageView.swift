@@ -118,14 +118,18 @@ struct ComposeMessageView: View {
     private let mailboxManager: MailboxManager
     private let htmlAttachments: [HTMLAttachable]
 
+    private var canSendEmails: Bool {
+        mailboxManager.mailbox.permissions?.canSendEmails ?? true
+    }
+
     private var isSendButtonDisabled: Bool {
         let encryptionReady = (draft.encrypted && draft.encryptionPassword.isEmpty) ? draft.allRecipients
             .allSatisfy { $0.canAutoEncrypt } : true
-        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
+        return !canSendEmails || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
     }
 
     private var isScheduleSendButtonDisabled: Bool {
-        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || isSyncingDrafts
+        return !canSendEmails || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || isSyncingDrafts
     }
 
     private var isMailboxOverQuota: Bool {

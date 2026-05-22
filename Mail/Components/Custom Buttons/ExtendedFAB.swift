@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -28,12 +30,19 @@ struct ExtendedFAB: View {
     let title: String
     let icon: MailResourcesImages
     let isExtended: Bool
+    let inactiveReason: String?
     let action: () -> Void
 
     var body: some View {
         Button {
             didTapButton.toggle()
-            action()
+
+            if let inactiveReason {
+                @InjectService var snackbarPresenter: IKSnackBarPresentable
+                snackbarPresenter.show(message: inactiveReason)
+            } else {
+                action()
+            }
         } label: {
             HStack(spacing: 0) {
                 icon
@@ -46,13 +55,18 @@ struct ExtendedFAB: View {
                     .clipped()
             }
         }
-        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended))
+        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended, isInactive: inactiveReason != nil))
         .ikSensoryFeedback(.impact(weight: .heavy), trigger: didTapButton)
     }
 }
 
 #Preview {
-    ExtendedFAB(title: MailResourcesStrings.Localizable.buttonNewMessage, icon: MailResourcesAsset.pencil, isExtended: true) {
+    ExtendedFAB(
+        title: MailResourcesStrings.Localizable.buttonNewMessage,
+        icon: MailResourcesAsset.pencil,
+        isExtended: true,
+        inactiveReason: nil
+    ) {
         /* Preview */
     }
 }

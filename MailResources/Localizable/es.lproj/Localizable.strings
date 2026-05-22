@@ -1636,6 +1636,9 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Recibo de lectura enviado";
 
+/* loco:6a046811c87ca471ce0aa9c4 */
+"snackbarAdminDisabledEmailSendingFromAddress" = "Un administrador ha desactivado el envío de correos electrónicos desde esta dirección";
+
 /* loco:69f0b852d1c96c96d10453c2 */
 "snackbarAdminDisabledMessageSending" = "Un administrador ha deshabilitado el envío de mensajes";
 

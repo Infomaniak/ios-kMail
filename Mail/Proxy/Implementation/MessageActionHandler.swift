@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import RealmSwift
 import UIKit
 import UserNotifications
@@ -96,6 +97,14 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.reply)
+
+        guard mailboxManager.mailbox.permissions?.canSendEmails != false else {
+            await MainActor.run {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            }
+            return
+        }
+
         await handleNotification(action: .reply, messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
     }
 

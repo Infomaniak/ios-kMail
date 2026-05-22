@@ -34,7 +34,13 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let realmConfiguration: Realm.Configuration
     public let transactionExecutor: Transactionable
 
-    public let mailbox: Mailbox
+    private let _mailbox: Mailbox
+    public var mailbox: Mailbox {
+        guard let freshMailbox = mailboxInfosManager.getMailbox(objectId: _mailbox.objectId) else {
+            return _mailbox
+        }
+        return freshMailbox.freezeIfNeeded()
+    }
 
     public let apiFetcher: MailApiFetchable
 
@@ -73,7 +79,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     }
 
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManageable) {
-        self.mailbox = mailbox
+        _mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager
         featureFlagsManager = FeatureFlagsManager(mailboxUUID: mailbox.uuid, apiFetcher: apiFetcher)

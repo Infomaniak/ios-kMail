@@ -109,6 +109,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             } label: {
                                 Label(action.title, asset: action.icon)
                             }
+                            .disabled(!canPerformAction(action))
                             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                                 ReplyActionsView(message: message)
                             }
@@ -122,6 +123,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
                                     .sheetViewStyle()
                             }
+                            .disabled(!canPerformAction(action))
                             .modifier(BottomToolbarSnackBarAvoider())
                         }
 
@@ -185,6 +187,15 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     origin: .toolbar(originFolder: frozenFolder, nearestDestructiveAlert: $destructiveAlert)
                 )
             }
+        }
+    }
+
+    private func canPerformAction(_ action: Action) -> Bool {
+        switch action {
+        case .reply, .forward:
+            return actionsManager.canSendEmails
+        default:
+            return true
         }
     }
 }

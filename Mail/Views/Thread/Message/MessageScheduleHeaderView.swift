@@ -49,12 +49,14 @@ struct MessageScheduleHeaderView: View {
                 Button(MailResourcesStrings.Localizable.buttonReschedule) {
                     isShowingReschedulePanel = true
                 }
+                .disabled(mailboxManager.mailbox.permissions?.canSendEmails == false)
 
                 MessageHeaderDivider()
 
                 Button(MailResourcesStrings.Localizable.buttonModify) {
                     mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
                 }
+                .disabled(mailboxManager.mailbox.permissions?.canSendEmails == false)
             }
         }
         .scheduleFloatingPanel(

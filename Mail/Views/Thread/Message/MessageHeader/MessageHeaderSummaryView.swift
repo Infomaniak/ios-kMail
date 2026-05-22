@@ -43,6 +43,10 @@ struct MessageHeaderSummaryView: View {
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
 
+    private var canSendEmails: Bool {
+        mailboxManager.mailbox.permissions?.canSendEmails ?? true
+    }
+
     let deleteDraftTapped: () -> Void
 
     var body: some View {
@@ -123,6 +127,7 @@ struct MessageHeaderSummaryView: View {
                             .iconSize(.large)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
                     }
+                    .disabled(!canSendEmails)
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
@@ -141,6 +146,7 @@ struct MessageHeaderSummaryView: View {
 
     private func replyToMessage() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
+
         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
         } else {

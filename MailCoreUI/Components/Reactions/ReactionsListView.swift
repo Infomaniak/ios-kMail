@@ -21,11 +21,14 @@ import ElegantEmojiPicker
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var selectedReactionToDisplay: ReactionSelectionType?
 
     @State private var isShowingEmojiPicker = false
@@ -35,6 +38,10 @@ public struct ReactionsListView: View {
     let emojiPickerButtonIsDisabled: Bool
     let addReaction: (String) -> Void
     let disabledOpenEmojiPickerButtonCompletion: (() -> Void)?
+
+    private var canSendEmails: Bool {
+        mailboxManager.mailbox.permissions?.canSendEmails ?? true
+    }
 
     public init(
         reactions: [UIReaction],
@@ -56,6 +63,7 @@ public struct ReactionsListView: View {
                 } didLongPressButton: {
                     didLongPressReaction(reaction)
                 }
+                .disabled(!canSendEmails)
             }
 
             Button(action: openEmojiPicker) {
@@ -68,7 +76,9 @@ public struct ReactionsListView: View {
                 .labelStyle(.iconOnly)
                 .padding(value: .micro)
             }
-            .tint(emojiPickerButtonIsDisabled ? MailResourcesAsset.textTertiaryColor.swiftUIColor : Color.accentColor)
+            .disabled(!canSendEmails)
+            .tint(emojiPickerButtonIsDisabled ? MailResourcesAsset.textTertiaryColor.swiftUIColor : Color
+                .accentColor)
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
@@ -89,6 +99,12 @@ public struct ReactionsListView: View {
         @InjectService var matomo: MatomoUtils
         let eventName = emojiPickerButtonIsDisabled ? "openEmojiPickerDisabled" : "openEmojiPicker"
         matomo.track(eventWithCategory: .emojiReactions, name: eventName)
+
+        guard canSendEmails else {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending)
+            return
+        }
 
         if emojiPickerButtonIsDisabled {
             disabledOpenEmojiPickerButtonCompletion?()
@@ -121,4 +137,5 @@ public struct ReactionsListView: View {
 
 #Preview {
     ReactionsListView(reactions: PreviewHelper.uiReactions, emojiPickerButtonIsDisabled: false) { _ in }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

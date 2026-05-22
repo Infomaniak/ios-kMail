@@ -115,6 +115,10 @@ public class ActionsManager: ObservableObject {
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
 
+    public var canSendEmails: Bool {
+        mailboxManager.mailbox.permissions?.canSendEmails ?? true
+    }
+
     public init(mailboxManager: MailboxManager, mainViewState: MainViewState?) {
         self.mailboxManager = mailboxManager
         self.mainViewState = mainViewState

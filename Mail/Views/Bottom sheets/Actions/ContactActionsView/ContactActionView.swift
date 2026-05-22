@@ -29,6 +29,10 @@ struct ContactActionView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
+    var isDisabled: Bool {
+        return action == .writeEmailAction && mailboxManager.mailbox.permissions?.canSendEmails == false
+    }
+
     let recipient: Recipient
     let action: Action
 
@@ -42,6 +46,7 @@ struct ContactActionView: View {
                 action.icon
             }
         }
+        .disabled(isDisabled)
     }
 
     // MARK: - Actions

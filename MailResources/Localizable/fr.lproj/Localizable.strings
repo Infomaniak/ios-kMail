@@ -1636,6 +1636,9 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Accusé de lecture envoyé";
 
+/* loco:6a046811c87ca471ce0aa9c4 */
+"snackbarAdminDisabledEmailSendingFromAddress" = "Un administrateur a désactivé l’envoi par e-mail depuis cette adresse";
+
 /* loco:69f0b852d1c96c96d10453c2 */
 "snackbarAdminDisabledMessageSending" = "Un administrateur a désactivé l’envoi de message";
 

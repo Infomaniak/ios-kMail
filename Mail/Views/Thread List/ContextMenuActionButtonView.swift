@@ -22,6 +22,7 @@ import SwiftUI
 struct ContextMenuActionButtonView: View {
     let action: Action
     let role: ButtonRole?
+    var disabled = false
 
     let onClick: (Action) -> Void
 
@@ -35,5 +36,6 @@ struct ContextMenuActionButtonView: View {
                 action.icon
             }
         }
+        .disabled(disabled)
     }
 }

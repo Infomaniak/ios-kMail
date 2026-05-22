@@ -20,4 +20,5 @@ import RealmSwift
 
 public class MailboxPermissions: EmbeddedObject, Decodable {
     @Persisted public var canRestoreEmails: Bool
+    @Persisted public var canSendEmails: Bool
 }
