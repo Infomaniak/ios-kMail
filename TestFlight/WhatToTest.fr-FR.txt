@@ -1,1 +1,1 @@
-- Correction de bugs et améliorations
+- Correction de bugs et améliorations.
