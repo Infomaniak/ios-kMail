@@ -72,7 +72,7 @@ struct AddLinkView: View {
         }
         .onAppear {
             firstFieldIsFocused = true
-            getValues()
+            getInitialValues()
         }
     }
 
@@ -94,7 +94,7 @@ struct AddLinkView: View {
         actionHandler?(url, text)
     }
 
-    private func getValues() {
+    private func getInitialValues() {
         switch selectionLink {
         case .url(let url):
             self.url = url.absoluteString

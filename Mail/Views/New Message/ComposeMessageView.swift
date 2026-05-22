@@ -285,9 +285,9 @@ struct ComposeMessageView: View {
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
-                    selectedText: $selectedText,
                     draft: draft,
-                    isEditorFocused: focusedField == .editor
+                    isEditorFocused: focusedField == .editor,
+                    selectedText: selectedText
                 )
                 .environmentObject(attachmentsManager)
             }

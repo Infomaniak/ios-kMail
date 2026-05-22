@@ -31,9 +31,10 @@ struct MobileFormattingToolbarView: View {
 
     @ObservedObject var textAttributes: TextAttributes
 
-    @Binding var selectedText: String
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
+
+    let selectedText: String
 
     private let actions: [[EditorToolbarAction]] = [
         [.bold, .italic, .underline, .strikeThrough],
@@ -141,8 +142,8 @@ struct MobileFormattingToolbarView: View {
 #Preview {
     MobileFormattingToolbarView(
         textAttributes: TextAttributes(),
-        selectedText: .constant(""),
         isShowingClassicOptions: .constant(false),
-        isShowingFormattingOptions: .constant(false)
+        isShowingFormattingOptions: .constant(false),
+        selectedText: ""
     )
 }

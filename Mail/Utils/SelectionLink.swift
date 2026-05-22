@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum SelectionLink: Identifiable {
+enum SelectionLink: Identifiable, Sendable {
     case url(URL)
     case title(String)
     case empty
