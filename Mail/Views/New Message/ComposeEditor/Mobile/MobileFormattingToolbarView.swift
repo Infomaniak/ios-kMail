@@ -23,21 +23,26 @@ import InfomaniakRichHTMLEditor
 import MailCoreUI
 import MailResources
 import SwiftModalPresentation
+import SwiftRegex
 import SwiftUI
 
 struct MobileFormattingToolbarView: View {
-    @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
+    @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingLink: SelectionLink?
 
     @ObservedObject var textAttributes: TextAttributes
 
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
 
+    let selectedText: String
+
     private let actions: [[EditorToolbarAction]] = [
         [.bold, .italic, .underline, .strikeThrough],
         [.unorderedList],
         [.link]
     ]
+
+    static let urlRegex = "((http|https)://)?([(w|W)]{3}+\\.)?+(.)+\\.+[A-Za-z]{2,3}+(\\.)?+(/(.)*)?"
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
@@ -70,9 +75,9 @@ struct MobileFormattingToolbarView: View {
                                 ) {
                                     formatText(for: action)
                                 }
-                                .mailCustomAlert(isPresented: $isShowingLinkAlert) {
-                                    AddLinkView(actionHandler: textAttributes.addLink)
-                                }
+                            }
+                            .mailCustomAlert(item: $isShowingLink) { link in
+                                AddLinkView(selectionLink: link, actionHandler: textAttributes.addLink)
                             }
                         }
                     }
@@ -115,7 +120,18 @@ struct MobileFormattingToolbarView: View {
             if textAttributes.hasLink {
                 textAttributes.unlink()
             } else {
-                isShowingLinkAlert = true
+                if selectedText.isEmpty {
+                    isShowingLink = .empty
+                } else {
+                    let trimmedText = selectedText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if Regex(pattern: MobileFormattingToolbarView.urlRegex)?.numberOfMatches(in: trimmedText) == 1 {
+                        if let url = URL(string: trimmedText) {
+                            isShowingLink = .url(url)
+                        }
+                    } else {
+                        isShowingLink = .title(trimmedText)
+                    }
+                }
             }
         default:
             return
@@ -127,6 +143,7 @@ struct MobileFormattingToolbarView: View {
     MobileFormattingToolbarView(
         textAttributes: TextAttributes(),
         isShowingClassicOptions: .constant(false),
-        isShowingFormattingOptions: .constant(false)
+        isShowingFormattingOptions: .constant(false),
+        selectedText: ""
     )
 }

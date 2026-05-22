@@ -48,6 +48,7 @@ struct EditorMobileToolbarView: View {
 
     let draft: Draft
     let isEditorFocused: Bool
+    let selectedText: String
 
     private let transition = AnyTransition.opacity.combined(with: .move(edge: .bottom))
 
@@ -72,7 +73,8 @@ struct EditorMobileToolbarView: View {
                 MobileFormattingToolbarView(
                     textAttributes: textAttributes,
                     isShowingClassicOptions: $isShowingClassicOptions,
-                    isShowingFormattingOptions: $isShowingFormattingOptions
+                    isShowingFormattingOptions: $isShowingFormattingOptions,
+                    selectedText: selectedText
                 )
                 .transition(transition)
             }
@@ -97,7 +99,8 @@ struct EditorMobileToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
-        isEditorFocused: true
+        isEditorFocused: true,
+        selectedText: ""
     )
     .environmentObject(AttachmentsManager(
         draftLocalUUID: "",

@@ -70,8 +70,13 @@ enum NewMessageAlertType {
 }
 
 struct EditorPositionPreferenceKey: PreferenceKey {
-    static var defaultValue: CGRect { return CGRect() }
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) { value = nextValue() }
+    static var defaultValue: CGRect {
+        return CGRect()
+    }
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
 }
 
 struct ComposeMessageView: View {
@@ -101,6 +106,8 @@ struct ComposeMessageView: View {
     @State private var isShowingEncryptStatePanel = false
 
     @State private var editorFrame: CGRect?
+
+    @State private var selectedText = ""
 
     @Weak private var scrollView: UIScrollView?
     @Weak private var editor: RichHTMLEditorView?
@@ -202,6 +209,7 @@ struct ComposeMessageView: View {
                         draftBody: $draftContentManager.draftContent,
                         draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
+                        selectedText: $selectedText,
                         editor: _editor,
                         messageReply: messageReply
                     )
@@ -278,7 +286,8 @@ struct ComposeMessageView: View {
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
-                    isEditorFocused: focusedField == .editor
+                    isEditorFocused: focusedField == .editor,
+                    selectedText: selectedText
                 )
                 .environmentObject(attachmentsManager)
             }
@@ -314,7 +323,8 @@ struct ComposeMessageView: View {
                         await attachmentsManager.completeUploadedAttachments()
                     }
                     group.addTask {
-                        await attachmentsManager.processHTMLAttachments(htmlAttachments, draftContentManager: draftContentManager)
+                        await attachmentsManager.processHTMLAttachments(htmlAttachments, draftContentManager:
+                            draftContentManager)
                     }
                 }
 
