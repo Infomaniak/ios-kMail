@@ -266,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
-        "branch" : "feat/get-selection",
-        "revision" : "ba9c8ce5c456d2d77d0a788d50d11471573829ec"
+        "revision" : "1c1e8423b1a3ae90584f8a9f3f333c32db179c58",
+        "version" : "3.3.0"
       }
     },
     {
