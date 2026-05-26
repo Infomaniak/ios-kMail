@@ -163,9 +163,7 @@ struct QuickActionView: View {
         .disabled(isActionInactive)
         .accessibilityIdentifier(action.accessibilityIdentifier)
         .mailCustomAlert(isPresented: $cannotReply) {
-            NoReplyAlertView {
-                doAction()
-            }
+            NoReplyAlertView(action: performAction)
         }
     }
 
@@ -175,17 +173,17 @@ struct QuickActionView: View {
             guard let lastMessage = targetMessages.last else { return }
             guard NoReplyAlert.verifySenders(message: lastMessage, action: action, currentMailboxEmail: currentMailboxEmail)
             else {
-                doAction()
+                performAction()
                 return
             }
             cannotReply = true
 
         default:
-            doAction()
+            performAction()
         }
     }
 
-    private func doAction() {
+    private func performAction() {
         dismiss()
 
         Task {

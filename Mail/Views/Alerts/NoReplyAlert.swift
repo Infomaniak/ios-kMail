@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 enum NoReplyAlert {
-    static let noReplyPrefixes = ["no-reply", "noreply", "postmaster", "catchall"]
+    static let noReplyPrefixes: Set = ["no-reply", "noreply", "postmaster", "catchall"]
 
     private static func isNoReply(email: String) -> Bool {
         let normalizedEmail = email.lowercased()
@@ -34,10 +34,8 @@ enum NoReplyAlert {
     }
 
     static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
-        var recipientHolder = message.recipientsForReplyTo(replyAll: false, currentMailboxEmail: currentMailboxEmail)
-        if action == .replyAll {
-            recipientHolder = message.recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail)
-        }
+        let isReplyingAll = action == .replyAll
+        let recipientHolder = message.recipientsForReplyTo(replyAll: isReplyingAll, currentMailboxEmail: currentMailboxEmail)
 
         let recipientsToCheck = recipientHolder.cc + recipientHolder.to
 
@@ -57,10 +55,9 @@ struct NoReplyAlertView: View {
                 .padding(.bottom, IKPadding.alertTitleBottom)
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue,
-                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose
-            ) {
-                action()
-            }
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+                primaryButtonAction: action
+            )
         }
     }
 }
