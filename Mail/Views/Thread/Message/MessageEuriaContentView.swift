@@ -50,8 +50,7 @@ struct MessageEuriaContentView<Content: View>: View {
 
                 Text(title)
                     .textStyle(.bodySmallMedium)
-
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 CloseButton(size: .medium) { dismissAction() }
             }
