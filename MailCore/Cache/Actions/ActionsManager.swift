@@ -116,7 +116,7 @@ public class ActionsManager: ObservableObject {
     private let mainViewState: MainViewState?
     private let threadViewState: ThreadViewState
 
- 	public var canSendEmails: Bool {
+    public var canSendEmails: Bool {
         mailboxManager.mailbox.permissions?.canSendEmails ?? true
     }
 
