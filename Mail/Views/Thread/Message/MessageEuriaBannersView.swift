@@ -30,36 +30,34 @@ struct MessageEuriaBannersView: View {
     @ObservedRealmObject var message: Message
 
     var body: some View {
-        Group {
-            if let summaryState = threadViewState.summaries[message.uid] {
-                MessageEuriaContentView(
-                    title: summaryState.title(contentLoaded: message.summary != nil),
-                    isError: summaryState == .showError
-                ) {
-                    if let summary = message.summary {
-                        Text(summary)
-                            .textStyle(.bodySmall)
-                    } else if summaryState == .showError {
-                        Button {
-                            Task {
-                                try await mailboxManager.summarize(
-                                    message: message.freezeIfNeeded(),
-                                    threadViewState: threadViewState
-                                )
-                            }
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.aiButtonRetry)
-                                .font(MailTextStyle.body.font)
-                                .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+        if let summaryState = threadViewState.summaries[message.uid] {
+            MessageEuriaContentView(
+                title: summaryState.title(contentLoaded: message.summary != nil),
+                isError: summaryState == .showError
+            ) {
+                if let summary = message.summary {
+                    Text(summary)
+                        .textStyle(.bodySmall)
+                } else if summaryState == .showError {
+                    Button {
+                        Task {
+                            try await mailboxManager.summarize(
+                                message: message.freezeIfNeeded(),
+                                threadViewState: threadViewState
+                            )
                         }
-                        .padding(.leading, value: .large)
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
                     }
-                } dismiss: {
-                    threadViewState.summaries[message.uid] = nil
+                    .padding(.leading, value: .large)
                 }
+            } dismiss: {
+                threadViewState.summaries[message.uid] = nil
             }
+            .padding(.horizontal, value: .medium)
         }
-        .padding(.horizontal, value: .medium)
     }
 }
 
