@@ -54,8 +54,11 @@ struct MessageEuriaBannersView: View {
                     .padding(.leading, value: .large)
                 }
             } dismiss: {
-                threadViewState.summaries[message.uid] = nil
+                withAnimation {
+                    threadViewState.summaries[message.uid] = nil
+                }
             }
+            .animation(.spring, value: message.summary)
             .padding(.horizontal, value: .medium)
         }
     }

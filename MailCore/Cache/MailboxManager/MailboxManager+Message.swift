@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakDI
 import OrderedCollections
 import RealmSwift
+import SwiftUI
 
 // MARK: - Message
 
@@ -214,11 +215,15 @@ public extension MailboxManager {
 
     @MainActor
     func summarize(message: Message, threadViewState: ThreadViewState) async throws {
-        threadViewState.summaries[message.uid] = .showContent
+        withAnimation {
+            threadViewState.summaries[message.uid] = .showContent
+        }
 
         guard message.summary == nil else { return }
         guard let body = message.body?.value else {
-            threadViewState.summaries[message.uid] = .showError
+            withAnimation {
+                threadViewState.summaries[message.uid] = .showError
+            }
             return
         }
 
@@ -229,7 +234,9 @@ public extension MailboxManager {
                 liveMessage.summary = summary
             }
         } catch {
-            threadViewState.summaries[message.uid] = .showError
+            withAnimation {
+                threadViewState.summaries[message.uid] = .showError
+            }
             throw error
         }
     }
