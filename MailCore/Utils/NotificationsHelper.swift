@@ -296,9 +296,8 @@ public enum NotificationsHelper {
 
         let body = await getMessagePreview(from: message, mailboxManager: mailboxManager)
         let subtitle: String
-        if message.isReaction, let originalMessageId = message.inReplyTo?.parseMessageIds().first,
-           let originalMessage = message.realm?.objects(Message.self).first(where: { $0.messageId == originalMessageId }) {
-            subtitle = originalMessage.formattedSubject
+        if message.isReaction, let originMessage = message.reactionOriginMessages.first {
+            subtitle = originMessage.formattedSubject
         } else {
             subtitle = message.formattedSubject
         }

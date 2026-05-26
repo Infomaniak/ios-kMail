@@ -49,9 +49,8 @@ public extension Message {
                 name = firstFrom.email
             }
 
-            if let originalMessageId = message.inReplyTo?.parseMessageIds().first,
-               let originalMessage = message.realm?.objects(Message.self).first(where: { $0.messageId == originalMessageId }) {
-                let reactionAuthors: Set<String> = Set(originalMessage.reactions.flatMap(\.authors)
+            if let originMessage = message.reactionOriginMessages.first {
+                let reactionAuthors: Set<String> = Set(originMessage.reactions.flatMap(\.authors)
                     .compactMap(\.recipient?.email))
                 if reactionAuthors.count == 2 {
                     return MailResourcesStrings.Localizable.previewMultiReaction(
