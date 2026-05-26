@@ -30,6 +30,8 @@ struct OpenThreadIntentView: View, IntentViewable {
 
     @Environment(\.dismiss) private var dismiss
 
+    @StateObject private var threadViewState = ThreadViewState()
+
     let resolvedIntent = State<ResolvedIntent?>()
 
     let openThreadIntent: OpenThreadIntent
@@ -50,7 +52,6 @@ struct OpenThreadIntentView: View, IntentViewable {
                 for: resolvedIntent.mailboxManager,
                 initialFolder: resolvedIntent.currentFolder
             )
-            let threadViewState = ThreadViewState()
 
             ThreadView(thread: resolvedIntent.thread)
                 .environmentObject(resolvedIntent.mailboxManager)
