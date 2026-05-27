@@ -254,16 +254,12 @@ public extension MailboxManager {
             }
             return
         }
-        guard let body = message.body?.value else {
-            withAnimation {
-                threadViewState.translatedMessages[message.uid] = .showError(nil)
-            }
-            return
-        }
 
         do {
             let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
-            let translatedMessage = try await apiFetcher.translate(content: body, destinationLanguage: currentLanguage)
+            let translatedMessage = try await apiFetcher.translate(messageUid: message.uid,
+                                                                   mailboxUuid: mailbox.uuid,
+                                                                   destinationLanguage: currentLanguage)
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 let translatedBody = TranslatedBody()
