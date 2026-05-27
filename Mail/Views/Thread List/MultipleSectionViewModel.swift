@@ -107,7 +107,7 @@ class MultipleSelectionViewModel: ObservableObject {
     private func setActions() {
         let read = selectedItems.values.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
         let star = selectedItems.values.allSatisfy(\.flagged) ? Action.unstar : Action.star
-        let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
+        let archive = fromArchiveFolder ? Action.moveToInbox : Action.archive
         toolbarActions = [read, archive, star, .delete]
     }
 }
