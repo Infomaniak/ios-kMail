@@ -49,8 +49,25 @@ public extension Message {
                 name = firstFrom.email
             }
 
-            let preview = MailResourcesStrings.Localizable.previewReaction(name, emojiReaction)
-            return preview
+            if let originMessage = message.reactionOriginMessages.first {
+                let reactionAuthors: Set<String> = Set(originMessage.reactions.flatMap(\.authors)
+                    .compactMap(\.recipient?.email))
+                if reactionAuthors.count == 2 {
+                    return MailResourcesStrings.Localizable.previewMultiReaction(
+                        emojiReaction,
+                        name,
+                        1
+                    )
+                } else if reactionAuthors.count > 2 {
+                    return MailResourcesStrings.Localizable.previewMultiReactionPlural(
+                        emojiReaction,
+                        name,
+                        reactionAuthors.count - 1
+                    )
+                }
+            }
+
+            return MailResourcesStrings.Localizable.previewReaction(name, emojiReaction)
         }
     }
 }

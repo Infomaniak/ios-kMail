@@ -191,6 +191,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var emojiReaction: String?
     @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
+    @Persisted(originProperty: "reactionMessages") public var reactionOriginMessages: LinkingObjects<Message>
 
     @Persisted public var reactions: List<MessageReaction>
     @Persisted public var reactionMessages: List<Message>
