@@ -54,7 +54,7 @@ public protocol MailApiCommonFetchable: ApiFetcher {
 
     func summarize(content: String) async throws -> String
 
-    func translate(content: String) async throws -> String
+    func translate(content: String, destinationLanguage: String) async throws -> String
 
     func downloadAttachments(message: Message, progressObserver: ((Double) -> Void)?) async throws -> URL
 

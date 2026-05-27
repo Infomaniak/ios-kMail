@@ -241,8 +241,50 @@ public extension MailboxManager {
         }
     }
 
-    func translate(content: String) async throws -> String {
-        return try await apiFetcher.translate(content: content)
+    @MainActor
+    func translate(message: Message, threadViewState: ThreadViewState) async throws {
+        withAnimation {
+            threadViewState.translatedMessages[message.uid] = .showContent
+        }
+
+        guard !isBodyTranslated(message: message) else {
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.isShowingTranslated = true
+            }
+            return
+        }
+        guard let body = message.body?.value else {
+            withAnimation {
+                threadViewState.translatedMessages[message.uid] = .showError
+            }
+            return
+        }
+
+        do {
+            let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
+            let translatedMessage = try await apiFetcher.translate(content: body, destinationLanguage: currentLanguage)
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                let translatedBody = TranslatedBody()
+                translatedBody.value = translatedMessage
+                translatedBody.type = liveMessage.body?.type
+                translatedBody.language = currentLanguage
+                liveMessage.translatedBody = translatedBody
+                liveMessage.isShowingTranslated = true
+            }
+        } catch {
+            withAnimation {
+                threadViewState.translatedMessages[message.uid] = .showError
+            }
+        }
+    }
+
+    private func isBodyTranslated(message: Message) -> Bool {
+        guard let liveMessage = message.thaw() else { return false }
+        let currentLanguage = Bundle.main.preferredLocalizations.first
+        return liveMessage.translatedBody?.value != nil &&
+            liveMessage.translatedBody?.language == currentLanguage
     }
 
     private func undoAction(

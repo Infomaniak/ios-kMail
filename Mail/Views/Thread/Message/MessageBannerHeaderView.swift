@@ -99,50 +99,6 @@ struct MessageBannerHeaderView: View {
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }
-            case .translating:
-                MessageHeaderActionView(
-                    message: MailResourcesStrings.Localizable.euriaTranslateMessage,
-                    showBottomSeparator: showBottomSeparator,
-                    animationView: { EuriaAnimationView() },
-                    actions: {}
-                )
-            case .translated:
-                let bannerMessage = {
-                    let targetLanguageCode = Bundle.main.preferredLocalizations.first
-                    guard let targetLanguage = Locale.current.localizedString(forLanguageCode: targetLanguageCode ?? "") else {
-                        return MailResourcesStrings.Localizable.genericMessageTranslated
-                    }
-
-                    return MailResourcesStrings.Localizable.messageTranslatedTitle(targetLanguage)
-                }()
-
-                MessageHeaderActionView(
-                    message: bannerMessage,
-                    showBottomSeparator: showBottomSeparator,
-                    animationView: { EuriaAnimationView() },
-                    actions: {
-                        Button {
-                            withAnimation {
-                                $message.isShowingTranslated.wrappedValue = false
-                            }
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonShowOriginal)
-                        }
-                    }
-                )
-            case .targetSameAsSource:
-                MessageHeaderActionView(
-                    message: MailResourcesStrings.Localizable.translationTargetSameAsSource,
-                    showBottomSeparator: showBottomSeparator,
-                    animationView: { EuriaAnimationView() },
-                    actions: {
-                        Button {
-                            $message.targetSameAsSource.wrappedValue = false
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonClose)
-                        }
-                    }
-                )
             }
         }
     }

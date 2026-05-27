@@ -61,6 +61,47 @@ struct MessageEuriaBannersView: View {
             .animation(.spring, value: message.summary)
             .padding(.horizontal, value: .medium)
         }
+
+        if let translatedState = threadViewState.translatedMessages[message.uid] {
+            MessageEuriaContentView(
+                title: translatedState.title(contentLoaded: message.translatedBody != nil),
+                isError: translatedState == .showError
+            ) {
+                if message.translatedBody?.value != nil {
+                    Button {
+                        withAnimation {
+                            $message.isShowingTranslated.wrappedValue = false
+                            threadViewState.translatedMessages[message.uid] = nil
+                        }
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.buttonShowOriginal)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                    }
+                    .padding(.leading, value: .large)
+                } else if translatedState == .showError {
+                    Button {
+                        Task {
+                            try await mailboxManager.translate(
+                                message: message.freezeIfNeeded(),
+                                threadViewState: threadViewState
+                            )
+                        }
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                    }
+                    .padding(.leading, value: .large)
+                }
+            } dismiss: {
+                withAnimation {
+                    threadViewState.translatedMessages[message.uid] = nil
+                }
+            }
+            .animation(.spring, value: message.translatedBody)
+            .padding(.horizontal, value: .medium)
+        }
     }
 }
 

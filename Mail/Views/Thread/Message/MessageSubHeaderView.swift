@@ -62,18 +62,6 @@ struct MessageSubHeaderView: View {
             result.append(.acknowledge)
         }
 
-        if message.isTranslating {
-            result.append(.translating)
-        }
-
-        if message.isShowingTranslated {
-            result.append(.translated)
-        }
-
-        if message.targetSameAsSource {
-            result.append(.targetSameAsSource)
-        }
-
         return result
     }
 

@@ -269,27 +269,8 @@ public class ActionsManager: ObservableObject {
             guard let message = messages.first else { return }
             try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
         case .translateMessage:
-            guard let message = messages.first,
-                  let content = message.body?.value,
-                  let liveMessage = message.thaw() else {
-                return
-            }
-
-            guard !isBodyTranslated(message: message) else {
-                withAnimation {
-                    try? liveMessage.realm?.write {
-                        liveMessage.isShowingTranslated = true
-                    }
-                }
-                return
-            }
-
-            withAnimation {
-                try? liveMessage.realm?.write {
-                    liveMessage.isTranslating = true
-                }
-            }
-            try await performTranslate(message: message, content: content)
+            guard let message = messages.first else { return }
+            try await mailboxManager.translate(message: message, threadViewState: threadViewState)
         default:
             break
         }
@@ -538,42 +519,6 @@ public class ActionsManager: ObservableObject {
 
         let uniqueThreads = Set(selectedMessages.uniqueThreadsInFolder(originFolder))
         return uniqueThreads.count == 1
-    }
-
-    private func performTranslate(message: Message, content: String) async throws {
-        do {
-            let response = try await mailboxManager.translate(content: content)
-
-            guard let liveMessage = message.thaw() else { return }
-            let currentLanguage = Bundle.main.preferredLocalizations.first
-            withAnimation {
-                try? liveMessage.realm?.write {
-                    let translatedBody = TranslatedBody()
-                    translatedBody.value = response
-                    translatedBody.type = liveMessage.body?.type
-                    translatedBody.language = currentLanguage
-                    liveMessage.translatedBody = translatedBody
-                    liveMessage.isTranslating = false
-                    liveMessage.isShowingTranslated = true
-                }
-            }
-        } catch {
-            if let liveMessage = message.thaw() {
-                withAnimation {
-                    try? liveMessage.realm?.write {
-                        liveMessage.isTranslating = false
-                        liveMessage.targetSameAsSource = true
-                    }
-                }
-            }
-        }
-    }
-
-    private func isBodyTranslated(message: Message) -> Bool {
-        guard let liveMessage = message.thaw() else { return false }
-        let currentLanguage = Bundle.main.preferredLocalizations.first
-        return liveMessage.translatedBody?.value != nil &&
-            liveMessage.translatedBody?.language == currentLanguage
     }
 }
 

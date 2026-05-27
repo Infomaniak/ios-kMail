@@ -128,10 +128,11 @@ public extension MailApiFetcher {
                                                         parameters: ["content": content]))
     }
 
-    func translate(content: String) async throws -> String {
+    func translate(content: String, destinationLanguage: String) async throws -> String {
         try await perform(request: authenticatedRequest(.translate,
                                                         method: .post,
-                                                        parameters: ["content": content]))
+                                                        parameters: ["content": content,
+                                                                     "destination_language": destinationLanguage]))
     }
 
     func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
