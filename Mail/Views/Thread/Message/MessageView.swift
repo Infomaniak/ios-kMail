@@ -96,6 +96,16 @@ struct MessageView: View {
             }
         }
         .task {
+            let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
+            guard message.translatedBody?.language == currentLanguage else {
+                guard let liveMessage = message.thaw() else { return }
+                try? liveMessage.realm?.write {
+                    liveMessage.translatedBody = nil
+                    liveMessage.isShowingTranslated = false
+                }
+                return
+            }
+
             if message.isShowingTranslated {
                 threadViewState.translatedMessages[message.uid] = .showContent
             }
