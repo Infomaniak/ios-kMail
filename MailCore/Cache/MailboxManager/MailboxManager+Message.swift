@@ -256,7 +256,7 @@ public extension MailboxManager {
         }
         guard let body = message.body?.value else {
             withAnimation {
-                threadViewState.translatedMessages[message.uid] = .showError
+                threadViewState.translatedMessages[message.uid] = .showError(nil)
             }
             return
         }
@@ -275,7 +275,7 @@ public extension MailboxManager {
             }
         } catch {
             withAnimation {
-                threadViewState.translatedMessages[message.uid] = .showError
+                threadViewState.translatedMessages[message.uid] = .showError(error as? MailApiError)
             }
         }
     }

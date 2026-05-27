@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Tue, 12 May 2026 08:56:03 +0200
+ * Exported by: Baptiste Griva
+ * Exported at: Wed, 27 May 2026 16:10:07 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1158,6 +1158,9 @@
 
 /* loco:69f07faf00857b6e8f0314f2 */
 "messageSummaryLoading" = "Message summary…";
+
+/* loco:69f322a82ef533c8a005f5d2 */
+"messageTranslateErrorRetry" = "Euria could not translate this message. Please try again.";
 
 /* loco:69ca51d3ab0a8c7268007f32 */
 "messageTranslatedTitle" = "Translated in %@";

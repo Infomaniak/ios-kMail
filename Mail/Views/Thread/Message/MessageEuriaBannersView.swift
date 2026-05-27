@@ -65,7 +65,14 @@ struct MessageEuriaBannersView: View {
         if let translatedState = threadViewState.translatedMessages[message.uid] {
             MessageEuriaContentView(
                 title: translatedState.title(contentLoaded: message.translatedBody != nil),
-                isError: translatedState == .showError
+                isError: {
+                    if case .showError(let error) = translatedState {
+                        if error?.code != "translation__target_same_as_source" {
+                            return true
+                        }
+                    }
+                    return false
+                }()
             ) {
                 if message.translatedBody?.value != nil {
                     Button {
@@ -79,20 +86,22 @@ struct MessageEuriaBannersView: View {
                             .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
                     }
                     .padding(.leading, value: .large)
-                } else if translatedState == .showError {
-                    Button {
-                        Task {
-                            try await mailboxManager.translate(
-                                message: message.freezeIfNeeded(),
-                                threadViewState: threadViewState
-                            )
+                } else if case .showError(let error) = translatedState {
+                    if error?.code != "translation__target_same_as_source" {
+                        Button {
+                            Task {
+                                try await mailboxManager.translate(
+                                    message: message.freezeIfNeeded(),
+                                    threadViewState: threadViewState
+                                )
+                            }
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                                .font(MailTextStyle.body.font)
+                                .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
                         }
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
-                            .font(MailTextStyle.body.font)
-                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                        .padding(.leading, value: .large)
                     }
-                    .padding(.leading, value: .large)
                 }
             } dismiss: {
                 withAnimation {

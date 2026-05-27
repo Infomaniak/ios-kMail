@@ -140,9 +140,9 @@ public enum MessageSummaryState: CaseIterable {
     }
 }
 
-public enum MessageTranslatedState: CaseIterable {
+public enum MessageTranslatedState {
     case showContent
-    case showError
+    case showError(MailApiError?)
 
     public func title(contentLoaded: Bool) -> String {
         if contentLoaded {
@@ -157,8 +157,8 @@ public enum MessageTranslatedState: CaseIterable {
         switch self {
         case .showContent:
             return MailResourcesStrings.Localizable.euriaTranslateMessage
-        case .showError:
-            return MailResourcesStrings.Localizable.translationTargetSameAsSource
+        case .showError(let error):
+            return error?.localizedDescription ?? MailResourcesStrings.Localizable.messageTranslateErrorRetry
         }
     }
 }
