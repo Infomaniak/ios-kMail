@@ -78,6 +78,8 @@ struct MessageSubHeaderView: View {
                 mailbox: mailboxManager.mailbox
             )
 
+            MessageEuriaBannersView(message: message)
+
             if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
                 CalendarView(event: event)
                     .padding(.horizontal, value: .medium)

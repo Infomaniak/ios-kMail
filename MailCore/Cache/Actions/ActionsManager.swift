@@ -114,14 +114,16 @@ public class ActionsManager: ObservableObject {
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
+    private let threadViewState: ThreadViewState
 
     public var canSendEmails: Bool {
         mailboxManager.mailbox.permissions?.canSendEmails ?? true
     }
 
-    public init(mailboxManager: MailboxManager, mainViewState: MainViewState?) {
+    public init(mailboxManager: MailboxManager, mainViewState: MainViewState?, threadViewState: ThreadViewState) {
         self.mailboxManager = mailboxManager
         self.mainViewState = mainViewState
+        self.threadViewState = threadViewState
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
@@ -196,8 +198,8 @@ public class ActionsManager: ObservableObject {
             guard let message = messages.first else { return }
             // Needed to be sure that the bottomView is dismissed before we try to show the printPanel
             DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
-                let nc = NotificationCenter.default
-                nc.post(name: Notification.Name.printNotification, object: message)
+                let notificationCenter = NotificationCenter.default
+                notificationCenter.post(name: Notification.Name.printNotification, object: message)
             }
         case .moveToInbox, .nonSpam:
             let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
@@ -263,6 +265,9 @@ public class ActionsManager: ObservableObject {
                 featureAvailableProvider: mailboxManager.featureAvailableProvider
             )
             try await performDeleteSnooze(messages: messagesToExecuteAction)
+        case .summarize:
+            guard let message = messages.first else { return }
+            try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
         default:
             break
         }

@@ -123,6 +123,23 @@ public final class MessageReaction: EmbeddedObject {
     }
 }
 
+public enum MessageSummaryState: CaseIterable {
+    case showContent
+    case showError
+
+    public func title(contentLoaded: Bool) -> String {
+        if contentLoaded {
+            return MailResourcesStrings.Localizable.messageSummary
+        }
+        switch self {
+        case .showContent:
+            return MailResourcesStrings.Localizable.messageSummaryLoading
+        case .showError:
+            return MailResourcesStrings.Localizable.messageSummaryErrorRetry
+        }
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -195,6 +212,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var reactions: List<MessageReaction>
     @Persisted public var reactionMessages: List<Message>
+
+    @Persisted public var summary: String?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))

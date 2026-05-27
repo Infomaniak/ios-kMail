@@ -30,6 +30,8 @@ struct OpenThreadIntentView: View, IntentViewable {
 
     @Environment(\.dismiss) private var dismiss
 
+    @StateObject private var threadViewState = ThreadViewState()
+
     let resolvedIntent = State<ResolvedIntent?>()
 
     let openThreadIntent: OpenThreadIntent
@@ -55,9 +57,11 @@ struct OpenThreadIntentView: View, IntentViewable {
                 .environmentObject(resolvedIntent.mailboxManager)
                 .environmentObject(ActionsManager(
                     mailboxManager: resolvedIntent.mailboxManager,
-                    mainViewState: mainViewState
+                    mainViewState: mainViewState,
+                    threadViewState: threadViewState
                 ))
                 .environmentObject(mainViewState)
+                .environmentObject(threadViewState)
                 .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.user))
         } else {
             ProgressView()

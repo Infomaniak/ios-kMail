@@ -59,7 +59,8 @@ extension Action: CaseIterable {
         .quickActionPanel,
         .snooze,
         .modifySnooze,
-        .cancelSnooze
+        .cancelSnooze,
+        .summarize
     ]
 
     public var refreshSearchResult: Bool {
@@ -117,11 +118,14 @@ extension Action: CaseIterable {
             guard !isFromMe else { return nil }
             return isInSpamFolder ? .nonSpam : .spam
         }
+        let summarize: Bool = featureAvailableProvider.isAvailable(.summarize) &&
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
+            summarize ? .summarize : nil,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -505,6 +509,12 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
+    )
+    static let summarize = Action(
+        id: "summarize",
+        title: MailResourcesStrings.Localizable.actionSummarize,
+        iconResource: MailResourcesAsset.paragraphShorten,
+        matomoName: "summarize"
     )
 
     // MARK: Account Actions

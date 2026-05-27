@@ -21,6 +21,7 @@ import Foundation
 public enum AppFeature {
     case snooze
     case emojiReaction
+    case summarize
 }
 
 public protocol FeatureAvailableProvider {
@@ -36,6 +37,8 @@ struct FeatureAvailableService: FeatureAvailableProvider {
             return isSnoozeAvailable()
         case .emojiReaction:
             return isEmojiReactionAvailable()
+        case .summarize:
+            return isMailSummarizeAvailable()
         }
     }
 
@@ -45,5 +48,9 @@ struct FeatureAvailableService: FeatureAvailableProvider {
 
     private func isEmojiReactionAvailable() -> Bool {
         return featureFlagManageable.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation
+    }
+
+    private func isMailSummarizeAvailable() -> Bool {
+        return featureFlagManageable.isEnabled(.mailEmailSummary)
     }
 }

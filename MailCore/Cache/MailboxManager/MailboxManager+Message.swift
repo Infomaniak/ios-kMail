@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakDI
 import OrderedCollections
 import RealmSwift
+import SwiftUI
 
 // MARK: - Message
 
@@ -210,6 +211,34 @@ public extension MailboxManager {
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
+    }
+
+    @MainActor
+    func summarize(message: Message, threadViewState: ThreadViewState) async throws {
+        withAnimation {
+            threadViewState.summaries[message.uid] = .showContent
+        }
+
+        guard message.summary == nil else { return }
+        guard let body = message.body?.value else {
+            withAnimation {
+                threadViewState.summaries[message.uid] = .showError
+            }
+            return
+        }
+
+        do {
+            let summary = try await apiFetcher.summarize(content: body)
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.summary = summary
+            }
+        } catch {
+            withAnimation {
+                threadViewState.summaries[message.uid] = .showError
+            }
+            throw error
+        }
     }
 
     private func undoAction(
