@@ -55,9 +55,9 @@ struct FeatureAvailableService: FeatureAvailableProvider {
 
     private func isMailSummarizeAvailable() -> Bool {
         return featureFlagManageable.isEnabled(.mailEmailSummary)
-	}
+    }
 
     private func isTranslateAvailable() -> Bool {
-        return featureFlagManageable.isEnabled(.mailTranslateEmail) && UserDefaults.shared.threadMode == .conversation
+        return featureFlagManageable.isEnabled(.mailTranslateEmail)
     }
 }
