@@ -37,6 +37,7 @@ struct MessageView: View {
 
     @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var displayContentBlockedActionView = false
     @State private var initialContentLoading = true
@@ -94,6 +95,11 @@ struct MessageView: View {
                 }
             }
         }
+        .task {
+            if message.isShowingTranslated {
+                threadViewState.translatedMessages[message.uid] = .showContent
+            }
+        }
         .onChange(of: message.isShowingTranslated) { _ in
             Task {
                 try? await messagesWorker.fetchAndProcessIfNeeded(messageUid: message.uid)
@@ -128,5 +134,6 @@ struct MessageView: View {
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
+    .environmentObject(ThreadViewState())
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
