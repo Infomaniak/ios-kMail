@@ -37,7 +37,7 @@ struct ComposeMessageCellTextField: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    TextField("", text: $text, axis: .vertical)
+                    SubjectTextView(text: $text, focusedField: _focusedField)
                         .focused($focusedField, equals: .subject)
                         .textStyle(.body)
                         .accessibilityIdentifier(type.title)
@@ -48,6 +48,7 @@ struct ComposeMessageCellTextField: View {
 
                 IKDivider()
             }
+            .contentShape(Rectangle())
             .onTapGesture {
                 focusedField = type
             }
@@ -57,4 +58,66 @@ struct ComposeMessageCellTextField: View {
 
 #Preview {
     ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
+}
+
+struct SubjectTextView: UIViewRepresentable {
+    @Binding var text: String
+    @FocusState var focusedField: ComposeViewFieldType?
+
+    func makeUIView(context: Context) -> UITextView {
+        let uiTextView = UITextView()
+        uiTextView.delegate = context.coordinator
+        uiTextView.isScrollEnabled = false
+        uiTextView.backgroundColor = .clear
+        uiTextView.font = UIFont.systemFont(ofSize: 16)
+        uiTextView.textContainerInset = .zero
+        uiTextView.textContainer.lineFragmentPadding = 0
+        return uiTextView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
+        let width = proposal.width ?? UIScreen.main.bounds.width
+        let size = uiView.sizeThatFits(CGSize(width: width, height: .infinity))
+        return CGSize(width: width, height: size.height)
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, focusedField: _focusedField)
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        @Binding var text: String
+        @FocusState var focusedField: ComposeViewFieldType?
+
+        init(text: Binding<String>, focusedField: FocusState<ComposeViewFieldType?>) {
+            _text = text
+            _focusedField = focusedField
+        }
+
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            guard text != "\n" else {
+                focusedField = .editor
+                return false
+            }
+
+            if text.contains("\n") {
+                let sanitized = text.replacingOccurrences(of: "\n", with: " ")
+                let newText = (textView.text as NSString).replacingCharacters(in: range, with: sanitized)
+                textView.text = newText
+                self.text = newText
+                return false
+            }
+            return true
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            text = textView.text
+        }
+    }
 }
