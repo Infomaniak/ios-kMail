@@ -44,6 +44,8 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
 
+    private let frozenThread: Thread
+
     private let isFlagged: Bool
     private let isRead: Bool
     private let isArchive: Bool
@@ -84,6 +86,7 @@ struct LargeToolbarModifier: ViewModifier {
     }
 
     init(frozenThread: Thread) {
+        self.frozenThread = frozenThread
         isFlagged = frozenThread.flagged
         isRead = frozenThread.messages.allSatisfy { $0.seen }
         isArchive = frozenThread.folder?.role == .archive
@@ -94,11 +97,15 @@ struct LargeToolbarModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar(id: "thread.largeToolbar") {
-                toolbarItemReply()
-                toolbarItemMove()
-                toolbarItemReport()
-                toolbarItemOther()
-                toolbarItemGroups()
+                if !frozenThread.containsOnlyScheduledDrafts {
+                    toolbarItemReply()
+                    toolbarItemMove()
+                    toolbarItemReport()
+                    toolbarItemOther()
+                    toolbarItemGroups()
+                } else {
+                    toolbarContainsOnlyScheduledDrafts()
+                }
             }
             .toolbarRole(.editor)
             .mailCustomAlert(item: $destructiveAlert) { item in
@@ -178,12 +185,14 @@ struct LargeToolbarModifier: ViewModifier {
 
         ToolbarItem(id: "thread.report", placement: .secondaryAction) {
             ControlGroup {
-                Button { didTap(action: .block) } label: {
-                    Label(Action.block.title, asset: Action.block.icon)
+                let spamAction: Action = frozenFolder?.role == .spam ? .nonSpam : .spam
+
+                Button { didTap(action: .blockList) } label: {
+                    Label(Action.blockList.title, asset: Action.blockList.icon)
                 }
 
-                Button { didTap(action: .spam) } label: {
-                    Label(Action.spam.title, asset: Action.spam.icon)
+                Button { didTap(action: spamAction) } label: {
+                    Label(spamAction.title, asset: spamAction.icon)
                 }
 
                 Button { didTap(action: .phishing) } label: {
@@ -285,16 +294,18 @@ struct LargeToolbarModifier: ViewModifier {
 
     @ToolbarContentBuilder
     private func toolbarItemReport() -> some CustomizableToolbarContent {
-        ToolbarItem(id: "thread.report.block", placement: .secondaryAction) {
-            Button { didTap(action: .block) } label: {
-                Label(Action.block.title, asset: Action.block.icon)
+        ToolbarItem(id: "thread.report.blockList", placement: .secondaryAction) {
+            Button { didTap(action: .blockList) } label: {
+                Label(Action.blockList.title, asset: Action.blockList.icon)
             }
         }
         .defaultCustomization(.hidden)
 
+        let spamAction: Action = frozenFolder?.role == .spam ? .nonSpam : .spam
+
         ToolbarItem(id: "thread.report.spam", placement: .secondaryAction) {
-            Button { didTap(action: .spam) } label: {
-                Label(Action.spam.title, asset: Action.spam.icon)
+            Button { didTap(action: spamAction) } label: {
+                Label(spamAction.title, asset: spamAction.icon)
             }
         }
         .defaultCustomization(.hidden)
@@ -360,13 +371,33 @@ struct LargeToolbarModifier: ViewModifier {
         }
         .defaultCustomization(.visible, options: .alwaysAvailable)
 
-        ToolbarItem(id: "thread.reply.replyAll", placement: .topBarLeading) {
-            Button { didTap(action: .replyAll) } label: {
-                Label(Action.replyAll.title, asset: Action.replyAll.icon)
+        if canReplyAll {
+            ToolbarItem(id: "thread.reply.replyAll", placement: .topBarLeading) {
+                Button { didTap(action: .replyAll) } label: {
+                    Label(Action.replyAll.title, asset: Action.replyAll.icon)
+                }
+                .disabled(!canPerformAction(Action.replyAll))
             }
-            .disabled(!canPerformAction(Action.replyAll))
+            .defaultCustomization(.visible, options: .alwaysAvailable)
         }
-        .defaultCustomization(.visible, options: .alwaysAvailable)
+    }
+
+    @ToolbarContentBuilder
+    private func toolbarContainsOnlyScheduledDrafts() -> some CustomizableToolbarContent {
+        ToolbarItem(id: "thread.move.delete.scheduled", placement: .topBarTrailing) {
+            Button { didTap(action: .delete) } label: {
+                Label(Action.delete.title, asset: Action.delete.icon)
+            }
+        }
+        .defaultCustomization(.visible)
+    }
+
+    private var canReplyAll: Bool {
+        guard let message = frozenMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else { return false }
+        return message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email)
     }
 
     private func didTapFlag() {

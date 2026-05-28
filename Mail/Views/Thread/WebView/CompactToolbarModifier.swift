@@ -167,6 +167,16 @@ struct CompactToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
+        if action == .reply,
+           let message = frozenMessages.lastMessageToExecuteAction(
+               currentMailboxEmail: mailboxManager.mailbox.email,
+               featureAvailableProvider: mailboxManager.featureAvailableProvider
+           ),
+           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+            replyOrReplyAllMessage = message
+            return
+        }
+
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
