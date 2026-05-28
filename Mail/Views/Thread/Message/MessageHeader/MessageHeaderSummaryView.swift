@@ -71,7 +71,7 @@ struct MessageHeaderSummaryView: View {
                 }
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
-                    if message.isDraft {
+                    if message.isDraft && !message.scheduled {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
@@ -112,7 +112,7 @@ struct MessageHeaderSummaryView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if message.isDraft {
+            if message.isDraft && !message.scheduled {
                 Button(role: .destructive, action: deleteDraftTapped) {
                     MailResourcesAsset.bin
                         .iconSize(.large)
@@ -120,7 +120,12 @@ struct MessageHeaderSummaryView: View {
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
 
-            if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) {
+            if message.isDraft && message.scheduled {
+                Text(MailResourcesStrings.Localizable.messageIsSending)
+                    .textStyle(.bodySmallItalicSecondary)
+            }
+
+            if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
                     Button(action: replyToMessage) {
                         MailResourcesAsset.emailActionReply

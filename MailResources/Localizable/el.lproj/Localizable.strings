@@ -1117,6 +1117,9 @@
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Πρόχειρο";
 
+/* loco:6a0d6887dd219f4ee50112d2 */
+"messageIsSending" = "Αποστολή…";
+
 /* loco:67dbe703eca211f5e507ba93 */
 "messageIsSpamBecauseSenderIsBlocked" = "Αυτό το μήνυμα εμφανίζεται στον φάκελο ανεπιθύμητης αλληλογραφίας επειδή ο %@ βρίσκεται στη λίστα αποκλεισμένων αποστολέων.";
 
@@ -1743,6 +1746,9 @@
 
 /* loco:6729d83e9f7d15aea0033402 */
 "snackbarScheduling" = "Το μήνυμα προγραμματίζεται";
+
+/* loco:6a0c63ebaabc71a8f60875a6 */
+"snackbarSendCancelled" = "Αποστολή ακυρώθηκε";
 
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Θα λάβετε υπενθύμιση για αυτό το μήνυμα %@";

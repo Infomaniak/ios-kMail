@@ -174,8 +174,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var isDraft: Bool
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
-    @Persisted public var scheduled: Bool
-    @Persisted public var isScheduledDraft: Bool?
+    @Persisted public var scheduled: Bool // Message is being sent (max 30sec delay)
+    @Persisted public var isScheduledDraft: Bool? // Message is scheduled
     @Persisted public var scheduleDate: Date?
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
@@ -597,7 +597,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             internalDate: internalDate,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasDrafts: !(draftResource?.isEmpty ?? true),
+            hasDrafts: !(draftResource?.isEmpty ?? true) && !scheduled,
+            hasDraftsSending: !(draftResource?.isEmpty ?? true) && scheduled,
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,

@@ -370,11 +370,10 @@ public final class DraftManager {
 
             if let latestSendDate {
                 /*
-                    We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
-                    because the sending process is not synchronous
+                    We need to refresh the draft folder after the mail is sent to make it disappear, using a small delay to account for the asynchronous sending process
                  */
                 let delay = latestSendDate.timeIntervalSinceNow
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(delay), 1.5)))
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * (max(Double(delay), 0) + Double(Constants.gracePeriod))))
                 await mailboxManager.refreshFolderContent(draftFolder)
             }
 
@@ -441,7 +440,11 @@ public final class DraftManager {
         if let cancelResource {
             action = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
-                    try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+                    await tryOrDisplayError {
+                        try await mailboxManager.apiFetcher.cancelSend(resource: cancelResource)
+                        self.alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarSendCancelled)
+                        try await self.refreshDraftFolder(latestSendDate: nil, mailboxManager: mailboxManager)
+                    }
                 }
             }
         }

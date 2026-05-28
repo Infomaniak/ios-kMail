@@ -47,6 +47,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var date: Date
     @Persisted public var hasAttachments: Bool
     @Persisted public var hasDrafts: Bool
+    @Persisted public var hasDraftsSending: Bool
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
@@ -261,6 +262,7 @@ public class Thread: Object, Decodable, Identifiable {
         date: Date,
         hasAttachments: Bool,
         hasDrafts: Bool,
+        hasDraftsSending: Bool,
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
@@ -282,6 +284,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.date = date
         self.hasAttachments = hasAttachments
         self.hasDrafts = hasDrafts
+        self.hasDraftsSending = hasDraftsSending
         self.flagged = flagged
         self.answered = answered
         self.forwarded = forwarded
@@ -364,7 +367,11 @@ public extension Thread {
                 hasAttachments = true
             }
             if message.isDraft {
-                hasDrafts = true
+                if message.scheduled {
+                    hasDraftsSending = true
+                } else {
+                    hasDrafts = true
+                }
             }
             if message.answered {
                 answered = true
@@ -411,6 +418,7 @@ public extension Thread {
         flagged = false
         hasAttachments = false
         hasDrafts = false
+        hasDraftsSending = false
         answered = false
         forwarded = false
         isLastMessageFromFolderSnoozed = false

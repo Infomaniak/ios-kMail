@@ -91,6 +91,9 @@ public enum Constants {
     public static let maxAttachmentsSize = 26_214_400 // 25 mo
     public static let minimumQuotasProgressionToDisplay = 0.03
 
+    /// Minimum delay to allow back-end to send a draft message
+    public static let gracePeriod = 2
+
     public static let threadCellMaxRecipients = 5
 
     public static let maxFolderNameLength = 255

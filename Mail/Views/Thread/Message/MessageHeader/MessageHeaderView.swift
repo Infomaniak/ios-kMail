@@ -62,7 +62,7 @@ struct MessageHeaderView: View {
     }
 
     private func didTapHeader() {
-        guard !message.isDraft else {
+        guard !message.isDraft || message.scheduled else {
             DraftUtils.editDraft(
                 from: message,
                 mailboxManager: mailboxManager,
@@ -72,7 +72,7 @@ struct MessageHeaderView: View {
         }
 
         guard let originalThreadMessages = message.originalThread?.messages,
-              originalThreadMessages.count > 1 else {
+              originalThreadMessages.count > 1 || message.scheduled else {
             return
         }
 
