@@ -39,7 +39,6 @@ struct ComposeMessageCellTextField: View {
 
                     SubjectTextView(text: $text, focusedField: _focusedField)
                         .focused($focusedField, equals: .subject)
-                        .textStyle(.body)
                         .accessibilityIdentifier(type.title)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -69,7 +68,9 @@ struct SubjectTextView: UIViewRepresentable {
         uiTextView.delegate = context.coordinator
         uiTextView.isScrollEnabled = false
         uiTextView.backgroundColor = .clear
-        uiTextView.font = UIFont.systemFont(ofSize: 16)
+        uiTextView.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 16))
+        uiTextView.textColor = UIColor(MailTextStyle.body.color)
+        uiTextView.adjustsFontForContentSizeCategory = true
         uiTextView.textContainerInset = .zero
         uiTextView.textContainer.lineFragmentPadding = 0
         return uiTextView
