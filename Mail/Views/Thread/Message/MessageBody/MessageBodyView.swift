@@ -33,7 +33,10 @@ struct MessageBodyView: View {
     let isRemoteContentBlocked: Bool
     let isShowingTranslated: Bool
     let messageUid: String
-    let messageTheme: MessageTheme
+
+    private var messageTheme: MessageTheme {
+        threadViewState.forcedLightModes.contains(messageUid) ? .light : .auto
+    }
 
     private var translatedPresentableBody: PresentableBody? {
         messagesWorker.presentableBody(for: messageUid, isShowingTranslated: true)
@@ -65,6 +68,7 @@ struct MessageBodyView: View {
                     messageUid: messageUid,
                     messageTheme: messageTheme
                 )
+                .id(messageTheme.cssProperty)
             }
         }
         .task {

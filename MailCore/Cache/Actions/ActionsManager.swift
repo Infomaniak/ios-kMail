@@ -278,11 +278,7 @@ public class ActionsManager: ObservableObject {
 			}
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
-            let theme: MessageTheme = action == .forceDarkMode ? .dark : .light
-            guard let realm = message.realm?.thaw(), let liveMessage = message.fresh(using: realm) else { return }
-            try? realm.write {
-                liveMessage.theme = theme
-            }
+            await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
         default:
             break
         }
@@ -438,6 +434,15 @@ public class ActionsManager: ObservableObject {
                     originFolder: origin.frozenFolder
                 )
             }
+        }
+    }
+
+    @MainActor
+    private func forceTheme(messageUid: String, light: Bool) {
+        if light {
+            threadViewState.forcedLightModes.insert(messageUid)
+        } else {
+            threadViewState.forcedLightModes.remove(messageUid)
         }
     }
 

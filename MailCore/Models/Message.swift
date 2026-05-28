@@ -255,7 +255,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var reactionMessages: List<Message>
 
     @Persisted public var summary: String?
-    @Persisted public var theme: MessageTheme = .auto
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))

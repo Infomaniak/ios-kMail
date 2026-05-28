@@ -29,6 +29,7 @@ struct OpenThreadIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     @StateObject private var threadViewState = ThreadViewState()
 
@@ -54,6 +55,12 @@ struct OpenThreadIntentView: View, IntentViewable {
             )
 
             ThreadView(thread: resolvedIntent.thread)
+                .onAppear {
+                    threadViewState.colorScheme = colorScheme
+                }
+                .onChange(of: colorScheme) { _ in
+                    threadViewState.colorScheme = colorScheme
+                }
                 .environmentObject(resolvedIntent.mailboxManager)
                 .environmentObject(ActionsManager(
                     mailboxManager: resolvedIntent.mailboxManager,

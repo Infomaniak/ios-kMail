@@ -44,10 +44,10 @@ extension View {
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -109,7 +109,7 @@ struct ActionsPanelViewModifier: ViewModifier {
                 target: messages,
                 origin: origin,
                 isMultipleSelection: isMultipleSelection,
-                colorScheme: colorScheme,
+                threadViewState: threadViewState,
                 completionHandler: completionHandler
             )
         }

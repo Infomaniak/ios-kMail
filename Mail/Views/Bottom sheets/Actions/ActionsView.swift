@@ -40,7 +40,7 @@ struct ActionsView: View {
         target messages: [Message],
         origin: ActionOrigin,
         isMultipleSelection: Bool,
-        colorScheme: ColorScheme,
+        threadViewState: ThreadViewState,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         let userIsStaff = user.isStaff ?? false
@@ -49,7 +49,7 @@ struct ActionsView: View {
             origin: origin,
             userIsStaff: userIsStaff,
             userEmail: user.email,
-            colorScheme: colorScheme,
+            threadViewState: threadViewState,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
         quickActions = actions.quickActions
@@ -102,8 +102,9 @@ struct ActionsView: View {
         mailboxManager: PreviewHelper.sampleMailboxManager,
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
-        origin: .toolbarLarge(originFolder: nil),
-        isMultipleSelection: false
+        origin: .toolbar(originFolder: nil),
+        isMultipleSelection: false,
+        threadViewState: ThreadViewState()
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
