@@ -348,6 +348,7 @@ struct LargeToolbarModifier: ViewModifier {
             Button { didTap(action: .reply) } label: {
                 Label(Action.reply.title, asset: Action.reply.icon)
             }
+            .disabled(!canPerformAction(Action.reply))
         }
         .defaultCustomization(.visible, options: .alwaysAvailable)
 
@@ -355,6 +356,7 @@ struct LargeToolbarModifier: ViewModifier {
             Button { didTap(action: .forward) } label: {
                 Label(Action.forward.title, asset: Action.forward.icon)
             }
+            .disabled(!canPerformAction(Action.forward))
         }
         .defaultCustomization(.visible, options: .alwaysAvailable)
 
@@ -362,6 +364,7 @@ struct LargeToolbarModifier: ViewModifier {
             Button { didTap(action: .replyAll) } label: {
                 Label(Action.replyAll.title, asset: Action.replyAll.icon)
             }
+            .disabled(!canPerformAction(Action.replyAll))
         }
         .defaultCustomization(.visible, options: .alwaysAvailable)
     }
@@ -414,6 +417,15 @@ struct LargeToolbarModifier: ViewModifier {
                     origin: origin
                 )
             }
+        }
+    }
+
+    private func canPerformAction(_ action: Action) -> Bool {
+        switch action {
+        case .reply, .forward, .replyAll:
+            return actionsManager.canSendEmails
+        default:
+            return true
         }
     }
 }

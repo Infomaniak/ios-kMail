@@ -116,6 +116,7 @@ struct CompactToolbarModifier: ViewModifier {
                         } label: {
                             Label(action.title, asset: action.icon)
                         }
+                        .disabled(!canPerformAction(action))
                         .modifier(BottomToolbarSnackBarAvoider())
                         if action != toolbarActions.last || showMoreButton {
                             LegacyToolbarSpacer()
@@ -174,6 +175,15 @@ struct CompactToolbarModifier: ViewModifier {
                     origin: origin
                 )
             }
+        }
+    }
+
+    private func canPerformAction(_ action: Action) -> Bool {
+        switch action {
+        case .reply, .forward, .replyAll:
+            return actionsManager.canSendEmails
+        default:
+            return true
         }
     }
 }

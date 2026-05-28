@@ -46,13 +46,4 @@ struct ThreadViewToolbarModifier: ViewModifier {
             content.largeToolbar(frozenThread: frozenThread)
         }
     }
-
-    private func canPerformAction(_ action: Action) -> Bool {
-        switch action {
-        case .reply, .forward:
-            return actionsManager.canSendEmails
-        default:
-            return true
-        }
-    }
 }
