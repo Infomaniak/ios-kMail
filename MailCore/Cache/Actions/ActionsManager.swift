@@ -271,6 +271,10 @@ public class ActionsManager: ObservableObject {
         case .translateMessage:
             guard let message = messages.first else { return }
             try await mailboxManager.translate(message: message, threadViewState: threadViewState)
+        case .showEuriaActions:
+            Task { @MainActor in
+                origin.messagesToProcessWithEuria?.wrappedValue = messages
+            }
         default:
             break
         }

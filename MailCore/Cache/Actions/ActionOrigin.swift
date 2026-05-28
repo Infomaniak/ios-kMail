@@ -48,6 +48,7 @@ public struct ActionOrigin {
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
     private(set) var nearestMessagesToSnooze: Binding<[Message]?>?
     private(set) var messagesToDownload: Binding<[Message]?>?
+    private(set) var messagesToProcessWithEuria: Binding<[Message]?>?
 
     init(
         type: ActionOriginType,
@@ -61,7 +62,8 @@ public struct ActionOrigin {
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-        messagesToDownload: Binding<[Message]?>? = nil
+        messagesToDownload: Binding<[Message]?>? = nil,
+        messagesToProcessWithEuria: Binding<[Message]?>? = nil
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
@@ -75,6 +77,7 @@ public struct ActionOrigin {
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
         self.nearestMessagesToSnooze = nearestMessagesToSnooze
         self.messagesToDownload = messagesToDownload
+        self.messagesToProcessWithEuria = messagesToProcessWithEuria
     }
 
     public static func toolbarLarge(
@@ -127,7 +130,8 @@ public struct ActionOrigin {
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
                                      nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-                                     messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                     messagesToDownload: Binding<[Message]?>? = nil,
+                                     messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel(source: source),
             folder: originFolder,
@@ -139,7 +143,8 @@ public struct ActionOrigin {
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
-            messagesToDownload: messagesToDownload
+            messagesToDownload: messagesToDownload,
+            messagesToProcessWithEuria: messagesToProcessWithEuria
         )
     }
 

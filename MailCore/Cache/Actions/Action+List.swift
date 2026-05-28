@@ -22,6 +22,12 @@ import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
+    public struct MessageActions {
+        public let quickActions: [Action]
+        public let listActions: [Action]
+        public let euriaActions: [Action]
+    }
+
     public static let rightClickActions: [Action] = [
         .activeMultiselect,
         .reply,
@@ -102,15 +108,37 @@ extension Action: CaseIterable {
         return actions.compactMap { $0 }
     }
 
+    private static func euriaActionsForMessage(_ message: Message,
+                                               origin: ActionOrigin,
+                                               featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
+        let translate = featureAvailableProvider.isAvailable(.translate) &&
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
+        let summarize = featureAvailableProvider.isAvailable(.summarize) &&
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
+
+        let tempEuriaActions: [Action?] = [
+            summarize ? .summarize : nil,
+            translate ? .translateMessage : nil,
+        ]
+        let euriaActions = tempEuriaActions.compactMap { $0 }
+
+        return euriaActions
+    }
+
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
                                           featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
                                             featureAvailableProvider: featureAvailableProvider)
+        let euriaActions = euriaActionsForMessage(
+            message,
+            origin: origin,
+            featureAvailableProvider: featureAvailableProvider
+        )
 
         let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
         let isInSpamFolder = message.folder?.role == .spam
@@ -118,17 +146,12 @@ extension Action: CaseIterable {
             guard !isFromMe else { return nil }
             return isInSpamFolder ? .nonSpam : .spam
         }
-        let summarize: Bool = featureAvailableProvider.isAvailable(.summarize) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
-        let hasAccessToTranslateFeature = featureAvailableProvider.isAvailable(.translate) &&
-            origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
-            summarize ? .summarize : nil,
-            hasAccessToTranslateFeature ? .translateMessage : nil,
+            euriaActions.isEmpty ? nil : .showEuriaActions,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -148,14 +171,18 @@ extension Action: CaseIterable {
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, listActions)
+        return MessageActions(
+            quickActions: Action.quickActions,
+            listActions: listActions,
+            euriaActions: euriaActions
+        )
     }
 
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message],
                                                              originFolder: Folder?,
                                                              userEmail: String,
                                                              featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
         var quickActions: [Action] = [
@@ -196,14 +223,18 @@ extension Action: CaseIterable {
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (quickActions, listActions)
+        return MessageActions(
+            quickActions: quickActions,
+            listActions: listActions,
+            euriaActions: []
+        )
     }
 
     private static func actionsForMessagesInSameThreads(_ messages: [Message],
                                                         originFolder: Folder?,
                                                         userEmail: String,
                                                         featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
         let showUnstar = messages.contains { $0.flagged }
@@ -230,7 +261,11 @@ extension Action: CaseIterable {
         ]
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, listActions)
+        return MessageActions(
+            quickActions: Action.quickActions,
+            listActions: listActions,
+            euriaActions: []
+        )
     }
 
     private static func snoozedActions(_ messages: [Message], folder: Folder?,
@@ -248,8 +283,12 @@ extension Action: CaseIterable {
         }
     }
 
-    private static func draftActions() -> (quickActions: [Action], listActions: [Action]) {
-        return ([], [.shareMailLink, .saveThreadInkDrive])
+    private static func draftActions() -> MessageActions {
+        return MessageActions(
+            quickActions: [],
+            listActions: [.shareMailLink, .saveThreadInkDrive],
+            euriaActions: []
+        )
     }
 
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
@@ -260,8 +299,7 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          featureAvailableProvider: FeatureAvailableProvider) ->
-        (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
