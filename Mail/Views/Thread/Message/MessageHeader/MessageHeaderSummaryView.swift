@@ -122,8 +122,7 @@ struct MessageHeaderSummaryView: View {
 
             if message.isDraft && message.scheduled {
                 Text(MailResourcesStrings.Localizable.messageIsSending)
-                    .textStyle(.bodySmallSecondary)
-                    .italic()
+                    .textStyle(.bodySmallItalicSecondary)
             }
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
