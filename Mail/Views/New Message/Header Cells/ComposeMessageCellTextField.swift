@@ -55,11 +55,7 @@ struct ComposeMessageCellTextField: View {
     }
 }
 
-#Preview {
-    ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
-}
-
-struct SubjectTextView: UIViewRepresentable {
+private struct SubjectTextView: UIViewRepresentable {
     @Binding var text: String
     @FocusState var focusedField: ComposeViewFieldType?
 
@@ -121,4 +117,8 @@ struct SubjectTextView: UIViewRepresentable {
             text = textView.text
         }
     }
+}
+
+#Preview {
+    ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
 }
