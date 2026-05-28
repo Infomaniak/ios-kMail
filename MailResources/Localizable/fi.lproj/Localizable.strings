@@ -4,7 +4,7 @@
  * Locale: fi, Finnish
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Wed, 27 May 2026 16:10:07 +0200
+ * Exported at: Thu, 28 May 2026 10:19:52 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -240,6 +240,9 @@
 
 /* loco:627e4053e699c44b3f1f9be2 */
 "archiveFolder" = "Arkisto";
+
+/* loco:6a17f9e305bc2870250c39f2 */
+"askEuriaTitle" = "Kysy Eurialta";
 
 /* loco:6437c60334e2ec004807c7f2 */
 "attachMailboxDescription1" = "Jos sinulla on jo Infomaniak-sähköpostiosoite, kirjaudu nyt sisään";

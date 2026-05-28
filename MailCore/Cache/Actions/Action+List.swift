@@ -128,7 +128,7 @@ extension Action: CaseIterable {
             origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
             summarize ? .summarize : nil,
-			hasAccessToTranslateFeature ? .translateMessage : nil,
+            hasAccessToTranslateFeature ? .translateMessage : nil,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -494,6 +494,18 @@ public extension Action {
         tintColorResource: MailResourcesAsset.swipeQuickActionColor,
         matomoName: "quickActions"
     )
+    static let translateMessage = Action(
+        id: "translateMessage",
+        title: MailResourcesStrings.Localizable.buttonTranslate,
+        iconResource: MailResourcesAsset.translate,
+        matomoName: "translate"
+    )
+    static let showEuriaActions = Action(
+        id: "showEuriaActions",
+        title: MailResourcesStrings.Localizable.askEuriaTitle,
+        iconResource: MailResourcesAsset.euria,
+        matomoName: ""
+    )
     /// Used to return an Action in the movePanel completion
     static let moved = Action(
         id: "fakeActionMove",
@@ -544,12 +556,6 @@ public extension Action {
         id: "activeMultiselect",
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
-        matomoName: ""
-    )
-    static let translateMessage = Action(
-        id: "translateMessage",
-        title: MailResourcesStrings.Localizable.buttonTranslate,
-        iconResource: MailResourcesAsset.translate,
         matomoName: ""
     )
 }
