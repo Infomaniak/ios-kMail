@@ -100,7 +100,7 @@ struct ActionsView: View {
         mailboxManager: PreviewHelper.sampleMailboxManager,
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
-        origin: .toolbar(originFolder: nil),
+        origin: .toolbarLarge(originFolder: nil),
         isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
