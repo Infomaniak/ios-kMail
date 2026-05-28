@@ -170,6 +170,10 @@ struct ThreadListView: View {
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
+                .actionsContextMenu(
+                    originFolder: viewModel.frozenFolder,
+                    multipleSelectionViewModel: multipleSelectionViewModel
+                )
                 .listStyle(.plain)
                 .removeTopContentMargin()
                 .observeScroll(with: scrollObserver)

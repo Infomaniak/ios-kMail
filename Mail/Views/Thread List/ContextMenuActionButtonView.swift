@@ -22,13 +22,14 @@ import SwiftUI
 struct ContextMenuActionButtonView: View {
     let action: Action
     let role: ButtonRole?
+    let thread: Thread
     var disabled = false
 
-    let onClick: (Action) -> Void
+    let onClick: (Action, Thread) -> Void
 
     var body: some View {
         Button(role: role) {
-            onClick(action)
+            onClick(action, thread)
         } label: {
             Label {
                 Text(action.title)
