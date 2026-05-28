@@ -218,6 +218,12 @@ struct LargeToolbarModifier: ViewModifier {
                 .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
                     .Localizable.actionStar)
 
+                if frozenMessages.count == 1 && mailboxManager.featureAvailableProvider.isAvailable(.summarize) {
+                    Button { didTap(action: .summarize) } label: {
+                        Label(Action.summarize.title, asset: Action.summarize.icon)
+                    }
+                }
+
                 Button { didTap(action: .saveThreadInkDrive) } label: {
                     Label(Action.saveThreadInkDrive.title, asset: Action.saveThreadInkDrive.icon)
                 }
@@ -259,6 +265,15 @@ struct LargeToolbarModifier: ViewModifier {
                 .Localizable.actionStar)
         }
         .defaultCustomization(.hidden)
+
+        if frozenMessages.count == 1 && mailboxManager.featureAvailableProvider.isAvailable(.summarize) {
+            ToolbarItem(id: "thread.other.summarize", placement: .secondaryAction) {
+                Button { didTap(action: .summarize) } label: {
+                    Label(Action.summarize.title, asset: Action.summarize.icon)
+                }
+            }
+            .defaultCustomization(.hidden)
+        }
 
         ToolbarItem(id: "thread.other.saveThreadInkDrive", placement: .secondaryAction) {
             Button { didTap(action: .saveThreadInkDrive) } label: {
