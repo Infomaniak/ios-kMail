@@ -71,7 +71,7 @@ struct ThreadListCellContextMenu: ViewModifier {
         )
     }
 
-    private var actions: Action.MessageActions {
+    private func actions(for thread: Thread) -> Action.MessageActions {
         return Action.actionsForMessages(
             thread.messages.toArray(),
             origin: origin,
