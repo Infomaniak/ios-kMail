@@ -283,10 +283,10 @@ extension Action: CaseIterable {
         }
     }
 
-    private static func draftActions() -> MessageActions {
+    private static func draftActions(hasMultipleMessages: Bool) -> MessageActions {
         return MessageActions(
             quickActions: [],
-            listActions: [.shareMailLink, .saveThreadInkDrive],
+            listActions: hasMultipleMessages ? [] : [.shareMailLink] + [.saveThreadInkDrive],
             euriaActions: []
         )
     }
@@ -301,7 +301,7 @@ extension Action: CaseIterable {
                                           userEmail: String,
                                           featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
-            return draftActions()
+            return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
                                      userEmail: userEmail, featureAvailableProvider: featureAvailableProvider)
