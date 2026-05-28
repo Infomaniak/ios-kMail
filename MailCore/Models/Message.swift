@@ -215,8 +215,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var summary: String?
 
-    @Persisted public var cancelResource: String?
-
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
