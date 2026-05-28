@@ -112,9 +112,11 @@ extension Action: CaseIterable {
                                                origin: ActionOrigin,
                                                featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
         let translate = featureAvailableProvider.isAvailable(.translate) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
+                || origin.type == .toolbar)
         let summarize = featureAvailableProvider.isAvailable(.summarize) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
+                || origin.type == .toolbar)
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
@@ -532,6 +534,12 @@ public extension Action {
         tintColorResource: MailResourcesAsset.swipeQuickActionColor,
         matomoName: "quickActions"
     )
+    static let summarize = Action(
+        id: "summarize",
+        title: MailResourcesStrings.Localizable.actionSummarize,
+        iconResource: MailResourcesAsset.paragraphShorten,
+        matomoName: "summarize"
+    )
     static let translateMessage = Action(
         id: "translateMessage",
         title: MailResourcesStrings.Localizable.buttonTranslate,
@@ -562,12 +570,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
-    )
-    static let summarize = Action(
-        id: "summarize",
-        title: MailResourcesStrings.Localizable.actionSummarize,
-        iconResource: MailResourcesAsset.paragraphShorten,
-        matomoName: "summarize"
     )
 
     // MARK: Account Actions

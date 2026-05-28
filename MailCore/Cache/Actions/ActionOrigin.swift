@@ -90,7 +90,8 @@ public struct ActionOrigin {
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-        messagesToDownload: Binding<[Message]?>? = nil
+        messagesToDownload: Binding<[Message]?>? = nil,
+        messagesToProcessWithEuria: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar,
@@ -103,7 +104,8 @@ public struct ActionOrigin {
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
-            messagesToDownload: messagesToDownload
+            messagesToDownload: messagesToDownload,
+            messagesToProcessWithEuria: messagesToProcessWithEuria
         )
     }
 
