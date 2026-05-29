@@ -1162,6 +1162,9 @@
 /* loco:69f07faf00857b6e8f0314f2 */
 "messageSummaryLoading" = "Meddelandesammanfattning…";
 
+/* loco:69f322a82ef533c8a005f5d2 */
+"messageTranslateErrorRetry" = "Euria kunde inte översätta detta meddelande. Försök igen.";
+
 /* loco:69ca51d3ab0a8c7268007f32 */
 "messageTranslatedTitle" = "Översatt i %@";
 
