@@ -241,12 +241,12 @@ public extension MailboxManager {
     }
 
     @MainActor
-    func translate(message: Message, threadViewState: ThreadViewState) async throws {
+    func translate(message: Message, threadViewState: ThreadViewState, locale: Locale) async throws {
         withAnimation {
             threadViewState.translatedMessages[message.uid] = .showContent
         }
 
-        guard !isBodyTranslated(message: message) else {
+        guard !isBodyTranslated(message: message, locale: locale) else {
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 liveMessage.isShowingTranslated = true
@@ -255,16 +255,18 @@ public extension MailboxManager {
         }
 
         do {
-            let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
+            guard let languageIdentifier = locale.language.languageCode?.identifier else {
+                return
+            }
             let translatedMessage = try await apiFetcher.translate(messageUid: message.uid,
                                                                    mailboxUuid: mailbox.uuid,
-                                                                   destinationLanguage: currentLanguage)
+                                                                   destinationLanguage: languageIdentifier)
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 let translatedBody = TranslatedBody()
                 translatedBody.value = translatedMessage
                 translatedBody.type = liveMessage.body?.type
-                translatedBody.language = currentLanguage
+                translatedBody.language = locale.identifier
                 liveMessage.translatedBody = translatedBody
                 liveMessage.isShowingTranslated = true
             }
@@ -275,11 +277,10 @@ public extension MailboxManager {
         }
     }
 
-    private func isBodyTranslated(message: Message) -> Bool {
+    private func isBodyTranslated(message: Message, locale: Locale) -> Bool {
         guard let liveMessage = message.thaw() else { return false }
-        let currentLanguage = Bundle.main.preferredLocalizations.first
         return liveMessage.translatedBody?.value != nil &&
-            liveMessage.translatedBody?.language == currentLanguage
+            liveMessage.translatedBody?.language == locale.identifier
     }
 
     private func undoAction(

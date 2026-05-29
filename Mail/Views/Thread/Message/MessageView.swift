@@ -34,6 +34,7 @@ extension EnvironmentValues {
 /// Something that can display an email
 struct MessageView: View {
     @Environment(\.isMessageInteractive) private var isMessageInteractive
+    @Environment(\.locale) private var locale
 
     @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -96,8 +97,7 @@ struct MessageView: View {
             }
         }
         .task {
-            let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
-            guard message.translatedBody?.value != nil && message.translatedBody?.language == currentLanguage else {
+            guard message.translatedBody?.value != nil && message.translatedBody?.language == locale.identifier else {
                 guard let liveMessage = message.thaw() else { return }
                 try? liveMessage.realm?.write {
                     liveMessage.translatedBody = nil

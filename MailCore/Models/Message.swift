@@ -144,10 +144,9 @@ public enum MessageTranslatedState {
     case showContent
     case showError(MailApiError?)
 
-    public func title(contentLoaded: Bool) -> String {
+    public func title(contentLoaded: Bool, locale: Locale) -> String {
         if contentLoaded {
-            let targetLanguageCode = Bundle.main.preferredLocalizations.first
-            guard let targetLanguage = Locale.current.localizedString(forLanguageCode: targetLanguageCode ?? "") else {
+            guard let targetLanguage = Locale.current.localizedString(forLanguageCode: locale.identifier) else {
                 return MailResourcesStrings.Localizable.genericMessageTranslated
             }
 

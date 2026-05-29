@@ -24,6 +24,7 @@ import RealmSwift
 import SwiftUI
 
 struct MessageEuriaBannersView: View {
+    @Environment(\.locale) private var locale
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
 
@@ -64,7 +65,7 @@ struct MessageEuriaBannersView: View {
 
         if let translatedState = threadViewState.translatedMessages[message.uid] {
             MessageEuriaContentView(
-                title: translatedState.title(contentLoaded: message.translatedBody != nil),
+                title: translatedState.title(contentLoaded: message.translatedBody != nil, locale: locale),
                 isError: {
                     if case .showError(let error) = translatedState,
                        error != MailApiError.translationTargetSameAsSource {
@@ -91,7 +92,8 @@ struct MessageEuriaBannersView: View {
                         Task {
                             try await mailboxManager.translate(
                                 message: message.freezeIfNeeded(),
-                                threadViewState: threadViewState
+                                threadViewState: threadViewState,
+                                locale: locale
                             )
                         }
                     } label: {
