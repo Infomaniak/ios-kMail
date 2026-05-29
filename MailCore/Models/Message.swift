@@ -140,6 +140,28 @@ public enum MessageSummaryState: CaseIterable {
     }
 }
 
+public enum MessageTranslatedState {
+    case showContent
+    case showError(MailApiError?)
+
+    public func title(contentLoaded: Bool, locale: Locale) -> String {
+        if contentLoaded {
+            guard let targetLanguage = Locale.current.localizedString(forLanguageCode: locale.identifier) else {
+                return MailResourcesStrings.Localizable.genericMessageTranslated
+            }
+
+            return MailResourcesStrings.Localizable.messageTranslatedTitle(targetLanguage)
+        }
+
+        switch self {
+        case .showContent:
+            return MailResourcesStrings.Localizable.euriaTranslateMessage
+        case .showError(let error):
+            return error?.localizedDescription ?? MailResourcesStrings.Localizable.messageTranslateErrorRetry
+        }
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -158,6 +180,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var bcc: List<Recipient>
     @Persisted public var replyTo: List<Recipient>
     @Persisted public var body: Body?
+    @Persisted public var translatedBody: TranslatedBody?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var dkimStatus: MessageDKIM
     @Persisted public var attachmentsResources: String?
@@ -197,6 +220,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
     @Persisted public var localSafeDisplay = false
+    @Persisted public var isShowingTranslated = false
 
     @Persisted public var calendarEventResponse: CalendarEventResponse?
 

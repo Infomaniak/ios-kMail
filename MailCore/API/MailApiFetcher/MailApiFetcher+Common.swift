@@ -128,6 +128,14 @@ public extension MailApiFetcher {
                                                         parameters: ["content": content]))
     }
 
+    func translate(messageUid: String, mailboxUuid: String, destinationLanguage: String) async throws -> String {
+        try await perform(request: authenticatedRequest(.translate,
+                                                        method: .post,
+                                                        parameters: ["msg_uid": messageUid,
+                                                                     "mailbox_uuid": mailboxUuid,
+                                                                     "destination_language": destinationLanguage]))
+    }
+
     func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder))
     }

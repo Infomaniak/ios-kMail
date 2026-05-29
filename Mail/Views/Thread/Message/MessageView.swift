@@ -34,8 +34,11 @@ extension EnvironmentValues {
 /// Something that can display an email
 struct MessageView: View {
     @Environment(\.isMessageInteractive) private var isMessageInteractive
+    @Environment(\.locale) private var locale
 
+    @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var displayContentBlockedActionView = false
     @State private var initialContentLoading = true
@@ -77,6 +80,7 @@ struct MessageView: View {
                             displayContentBlockedActionView: $displayContentBlockedActionView,
                             initialContentLoading: $initialContentLoading,
                             isRemoteContentBlocked: isRemoteContentBlocked,
+                            isShowingTranslated: message.isShowingTranslated,
                             messageUid: message.uid
                         )
 
@@ -90,6 +94,25 @@ struct MessageView: View {
                         }
                     }
                 }
+            }
+        }
+        .task {
+            guard message.translatedBody?.value != nil && message.translatedBody?.language == locale.identifier else {
+                guard let liveMessage = message.thaw() else { return }
+                try? liveMessage.realm?.write {
+                    liveMessage.translatedBody = nil
+                    liveMessage.isShowingTranslated = false
+                }
+                return
+            }
+
+            if message.isShowingTranslated {
+                threadViewState.translatedMessages[message.uid] = .showContent
+            }
+        }
+        .onChange(of: message.isShowingTranslated) { _ in
+            Task {
+                try? await messagesWorker.fetchAndProcessIfNeeded(messageUid: message.uid)
             }
         }
         .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
@@ -108,6 +131,7 @@ struct MessageView: View {
         message: PreviewHelper.sampleMessage
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
@@ -120,5 +144,6 @@ struct MessageView: View {
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
+    .environmentObject(ThreadViewState())
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

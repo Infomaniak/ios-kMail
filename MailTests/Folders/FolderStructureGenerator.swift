@@ -196,6 +196,7 @@ final class InMemoryRealmAccessor: RealmAccessible {
             Message.self,
             Body.self,
             SubBody.self,
+            TranslatedBody.self,
             Attachment.self,
             Recipient.self,
             Draft.self,

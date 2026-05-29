@@ -176,6 +176,7 @@ struct QuickActionView: View {
 }
 
 struct MessageActionView: View {
+    @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -200,7 +201,8 @@ struct MessageActionView: View {
                 try await actionsManager.performAction(
                     target: targetMessages,
                     action: action,
-                    origin: origin
+                    origin: origin,
+                    locale: locale
                 )
                 completionHandler?(action)
 

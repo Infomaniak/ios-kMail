@@ -31,6 +31,7 @@ extension View {
 }
 
 struct LargeToolbarModifier: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -43,6 +44,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
+    @ModalState private var messagesToProcessWithEuria: [Message]?
 
     private let frozenThread: Thread
 
@@ -81,7 +83,8 @@ struct LargeToolbarModifier: ViewModifier {
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
         )
     }
 
@@ -151,6 +154,11 @@ struct LargeToolbarModifier: ViewModifier {
                 messages: messagesToSnooze,
                 initialDate: initialSnoozedDate,
                 folder: frozenFolder?.freezeIfNeeded()
+            )
+            .euriaFloatingPanel(
+                user: currentUser.value,
+                messages: messagesToProcessWithEuria,
+                origin: origin
             )
     }
 
@@ -227,9 +235,11 @@ struct LargeToolbarModifier: ViewModifier {
                 .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
                     .Localizable.actionStar)
 
-                if frozenMessages.count == 1 && mailboxManager.featureAvailableProvider.isAvailable(.summarize) {
-                    Button { didTap(action: .summarize) } label: {
-                        Label(Action.summarize.title, asset: Action.summarize.icon)
+                if frozenMessages.count == 1 &&
+                    (mailboxManager.featureAvailableProvider.isAvailable(.summarize) ||
+                        mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
+                    Button { didTap(action: .showEuriaActions) } label: {
+                        Label(Action.showEuriaActions.title, asset: Action.showEuriaActions.icon)
                     }
                 }
 
@@ -275,10 +285,12 @@ struct LargeToolbarModifier: ViewModifier {
         }
         .defaultCustomization(.hidden)
 
-        if frozenMessages.count == 1 && mailboxManager.featureAvailableProvider.isAvailable(.summarize) {
-            ToolbarItem(id: "thread.other.summarize", placement: .secondaryAction) {
-                Button { didTap(action: .summarize) } label: {
-                    Label(Action.summarize.title, asset: Action.summarize.icon)
+        if frozenMessages.count == 1 &&
+            (mailboxManager.featureAvailableProvider.isAvailable(.summarize) ||
+                mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
+            ToolbarItem(id: "thread.other.showEuriaActions", placement: .secondaryAction) {
+                Button { didTap(action: .showEuriaActions) } label: {
+                    Label(Action.showEuriaActions.title, asset: Action.showEuriaActions.icon)
                 }
             }
             .defaultCustomization(.hidden)

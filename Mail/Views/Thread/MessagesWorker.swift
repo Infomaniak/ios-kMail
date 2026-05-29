@@ -27,11 +27,17 @@ extension MessagesWorker {
     enum WorkerError: Error {
         case cantFetchMessage
     }
+
+    // periphery:ignore - Used as a cache key for presentable bodies
+    struct PresentableBodyCacheKey: Hashable {
+        let messageUid: String
+        let isShowingTranslated: Bool
+    }
 }
 
 @MainActor
 final class MessagesWorker: ObservableObject {
-    @Published var presentableBodies = [String: PresentableBody]()
+    @Published var presentableBodies = [PresentableBodyCacheKey: PresentableBody]()
 
     private var replacedAllAttachments = [String: Bool]()
     private let bodyImageProcessor = BodyImageProcessor()
@@ -39,6 +45,11 @@ final class MessagesWorker: ObservableObject {
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
+    }
+
+    func presentableBody(for messageUid: String, isShowingTranslated: Bool) -> PresentableBody? {
+        let cacheKey = PresentableBodyCacheKey(messageUid: messageUid, isShowingTranslated: isShowingTranslated)
+        return presentableBodies[cacheKey]
     }
 
     func fetchAndProcessIfNeeded(messageUid: String) async throws {
@@ -97,7 +108,7 @@ extension MessagesWorker {
     private func prepareBody(of message: Message) async {
         guard !Task.isCancelled else { return }
 
-        guard !hasPresentableBody(messageUid: message.uid),
+        guard !hasPresentableBody(messageUid: message.uid, isShowingTranslated: message.isShowingTranslated),
               let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
             return
         }
@@ -140,7 +151,11 @@ extension MessagesWorker {
     ) async {
         guard !Task.isCancelled else { return }
 
-        guard let presentableBody = presentableBodies[frozenMessage.uid] else { return }
+        let cacheKey = PresentableBodyCacheKey(
+            messageUid: frozenMessage.uid,
+            isShowingTranslated: frozenMessage.isShowingTranslated
+        )
+        guard let presentableBody = presentableBodies[cacheKey] else { return }
 
         let base64Images = await bodyImageProcessor.fetchBase64Images(attachments, mailboxManager: mailboxManager)
 
@@ -179,11 +194,13 @@ extension MessagesWorker {
     }
 
     private func setPresentableBody(_ presentableBody: PresentableBody, for message: Message) {
-        presentableBodies[message.uid] = presentableBody
+        let cacheKey = PresentableBodyCacheKey(messageUid: message.uid, isShowingTranslated: message.isShowingTranslated)
+        presentableBodies[cacheKey] = presentableBody
     }
 
-    private func hasPresentableBody(messageUid: String) -> Bool {
-        return presentableBodies[messageUid] != nil
+    private func hasPresentableBody(messageUid: String, isShowingTranslated: Bool) -> Bool {
+        let cacheKey = PresentableBodyCacheKey(messageUid: messageUid, isShowingTranslated: isShowingTranslated)
+        return presentableBodies[cacheKey] != nil
     }
 
     private func setReplacedAllAttachments(for message: Message) {

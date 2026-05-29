@@ -57,6 +57,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
+    @ModalState private var messagesToProcessWithEuria: [Message]?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -77,7 +78,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
         )
     }
 
@@ -158,6 +160,12 @@ struct ActionsPanelViewModifier: ViewModifier {
             messages: messagesToSnooze,
             initialDate: initialSnoozedDate,
             folder: originFolder?.freezeIfNeeded(),
+            completionHandler: completionHandler
+        )
+        .euriaFloatingPanel(
+            user: currentUser.value,
+            messages: messagesToProcessWithEuria,
+            origin: origin,
             completionHandler: completionHandler
         )
     }

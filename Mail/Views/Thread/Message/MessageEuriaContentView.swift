@@ -53,6 +53,7 @@ struct MessageEuriaContentView<Content: View>: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 CloseButton(size: .medium) { dismissAction() }
+                    .tint(MailResourcesAsset.textTertiaryColor)
             }
 
             if let content {

@@ -23,6 +23,7 @@ import SwiftUI
 
 struct MessageBodyView: View {
     @EnvironmentObject private var messagesWorker: MessagesWorker
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var isShowingLoadingError = false
 
@@ -30,11 +31,26 @@ struct MessageBodyView: View {
     @Binding var initialContentLoading: Bool
 
     let isRemoteContentBlocked: Bool
+    let isShowingTranslated: Bool
     let messageUid: String
+
+    private var translatedPresentableBody: PresentableBody? {
+        messagesWorker.presentableBody(for: messageUid, isShowingTranslated: true)
+    }
+
+    private var isTranslationInProgress: Bool {
+        guard case .showContent = threadViewState.translatedMessages[messageUid] else {
+            return false
+        }
+
+        return translatedPresentableBody == nil
+    }
 
     var body: some View {
         ZStack {
-            if isShowingLoadingError {
+            if isTranslationInProgress {
+                ShimmerView()
+            } else if isShowingLoadingError {
                 Text(MailResourcesStrings.Localizable.errorLoadingMessage)
                     .textStyle(.bodySmallItalicSecondary)
                     .padding(value: .medium)
@@ -43,7 +59,7 @@ struct MessageBodyView: View {
                 MessageBodyContentView(
                     displayContentBlockedActionView: $displayContentBlockedActionView,
                     initialContentLoading: $initialContentLoading,
-                    presentableBody: messagesWorker.presentableBodies[messageUid],
+                    presentableBody: messagesWorker.presentableBody(for: messageUid, isShowingTranslated: isShowingTranslated),
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid
                 )
@@ -66,7 +82,9 @@ struct MessageBodyView: View {
         displayContentBlockedActionView: .constant(false),
         initialContentLoading: .constant(false),
         isRemoteContentBlocked: false,
+        isShowingTranslated: false,
         messageUid: PreviewHelper.sampleMessage.uid
     )
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
+    .environmentObject(ThreadViewState())
 }

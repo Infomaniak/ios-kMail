@@ -126,7 +126,8 @@ public class ActionsManager: ObservableObject {
         self.threadViewState = threadViewState
     }
 
-    public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
+    public func performAction(target messages: [Message], action: Action,
+                              origin: ActionOrigin, locale: Locale? = nil) async throws {
         let messagesWithDuplicates = Set(messages.addingDuplicates()).toArray()
 
         guard networkMonitor.isConnected || action == .quickActionPanel else {
@@ -268,6 +269,13 @@ public class ActionsManager: ObservableObject {
         case .summarize:
             guard let message = messages.first else { return }
             try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
+        case .translateMessage:
+            guard let message = messages.first, let locale else { return }
+            try await mailboxManager.translate(message: message, threadViewState: threadViewState, locale: locale)
+        case .showEuriaActions:
+            Task { @MainActor in
+                origin.messagesToProcessWithEuria?.wrappedValue = messages
+            }
         default:
             break
         }

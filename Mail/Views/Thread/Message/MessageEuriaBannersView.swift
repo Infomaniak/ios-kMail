@@ -24,6 +24,7 @@ import RealmSwift
 import SwiftUI
 
 struct MessageEuriaBannersView: View {
+    @Environment(\.locale) private var locale
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
 
@@ -39,14 +40,7 @@ struct MessageEuriaBannersView: View {
                     Text(summary)
                         .textStyle(.bodySmall)
                 } else if summaryState == .showError {
-                    Button {
-                        Task {
-                            try await mailboxManager.summarize(
-                                message: message.freezeIfNeeded(),
-                                threadViewState: threadViewState
-                            )
-                        }
-                    } label: {
+                    Button(action: summarizeMessage) {
                         Text(MailResourcesStrings.Localizable.aiButtonRetry)
                             .font(MailTextStyle.body.font)
                             .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
@@ -58,8 +52,66 @@ struct MessageEuriaBannersView: View {
                     threadViewState.summaries[message.uid] = nil
                 }
             }
-            .animation(.spring, value: message.summary)
             .padding(.horizontal, value: .medium)
+        }
+
+        if let translatedState = threadViewState.translatedMessages[message.uid] {
+            MessageEuriaContentView(
+                title: translatedState.title(contentLoaded: message.translatedBody != nil, locale: locale),
+                isError: {
+                    if case .showError(let error) = translatedState,
+                       error != MailApiError.translationTargetSameAsSource {
+                        return true
+                    }
+                    return false
+                }()
+            ) {
+                if message.translatedBody?.value != nil {
+                    Button {
+                        withAnimation {
+                            $message.isShowingTranslated.wrappedValue = false
+                            threadViewState.translatedMessages[message.uid] = nil
+                        }
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.buttonShowOriginal)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                    }
+                    .padding(.leading, value: .large)
+                } else if case .showError(let error) = translatedState,
+                          error != MailApiError.translationTargetSameAsSource {
+                    Button(action: translateMessage) {
+                        Text(MailResourcesStrings.Localizable.aiButtonRetry)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
+                    }
+                    .padding(.leading, value: .large)
+                }
+            } dismiss: {
+                withAnimation {
+                    threadViewState.translatedMessages[message.uid] = nil
+                }
+            }
+            .padding(.horizontal, value: .medium)
+        }
+    }
+
+    private func summarizeMessage() {
+        Task {
+            try await mailboxManager.summarize(
+                message: message.freezeIfNeeded(),
+                threadViewState: threadViewState
+            )
+        }
+    }
+
+    private func translateMessage() {
+        Task {
+            try await mailboxManager.translate(
+                message: message.freezeIfNeeded(),
+                threadViewState: threadViewState,
+                locale: locale
+            )
         }
     }
 }

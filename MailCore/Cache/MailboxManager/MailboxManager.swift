@@ -87,7 +87,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 51,
+            schemaVersion: 52,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -143,6 +143,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 Message.self,
                 Body.self,
                 SubBody.self,
+                TranslatedBody.self,
                 Attachment.self,
                 Recipient.self,
                 RecipientsList.self,

@@ -22,6 +22,12 @@ import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
+    public struct MessageActions {
+        public let quickActions: [Action]
+        public let listActions: [Action]
+        public let euriaActions: [Action]
+    }
+
     public static let rightClickActions: [Action] = [
         .activeMultiselect,
         .reply,
@@ -102,15 +108,37 @@ extension Action: CaseIterable {
         return actions.compactMap { $0 }
     }
 
+    private static func euriaActionsForMessage(origin: ActionOrigin,
+                                               featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
+        let translate = featureAvailableProvider.isAvailable(.translate) &&
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
+                || origin.type == .toolbar)
+        let summarize = featureAvailableProvider.isAvailable(.summarize) &&
+            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
+                || origin.type == .toolbar)
+
+        let tempEuriaActions: [Action?] = [
+            summarize ? .summarize : nil,
+            translate ? .translateMessage : nil
+        ]
+        let euriaActions = tempEuriaActions.compactMap { $0 }
+
+        return euriaActions
+    }
+
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
                                           featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
                                             featureAvailableProvider: featureAvailableProvider)
+        let euriaActions = euriaActionsForMessage(
+            origin: origin,
+            featureAvailableProvider: featureAvailableProvider
+        )
 
         let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
         let isInSpamFolder = message.folder?.role == .spam
@@ -118,14 +146,12 @@ extension Action: CaseIterable {
             guard !isFromMe else { return nil }
             return isInSpamFolder ? .nonSpam : .spam
         }
-        let summarize: Bool = featureAvailableProvider.isAvailable(.summarize) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList))
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .message)
         var tempListActions: [Action?] = [
-            summarize ? .summarize : nil,
+            euriaActions.isEmpty ? nil : .showEuriaActions,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -145,14 +171,18 @@ extension Action: CaseIterable {
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, listActions)
+        return MessageActions(
+            quickActions: Action.quickActions,
+            listActions: listActions,
+            euriaActions: euriaActions
+        )
     }
 
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message],
                                                              originFolder: Folder?,
                                                              userEmail: String,
                                                              featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
         var quickActions: [Action] = [
@@ -193,14 +223,18 @@ extension Action: CaseIterable {
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (quickActions, listActions)
+        return MessageActions(
+            quickActions: quickActions,
+            listActions: listActions,
+            euriaActions: []
+        )
     }
 
     private static func actionsForMessagesInSameThreads(_ messages: [Message],
                                                         originFolder: Folder?,
                                                         userEmail: String,
                                                         featureAvailableProvider: FeatureAvailableProvider)
-        -> (quickActions: [Action], listActions: [Action]) {
+        -> MessageActions {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
         let showUnstar = messages.contains { $0.flagged }
@@ -227,7 +261,11 @@ extension Action: CaseIterable {
         ]
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, listActions)
+        return MessageActions(
+            quickActions: Action.quickActions,
+            listActions: listActions,
+            euriaActions: []
+        )
     }
 
     private static func snoozedActions(_ messages: [Message], folder: Folder?,
@@ -245,8 +283,12 @@ extension Action: CaseIterable {
         }
     }
 
-    private static func draftActions() -> (quickActions: [Action], listActions: [Action]) {
-        return ([], [.shareMailLink, .saveThreadInkDrive])
+    private static func draftActions() -> MessageActions {
+        return MessageActions(
+            quickActions: [],
+            listActions: [.shareMailLink, .saveThreadInkDrive],
+            euriaActions: []
+        )
     }
 
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
@@ -257,8 +299,7 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          featureAvailableProvider: FeatureAvailableProvider) ->
-        (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions()
         } else if messages.count == 1, let message = messages.first {
@@ -491,6 +532,24 @@ public extension Action {
         tintColorResource: MailResourcesAsset.swipeQuickActionColor,
         matomoName: "quickActions"
     )
+    static let summarize = Action(
+        id: "summarize",
+        title: MailResourcesStrings.Localizable.actionSummarize,
+        iconResource: MailResourcesAsset.paragraphShorten,
+        matomoName: "summarize"
+    )
+    static let translateMessage = Action(
+        id: "translateMessage",
+        title: MailResourcesStrings.Localizable.buttonTranslate,
+        iconResource: MailResourcesAsset.translate,
+        matomoName: "translate"
+    )
+    static let showEuriaActions = Action(
+        id: "showEuriaActions",
+        title: MailResourcesStrings.Localizable.askEuriaTitle,
+        iconResource: MailResourcesAsset.euria,
+        matomoName: ""
+    )
     /// Used to return an Action in the movePanel completion
     static let moved = Action(
         id: "fakeActionMove",
@@ -509,12 +568,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
-    )
-    static let summarize = Action(
-        id: "summarize",
-        title: MailResourcesStrings.Localizable.actionSummarize,
-        iconResource: MailResourcesAsset.paragraphShorten,
-        matomoName: "summarize"
     )
 
     // MARK: Account Actions

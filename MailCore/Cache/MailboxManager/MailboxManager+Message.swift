@@ -237,8 +237,50 @@ public extension MailboxManager {
             withAnimation {
                 threadViewState.summaries[message.uid] = .showError
             }
-            throw error
         }
+    }
+
+    @MainActor
+    func translate(message: Message, threadViewState: ThreadViewState, locale: Locale) async throws {
+        withAnimation {
+            threadViewState.translatedMessages[message.uid] = .showContent
+        }
+
+        guard !isBodyTranslated(message: message, locale: locale) else {
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.isShowingTranslated = true
+            }
+            return
+        }
+
+        do {
+            guard let languageIdentifier = locale.language.languageCode?.identifier else {
+                return
+            }
+            let translatedMessage = try await apiFetcher.translate(messageUid: message.uid,
+                                                                   mailboxUuid: mailbox.uuid,
+                                                                   destinationLanguage: languageIdentifier)
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                let translatedBody = TranslatedBody()
+                translatedBody.value = translatedMessage
+                translatedBody.type = liveMessage.body?.type
+                translatedBody.language = locale.identifier
+                liveMessage.translatedBody = translatedBody
+                liveMessage.isShowingTranslated = true
+            }
+        } catch {
+            withAnimation {
+                threadViewState.translatedMessages[message.uid] = .showError(error as? MailApiError)
+            }
+        }
+    }
+
+    private func isBodyTranslated(message: Message, locale: Locale) -> Bool {
+        guard let liveMessage = message.thaw() else { return false }
+        return liveMessage.translatedBody?.value != nil &&
+            liveMessage.translatedBody?.language == locale.identifier
     }
 
     private func undoAction(
