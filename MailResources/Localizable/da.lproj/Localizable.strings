@@ -28,6 +28,9 @@
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Bloker afsender";
 
+/* loco:6a1ff9313bbd5078f00b5912 */
+"actionCallIfNoResponse" = "Mind mig om det, hvis der ikke er svar";
+
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Annuller udsættelse";
 
@@ -235,6 +238,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notifikationer deaktiveret";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Vær opmærksom på, at afsenderen af denne e-mail tilsyneladende ikke ønsker et svar.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Beskytt adgangen til din app ved at aktivere din telefons lås.";
 
@@ -372,6 +378,9 @@
 
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Tilføj en mappe";
+
+/* loco:6a27d7f60e7b4dc01d097f18 */
+"buttonCustomReminder" = "Brugerdefineret påmindelse";
 
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Tilpasset tidsplan";
@@ -526,6 +535,9 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Arrangør)";
 
+/* loco:6a202b5d27e1689d6f097ef3 */
+"callIfNoResponseHeaderTitle" = "Mind mig om det, hvis der ikke er svar: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 
@@ -631,6 +643,9 @@
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Ny";
 
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "Er en påmindelse";
+
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Svar";
 
@@ -639,6 +654,10 @@
 
 /* loco:642430a9ce12f43b026e7ef2 */
 "contentDescriptionSelectedItem" = "Valgt";
+
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionTagMention" = "Du er blevet nævnt.";
 
 /* loco:64a4240f5579c83f7b070182 */
 "contentDescriptionUnreadPastille" = "Denne mappe indeholder ulæste mails";
@@ -657,6 +676,9 @@
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Dato:";
+
+/* loco:6a200cbc394598861c0fe902 */
+"daysBeforeSendingReminder" = "%d dage";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Sletningen af din konto vil være endelig. Du vil ikke kunne genaktivere din konto.";
@@ -982,6 +1004,9 @@
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Afsenderens oprindelse er blevet autentificeret.";
 
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Modtagere i din organisation vil se, at der forventes et svar.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Jeg forstår";
 
@@ -1054,6 +1079,9 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "For at hjælpe dig";
 
+/* loco:6a200d0be50e2414ef01c585 */
+"hoursBeforeSendingReminder" = "%d timer";
+
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Indbakke";
 
@@ -1074,6 +1102,9 @@
 
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Senere i morges";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "og";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Indlæser…";
@@ -1155,6 +1186,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Beskedens resumé";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria kunne ikke opsummere denne besked.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria kunne ikke opsummere denne besked. Prøv venligst igen.";
@@ -1345,6 +1379,34 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Seneste søgninger";
 
+/* loco:6a215874fe133c053105c086 */
+"reminderAfterHeaderTitle" = "%1$@ venter på et svar siden %2$@";
+
+/* loco:6a215cec5983e40edf0d2d92 */
+"reminderAfterHeaderTitle-plural" = "%1$@ venter på et svar siden %2$@";
+
+/* loco:6a215873199011ec1c03ecf2 */
+"reminderBeforeHeaderTitle" = "%1$s venter på et svar inden %2$s";
+
+/* loco:6a215cec7c626a0c6e001732 */
+"reminderBeforeHeaderTitle-plural" = "%1$s venter på et svar inden %2$s";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Følg op";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hej,\nEr det muligt at få feedback om dette emne?\nPå forhånd tak.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Marker som udført";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Påmindelse: intet svar fra %1$s på denne e-mail siden %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Udsæt til i morgen kl. %s";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Omdøb mappen";
 
@@ -1374,6 +1436,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Gem i kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Planlagt afsendelse: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Planlæg afsendelse";
@@ -1416,6 +1481,9 @@
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Send bekræftelsen";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Sendevalg";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Sendte beskeder";

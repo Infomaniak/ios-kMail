@@ -28,6 +28,9 @@
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Afzender blokkeren";
 
+/* loco:6a1ff9313bbd5078f00b5912 */
+"actionCallIfNoResponse" = "Herinner me eraan als er geen antwoord is";
+
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Snooze annuleren";
 
@@ -235,6 +238,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Meldingen uitgeschakeld";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Let op, de verzender van deze e-mail lijkt geen antwoord te wensen.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Bescherm de toegang tot uw app door de vergrendeling van uw telefoon in te schakelen.";
 
@@ -372,6 +378,9 @@
 
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Een map toevoegen";
+
+/* loco:6a27d7f60e7b4dc01d097f18 */
+"buttonCustomReminder" = "Aangepaste herinnering";
 
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Aangepast schema";
@@ -526,6 +535,9 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organisator)";
 
+/* loco:6a202b5d27e1689d6f097ef3 */
+"callIfNoResponseHeaderTitle" = "Herinner me eraan als er geen antwoord is: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 
@@ -631,6 +643,9 @@
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nieuw";
 
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "Is een herinnering";
+
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Antwoord";
 
@@ -639,6 +654,10 @@
 
 /* loco:642430a9ce12f43b026e7ef2 */
 "contentDescriptionSelectedItem" = "Geselecteerd";
+
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionTagMention" = "Je bent vermeld.";
 
 /* loco:64a4240f5579c83f7b070182 */
 "contentDescriptionUnreadPastille" = "Deze map bevat ongelezen berichten";
@@ -657,6 +676,9 @@
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Datum:";
+
+/* loco:6a200cbc394598861c0fe902 */
+"daysBeforeSendingReminder" = "%d dagen";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Het verwijderen van uw account is definitief. U kunt uw account niet opnieuw activeren.";
@@ -982,6 +1004,9 @@
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "De herkomst van deze afzender is geauthenticeerd.";
 
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Ontvangers binnen je organisatie zullen zien dat er een reactie wordt verwacht.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Ik begrijp het";
 
@@ -1054,6 +1079,9 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Om u te helpen";
 
+/* loco:6a200d0be50e2414ef01c585 */
+"hoursBeforeSendingReminder" = "%d uur";
+
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Inbox";
 
@@ -1074,6 +1102,9 @@
 
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Later deze ochtend";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "en";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Laden…";
@@ -1155,6 +1186,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Samenvatting van het bericht";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria kon dit bericht niet samenvatten.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria kon dit bericht niet samenvatten. Probeer het opnieuw.";
@@ -1345,6 +1379,34 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recente zoekopdrachten";
 
+/* loco:6a215874fe133c053105c086 */
+"reminderAfterHeaderTitle" = "%1$@ wacht op een antwoord sinds %2$@";
+
+/* loco:6a215cec5983e40edf0d2d92 */
+"reminderAfterHeaderTitle-plural" = "%1$@ wachten op een antwoord sinds %2$@";
+
+/* loco:6a215873199011ec1c03ecf2 */
+"reminderBeforeHeaderTitle" = "%1$s wacht op een antwoord vóór %2$s";
+
+/* loco:6a215cec7c626a0c6e001732 */
+"reminderBeforeHeaderTitle-plural" = "%1$s wachten op een antwoord vóór %2$s";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Opvolgen";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hallo,\nIs het mogelijk om feedback te krijgen over dit onderwerp?\nBij voorbaat dank.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Markeer als voltooid";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Herinnering: geen reactie van %1$s op deze e-mail sinds %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Uitstellen tot morgen %s";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "De map hernoemen";
 
@@ -1374,6 +1436,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Opslaan in kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Geplande verzending: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Verzending plannen";
@@ -1416,6 +1481,9 @@
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "De bevestiging verzenden";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Verzendopties";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Verzonden berichten";
