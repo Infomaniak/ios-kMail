@@ -29,7 +29,6 @@ public protocol SettingsOptionEnum {
 public extension UserDefaults.Keys {
     static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
     static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
-    static let appLock = UserDefaults.Keys(rawValue: "appLock")
     static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
     static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
     static let theme = UserDefaults.Keys(rawValue: "theme")
@@ -62,7 +61,7 @@ public extension UserDefaults.Keys {
         return UserDefaults.Keys(rawValue: "notificationsEnabled-\(userId)")
     }
 
-    // Legacy keys — migration only, do not use
+    /// Legacy keys — migration only, do not use
     static let legacyNotificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
 }
 
@@ -94,18 +93,6 @@ public extension UserDefaults {
 
     func setNotificationEnabled(_ newValue: Bool, userId: Int) {
         set(newValue, forKey: key(.notificationsEnabled(userId: userId)))
-    }
-
-    var isAppLockEnabled: Bool {
-        get {
-            if object(forKey: key(.appLock)) == nil {
-                set(DefaultPreferences.appLock, forKey: key(.appLock))
-            }
-            return bool(forKey: key(.appLock))
-        }
-        set {
-            set(newValue, forKey: key(.appLock))
-        }
     }
 
     var threadDensity: ThreadDensity {
