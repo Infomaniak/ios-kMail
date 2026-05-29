@@ -1,1 +1,6 @@
-- Correction de bugs et améliorations.
+- Résumé de mail avec Euria
+- Traduction de mail avec Euria
+- Amélioration notification de réaction
+- Personnalisation de la barre d'outils sur iPadOS et macOS 
+- Affichage des mails en cours d'envoi
+- Correction de bugs et améliorations

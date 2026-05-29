@@ -1,1 +1,6 @@
-- Bug fixes and improvements.
+- Email summarization with Euria
+- Email translation with Euria
+- Improved reaction notifications
+- Toolbar customization on iPadOS and macOS
+- Display of emails currently being sent
+- Bug fixes and improvements
