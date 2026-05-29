@@ -78,7 +78,8 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
             Factory(type: AppLockHelper.self) { _, _ in
                 AppLockHelper(
                     logoImage: MailResourcesAsset.logoText.swiftUIImage,
-                    lockImage: MailResourcesAsset.lock.swiftUIImage
+                    lockImage: MailResourcesAsset.lock.swiftUIImage,
+                    userDefaults: UserDefaults.shared
                 )
             },
             Factory(type: ConfigWebServer.self) { _, _ in
