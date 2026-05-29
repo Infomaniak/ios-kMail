@@ -1,0 +1,29 @@
+name: Build Infomaniak Mail Cache
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+env:
+  TUIST_TOKEN: ${{ secrets.TUIST_TOKEN }}
+
+jobs:
+  build:
+    runs-on: [ self-hosted, iOS ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup mise
+        uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8
+        with:
+          cache: false
+      - name: Setup Cache
+        run: tuist setup cache
+      - name: Install dependencies
+        run: tuist install && tuist generate --no-open
+      - name: Build Cache
+        run: tuist cache --external-only
