@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppIntents
+import AppLock
 import Foundation
 import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
@@ -26,7 +28,10 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import InterAppLogin
+import KSuite
 import MailCore
+import MailResources
+import SwiftUI
 
 open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
     override open class func getTargetServices() -> [Factory] {
@@ -73,7 +78,10 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
                 UserActivityController()
             },
             Factory(type: AppLockHelper.self) { _, _ in
-                AppLockHelper()
+                AppLockHelper(
+                    logoImage: MailResourcesAsset.logoText.swiftUIImage,
+                    lockImage: MailResourcesAsset.lock.swiftUIImage
+                )
             },
             Factory(type: ConfigWebServer.self) { _, _ in
                 ConfigWebServer()

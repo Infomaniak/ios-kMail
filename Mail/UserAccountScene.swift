@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppLock
 import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -74,13 +75,12 @@ struct UserAccountScene: Scene {
             appLaunchCounter.increase()
             reviewManager.decreaseActionUntilReview()
         }
-        rootViewState.transitionToLockViewIfNeeded()
         checkAppVersion()
     }
 
     private func didEnterBackground() {
         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
+        if UserDefaults.shared.isAppLockEnabled {
             appLockHelper.setTime()
         }
     }
