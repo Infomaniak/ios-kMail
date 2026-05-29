@@ -40,14 +40,7 @@ struct MessageEuriaBannersView: View {
                     Text(summary)
                         .textStyle(.bodySmall)
                 } else if summaryState == .showError {
-                    Button {
-                        Task {
-                            try await mailboxManager.summarize(
-                                message: message.freezeIfNeeded(),
-                                threadViewState: threadViewState
-                            )
-                        }
-                    } label: {
+                    Button(action: summarizeMessage) {
                         Text(MailResourcesStrings.Localizable.aiButtonRetry)
                             .font(MailTextStyle.body.font)
                             .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
@@ -59,7 +52,6 @@ struct MessageEuriaBannersView: View {
                     threadViewState.summaries[message.uid] = nil
                 }
             }
-            .animation(.spring, value: message.summary)
             .padding(.horizontal, value: .medium)
         }
 
@@ -88,15 +80,7 @@ struct MessageEuriaBannersView: View {
                     .padding(.leading, value: .large)
                 } else if case .showError(let error) = translatedState,
                           error != MailApiError.translationTargetSameAsSource {
-                    Button {
-                        Task {
-                            try await mailboxManager.translate(
-                                message: message.freezeIfNeeded(),
-                                threadViewState: threadViewState,
-                                locale: locale
-                            )
-                        }
-                    } label: {
+                    Button(action: translateMessage) {
                         Text(MailResourcesStrings.Localizable.aiButtonRetry)
                             .font(MailTextStyle.body.font)
                             .foregroundStyle(MailResourcesAsset.primaryBlueColor.swiftUIColor)
@@ -108,8 +92,26 @@ struct MessageEuriaBannersView: View {
                     threadViewState.translatedMessages[message.uid] = nil
                 }
             }
-            .animation(.spring, value: message.translatedBody)
             .padding(.horizontal, value: .medium)
+        }
+    }
+
+    private func summarizeMessage() {
+        Task {
+            try await mailboxManager.summarize(
+                message: message.freezeIfNeeded(),
+                threadViewState: threadViewState
+            )
+        }
+    }
+
+    private func translateMessage() {
+        Task {
+            try await mailboxManager.translate(
+                message: message.freezeIfNeeded(),
+                threadViewState: threadViewState,
+                locale: locale
+            )
         }
     }
 }
