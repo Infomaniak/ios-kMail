@@ -137,6 +137,12 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let translationTargetSameAsSource = MailApiError(
+        code: "translation__target_same_as_source",
+        localizedDescription: MailResourcesStrings.Localizable.translationTargetSameAsSource,
+        shouldDisplay: true
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -269,11 +275,7 @@ public class MailApiError: MailError {
         emojiReactionAlreadyUsed,
 
         // Translation
-        MailApiError(
-            code: "translation__target_same_as_source",
-            localizedDescription: MailResourcesStrings.Localizable.translationTargetSameAsSource,
-            shouldDisplay: true
-        )
+        translationTargetSameAsSource
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

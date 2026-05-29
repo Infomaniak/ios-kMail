@@ -67,7 +67,7 @@ struct MessageEuriaBannersView: View {
                 title: translatedState.title(contentLoaded: message.translatedBody != nil),
                 isError: {
                     if case .showError(let error) = translatedState,
-                       error?.code != "translation__target_same_as_source" {
+                       error != MailApiError.translationTargetSameAsSource {
                         return true
                     }
                     return false
@@ -86,7 +86,7 @@ struct MessageEuriaBannersView: View {
                     }
                     .padding(.leading, value: .large)
                 } else if case .showError(let error) = translatedState,
-                          error?.code != "translation__target_same_as_source" {
+                          error != MailApiError.translationTargetSameAsSource {
                     Button {
                         Task {
                             try await mailboxManager.translate(
