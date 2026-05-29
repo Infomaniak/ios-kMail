@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  TUIST_TOKEN: ${{ secrets.TUIST_TOKEN }}
+  
 jobs:
   api-tests:
     name: Run API Tests
