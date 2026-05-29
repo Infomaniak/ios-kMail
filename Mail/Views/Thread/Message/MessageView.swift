@@ -97,7 +97,7 @@ struct MessageView: View {
         }
         .task {
             let currentLanguage = Bundle.main.preferredLocalizations.first ?? "en"
-            guard message.translatedBody?.language == currentLanguage else {
+            guard message.translatedBody?.value != nil && message.translatedBody?.language == currentLanguage else {
                 guard let liveMessage = message.thaw() else { return }
                 try? liveMessage.realm?.write {
                     liveMessage.translatedBody = nil

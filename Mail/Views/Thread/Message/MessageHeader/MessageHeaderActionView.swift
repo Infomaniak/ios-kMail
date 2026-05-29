@@ -113,7 +113,7 @@ struct MessageHeaderActionView<AnimationView: View, Content: View>: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: iconSize)
                             .foregroundStyle(iconColor)
-							.accessibilityHidden(true)
+                            .accessibilityHidden(true)
                     } else {
                         animationView
                             .aspectRatio(contentMode: .fit)

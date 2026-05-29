@@ -20,7 +20,6 @@ import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
-import KSuite
 import MailCore
 import MailCoreUI
 import MailResources

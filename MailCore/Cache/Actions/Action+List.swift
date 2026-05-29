@@ -108,8 +108,7 @@ extension Action: CaseIterable {
         return actions.compactMap { $0 }
     }
 
-    private static func euriaActionsForMessage(_ message: Message,
-                                               origin: ActionOrigin,
+    private static func euriaActionsForMessage(origin: ActionOrigin,
                                                featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
         let translate = featureAvailableProvider.isAvailable(.translate) &&
             (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
@@ -120,7 +119,7 @@ extension Action: CaseIterable {
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
-            translate ? .translateMessage : nil,
+            translate ? .translateMessage : nil
         ]
         let euriaActions = tempEuriaActions.compactMap { $0 }
 
@@ -137,7 +136,6 @@ extension Action: CaseIterable {
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
                                             featureAvailableProvider: featureAvailableProvider)
         let euriaActions = euriaActionsForMessage(
-            message,
             origin: origin,
             featureAvailableProvider: featureAvailableProvider
         )

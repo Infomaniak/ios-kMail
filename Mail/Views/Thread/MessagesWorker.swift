@@ -28,7 +28,6 @@ extension MessagesWorker {
         case cantFetchMessage
     }
 
-    // swiftlint:disable:next unused_declaration
     struct PresentableBodyCacheKey: Hashable {
         let messageUid: String
         let isShowingTranslated: Bool

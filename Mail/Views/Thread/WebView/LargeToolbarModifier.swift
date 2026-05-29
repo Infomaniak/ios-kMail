@@ -235,7 +235,9 @@ struct LargeToolbarModifier: ViewModifier {
                 .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
                     .Localizable.actionStar)
 
-                if frozenMessages.count == 1 && (mailboxManager.featureAvailableProvider.isAvailable(.summarize) || mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
+                if frozenMessages.count == 1 &&
+                    (mailboxManager.featureAvailableProvider.isAvailable(.summarize) ||
+                        mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
                     Button { didTap(action: .showEuriaActions) } label: {
                         Label(Action.showEuriaActions.title, asset: Action.showEuriaActions.icon)
                     }
@@ -283,7 +285,9 @@ struct LargeToolbarModifier: ViewModifier {
         }
         .defaultCustomization(.hidden)
 
-        if frozenMessages.count == 1 && (mailboxManager.featureAvailableProvider.isAvailable(.summarize) || mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
+        if frozenMessages.count == 1 &&
+            (mailboxManager.featureAvailableProvider.isAvailable(.summarize) ||
+                mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
             ToolbarItem(id: "thread.other.showEuriaActions", placement: .secondaryAction) {
                 Button { didTap(action: .showEuriaActions) } label: {
                     Label(Action.showEuriaActions.title, asset: Action.showEuriaActions.icon)

@@ -273,6 +273,7 @@ public extension MailboxManager {
             withAnimation {
                 threadViewState.translatedMessages[message.uid] = .showError(error as? MailApiError)
             }
+            throw error
         }
     }
 
