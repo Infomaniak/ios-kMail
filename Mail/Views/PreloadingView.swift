@@ -37,7 +37,6 @@ extension VerticalAlignment {
 }
 
 struct PreloadingView: View {
-    @InjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var accountManager: AccountManager

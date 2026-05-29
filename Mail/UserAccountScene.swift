@@ -34,7 +34,7 @@ import UIKit
 import VersionChecker
 
 struct UserAccountScene: Scene {
-    @LazyInjectService private var appLockHelper: AppLockHelper
+    @InjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
