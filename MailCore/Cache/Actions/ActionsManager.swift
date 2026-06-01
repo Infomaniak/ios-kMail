@@ -275,7 +275,7 @@ public class ActionsManager: ObservableObject {
         case .showEuriaActions:
             Task { @MainActor in
                 origin.messagesToProcessWithEuria?.wrappedValue = messages
-			}
+            }
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
