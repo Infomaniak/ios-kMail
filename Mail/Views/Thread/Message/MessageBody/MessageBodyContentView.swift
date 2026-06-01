@@ -33,7 +33,6 @@ struct MessageBodyContentView: View {
     private let presentableBody: PresentableBody?
     private let blockRemoteContent: Bool
     private let messageUid: String
-    private let messageTheme: MessageTheme
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
@@ -50,7 +49,6 @@ struct MessageBodyContentView: View {
         self.presentableBody = presentableBody
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
-        self.messageTheme = messageTheme
 
         let viewModel = WebViewModel()
         viewModel.theme = messageTheme
