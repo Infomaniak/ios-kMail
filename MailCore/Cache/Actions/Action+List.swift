@@ -310,6 +310,7 @@ extension Action: CaseIterable {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
     }
 
+    // swiftlint:disable:next function_parameter_count
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
