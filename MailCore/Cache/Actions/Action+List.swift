@@ -129,6 +129,7 @@ extension Action: CaseIterable {
         return euriaActions
     }
 
+    // swiftlint:disable:next function_parameter_count
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
