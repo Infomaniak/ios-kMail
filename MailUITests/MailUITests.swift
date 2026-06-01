@@ -341,7 +341,7 @@ class MailUITests: XCTestCase {
         app.typeText(Env.testAccountEmail)
         app.typeText("\r")
 
-        let subjectTextField = app.textFields[MailResourcesStrings.Localizable.subjectTitle].firstMatch
+        let subjectTextField = app.staticTexts[MailResourcesStrings.Localizable.subjectTitle].firstMatch
         subjectTextField.tap()
         subjectTextField.typeText(subject ?? MailUITests.testSubject)
 
