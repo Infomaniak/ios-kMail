@@ -314,8 +314,7 @@ extension Action: CaseIterable {
                                           userIsStaff: Bool,
                                           userEmail: String,
                                           threadViewState: ThreadViewState,
-                                          featureAvailableProvider: FeatureAvailableProvider) ->
-        (quickActions: [Action], listActions: [Action]) {
+                                          featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {

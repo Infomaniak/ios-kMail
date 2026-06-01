@@ -27,17 +27,3 @@ public class ThreadViewState: ObservableObject {
 
     public init() {}
 }
-
-public enum MessageTheme {
-    case light
-    case auto
-
-    public var cssProperty: String {
-        switch self {
-        case .light:
-            "light"
-        case .auto:
-            "light dark"
-        }
-    }
-}
