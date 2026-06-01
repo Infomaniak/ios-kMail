@@ -16,10 +16,12 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppLock
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import Social
 import SwiftUI
 import UIKit
@@ -89,9 +91,22 @@ final class ShareNavigationViewController: UIViewController {
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        unlockApp()
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    }
+
+    func unlockApp() {
+        @LazyInjectService var appLockHelper: AppLockHelper
+        Task {
+            guard await appLockHelper.evaluatePolicyInAppLockExtension(reason: MailResourcesStrings.Localizable.lockAppTitle)
+            else {
+                print("On dismiss pour une raison inconnue")
+                dismiss(animated: true)
+                return
+            }
+        }
     }
 }

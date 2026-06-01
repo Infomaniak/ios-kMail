@@ -54,6 +54,13 @@ open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
             },
             Factory(type: ReviewManageable.self) { _, _ in
                 ReviewManager(userDefaults: UserDefaults.shared, actionBeforeFirstReview: 50)
+            },
+            Factory(type: AppLockHelper.self) { _, _ in
+                AppLockHelper(
+                    logoImage: MailResourcesAsset.logoText.swiftUIImage,
+                    lockImage: MailResourcesAsset.lock.swiftUIImage,
+                    userDefaults: UserDefaults.shared
+                )
             }
         ]
     }
@@ -74,13 +81,6 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
             },
             Factory(type: UserActivityController.self) { _, _ in
                 UserActivityController()
-            },
-            Factory(type: AppLockHelper.self) { _, _ in
-                AppLockHelper(
-                    logoImage: MailResourcesAsset.logoText.swiftUIImage,
-                    lockImage: MailResourcesAsset.lock.swiftUIImage,
-                    userDefaults: UserDefaults.shared
-                )
             },
             Factory(type: ConfigWebServer.self) { _, _ in
                 ConfigWebServer()
