@@ -31,7 +31,7 @@ extension EnvironmentValues {
     var folderCellType = FolderCell.CellType.menuDrawer
 
     @Entry
-    var isSearching = false
+    var isMoveSearchActive = false
 }
 
 struct FolderCell: View {
