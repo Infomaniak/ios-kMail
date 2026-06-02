@@ -44,6 +44,7 @@ struct EuriaFloatingPanel: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
     @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var isShowingPanel = false
@@ -56,11 +57,11 @@ struct EuriaFloatingPanel: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onChange(of: messages) { newValue in
-                isShowingPanel = newValue != nil && !availableActions(for: newValue).isEmpty
+                isShowingPanel = newValue != nil && !availableActions(for: newValue, origin: origin).isEmpty
             }
             .mailFloatingPanel(isPresented: $isShowingPanel, title: MailResourcesStrings.Localizable.askEuriaTitle) {
                 VStack(alignment: .leading, spacing: 0) {
-                    let availableActions = availableActions(for: messages)
+                    let availableActions = availableActions(for: messages, origin: origin)
 
                     ForEach(availableActions) { action in
                         if action != availableActions.first {
@@ -79,18 +80,10 @@ struct EuriaFloatingPanel: ViewModifier {
             }
     }
 
-    private func availableActions(for messages: [Message]?) -> [Action] {
+    private func availableActions(for messages: [Message]?, origin: ActionOrigin) -> [Action] {
         guard let messages else { return [] }
 
-        let actions = Action.actionsForMessages(
-            messages,
-            origin: origin,
-            userIsStaff: user.isStaff ?? false,
-            userEmail: user.email,
-            threadViewState: threadViewState,
-            colorScheme: colorScheme,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
+        let actions = actionsProvider.actionsFor(origin: origin, messages: messages)
 
         return actions.euriaActions
     }
