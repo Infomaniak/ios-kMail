@@ -21,7 +21,7 @@ import SwiftUI
 
 public struct ActionOrigin {
     public enum ActionOriginType: Equatable {
-        case swipe
+        case swipe(direction: SwipeDirection)
         case floatingPanel(source: FloatingPanelSource)
         case toolbar(mode: ToolbarMode)
         case multipleSelection
@@ -40,8 +40,14 @@ public struct ActionOrigin {
         case large
     }
 
+    public enum SwipeDirection {
+        case leading
+        case trailing
+    }
+
     public private(set) var type: ActionOriginType
     public private(set) var frozenFolder: Folder?
+    public private(set) var thread: Thread?
 
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestDestructiveAlert: Binding<DestructiveActionAlertState?>?
@@ -58,6 +64,7 @@ public struct ActionOrigin {
     init(
         type: ActionOriginType,
         folder: Folder? = nil,
+        thread: Thread? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
@@ -72,6 +79,7 @@ public struct ActionOrigin {
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
+        self.thread = thread
         self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
         self.nearestDestructiveAlert = nearestDestructiveAlert
         self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
@@ -167,15 +175,18 @@ public struct ActionOrigin {
     }
 
     public static func swipe(
-        originFolder: Folder? = nil,
+        direction: SwipeDirection,
+        thread: Thread? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil
+
     ) -> ActionOrigin {
         return ActionOrigin(
-            type: .swipe,
-            folder: originFolder,
+            type: .swipe(direction: direction),
+            folder: thread?.folder,
+            thread: thread,
             nearestMessagesActionsPanel: nearestMessagesActionsPanel,
             nearestDestructiveAlert: nearestDestructiveAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
