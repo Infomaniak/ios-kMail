@@ -29,10 +29,7 @@ private struct SwipeActionView: View {
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
-    @Binding var actionPanelMessages: [Message]?
-    @Binding var moveSheetMessages: [Message]?
-    @Binding var destructiveAlert: DestructiveActionAlertState?
-    @Binding var nearestMessagesToSnooze: [Message]?
+    let actionOrigin: ActionOrigin
 
     let viewModel: ThreadListable
     let thread: Thread
@@ -52,13 +49,7 @@ private struct SwipeActionView: View {
                     try await actionsManager.performAction(
                         target: thread.messages.toArray(),
                         action: action,
-                        origin: .swipe(
-                            originFolder: thread.folder,
-                            nearestMessagesActionsPanel: $actionPanelMessages,
-                            nearestMessagesToMoveSheet: $moveSheetMessages,
-                            nearestDestructiveAlert: $destructiveAlert,
-                            nearestMessagesToSnooze: $nearestMessagesToSnooze
-                        )
+                        origin: actionOrigin
                     )
 
                     viewModel.refreshSearchIfNeeded(action: action)
@@ -76,12 +67,7 @@ private struct SwipeActionView: View {
 struct ThreadListSwipeActions: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
-
-    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
-    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
-
-    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
-    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var actionPanelMessages: [Message]?
     @ModalState private var messagesToMove: [Message]?
@@ -98,16 +84,25 @@ struct ThreadListSwipeActions: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                if !viewModel.frozenFolder.hasLimitedSwipeActions {
-                    edgeActions([swipeFullLeading, swipeLeading])
-                }
+                edgeActions(origin: .swipe(
+                    direction: .leading,
+                    thread: thread,
+                    nearestMessagesActionsPanel: $actionPanelMessages,
+                    nearestMessagesToMoveSheet: $messagesToMove,
+                    nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                    nearestMessagesToSnooze: $messagesToSnooze,
+                ))
             }
             .swipeActions(edge: .trailing) {
-                if viewModel.frozenFolder.hasLimitedSwipeActions {
-                    edgeActions([.delete])
-                } else {
-                    edgeActions([swipeFullTrailing, swipeTrailing])
-                }
+                edgeActions(origin: .swipe(
+                    direction: .trailing,
+                    thread: thread,
+                    nearestMessagesActionsPanel: $actionPanelMessages,
+                    nearestMessagesToMoveSheet: $messagesToMove,
+                    nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                    nearestMessagesToSnooze: $messagesToSnooze,
+
+                ))
             }
             .actionsPanel(
                 messages: $actionPanelMessages,
@@ -129,33 +124,15 @@ struct ThreadListSwipeActions: ViewModifier {
     }
 
     @MainActor @ViewBuilder
-    private func edgeActions(_ actions: [Action]) -> some View {
+    private func edgeActions(origin: ActionOrigin) -> some View {
         if !multipleSelectionViewModel.isEnabled {
-            ForEach(filterAvailableActions(actions)) { action in
+            ForEach(actionsProvider.actionsFor(origin: origin, messages: messagesToMove ?? []).listActions) { action in
                 SwipeActionView(
-                    actionPanelMessages: $actionPanelMessages,
-                    moveSheetMessages: $messagesToMove,
-                    destructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToSnooze: $messagesToSnooze,
+                    actionOrigin: origin,
                     viewModel: viewModel,
                     thread: thread,
                     action: action
                 )
-            }
-        }
-    }
-
-    private func filterAvailableActions(_ actions: [Action]) -> [Action] {
-        let realActions = actions.map { $0.inverseActionIfNeeded(for: thread) }
-        return realActions.filter { action in
-            switch action {
-            case .noAction:
-                return false
-            case .snooze:
-                return folder?.canAccessSnoozeActions(featureAvailableProvider:
-                    mailboxManager.featureAvailableProvider) == true
-            default:
-                return true
             }
         }
     }
@@ -173,10 +150,7 @@ extension View {
 
 #Preview {
     SwipeActionView(
-        actionPanelMessages: .constant(nil),
-        moveSheetMessages: .constant(nil),
-        destructiveAlert: .constant(nil),
-        nearestMessagesToSnooze: .constant(nil),
+        actionOrigin: .swipe(direction: .leading),
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),

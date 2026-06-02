@@ -20,8 +20,14 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import MailResources
+import SwiftUI
 
 public class ActionsProvider: ObservableObject {
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
+
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     public struct MessageActions {
         public let quickActions: [Action]
@@ -45,13 +51,45 @@ public class ActionsProvider: ObservableObject {
         self.featureAvailableProvider = featureAvailableProvider
     }
 
+    private func leadingActions(folder: Folder) -> [Action] {
+        if !folder.hasLimitedSwipeActions {
+            return [swipeFullLeading, swipeLeading]
+        }
+        return []
+    }
+
+    private func trailingActions(folder: Folder) -> [Action] {
+        if folder.hasLimitedSwipeActions {
+            return [.delete]
+        } else {
+            return [swipeFullTrailing, swipeTrailing]
         }
     }
 
+    private func swipeActions(origin: ActionOrigin) -> [Action] {
+        guard let thread = origin.thread, let folder = origin.frozenFolder else {
+            return []
         }
-    }
+        var actions = [Action]()
+        if case .swipe(let direction) = origin.type {
+            switch direction {
+            case .leading:
+                actions = leadingActions(folder: folder)
+            case .trailing:
+                actions = trailingActions(folder: folder)
+            }
+        }
 
-
+        let realActions = actions.map { $0.inverseActionIfNeeded(for: thread) }
+        return realActions.filter { action in
+            switch action {
+            case .noAction:
+                return false
+            case .snooze:
+                return folder.canAccessSnoozeActions(featureAvailableProvider: featureAvailableProvider) == true
+            default:
+                return true
+            }
         }
     }
 
@@ -82,7 +120,7 @@ public class ActionsProvider: ObservableObject {
     public func actionsFor(origin: ActionOrigin, messages: [Message]) -> MessageActions {
         switch origin.type {
         case .swipe:
-            return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+            return MessageActions(quickActions: [], listActions: swipeActions(origin: origin), euriaActions: [])
         case .floatingPanel(let source):
             return MessageActions(quickActions: [], listActions: [], euriaActions: [])
         case .toolbar:
