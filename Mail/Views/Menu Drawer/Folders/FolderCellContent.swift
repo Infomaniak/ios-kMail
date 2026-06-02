@@ -31,6 +31,7 @@ struct FolderCellContent: View {
     private static let maximumSubFolderLevel = 5
 
     @Environment(\.folderCellType) private var cellType
+    @Environment(\.isMoveSearchActive) private var isMoveSearchActive
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -61,10 +62,18 @@ struct FolderCellContent: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
 
-                Text(frozenFolder.localizedName)
-                    .textStyle(textStyle)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(frozenFolder.localizedName)
+                        .textStyle(textStyle)
+                        .lineLimit(1)
+                    if let path = frozenFolder.formattedPath, cellType == .move && isMoveSearchActive {
+                        Text(path)
+                            .textStyle(.bodySecondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
             }

@@ -29,6 +29,9 @@ import SwiftUI
 extension EnvironmentValues {
     @Entry
     var folderCellType = FolderCell.CellType.menuDrawer
+
+    @Entry
+    var isMoveSearchActive = false
 }
 
 struct FolderCell: View {
