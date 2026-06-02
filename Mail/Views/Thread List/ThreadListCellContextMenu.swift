@@ -41,6 +41,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -98,7 +99,9 @@ struct ThreadListCellContextMenu: ViewModifier {
         content
             .contextMenu(forSelectionType: Thread.self) { selectedThreads in
                 if let myThread = selectedThreads.first {
-                    let computedActions = actions(for: myThread) // Capture actions to avoid re-computation
+                    let computedActions = actionsProvider
+                        .actionsFor(origin: origin,
+                                    messages: myThread.messages.toArray()) // Capture actions to avoid re-computation
 
                     ControlGroup {
                         ForEach(computedActions.quickActions) { action in

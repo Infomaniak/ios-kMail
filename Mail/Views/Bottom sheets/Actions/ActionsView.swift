@@ -28,9 +28,11 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
+    @EnvironmentObject private var actionsProvider: ActionsProvider
+
+    @State private var quickActions: [Action] = []
+    @State private var listActions: [Action] = []
     private let targetMessages: [Message]
-    private let quickActions: [Action]
-    private let listActions: [Action]
     private let origin: ActionOrigin
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
@@ -57,11 +59,6 @@ struct ActionsView: View {
         )
         quickActions = actions.quickActions
         listActions = actions.listActions
-
-        targetMessages = messages
-        self.isMultipleSelection = isMultipleSelection
-        self.origin = origin
-        self.completionHandler = completionHandler
     }
 
     var body: some View {
@@ -97,6 +94,7 @@ struct ActionsView: View {
             }
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
+        .onAppear(perform: loadActions)
     }
 }
 
