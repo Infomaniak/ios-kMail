@@ -259,13 +259,14 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    public var formattedPath: String {
+    public var formattedPath: String? {
         var names = [String]()
-        var maybeFolder: Folder? = self
-        while let folder = maybeFolder {
+        var currentParent = parent
+        while let folder = currentParent {
             names.append(folder.localizedName)
-            maybeFolder = folder.parent
+            currentParent = folder.parent
         }
+        guard !names.isEmpty else { return nil }
         return names.reversed().joined(separator: " > ")
     }
 
