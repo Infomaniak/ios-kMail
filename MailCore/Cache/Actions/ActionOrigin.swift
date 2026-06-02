@@ -23,7 +23,7 @@ public struct ActionOrigin {
     public enum ActionOriginType: Equatable {
         case swipe
         case floatingPanel(source: FloatingPanelSource)
-        case toolbar
+        case toolbar(mode: ToolbarMode)
         case multipleSelection
         case shortcut
         case threadHeader
@@ -33,6 +33,11 @@ public struct ActionOrigin {
         case threadList
         case messageList
         case message
+    }
+
+    public enum ToolbarMode {
+        case compact
+        case large
     }
 
     public private(set) var type: ActionOriginType
@@ -94,7 +99,7 @@ public struct ActionOrigin {
         messagesToProcessWithEuria: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
-            type: .toolbar,
+            type: .toolbar(mode: .large),
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
@@ -115,7 +120,7 @@ public struct ActionOrigin {
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
-            type: .toolbar,
+            type: .toolbar(mode: .compact),
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
