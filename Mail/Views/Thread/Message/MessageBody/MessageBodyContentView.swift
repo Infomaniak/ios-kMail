@@ -50,9 +50,7 @@ struct MessageBodyContentView: View {
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
 
-        let viewModel = WebViewModel()
-        viewModel.theme = messageTheme
-        _model = StateObject(wrappedValue: viewModel)
+        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme))
     }
 
     var body: some View {

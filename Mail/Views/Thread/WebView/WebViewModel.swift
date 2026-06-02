@@ -49,6 +49,11 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorParsingBody
     }
 
+    convenience init(theme: MessageTheme) {
+        self.init()
+        self.theme = theme
+    }
+
     override init() {
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
