@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "5d9828a3a92e0410ecc89580ebbd912737b9e9fd",
-        "version" : "1.35.0"
+        "revision" : "6427600ec87d516a43754e4eaa7762f3271ac77f",
+        "version" : "1.36.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-dependency-injection",
       "state" : {
-        "revision" : "46250e9cccf918c2a03bcd6cff6b16cdc2adb9ee",
-        "version" : "2.0.6"
+        "revision" : "c24d45e86efe13e864b707f4711b7a9fd4b75ac0",
+        "version" : "2.0.7"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "87cc1a846fc0dad2a25b2261d33950d98395e66e",
-        "version" : "8.9.1"
+        "revision" : "cc3fb4c8fc5756246b53b293a94abdd111bc674b",
+        "version" : "8.9.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "3ead81cbaf8c1aa1c7daf45904f77e4b1634aa85",
-        "version" : "7.8.0"
+        "revision" : "b53d08cd0830cfed227ce1b79dbaccd29827b81d",
+        "version" : "7.8.1"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "193d313fbfd9affaf2be1692a0284a3b6574c515",
-        "version" : "9.14.0"
+        "revision" : "cef29e94feb00b1b712514443d6d70b09ef20355",
+        "version" : "9.15.0"
       }
     },
     {
@@ -239,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-concurrency",
       "state" : {
-        "revision" : "97ae7c9b998a43812d3f57ae106cb447a853bf3b",
-        "version" : "1.0.0"
+        "revision" : "696ea95ad5974bd04f63d353f317cf5ecd9235e8",
+        "version" : "1.0.1"
       }
     },
     {
