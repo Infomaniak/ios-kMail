@@ -31,6 +31,7 @@ struct FolderCellContent: View {
     private static let maximumSubFolderLevel = 5
 
     @Environment(\.folderCellType) private var cellType
+    @Environment(\.isSearching) private var isSearching
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 

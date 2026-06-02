@@ -38,6 +38,7 @@ struct SearchableFolderListView: View {
             .searchable(text: $viewModel.searchQuery)
         }
         .environment(\.folderCellType, .move)
+        .environment(\.isSearching, viewModel.isSearching)
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
