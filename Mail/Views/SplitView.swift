@@ -229,6 +229,11 @@ struct SplitView: View {
             mainViewState: mainViewState,
             threadViewState: threadViewState
         ))
+        .environmentObject(ActionsProvider(
+            currentUser: currentUser.value,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider,
+            currentEmail: mailboxManager.mailbox.email
+        ))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 

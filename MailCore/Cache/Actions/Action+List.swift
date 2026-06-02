@@ -115,10 +115,10 @@ extension Action: CaseIterable {
                                                featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
         let translate = featureAvailableProvider.isAvailable(.translate) &&
             (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar)
+                || origin.type == .toolbar(mode: .compact) || origin.type == .toolbar(mode: .large))
         let summarize = featureAvailableProvider.isAvailable(.summarize) &&
             (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar)
+                || origin.type == .toolbar(mode: .compact) || origin.type == .toolbar(mode: .large))
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
@@ -319,6 +319,7 @@ extension Action: CaseIterable {
                                           threadViewState: ThreadViewState,
                                           colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
+        Swift.print("Origin Type: \(origin.type)")
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
