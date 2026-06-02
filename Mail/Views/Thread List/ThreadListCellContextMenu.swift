@@ -36,6 +36,7 @@ extension View {
 
 struct ThreadListCellContextMenu: ViewModifier {
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -79,6 +80,7 @@ struct ThreadListCellContextMenu: ViewModifier {
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email,
             threadViewState: threadViewState,
+            colorScheme: colorScheme,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
     }

@@ -23,7 +23,5 @@ public class ThreadViewState: ObservableObject {
     @Published public var translatedMessages = [String: MessageTranslatedState]()
     @Published public var forcedLightModes = Set<String>()
 
-    @Published public var colorScheme: ColorScheme = .light
-
     public init() {}
 }

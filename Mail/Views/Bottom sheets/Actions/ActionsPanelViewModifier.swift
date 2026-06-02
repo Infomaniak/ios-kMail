@@ -45,6 +45,7 @@ extension View {
 
 struct ActionsPanelViewModifier: ViewModifier {
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
@@ -110,6 +111,7 @@ struct ActionsPanelViewModifier: ViewModifier {
                 origin: origin,
                 isMultipleSelection: isMultipleSelection,
                 threadViewState: threadViewState,
+                colorScheme: colorScheme,
                 completionHandler: completionHandler
             )
         }

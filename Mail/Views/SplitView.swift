@@ -63,7 +63,6 @@ struct SplitView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
     @Environment(\.isCompactWindow) private var isCompactWindow
-    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -184,10 +183,6 @@ struct SplitView: View {
         .onAppear {
             orientationManager.setOrientationLock(.all)
             handleShortcutItem(shortcut: quickActionsManager.homeScreenShortcut)
-            threadViewState.colorScheme = colorScheme
-        }
-        .onChange(of: colorScheme) { _ in
-            threadViewState.colorScheme = colorScheme
         }
         .onChange(of: quickActionsManager.homeScreenShortcut) { newHomeScreenShortcut in
             handleShortcutItem(shortcut: newHomeScreenShortcut)
