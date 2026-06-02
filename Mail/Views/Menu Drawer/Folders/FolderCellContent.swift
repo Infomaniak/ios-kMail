@@ -62,10 +62,18 @@ struct FolderCellContent: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
 
-                Text(frozenFolder.localizedName)
-                    .textStyle(textStyle)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(frozenFolder.localizedName)
+                        .textStyle(textStyle)
+                        .lineLimit(1)
+                    if let path = frozenFolder.formattedPath, cellType == .move && isSearching {
+                        Text(path)
+                            .textStyle(.bodySecondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
             }
