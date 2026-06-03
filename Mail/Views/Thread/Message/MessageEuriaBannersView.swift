@@ -100,7 +100,8 @@ struct MessageEuriaBannersView: View {
         Task {
             try await mailboxManager.summarize(
                 message: message.freezeIfNeeded(),
-                threadViewState: threadViewState
+                threadViewState: threadViewState,
+                locale: locale
             )
         }
     }

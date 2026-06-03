@@ -52,7 +52,7 @@ public protocol MailApiCommonFetchable: ApiFetcher {
 
     func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
 
-    func summarize(content: String) async throws -> String
+    func summarize(messageUid: String, mailboxUuid: String, destinationLanguage: String) async throws -> String
 
     func translate(messageUid: String, mailboxUuid: String, destinationLanguage: String) async throws -> String
 

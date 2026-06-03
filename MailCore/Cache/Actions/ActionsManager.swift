@@ -267,8 +267,8 @@ public class ActionsManager: ObservableObject {
             )
             try await performDeleteSnooze(messages: messagesToExecuteAction)
         case .summarize:
-            guard let message = messages.first else { return }
-            try await mailboxManager.summarize(message: message, threadViewState: threadViewState)
+            guard let message = messages.first, let locale else { return }
+            try await mailboxManager.summarize(message: message, threadViewState: threadViewState, locale: locale)
         case .translateMessage:
             guard let message = messages.first, let locale else { return }
             try await mailboxManager.translate(message: message, threadViewState: threadViewState, locale: locale)
