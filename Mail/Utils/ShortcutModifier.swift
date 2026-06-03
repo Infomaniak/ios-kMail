@@ -28,29 +28,38 @@ import SwiftUI
 struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
+    private var origin: ActionOrigin {
+        return .shortcut(originFolder: viewModel.frozenFolder,
+                         nearestDestructiveAlert: $destructiveAlert)
+    }
+
+    private var actions: [Action] {
+        var messages: [Message]
+        if multipleSelectionViewModel.isEnabled {
+            messages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+        } else {
+            messages = mainViewState.selectedThread?.messages.toArray() ?? []
+        }
+
+        return actionsProvider.actionsFor(origin: origin, messages: messages)
+    }
+
     func body(content: Content) -> some View {
         ZStack {
             VStack {
-                Button(MailResourcesStrings.Localizable.actionDelete, action: shortcutDelete)
-                    .keyboardShortcut(.delete, modifiers: [])
-
-                Button(MailResourcesStrings.Localizable.actionDelete, action: shortcutDelete)
-                    .keyboardShortcut("\u{007F}", modifiers: [])
-
-                Button(MailResourcesStrings.Localizable.actionReply, action: shortcutReply)
-                    .keyboardShortcut("r")
-
-                Button(MailResourcesStrings.Localizable.buttonNewMessage, action: shortcutNewMessage)
-                    .keyboardShortcut("n")
-
-                Button(MailResourcesStrings.Localizable.shortcutRefreshAction, action: shortcutRefresh)
-                    .keyboardShortcut("n", modifiers: [.shift, .command])
+                ForEach(actions) { action in
+                    Button(action.title) {
+                        executeAction(action: action)
+                    }
+                    .keyboardShortcut(action.keyboardShortcut!.key, modifiers: action.keyboardShortcut!.modifiers)
+                }
             }
             .frame(width: 0, height: 0)
             .hidden()
@@ -62,52 +71,25 @@ struct ShortcutModifier: ViewModifier {
         }
     }
 
-    private func shortcutDelete() {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "delete")
-
-        let messages: [Message]
-        if multipleSelectionViewModel.isEnabled {
-            messages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+    private func executeAction(action: Action) {
+        if action == .refresh {
+            shortcutRefresh()
         } else {
-            guard let unwrapMessages = mainViewState.selectedThread?.messages.toArray() else { return }
-            messages = unwrapMessages
+            var messages: [Message]
+            if multipleSelectionViewModel.isEnabled {
+                messages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+            } else {
+                messages = mainViewState.selectedThread?.messages.toArray() ?? []
+            }
+            multipleSelectionViewModel.disable()
+            Task {
+                try await actionsManager.performAction(
+                    target: messages,
+                    action: action,
+                    origin: origin
+                )
+            }
         }
-        multipleSelectionViewModel.disable()
-        Task {
-            try await actionsManager.performAction(
-                target: messages,
-                action: .delete,
-                origin: .shortcut(originFolder: viewModel.frozenFolder, nearestDestructiveAlert: $destructiveAlert)
-            )
-        }
-    }
-
-    private func shortcutReply() {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "reply")
-
-        guard !multipleSelectionViewModel.isEnabled,
-              let message = mainViewState.selectedThread?
-              .lastMessageToExecuteAction(
-                  currentMailboxEmail: viewModel.mailboxManager.mailbox.email,
-                  featureAvailableProvider: viewModel.mailboxManager.featureAvailableProvider
-              )
-        else { return }
-        Task {
-            try await actionsManager.performAction(
-                target: [message],
-                action: .reply,
-                origin: .shortcut(originFolder: viewModel.frozenFolder)
-            )
-        }
-    }
-
-    private func shortcutNewMessage() {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
-
-        mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
     }
 
     private func shortcutRefresh() {
