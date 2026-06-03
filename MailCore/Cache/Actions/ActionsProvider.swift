@@ -129,7 +129,7 @@ public class ActionsProvider: ObservableObject {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: currentEmail) }
     }
 
-    private func euriaActionsForMessage(origin: ActionOrigin) -> [Action] {
+    private func euriaActionsForMessage() -> [Action] {
         let translate = featureAvailableProvider.isAvailable(.translate)
         let summarize = featureAvailableProvider.isAvailable(.summarize)
 
@@ -146,9 +146,7 @@ public class ActionsProvider: ObservableObject {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
-        let euriaActions = euriaActionsForMessage(
-            origin: origin
-        )
+        let euriaActions = euriaActionsForMessage()
 
         let isFromMe = message.fromMe(currentMailboxEmail: currentEmail)
         let isInSpamFolder = message.folder?.role == .spam
@@ -185,9 +183,6 @@ public class ActionsProvider: ObservableObject {
     }
 
     private func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?) -> [Action] {
-        let unread = messages.allSatisfy(\.seen)
-        let archive = originFolder?.role != .archive
-
         let snoozedActions = snoozedActions(messages, folder: originFolder)
 
         let isSelfThread = isSelfThread(messages)
@@ -327,10 +322,11 @@ public class ActionsProvider: ObservableObject {
             if mode == .compact {
                 return compactToolbarActions(for: messages, folder: folder)
             } else {
-                if origin.thread?.containsOnlyScheduledDrafts == true {
+                guard let thread = origin.thread else { return [] }
+                if thread.containsOnlyScheduledDrafts == true {
                     return [.delete]
                 }
-                return largeToolbarActions(mode: mode, messages: messages, folder: folder, thread: origin.thread!)
+                return largeToolbarActions(mode: mode, messages: messages, folder: folder, thread: thread)
             }
         }
         return []
@@ -343,7 +339,7 @@ public class ActionsProvider: ObservableObject {
             featureAvailableProvider: featureAvailableProvider
         )
         let fromArchiveFolder = origin.frozenFolder?.role == .archive
-        let read = messages.contains { $0.seen } ? Action.markAsRead : Action.markAsUnread
+        let read = messages.contains { !$0.seen } ? Action.markAsRead : Action.markAsUnread
         let star = lastMessages.allSatisfy { $0.flagged } ? Action.unstar : Action.star
         let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
         return [read, archive, star, .delete]
@@ -362,7 +358,7 @@ public class ActionsProvider: ObservableObject {
         case .floatingPanelQuickAction:
             return floatingPanelQuickActions(origin: origin, messages: messages)
         case .euriaActions:
-            return euriaActionsForMessage(origin: origin)
+            return euriaActionsForMessage()
         case .toolbar:
             return toolbarActions(origin: origin, messages: messages)
         case .multipleSelection:
@@ -372,6 +368,5 @@ public class ActionsProvider: ObservableObject {
         case .threadHeader:
             return []
         }
-        return []
     }
 }

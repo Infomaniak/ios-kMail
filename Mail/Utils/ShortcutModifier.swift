@@ -55,10 +55,12 @@ struct ShortcutModifier: ViewModifier {
         ZStack {
             VStack {
                 ForEach(actions) { action in
-                    Button(action.title) {
-                        executeAction(action: action)
+                    if let shortcut = action.keyboardShortcut {
+                        Button(action.title) {
+                            executeAction(action: action)
+                        }
+                        .keyboardShortcut(shortcut.key, modifiers: shortcut.modifiers)
                     }
-                    .keyboardShortcut(action.keyboardShortcut!.key, modifiers: action.keyboardShortcut!.modifiers)
                 }
             }
             .frame(width: 0, height: 0)
@@ -74,6 +76,8 @@ struct ShortcutModifier: ViewModifier {
     private func executeAction(action: Action) {
         if action == .refresh {
             shortcutRefresh()
+        } else if action == .writeEmailAction {
+            shortcutNewMessage()
         } else {
             var messages: [Message]
             if multipleSelectionViewModel.isEnabled {
@@ -82,6 +86,7 @@ struct ShortcutModifier: ViewModifier {
                 messages = mainViewState.selectedThread?.messages.toArray() ?? []
             }
             multipleSelectionViewModel.disable()
+            guard !messages.isEmpty else { return }
             Task {
                 try await actionsManager.performAction(
                     target: messages,
@@ -90,6 +95,13 @@ struct ShortcutModifier: ViewModifier {
                 )
             }
         }
+    }
+
+    private func shortcutNewMessage() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
+
+        mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
     }
 
     private func shortcutRefresh() {
