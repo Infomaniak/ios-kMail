@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import MailResources
+import SwiftUI
 
 extension Action: CaseIterable {
     public struct MessageActions {
@@ -66,6 +67,8 @@ extension Action: CaseIterable {
         .snooze,
         .modifySnooze,
         .cancelSnooze,
+        .forceDarkMode,
+        .forceLightMode,
         .summarize
     ]
 
@@ -126,9 +129,12 @@ extension Action: CaseIterable {
         return euriaActions
     }
 
+    // swiftlint:disable:next function_parameter_count
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
+                                          threadViewState: ThreadViewState,
+                                          colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider)
         -> MessageActions {
         @LazyInjectService var platformDetector: PlatformDetectable
@@ -161,6 +167,7 @@ extension Action: CaseIterable {
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
+            themeAction(message: message, threadViewState: threadViewState, colorScheme: colorScheme),
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
@@ -291,20 +298,33 @@ extension Action: CaseIterable {
         )
     }
 
+    private static func themeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
+        guard colorScheme == .dark else { return nil }
+        if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
+            return .forceDarkMode
+        } else {
+            return .forceLightMode
+        }
+    }
+
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
     }
 
+    // swiftlint:disable:next function_parameter_count
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
+                                          threadViewState: ThreadViewState,
+                                          colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, featureAvailableProvider: featureAvailableProvider)
+                                     userEmail: userEmail, threadViewState: threadViewState, colorScheme: colorScheme,
+                                     featureAvailableProvider: featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
                                                         userEmail: userEmail,
@@ -568,6 +588,18 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveThreadInkDrive"
+    )
+    static let forceLightMode = Action(
+        id: "forceLightMode",
+        title: MailResourcesStrings.Localizable.actionViewInLight,
+        iconResource: MailResourcesAsset.viewInLight,
+        matomoName: ""
+    )
+    static let forceDarkMode = Action(
+        id: "forceDarkMode",
+        title: MailResourcesStrings.Localizable.actionViewInDark,
+        iconResource: MailResourcesAsset.viewInLight,
+        matomoName: ""
     )
 
     // MARK: Account Actions

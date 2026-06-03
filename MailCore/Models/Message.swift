@@ -162,6 +162,20 @@ public enum MessageTranslatedState {
     }
 }
 
+public enum MessageTheme {
+    case light
+    case auto
+
+    public var cssProperty: String {
+        switch self {
+        case .light:
+            "light"
+        case .auto:
+            "light dark"
+        }
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread

@@ -41,7 +41,10 @@ extension View {
 }
 
 struct EuriaFloatingPanel: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var isShowingPanel = false
 
@@ -84,6 +87,8 @@ struct EuriaFloatingPanel: ViewModifier {
             origin: origin,
             userIsStaff: user.isStaff ?? false,
             userEmail: user.email,
+            threadViewState: threadViewState,
+            colorScheme: colorScheme,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
 

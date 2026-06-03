@@ -36,7 +36,9 @@ final class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
-    let style = MessageWebViewUtils.loadAndFormatCSS(for: .message)
+    var theme: MessageTheme = .auto
+
+    lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme))
 
     enum LoadResult: Equatable {
         case remoteContentBlocked
@@ -45,6 +47,11 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorEmptyInputValue
         case errorCleanHTMLContent
         case errorParsingBody
+    }
+
+    convenience init(theme: MessageTheme) {
+        self.init()
+        self.theme = theme
     }
 
     override init() {

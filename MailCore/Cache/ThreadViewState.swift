@@ -21,6 +21,7 @@ import SwiftUI
 public class ThreadViewState: ObservableObject {
     @Published public var summaries = [String: MessageSummaryState]()
     @Published public var translatedMessages = [String: MessageTranslatedState]()
+    @Published public var forcedLightModes = Set<String>()
 
     public init() {}
 }

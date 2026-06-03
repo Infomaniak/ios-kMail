@@ -276,6 +276,9 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 origin.messagesToProcessWithEuria?.wrappedValue = messages
             }
+        case .forceDarkMode, .forceLightMode:
+            guard let message = messages.first else { return }
+            await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
         default:
             break
         }
@@ -431,6 +434,15 @@ public class ActionsManager: ObservableObject {
                     originFolder: origin.frozenFolder
                 )
             }
+        }
+    }
+
+    @MainActor
+    private func forceTheme(messageUid: String, light: Bool) {
+        if light {
+            threadViewState.forcedLightModes.insert(messageUid)
+        } else {
+            threadViewState.forcedLightModes.remove(messageUid)
         }
     }
 

@@ -22,7 +22,8 @@ import SwiftSoup
 
 public enum MessageWebViewUtils {
     public enum WebViewTarget {
-        case message, editor
+        case message(theme: MessageTheme)
+        case editor
     }
 
     public static func loadAndFormatCSS(for target: WebViewTarget) -> String {
@@ -34,11 +35,20 @@ public enum MessageWebViewUtils {
         var resources = [String]()
 
         if let style = MailResourcesResources.bundle.loadCSS(filename: "style") {
-            let variables = """
+            var variables = """
             :root {
                 --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
+
+            if case .message(let theme) = target {
+                variables.append("""
+                :root {
+                    color-scheme: \(theme.cssProperty);
+                }
+                """)
+            }
+
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
             resources.append(processedStyle)
         }
@@ -47,7 +57,7 @@ public enum MessageWebViewUtils {
             resources.append(fixDisplayCSS)
         }
 
-        if target == .editor, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor") {
+        if case .editor = target, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor") {
             resources.append(editorCSS)
         }
 
