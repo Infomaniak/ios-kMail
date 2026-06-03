@@ -29,12 +29,6 @@ public class ActionsProvider: ObservableObject {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
-    public struct MessageActions {
-        public let quickActions: [Action]
-        public let listActions: [Action]
-        public let euriaActions: [Action]
-    }
-
     enum ToolbarActions {
         static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
         static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
@@ -110,23 +104,34 @@ public class ActionsProvider: ObservableObject {
         }
     }
 
-    let draftActions = MessageActions(
-        quickActions: [],
-        listActions: [.shareMailLink, .saveThreadInkDrive],
-        euriaActions: []
-    )
+    public func allAvailableSwipeActions() -> [Action] {
+        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
+
+        let actions: [Action?] = [
+            .delete,
+            .archive,
+            .markAsRead,
+            .openMovePanel,
+            .star,
+            hasAccessToSnoozeFeature ? .snooze : nil,
+            .spam,
+            .quickActionPanel,
+            .noAction
+        ]
+        return actions.compactMap { $0 }
+    }
+
+    private let draftActions: [Action] = [.shareMailLink, .saveThreadInkDrive]
+
+    private let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
 
     private func isSelfThread(_ messages: [Message]) -> Bool {
         return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: currentEmail) }
     }
 
     private func euriaActionsForMessage(origin: ActionOrigin) -> [Action] {
-        let translate = featureAvailableProvider.isAvailable(.translate) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar(mode: .compact) || origin.type == .toolbar(mode: .large))
-        let summarize = featureAvailableProvider.isAvailable(.summarize) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar(mode: .compact) || origin.type == .toolbar(mode: .large))
+        let translate = featureAvailableProvider.isAvailable(.translate)
+        let summarize = featureAvailableProvider.isAvailable(.summarize)
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
@@ -137,7 +142,7 @@ public class ActionsProvider: ObservableObject {
         return euriaActions
     }
 
-    private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> MessageActions {
+    private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> [Action] {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
@@ -154,7 +159,7 @@ public class ActionsProvider: ObservableObject {
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
-        let print = origin.type == .floatingPanel(source: .message)
+        let print = origin.type == .floatingPanelListAction(source: .message)
         var tempListActions: [Action?] = [
             euriaActions.isEmpty ? nil : .showEuriaActions,
             .openMovePanel,
@@ -176,22 +181,12 @@ public class ActionsProvider: ObservableObject {
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return MessageActions(
-            quickActions: Action.quickActions,
-            listActions: listActions,
-            euriaActions: euriaActions
-        )
+        return listActions
     }
 
-    private func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?) -> MessageActions {
+    private func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?) -> [Action] {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
-        var quickActions: [Action] = [
-            .openMovePanel,
-            unread ? .markAsUnread : .markAsRead,
-            archive ? .archive : .moveToInbox,
-            .delete
-        ]
 
         let snoozedActions = snoozedActions(messages, folder: originFolder)
 
@@ -213,26 +208,16 @@ public class ActionsProvider: ObservableObject {
 
         if messages.contains(where: { $0.isScheduledDraft == true }) {
             tempListActions.removeAll { $0 == .star || $0 == .unstar }
-            quickActions = quickActions.map { action in
-                if action == .archive {
-                    return star ? .unstar : .star
-                }
-                return action
-            }
         }
 
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return MessageActions(
-            quickActions: quickActions,
-            listActions: listActions,
-            euriaActions: []
-        )
+        return listActions
     }
 
     private func actionsForMessagesInSameThreads(_ messages: [Message],
                                                  originFolder: Folder?)
-        -> MessageActions {
+        -> [Action] {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
         let showUnstar = messages.contains { $0.flagged }
@@ -258,11 +243,7 @@ public class ActionsProvider: ObservableObject {
         ]
         let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return MessageActions(
-            quickActions: Action.quickActions,
-            listActions: listActions,
-            euriaActions: []
-        )
+        return listActions
     }
 
     private func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
@@ -279,7 +260,7 @@ public class ActionsProvider: ObservableObject {
         }
     }
 
-    func floatingPanelActions(origin: ActionOrigin, messages: [Message]) -> MessageActions {
+    func floatingPanelListActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions
         } else if messages.count == 1, let message = messages.first {
@@ -291,17 +272,12 @@ public class ActionsProvider: ObservableObject {
         }
     }
 
-    func toolbarActions(for mode: ActionOrigin.ToolbarMode, folder: Folder?, messages: [Message]) -> MessageActions {
-        guard let folder else { return MessageActions(quickActions: [], listActions: [], euriaActions: []) }
-
-        if mode == .compact {
-            return MessageActions(
-                quickActions: [],
-                listActions: compactToolbarActions(for: messages, folder: folder),
-                euriaActions: []
-            )
-        } else {}
-        return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+    func floatingPanelQuickActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
+        if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
+            return []
+        } else {
+            return quickActions
+        }
     }
 
     func compactToolbarActions(for messages: [Message], folder: Folder) -> [Action] {
@@ -315,23 +291,87 @@ public class ActionsProvider: ObservableObject {
         }
     }
 
-    public func actionsFor(origin: ActionOrigin, messages: [Message]) -> MessageActions {
+    func largeToolbarActions(mode: ActionOrigin.ToolbarMode, messages: [Message], folder: Folder, thread: Thread) -> [Action] {
+        if case .large(let group) = mode {
+            switch group {
+            case .move:
+                return [.snooze, folder.role == .archive ? .moveToInbox : .archive, .openMovePanel, .delete]
+            case .reply:
+                return [.reply, .forward, .replyAll]
+            case .report:
+                return [.blockList, folder.role == .spam ? .nonSpam : .spam, .phishing]
+            case .other:
+                let isRead = messages.allSatisfy { $0.seen }
+                let canUseEuriaActions = (messages.count == 1 &&
+                    (featureAvailableProvider.isAvailable(.summarize) ||
+                        featureAvailableProvider.isAvailable(.translate)))
+
+                var actions: [Action] = [isRead ? .markAsUnread : .markAsRead,
+                                         thread.flagged ? .unstar : .star]
+
+                if canUseEuriaActions {
+                    actions.append(.showEuriaActions)
+                }
+
+                actions.append(.saveThreadInkDrive)
+
+                return actions
+            }
+        }
+        return []
+    }
+
+    func toolbarActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
+        guard let folder = origin.frozenFolder else { return [] }
+        if case .toolbar(let mode) = origin.type {
+            if mode == .compact {
+                return compactToolbarActions(for: messages, folder: folder)
+            } else {
+                if origin.thread?.containsOnlyScheduledDrafts == true {
+                    return [.delete]
+                }
+                return largeToolbarActions(mode: mode, messages: messages, folder: folder, thread: origin.thread!)
+            }
+        }
+        return []
+    }
+
+    func multipleSelectionActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
+        let lastMessages = messages.lastMessagesAndDuplicatesToExecuteAction(
+            currentMailboxEmail: currentEmail,
+            currentFolder: origin.frozenFolder,
+            featureAvailableProvider: featureAvailableProvider
+        )
+        let fromArchiveFolder = origin.frozenFolder?.role == .archive
+        let read = messages.contains { $0.seen } ? Action.markAsRead : Action.markAsUnread
+        let star = lastMessages.allSatisfy { $0.flagged } ? Action.unstar : Action.star
+        let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
+        return [read, archive, star, .delete]
+    }
+
+    func shortcutActions() -> [Action] {
+        return [.delete, .deleteShortcut, .reply, .refresh, .writeEmailAction]
+    }
+
+    public func actionsFor(origin: ActionOrigin, messages: [Message]) -> [Action] {
         switch origin.type {
         case .swipe:
-            return MessageActions(quickActions: [], listActions: swipeActions(origin: origin), euriaActions: [])
-        case .floatingPanel:
-            return floatingPanelActions(origin: origin, messages: messages)
+            return swipeActions(origin: origin)
+        case .floatingPanelListAction:
+            return floatingPanelListActions(origin: origin, messages: messages)
+        case .floatingPanelQuickAction:
+            return floatingPanelQuickActions(origin: origin, messages: messages)
+        case .euriaActions:
+            return euriaActionsForMessage(origin: origin)
         case .toolbar:
-            if case .toolbar(let mode) = origin.type {
-                return toolbarActions(for: mode, folder: origin.frozenFolder, messages: messages)
-            }
+            return toolbarActions(origin: origin, messages: messages)
         case .multipleSelection:
-            return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+            return multipleSelectionActions(origin: origin, messages: messages)
         case .shortcut:
-            return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+            return shortcutActions()
         case .threadHeader:
-            return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+            return []
         }
-        return MessageActions(quickActions: [], listActions: [], euriaActions: [])
+        return []
     }
 }
