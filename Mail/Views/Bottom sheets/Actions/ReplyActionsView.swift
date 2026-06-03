@@ -34,7 +34,7 @@ struct ReplyActionsView: View {
                 QuickActionView(
                     targetMessages: [message],
                     action: action,
-                    origin: .floatingPanel(source: .messageList),
+                    origin: .floatingPanelQuickAction(source: .messageList),
                     isMultipleSelection: false
                 )
             }

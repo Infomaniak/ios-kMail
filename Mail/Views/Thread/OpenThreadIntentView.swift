@@ -63,7 +63,8 @@ struct OpenThreadIntentView: View, IntentViewable {
                 .environmentObject(ActionsProvider(
                     currentUser: resolvedIntent.user,
                     featureAvailableProvider: resolvedIntent.mailboxManager.featureAvailableProvider,
-                    currentEmail: resolvedIntent.mailboxManager.mailbox.email
+                    currentEmail: resolvedIntent.mailboxManager.mailbox.email,
+                    threadViewState: threadViewState
                 ))
                 .environmentObject(mainViewState)
                 .environmentObject(threadViewState)

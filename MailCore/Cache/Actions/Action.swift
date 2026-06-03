@@ -20,11 +20,18 @@ import Foundation
 import MailResources
 import SwiftUI
 
+public struct KeyboardShortcut {
+    public let key: KeyEquivalent
+    public let modifiers: EventModifiers
+}
+
 public struct Action: Identifiable, Hashable, Equatable {
     public let id: String
     public let title: String
     public let shortTitle: String?
     public let iconName: String
+    public var keyboardShortcut: KeyboardShortcut?
+
     public var icon: Image {
         return Image(iconName, bundle: MailResourcesResources.bundle)
     }
@@ -47,7 +54,8 @@ public struct Action: Identifiable, Hashable, Equatable {
         shortTitle: String? = nil,
         iconResource: MailResourcesImages,
         tintColorResource: MailResourcesColors? = nil,
-        matomoName: String
+        matomoName: String,
+        keyboardShortcut: KeyboardShortcut? = nil
     ) {
         self.id = id
         self.title = title
@@ -55,6 +63,7 @@ public struct Action: Identifiable, Hashable, Equatable {
         iconName = iconResource.name
         tintColorName = tintColorResource?.name
         self.matomoName = matomoName
+        self.keyboardShortcut = keyboardShortcut
     }
 
     public func inverseActionIfNeeded(for thread: Thread) -> Self {

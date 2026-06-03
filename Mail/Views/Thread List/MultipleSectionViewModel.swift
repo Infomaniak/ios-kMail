@@ -28,7 +28,6 @@ class MultipleSelectionViewModel: ObservableObject {
 
     @Published var isEnabled = false
     @Published var selectedItems = [String: Thread]()
-    @Published var toolbarActions = [Action]()
 
     let fromArchiveFolder: Bool
     let fromSearch: Bool
@@ -37,7 +36,6 @@ class MultipleSelectionViewModel: ObservableObject {
     init(fromArchiveFolder: Bool = false, fromSearch: Bool = false) {
         self.fromArchiveFolder = fromArchiveFolder
         self.fromSearch = fromSearch
-        setActions()
     }
 
     func disable() {
@@ -64,7 +62,6 @@ class MultipleSelectionViewModel: ObservableObject {
             } else {
                 selectedItems[thread.uid] = thread
             }
-            setActions()
 
             updateEnabledState()
         }
@@ -101,13 +98,5 @@ class MultipleSelectionViewModel: ObservableObject {
             selectedItems = Dictionary(uniqueKeysWithValues: threads.map { ($0.uid, $0) })
             matomo.track(eventWithCategory: .multiSelection, name: "all")
         }
-        setActions()
-    }
-
-    private func setActions() {
-        let read = selectedItems.values.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
-        let star = selectedItems.values.allSatisfy(\.flagged) ? Action.unstar : Action.star
-        let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
-        toolbarActions = [read, archive, star, .delete]
     }
 }

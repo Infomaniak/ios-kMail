@@ -25,15 +25,13 @@ import SwiftUI
 extension View {
     func euriaFloatingPanel(
         user: UserProfile,
-        messages: [Message]?,
-        origin: ActionOrigin,
+        messages: Binding<[Message]?>,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
                 user: user,
                 messages: messages,
-                origin: origin,
                 completionHandler: completionHandler
             )
         )
@@ -50,18 +48,21 @@ struct EuriaFloatingPanel: ViewModifier {
     @State private var isShowingPanel = false
 
     let user: UserProfile
-    let messages: [Message]?
-    let origin: ActionOrigin
+    @Binding var messages: [Message]?
     let completionHandler: ((Action) -> Void)?
+
+    private var origin: ActionOrigin {
+        return .euriaActions(messagesToProcessWithEuria: $messages)
+    }
 
     func body(content: Content) -> some View {
         content
             .onChange(of: messages) { newValue in
-                isShowingPanel = newValue != nil && !availableActions(for: newValue, origin: origin).isEmpty
+                isShowingPanel = newValue != nil && !availableActions(for: newValue).isEmpty
             }
             .mailFloatingPanel(isPresented: $isShowingPanel, title: MailResourcesStrings.Localizable.askEuriaTitle) {
                 VStack(alignment: .leading, spacing: 0) {
-                    let availableActions = availableActions(for: messages, origin: origin)
+                    let availableActions = availableActions(for: messages)
 
                     ForEach(availableActions) { action in
                         if action != availableActions.first {
@@ -80,11 +81,11 @@ struct EuriaFloatingPanel: ViewModifier {
             }
     }
 
-    private func availableActions(for messages: [Message]?, origin: ActionOrigin) -> [Action] {
+    private func availableActions(for messages: [Message]?) -> [Action] {
         guard let messages else { return [] }
 
-        let actions = actionsProvider.actionsFor(origin: origin, messages: messages)
+        return actionsProvider.actionsFor(origin: origin, messages: messages)
 
-        return actions.euriaActions
+        
     }
 }

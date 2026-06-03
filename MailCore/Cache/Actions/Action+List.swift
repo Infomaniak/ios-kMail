@@ -23,23 +23,6 @@ import MailResources
 import SwiftUI
 
 extension Action: CaseIterable {
-    public struct MessageActions {
-        public let quickActions: [Action]
-        public let listActions: [Action]
-        public let euriaActions: [Action]
-    }
-
-    public static let rightClickActions: [Action] = [
-        .activeMultiselect,
-        .reply,
-        .replyAll,
-        .forward,
-        .openMovePanel,
-        .archive,
-        .delete
-    ]
-    public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
-
     public static let allCases: [Action] = [
         .delete,
         .reply,
@@ -355,6 +338,7 @@ extension Action: RawRepresentable {
         iconName = action.iconName
         tintColorName = action.tintColorName
         matomoName = action.matomoName
+        keyboardShortcut = action.keyboardShortcut
     }
 }
 
@@ -401,13 +385,30 @@ public extension Action {
         title: MailResourcesStrings.Localizable.actionDelete,
         iconResource: MailResourcesAsset.bin,
         tintColorResource: MailResourcesAsset.swipeDeleteColor,
-        matomoName: "delete"
+        matomoName: "delete",
+        keyboardShortcut: KeyboardShortcut(key: "\u{007F}", modifiers: [])
+    )
+    static let deleteShortcut = Action(
+        id: "deleteShortcut",
+        title: MailResourcesStrings.Localizable.actionDelete,
+        iconResource: MailResourcesAsset.bin,
+        tintColorResource: MailResourcesAsset.swipeDeleteColor,
+        matomoName: "delete",
+        keyboardShortcut: KeyboardShortcut(key: .delete, modifiers: [])
+    )
+    static let refresh = Action(
+        id: "refresh",
+        title: MailResourcesStrings.Localizable.shortcutRefreshAction,
+        iconResource: MailResourcesAsset.doubleArrowsSynchronize,
+        matomoName: "refresh",
+        keyboardShortcut: KeyboardShortcut(key: "n", modifiers: [.shift, .command])
     )
     static let reply = Action(
         id: "reply",
         title: MailResourcesStrings.Localizable.actionReply,
         iconResource: MailResourcesAsset.emailActionReply,
-        matomoName: "reply"
+        matomoName: "reply",
+        keyboardShortcut: KeyboardShortcut(key: "r", modifiers: .command)
     )
     static let replyAll = Action(
         id: "replyAll",
@@ -530,7 +531,8 @@ public extension Action {
         id: "writeEmailAction",
         title: MailResourcesStrings.Localizable.contactActionWriteEmail,
         iconResource: MailResourcesAsset.pencil,
-        matomoName: "writeEmail"
+        matomoName: "writeEmail",
+        keyboardShortcut: KeyboardShortcut(key: "n", modifiers: .command)
     )
     static let addContactsAction = Action(
         id: "addContactsAction",
