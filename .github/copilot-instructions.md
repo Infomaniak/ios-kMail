@@ -7,6 +7,8 @@ Before reading this file, please read AGENTS.md to learn more about the project 
 - Pay attention for consistency with existing code style and architecture.
 - Ensure new UI uses Design System components where applicable. Notably IKPaddings, IKRadius, IKIconSize.
 - Ensure strings are localized with MailResourcesStrings.Localizable.<some key>
+- When reviewing Realm model changes, check whether the persisted schema changed: added, removed, renamed, or type-changed persisted properties, changed optionality, lists, embedded objects, or object types.
+- If the persisted Realm schema changed, ensure the matching schema version was incremented in `MailCore/Cache/MailboxManager/MailboxManager.swift`, `MailCore/Cache/MailboxInfosManager/MailboxInfosManager.swift`, or `MailCore/Cache/ContactManager/ContactManager.swift`, and that the relevant migration logic was updated when existing data needs migration.
 
 Some common UI errors with correction:
 

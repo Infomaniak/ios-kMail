@@ -102,6 +102,7 @@ tuist test # Or via Xcode Test Navigator
 - **DI:** Use `@LazyInjectService` or `@njectService` for dependency injection; register via target assembly classes.
 - **API layer:** Extend `MailApiFetcher` with focused extensions (e.g., `+Calendar`, `+AI`, `+Attachment`).
 - **Concurrency:** Use `async/await` and structured concurrency. `RefreshActor` for background sync.
+- **Realm migrations:** Any schema-affecting change to a Realm `Object` or `EmbeddedObject` must increment the matching schema version in `MailCore/Cache/MailboxManager/MailboxManager.swift`, `MailCore/Cache/MailboxInfosManager/MailboxInfosManager.swift`, or `MailCore/Cache/ContactManager/ContactManager.swift`. Update the relevant migration block when existing data needs migration.
 - **Formatting:** SwiftFormat excludes `DerivedData`, `Derived`, `Tuist`, `Project.swift`.
 
 ### Testing
@@ -118,6 +119,7 @@ tuist test # Or via Xcode Test Navigator
 - Use Conventional Commits for commit messages.
 - Use Design System tokens (IKPadding, IKRadius, IKIconSize) — no raw numeric values.
 - Localize all user-facing strings.
+- When modifying Realm models, verify the matching schema version was incremented and the migration logic was updated when needed.
 - Never use `ci_scripts/` locally.
 
 ### Learned Preferences
