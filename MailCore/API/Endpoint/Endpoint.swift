@@ -352,7 +352,7 @@ public extension Endpoint {
     }
 
     static var summarize: Endpoint {
-        return .base.appending(path: "/resume")
+        return .base.appending(path: "/summarize")
     }
 
     static var translate: Endpoint {
