@@ -33,32 +33,31 @@ struct ActionsView: View {
     @State private var quickActions: [Action] = []
     @State private var listActions: [Action] = []
     private let targetMessages: [Message]
-    private let origin: ActionOrigin
+    private let listActionOrigin: ActionOrigin
+    private let quickActionOrigin: ActionOrigin
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
 
     init(
-        mailboxManager: MailboxManager,
         user: UserProfile,
         target messages: [Message],
-        origin: ActionOrigin,
+        listActionOrigin: ActionOrigin,
+        quickActionOrigin: ActionOrigin,
         isMultipleSelection: Bool,
         threadViewState: ThreadViewState,
         colorScheme: ColorScheme,
         completionHandler: ((Action) -> Void)? = nil
     ) {
-        let userIsStaff = user.isStaff ?? false
-        let actions = Action.actionsForMessages(
-            messages,
-            origin: origin,
-            userIsStaff: userIsStaff,
-            userEmail: user.email,
-            threadViewState: threadViewState,
-            colorScheme: colorScheme,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
-        quickActions = actions.quickActions
-        listActions = actions.listActions
+        targetMessages = messages
+        self.listActionOrigin = listActionOrigin
+        self.quickActionOrigin = quickActionOrigin
+        self.isMultipleSelection = isMultipleSelection
+        self.completionHandler = completionHandler
+    }
+
+    private func loadActions() {
+        quickActions = actionsProvider.actionsFor(origin: quickActionOrigin, messages: targetMessages)
+        listActions = actionsProvider.actionsFor(origin: listActionOrigin, messages: targetMessages)
     }
 
     var body: some View {
@@ -68,7 +67,7 @@ struct ActionsView: View {
                     QuickActionView(
                         targetMessages: targetMessages,
                         action: action,
-                        origin: origin,
+                        origin: quickActionOrigin,
                         isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
@@ -86,7 +85,7 @@ struct ActionsView: View {
                     MessageActionView(
                         targetMessages: targetMessages,
                         action: action,
-                        origin: origin,
+                        origin: listActionOrigin,
                         isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler
                     )
@@ -100,13 +99,11 @@ struct ActionsView: View {
 
 #Preview {
     ActionsView(
-        mailboxManager: PreviewHelper.sampleMailboxManager,
         user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
-        origin: .toolbarLarge(originFolder: nil),
-        isMultipleSelection: false,
-        threadViewState: ThreadViewState(),
-        colorScheme: .dark
+        listActionOrigin: .floatingPanelListAction(source: .message),
+        quickActionOrigin: .floatingPanelQuickAction(source: .message),
+        isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }

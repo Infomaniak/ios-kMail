@@ -135,7 +135,7 @@ public class ActionsManager: ObservableObject {
         }
 
         switch action {
-        case .delete:
+        case .delete, .deleteShortcut:
             for message in messagesWithDuplicates {
                 if message.isScheduledDraft == true {
                     await showWarningDeleteScheduleAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)

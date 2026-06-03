@@ -48,7 +48,7 @@ struct CompactToolbarModifier: ViewModifier {
     private let frozenMessages: [Message]
 
     private var toolbarActions: [Action] {
-        return actionsProvider.actionsFor(origin: origin, messages: frozenMessages).listActions
+        return actionsProvider.actionsFor(origin: origin, messages: frozenMessages)
     }
 
     private var showMoreButton: Bool {

@@ -40,6 +40,7 @@ struct SearchToolbar: ViewModifier {
 
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var multipleSelectedMessages: [Message]?
     @State private var messagesToMove: [Message]?
@@ -66,6 +67,13 @@ struct SearchToolbar: ViewModifier {
         } else {
             return isBottomBarVisible
         }
+    }
+
+    private var origin: ActionOrigin {
+        return .multipleSelection(
+            originFolder: viewModel.frozenSearchFolder,
+            nearestMessagesToMoveSheet: $messagesToMove
+        )
     }
 
     func body(content: Content) -> some View {
@@ -124,10 +132,10 @@ struct SearchToolbar: ViewModifier {
             .toolbarSpacer(placement: .bottomBar, isVisible: isShowingBottomBarItems)
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
+                    let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                     if isShowingBottomBarItems {
-                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                        ForEach(actionsProvider.actionsFor(origin: origin, messages: allMessages)) { action in
                             Button {
-                                let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                                 multipleSelectionViewModel.disable()
                                 Task {
                                     matomo.trackBulkEvent(

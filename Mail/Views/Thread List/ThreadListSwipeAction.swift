@@ -126,7 +126,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @MainActor @ViewBuilder
     private func edgeActions(origin: ActionOrigin) -> some View {
         if !multipleSelectionViewModel.isEnabled {
-            ForEach(actionsProvider.actionsFor(origin: origin, messages: messagesToMove ?? []).listActions) { action in
+            ForEach(actionsProvider.actionsFor(origin: origin, messages: messagesToMove ?? [])) { action in
                 SwipeActionView(
                     actionOrigin: origin,
                     viewModel: viewModel,

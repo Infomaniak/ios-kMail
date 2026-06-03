@@ -46,6 +46,7 @@ struct SettingsSwipeActionsView: View {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var fullTrailing = DefaultPreferences.swipeFullTrailing
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -57,7 +58,7 @@ struct SettingsSwipeActionsView: View {
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
                             SettingsOptionView(
                                 title: item.title,
-                                values: Action.allAvailableSwipeActions(mailboxManager.featureAvailableProvider),
+                                values: actionsProvider.allAvailableSwipeActions(),
                                 keyPath: item.keyPath,
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,

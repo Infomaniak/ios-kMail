@@ -58,8 +58,24 @@ struct ThreadListCellContextMenu: ViewModifier {
 
     private static let sendEmailActions: Set<Action> = [.reply, .replyAll, .forward]
 
-    private var origin: ActionOrigin {
-        .floatingPanel(
+    private var quickActionOrigin: ActionOrigin {
+        .floatingPanelQuickAction(
+            source: .threadList,
+            originFolder: originFolder?.freezeIfNeeded(),
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload
+        )
+    }
+    
+    private var listActionOrigin: ActionOrigin {
+        .floatingPanelListAction(
             source: .threadList,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestDestructiveAlert: $destructiveAlert,
@@ -99,12 +115,11 @@ struct ThreadListCellContextMenu: ViewModifier {
         content
             .contextMenu(forSelectionType: Thread.self) { selectedThreads in
                 if let myThread = selectedThreads.first {
-                    let computedActions = actionsProvider
-                        .actionsFor(origin: origin,
-                                    messages: myThread.messages.toArray()) // Capture actions to avoid re-computation
-
+                    let quickActions = actionsProvider.actionsFor(origin: quickActionOrigin, messages: myThread.messages.toArray())
+                    let listActions = actionsProvider.actionsFor(origin: listActionOrigin, messages: myThread.messages.toArray())
+                    
                     ControlGroup {
-                        ForEach(computedActions.quickActions) { action in
+                        ForEach(quickActions) { action in
                             ContextMenuActionButtonView(
                                 action: action,
                                 role: isDestructiveAction(action, of: myThread),
@@ -120,7 +135,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                         multipleSelectionViewModel.toggleMultipleSelection(of: myThread, withImpact: false)
                     }
 
-                    ForEach(computedActions.listActions) { action in
+                    ForEach(listActions) { action in
                         ContextMenuActionButtonView(
                             action: action,
                             role: isDestructiveAction(action, of: myThread),
@@ -141,13 +156,13 @@ struct ThreadListCellContextMenu: ViewModifier {
             }
             .mailFloatingPanel(item: $blockSendersList,
                                title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: listActionOrigin)
             }
             .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
                 ConfirmationBlockRecipientView(
                     recipients: blockSenderState.recipients,
                     reportedMessages: blockSenderState.messages,
-                    origin: origin
+                    origin: listActionOrigin
                 )
             }
             .mailCustomAlert(
@@ -194,7 +209,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 try await actionsManager.performAction(
                     target: thread.messages.toArray(),
                     action: action,
-                    origin: origin
+                    origin: listActionOrigin
                 )
             }
         }

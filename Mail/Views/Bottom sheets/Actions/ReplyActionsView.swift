@@ -37,7 +37,7 @@ struct ReplyActionsView: View {
                 QuickActionView(
                     targetMessages: [message],
                     action: action,
-                    origin: .floatingPanel(source: .messageList, nearestNoReplyAlert: $noReplyAlert),
+                    origin: .floatingPanelQuickAction(source: .messageList, nearestNoReplyAlert: $noReplyAlert),
                     isMultipleSelection: false
                 )
             }

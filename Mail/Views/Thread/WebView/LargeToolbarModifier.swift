@@ -34,6 +34,7 @@ struct LargeToolbarModifier: ViewModifier {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -73,9 +74,10 @@ struct LargeToolbarModifier: ViewModifier {
         return initialDate
     }
 
-    private var origin: ActionOrigin {
+    private var MoveOrigin: ActionOrigin {
         .toolbarLarge(
-            originFolder: frozenFolder,
+            group: .move,
+            thread: frozenThread,
             nearestDestructiveAlert: $destructiveAlert,
             nearestNoReplyAlert: $noReplyAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
@@ -88,6 +90,73 @@ struct LargeToolbarModifier: ViewModifier {
             messagesToDownload: $messagesToDownload,
             messagesToProcessWithEuria: $messagesToProcessWithEuria
         )
+    }
+
+    private var ReplyOrigin: ActionOrigin {
+        .toolbarLarge(
+            group: .reply,
+            thread: frozenThread,
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
+        )
+    }
+
+    private var ReportOrigin: ActionOrigin {
+        .toolbarLarge(
+            group: .report,
+            thread: frozenThread,
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
+        )
+    }
+
+    private var OtherOrigin: ActionOrigin {
+        .toolbarLarge(
+            group: .other,
+            thread: frozenThread,
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
+        )
+    }
+
+    private var moveActions: [Action] {
+        return actionsProvider.actionsFor(origin: MoveOrigin, messages: frozenMessages)
+    }
+
+    private var replyActions: [Action] {
+        return actionsProvider.actionsFor(origin: ReplyOrigin, messages: frozenMessages)
+    }
+
+    private var reportActions: [Action] {
+        return actionsProvider.actionsFor(origin: ReportOrigin, messages: frozenMessages)
+    }
+
+    private var otherActions: [Action] {
+        return actionsProvider.actionsFor(origin: OtherOrigin, messages: frozenMessages)
     }
 
     init(frozenThread: Thread) {
@@ -126,13 +195,13 @@ struct LargeToolbarModifier: ViewModifier {
             }
             .mailFloatingPanel(item: $blockSendersList,
                                title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: ReportOrigin)
             }
             .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
                 ConfirmationBlockRecipientView(
                     recipients: blockSenderState.recipients,
                     reportedMessages: blockSenderState.messages,
-                    origin: origin
+                    origin: ReportOrigin
                 )
             }
             .mailCustomAlert(item: $reportedForDisplayProblemMessage) { message in
@@ -162,8 +231,7 @@ struct LargeToolbarModifier: ViewModifier {
             )
             .euriaFloatingPanel(
                 user: currentUser.value,
-                messages: messagesToProcessWithEuria,
-                origin: origin
+                messages: $messagesToProcessWithEuria
             )
     }
 
@@ -171,24 +239,10 @@ struct LargeToolbarModifier: ViewModifier {
     private func toolbarItemGroups() -> some CustomizableToolbarContent {
         ToolbarItem(id: "thread.move", placement: .secondaryAction) {
             ControlGroup {
-                Button { didTap(action: .snooze) } label: {
-                    Label(Action.snooze.title, asset: Action.snooze.icon)
-                }
-
-                Button(action: didTapArchive) {
-                    Label(
-                        isArchive ? MailResourcesStrings.Localizable.actionMoveToInbox : MailResourcesStrings.Localizable
-                            .actionArchive,
-                        asset: isArchive ? Action.moveToInbox.icon : Action.archive.icon
-                    )
-                }
-
-                Button { didTap(action: .openMovePanel) } label: {
-                    Label(Action.openMovePanel.title, asset: Action.openMovePanel.icon)
-                }
-
-                Button { didTap(action: .delete) } label: {
-                    Label(Action.delete.title, asset: Action.delete.icon)
+                ForEach(moveActions) { action in
+                    Button { didTap(action: action) } label: {
+                        Label(action.title, asset: action.icon)
+                    }
                 }
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonMore, systemImage: "arrow.forward.folder")
@@ -198,18 +252,10 @@ struct LargeToolbarModifier: ViewModifier {
 
         ToolbarItem(id: "thread.report", placement: .secondaryAction) {
             ControlGroup {
-                let spamAction: Action = frozenFolder?.role == .spam ? .nonSpam : .spam
-
-                Button { didTap(action: .blockList) } label: {
-                    Label(Action.blockList.title, asset: Action.blockList.icon)
-                }
-
-                Button { didTap(action: spamAction) } label: {
-                    Label(spamAction.title, asset: spamAction.icon)
-                }
-
-                Button { didTap(action: .phishing) } label: {
-                    Label(Action.phishing.title, asset: Action.phishing.icon)
+                ForEach(reportActions) { action in
+                    Button { didTap(action: action) } label: {
+                        Label(action.title, asset: action.icon)
+                    }
                 }
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonMore, systemImage: "nosign")
@@ -219,37 +265,10 @@ struct LargeToolbarModifier: ViewModifier {
 
         ToolbarItem(id: "thread.other", placement: .secondaryAction) {
             ControlGroup {
-                Button(action: didTapRead) {
-                    Label(
-                        isRead ? MailResourcesStrings.Localizable.actionMarkAsUnread : MailResourcesStrings.Localizable
-                            .actionMarkAsRead,
-                        asset: isRead ? Action.markAsUnread.icon : Action.markAsRead.icon
-                    )
-                }
-
-                Button { didTap(action: .shareMailLink) } label: {
-                    Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
-                }
-
-                Button(action: didTapFlag) {
-                    Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
-                        .actionStar,
-                        asset: isFlagged ? MailResourcesAsset.starFull.swiftUIImage : MailResourcesAsset.star.swiftUIImage)
-                }
-                .tint(flaggedTint)
-                .accessibilityLabel(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings
-                    .Localizable.actionStar)
-
-                if frozenMessages.count == 1 &&
-                    (mailboxManager.featureAvailableProvider.isAvailable(.summarize) ||
-                        mailboxManager.featureAvailableProvider.isAvailable(.translate)) {
-                    Button { didTap(action: .showEuriaActions) } label: {
-                        Label(Action.showEuriaActions.title, asset: Action.showEuriaActions.icon)
+                ForEach(otherActions) { action in
+                    Button { didTap(action: action) } label: {
+                        Label(action.title, asset: action.icon)
                     }
-                }
-
-                Button { didTap(action: .saveThreadInkDrive) } label: {
-                    Label(Action.saveThreadInkDrive.title, asset: Action.saveThreadInkDrive.icon)
                 }
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
@@ -423,7 +442,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isFlagged ? .unstar : .star,
-                    origin: .toolbarLarge(originFolder: frozenFolder)
+                    origin: OtherOrigin
                 )
             }
         }
@@ -435,7 +454,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isRead ? .markAsUnread : .markAsRead,
-                    origin: .toolbarLarge(originFolder: frozenFolder)
+                    origin: OtherOrigin
                 )
             }
         }
@@ -447,7 +466,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isArchive ? .moveToInbox : .archive,
-                    origin: .toolbarLarge(originFolder: frozenFolder)
+                    origin: MoveOrigin
                 )
             }
         }
@@ -457,12 +476,27 @@ struct LargeToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
+        var origin: ActionOrigin? = nil
+
+        switch action {
+        case .reply, .replyAll, .forward:
+            origin = ReplyOrigin
+        case .blockList, .spam, .nonSpam, .phishing:
+            origin = ReportOrigin
+        case .showEuriaActions, .saveThreadInkDrive, .markAsRead, .markAsUnread, .star, .unstar:
+            origin = OtherOrigin
+        case .archive, .moveToInbox, .openMovePanel, .snooze, .delete:
+            origin = MoveOrigin
+        default:
+            return
+        }
+
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: action,
-                    origin: origin
+                    origin: origin!
                 )
             }
         }

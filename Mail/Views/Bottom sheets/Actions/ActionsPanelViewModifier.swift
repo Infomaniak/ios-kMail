@@ -70,8 +70,25 @@ struct ActionsPanelViewModifier: ViewModifier {
     var popoverArrowEdge: Edge
     var completionHandler: ((Action) -> Void)?
 
-    private var origin: ActionOrigin {
-        .floatingPanel(
+    private var listActionOrigin: ActionOrigin {
+        .floatingPanelListAction(   
+            source: panelSource,
+            originFolder: originFolder?.freezeIfNeeded(),
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
+        )
+    }
+
+    private var quickActionOrigin: ActionOrigin {
+        .floatingPanelQuickAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestDestructiveAlert: $destructiveAlert,
@@ -108,10 +125,10 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $messages, style: panelStyle,
                               popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
-                mailboxManager: mailboxManager,
                 user: currentUser.value,
                 target: messages,
-                origin: origin,
+                listActionOrigin: listActionOrigin,
+                quickActionOrigin: quickActionOrigin,
                 isMultipleSelection: isMultipleSelection,
                 threadViewState: threadViewState,
                 colorScheme: colorScheme,
@@ -131,13 +148,13 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .mailFloatingPanel(item: $blockSendersList,
                            title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: listActionOrigin)
         }
         .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipients: blockSenderState.recipients,
                 reportedMessages: blockSenderState.messages,
-                origin: origin
+                origin: listActionOrigin
             )
         }
         .mailCustomAlert(
@@ -176,8 +193,7 @@ struct ActionsPanelViewModifier: ViewModifier {
         )
         .euriaFloatingPanel(
             user: currentUser.value,
-            messages: messagesToProcessWithEuria,
-            origin: origin,
+            messages: $messagesToProcessWithEuria,
             completionHandler: completionHandler
         )
     }

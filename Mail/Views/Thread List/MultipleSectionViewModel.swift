@@ -28,7 +28,6 @@ class MultipleSelectionViewModel: ObservableObject {
 
     @Published var isEnabled = false
     @Published var selectedItems = [String: Thread]()
-    @Published var toolbarActions = [Action]()
 
     let fromArchiveFolder: Bool
     let fromSearch: Bool
@@ -37,7 +36,6 @@ class MultipleSelectionViewModel: ObservableObject {
     init(fromArchiveFolder: Bool = false, fromSearch: Bool = false) {
         self.fromArchiveFolder = fromArchiveFolder
         self.fromSearch = fromSearch
-        setActions()
     }
 
     func disable() {
@@ -64,7 +62,6 @@ class MultipleSelectionViewModel: ObservableObject {
             } else {
                 selectedItems[thread.uid] = thread
             }
-            setActions()
 
             updateEnabledState()
         }
