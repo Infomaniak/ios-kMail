@@ -214,21 +214,20 @@ public extension MailboxManager {
     }
 
     @MainActor
-    func summarize(message: Message, threadViewState: ThreadViewState) async throws {
+    func summarize(message: Message, threadViewState: ThreadViewState, locale: Locale) async throws {
         withAnimation {
             threadViewState.summaries[message.uid] = .showContent
         }
 
         guard message.summary == nil else { return }
-        guard let body = message.body?.value else {
-            withAnimation {
-                threadViewState.summaries[message.uid] = .showError
-            }
-            return
-        }
 
         do {
-            let summary = try await apiFetcher.summarize(content: body)
+            guard let languageIdentifier = locale.language.languageCode?.identifier else {
+                return
+            }
+            let summary = try await apiFetcher.summarize(messageUid: message.uid,
+                                                         mailboxUuid: mailbox.uuid,
+                                                         destinationLanguage: languageIdentifier)
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
                 liveMessage.summary = summary

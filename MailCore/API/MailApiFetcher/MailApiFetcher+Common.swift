@@ -122,10 +122,12 @@ public extension MailApiFetcher {
         ))
     }
 
-    func summarize(content: String) async throws -> String {
+    func summarize(messageUid: String, mailboxUuid: String, destinationLanguage: String) async throws -> String {
         try await perform(request: authenticatedRequest(.summarize,
                                                         method: .post,
-                                                        parameters: ["content": content]))
+                                                        parameters: ["msg_uid": messageUid,
+                                                                     "mailbox_uuid": mailboxUuid,
+                                                                     "destination_language": destinationLanguage]))
     }
 
     func translate(messageUid: String, mailboxUuid: String, destinationLanguage: String) async throws -> String {
