@@ -88,7 +88,7 @@ public struct ActionOrigin {
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
-        self.thread = thread
+        self.thread = thread?.freezeIfNeeded()
         self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
         self.nearestDestructiveAlert = nearestDestructiveAlert
         self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet

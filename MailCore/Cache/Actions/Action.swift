@@ -20,7 +20,9 @@ import Foundation
 import MailResources
 import SwiftUI
 
-public struct KeyboardShortcut {
+extension EventModifiers: @retroactive Hashable {}
+
+public struct KeyboardShortcut: Hashable {
     public let key: KeyEquivalent
     public let modifiers: EventModifiers
 }

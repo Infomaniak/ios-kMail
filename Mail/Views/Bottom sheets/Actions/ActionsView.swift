@@ -39,7 +39,6 @@ struct ActionsView: View {
     private let completionHandler: ((Action) -> Void)?
 
     init(
-        user: UserProfile,
         target messages: [Message],
         listActionOrigin: ActionOrigin,
         quickActionOrigin: ActionOrigin,
@@ -99,7 +98,6 @@ struct ActionsView: View {
 
 #Preview {
     ActionsView(
-        user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
         listActionOrigin: .floatingPanelListAction(source: .message),
         quickActionOrigin: .floatingPanelQuickAction(source: .message),

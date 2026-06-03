@@ -122,7 +122,6 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $messages, style: panelStyle,
                               popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
-                user: currentUser.value,
                 target: messages,
                 listActionOrigin: listActionOrigin,
                 quickActionOrigin: quickActionOrigin,

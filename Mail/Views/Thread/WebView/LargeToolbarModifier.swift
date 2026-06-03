@@ -73,7 +73,7 @@ struct LargeToolbarModifier: ViewModifier {
         return initialDate
     }
 
-    private var MoveOrigin: ActionOrigin {
+    private var moveOrigin: ActionOrigin {
         .toolbarLarge(
             group: .move,
             thread: frozenThread,
@@ -90,7 +90,7 @@ struct LargeToolbarModifier: ViewModifier {
         )
     }
 
-    private var ReplyOrigin: ActionOrigin {
+    private var replyOrigin: ActionOrigin {
         .toolbarLarge(
             group: .reply,
             thread: frozenThread,
@@ -107,7 +107,7 @@ struct LargeToolbarModifier: ViewModifier {
         )
     }
 
-    private var ReportOrigin: ActionOrigin {
+    private var reportOrigin: ActionOrigin {
         .toolbarLarge(
             group: .report,
             thread: frozenThread,
@@ -124,7 +124,7 @@ struct LargeToolbarModifier: ViewModifier {
         )
     }
 
-    private var OtherOrigin: ActionOrigin {
+    private var otherOrigin: ActionOrigin {
         .toolbarLarge(
             group: .other,
             thread: frozenThread,
@@ -142,19 +142,37 @@ struct LargeToolbarModifier: ViewModifier {
     }
 
     private var moveActions: [Action] {
-        return actionsProvider.actionsFor(origin: MoveOrigin, messages: frozenMessages)
+        return actionsProvider.actionsFor(origin: moveOrigin, messages: frozenMessages)
     }
 
     private var replyActions: [Action] {
-        return actionsProvider.actionsFor(origin: ReplyOrigin, messages: frozenMessages)
+        return actionsProvider.actionsFor(origin: replyOrigin, messages: frozenMessages)
     }
 
     private var reportActions: [Action] {
-        return actionsProvider.actionsFor(origin: ReportOrigin, messages: frozenMessages)
+        return actionsProvider.actionsFor(origin: reportOrigin, messages: frozenMessages)
     }
 
     private var otherActions: [Action] {
-        return actionsProvider.actionsFor(origin: OtherOrigin, messages: frozenMessages)
+        return actionsProvider.actionsFor(origin: otherOrigin, messages: frozenMessages)
+    }
+
+    private func getOtherActionTint(action: Action) -> Color? {
+        if action == .star || action == .unstar {
+            return flaggedTint
+        } else {
+            return nil
+        }
+    }
+
+    private func getOtherItemAccessibilityLabel(action: Action) -> String {
+        if action == .unstar {
+            return MailResourcesStrings.Localizable.actionUnstar
+        } else if action == .star {
+            return MailResourcesStrings.Localizable.actionStar
+        } else {
+            return action.title
+        }
     }
 
     init(frozenThread: Thread) {
@@ -193,13 +211,13 @@ struct LargeToolbarModifier: ViewModifier {
             }
             .mailFloatingPanel(item: $blockSendersList,
                                title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: ReportOrigin)
+                BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: reportOrigin)
             }
             .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
                 ConfirmationBlockRecipientView(
                     recipients: blockSenderState.recipients,
                     reportedMessages: blockSenderState.messages,
-                    origin: ReportOrigin
+                    origin: reportOrigin
                 )
             }
             .mailCustomAlert(item: $reportedForDisplayProblemMessage) { message in
@@ -264,6 +282,8 @@ struct LargeToolbarModifier: ViewModifier {
                     Button { didTap(action: action) } label: {
                         Label(action.title, asset: action.icon)
                     }
+                    .tint(getOtherActionTint(action: action))
+                    .accessibilityLabel(getOtherItemAccessibilityLabel(action: action))
                 }
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
@@ -437,7 +457,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isFlagged ? .unstar : .star,
-                    origin: OtherOrigin
+                    origin: otherOrigin
                 )
             }
         }
@@ -449,7 +469,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isRead ? .markAsUnread : .markAsRead,
-                    origin: OtherOrigin
+                    origin: otherOrigin
                 )
             }
         }
@@ -461,7 +481,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isArchive ? .moveToInbox : .archive,
-                    origin: MoveOrigin
+                    origin: moveOrigin
                 )
             }
         }
@@ -471,17 +491,17 @@ struct LargeToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
-        var origin: ActionOrigin? = nil
+        var origin: ActionOrigin
 
         switch action {
         case .reply, .replyAll, .forward:
-            origin = ReplyOrigin
+            origin = replyOrigin
         case .blockList, .spam, .nonSpam, .phishing:
-            origin = ReportOrigin
+            origin = reportOrigin
         case .showEuriaActions, .saveThreadInkDrive, .markAsRead, .markAsUnread, .star, .unstar:
-            origin = OtherOrigin
+            origin = otherOrigin
         case .archive, .moveToInbox, .openMovePanel, .snooze, .delete:
-            origin = MoveOrigin
+            origin = moveOrigin
         default:
             return
         }
@@ -491,7 +511,7 @@ struct LargeToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: action,
-                    origin: origin!
+                    origin: origin
                 )
             }
         }
