@@ -44,12 +44,29 @@ public class ActionsProvider: ObservableObject {
     let currentUser: UserProfile
     let currentEmail: String
     let featureAvailableProvider: FeatureAvailableProvider
+    let threadViewState: ThreadViewState
 
-    public init(currentUser: UserProfile, featureAvailableProvider: FeatureAvailableProvider, currentEmail: String) {
+    public init(
+        currentUser: UserProfile,
+        featureAvailableProvider: FeatureAvailableProvider,
+        currentEmail: String,
+        threadViewState: ThreadViewState
+    ) {
         self.currentUser = currentUser
         self.currentEmail = currentEmail
         self.featureAvailableProvider = featureAvailableProvider
+        self.threadViewState = threadViewState
     }
+
+    public let rightClickActions: [Action] = [
+        .activeMultiselect,
+        .reply,
+        .replyAll,
+        .forward,
+        .openMovePanel,
+        .archive,
+        .delete
+    ]
 
     private func leadingActions(folder: Folder) -> [Action] {
         if !folder.hasLimitedSwipeActions {
