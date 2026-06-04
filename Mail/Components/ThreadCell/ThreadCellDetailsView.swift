@@ -25,9 +25,18 @@ import SwiftUI
 struct ThreadCellDetailsView: View {
     let hasAttachments: Bool
     let isFlagged: Bool
+    let hasReminder: Bool
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
+            if hasReminder {
+                MailResourcesAsset.alarmClock
+                    .iconSize(.medium)
+                    .foregroundStyle(UserDefaults.shared.accentColor.primary)
+                    .padding(IKPadding.micro)
+                    .background(UserDefaults.shared.accentColor.secondary.swiftUIColor)
+                    .cornerRadius(IKRadius.small)
+            }
             if hasAttachments {
                 MailResourcesAsset.attachment
                     .iconSize(.medium)
@@ -42,18 +51,34 @@ struct ThreadCellDetailsView: View {
     }
 }
 
-#Preview("Attachments, Flagged") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: true)
+#Preview("Attachments, Flagged, Reminder") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, hasReminder: true)
 }
 
-#Preview("Attachments, Not flagged") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: false)
+#Preview("Attachments, Flagged, No Reminder") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, hasReminder: false)
 }
 
-#Preview("No Attachment, Flagged") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: true)
+#Preview("Attachments, Not Flagged, Reminder") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, hasReminder: true)
 }
 
-#Preview("No Attachment, Not flagged") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: false)
+#Preview("Attachments Only") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, hasReminder: false)
+}
+
+#Preview("Flagged, Reminder, No Attachments") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, hasReminder: true)
+}
+
+#Preview("Flagged Only") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, hasReminder: false)
+}
+
+#Preview("Reminder Only") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, hasReminder: true)
+}
+
+#Preview("No Attachments, Not Flagged, No Reminder") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, hasReminder: false)
 }

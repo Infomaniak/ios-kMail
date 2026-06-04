@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: sv, Swedish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 28 May 2026 10:19:52 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Wed, 03 Jun 2026 16:49:17 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -525,6 +525,9 @@
 
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Arrangör)";
+
+/* loco:6a202b5d27e1689d6f097ef3 */
+"callIfNoResponseHeaderTitle" = "Ring tillbaka till mig om det inte finns något svar: %s";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Kopia:";
@@ -1374,6 +1377,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Spara i kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Schemalagd sändning: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schemalägg sändning";
