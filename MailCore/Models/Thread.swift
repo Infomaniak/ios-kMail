@@ -158,6 +158,10 @@ public class Thread: Object, Decodable, Identifiable {
         return numberOfScheduledDraft > 0
     }
 
+    public var hasReminder: Bool {
+        return messages.last?.reminder != nil
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messagesAndDuplicates.filter { !$0.seen }.count
     }

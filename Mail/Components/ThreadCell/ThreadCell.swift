@@ -194,7 +194,8 @@ struct ThreadCell: View {
                     lastAction: thread.lastAction,
                     hasAttachments: thread.hasAttachments,
                     isFlagged: thread.flagged,
-                    isMentioned: thread.isMentioned
+                    isMentioned: thread.isMentioned,
+                    hasReminder: thread.hasReminder
                 )
             }
             .animation(
