@@ -26,11 +26,15 @@ struct ThreadCellDetailsView: View {
     let hasAttachments: Bool
     let isFlagged: Bool
     let isMentioned: Bool
+    let hasReminder: Bool
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             if isMentioned {
                 ThreadCellChip(chipItem: .tag)
+            }
+            if hasReminder {
+                ThreadCellChip(chipItem: .reminder)
             }
             if hasAttachments {
                 MailResourcesAsset.attachment
@@ -47,33 +51,37 @@ struct ThreadCellDetailsView: View {
 }
 
 #Preview("Attachments, Flagged, Mentioned") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: true)
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: true, hasReminder: false)
 }
 
 #Preview("Attachments, Flagged, Not Mentioned") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: false)
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: false, hasReminder: false)
 }
 
 #Preview("Attachments, Not Flagged, Mentioned") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: true)
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: true, hasReminder: false)
 }
 
 #Preview("Attachments, Not Flagged, Not Mentioned") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: false)
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: false, hasReminder: false)
 }
 
 #Preview("No Attachment, Flagged, Mentioned") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: true)
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: true, hasReminder: false)
 }
 
 #Preview("No Attachment, Flagged, Not Mentioned") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: false)
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: false, hasReminder: false)
 }
 
 #Preview("No Attachment, Not Flagged, Mentioned") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: true)
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: true, hasReminder: false)
 }
 
 #Preview("No Attachment, Not Flagged, Not Mentioned") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: false)
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: false, hasReminder: false)
+}
+
+#Preview("Reminder Only") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: false, hasReminder: true)
 }

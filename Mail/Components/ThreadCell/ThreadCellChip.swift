@@ -22,10 +22,13 @@ import MailResources
 import SwiftUI
 
 public enum ThreadCellChipItem: String {
+    case reminder
     case tag
 
     var contentDescription: String {
         switch self {
+        case .reminder:
+            return MailResourcesStrings.Localizable.contentDescriptionIconReminder
         case .tag:
             return MailResourcesStrings.Localizable.contentDescriptionIconMention
         }
@@ -33,6 +36,8 @@ public enum ThreadCellChipItem: String {
 
     public var icon: Image {
         switch self {
+        case .reminder:
+            return MailResourcesAsset.alarmClock.swiftUIImage
         case .tag:
             return MailResourcesAsset.mentionTag.swiftUIImage
         }

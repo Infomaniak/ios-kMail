@@ -1484,6 +1484,9 @@
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Gem i kDrive";
 
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Planlagt afsendelse: %s";
+
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Planlæg afsendelse";
 
