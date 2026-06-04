@@ -34,7 +34,7 @@ import UIKit
 import VersionChecker
 
 struct UserAccountScene: Scene {
-    @InjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
@@ -71,6 +71,7 @@ struct UserAccountScene: Scene {
     }
 
     private func willEnterForeground() {
+        appLockHelper.startObservation()
         if rootViewState.state != .onboarding && rootViewState.state != .preloading {
             appLaunchCounter.increase()
             reviewManager.decreaseActionUntilReview()
