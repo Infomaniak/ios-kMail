@@ -24,6 +24,7 @@ public enum AppFeature {
     case summarize
     case translate
     case replyWithEuria
+    case reminder
 }
 
 public protocol FeatureAvailableProvider {
@@ -45,6 +46,8 @@ struct FeatureAvailableService: FeatureAvailableProvider {
             return isTranslateAvailable()
         case .replyWithEuria:
             return isReplyWithEuriaAvailable()
+        case .reminder:
+            return isReminderAvailable()
         }
     }
 
@@ -66,5 +69,9 @@ struct FeatureAvailableService: FeatureAvailableProvider {
 
     private func isReplyWithEuriaAvailable() -> Bool {
         return featureFlagManageable.isEnabled(.mailReplyWithEuria)
+    }
+
+    private func isReminderAvailable() -> Bool {
+        return featureFlagManageable.isEnabled(.mailReminder) && UserDefaults.shared.threadMode == .conversation
     }
 }
