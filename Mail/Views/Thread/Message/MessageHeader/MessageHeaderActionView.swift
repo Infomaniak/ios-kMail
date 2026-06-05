@@ -86,7 +86,7 @@ struct MessageHeaderActionView<AnimationView: View, Content: View>: View {
     }
 
     private var topPadding: CGFloat {
-        guard showTopSeparator || showBottomSeparator else {
+        guard showTopSeparator else {
             return IKPadding.mini
         }
         return showTopSeparator ? IKPadding.micro : 0
