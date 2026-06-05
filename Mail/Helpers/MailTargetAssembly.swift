@@ -57,8 +57,11 @@ open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
             },
             Factory(type: AppLockHelper.self) { _, _ in
                 AppLockHelper(
-                    logoImage: MailResourcesAsset.logoText.swiftUIImage,
-                    lockImage: MailResourcesAsset.lock.swiftUIImage,
+                    appLockUIConfiguration: AppLockUIConfiguration(
+                        logoImage: MailResourcesAsset.logoText.swiftUIImage,
+                        lockImage: MailResourcesAsset.lock.swiftUIImage,
+                        ikButtonTheme: .mail
+                    ),
                     userDefaults: UserDefaults.shared
                 )
             }
