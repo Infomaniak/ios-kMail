@@ -99,6 +99,12 @@ struct MessageBannerHeaderView: View {
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }
+            case .reminder(let reminderDate, let senderNames):
+                MessageReminderHeaderView(
+                    reminderDate: reminderDate + 3600,
+                    senderNames: senderNames,
+                    showBottomSeparator: showBottomSeparator
+                )
             }
         }
     }
