@@ -214,6 +214,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var scheduled: Bool // Message is being sent (max 30sec delay)
     @Persisted public var isScheduledDraft: Bool? // Message is scheduled
     @Persisted public var scheduleDate: Date?
+    @Persisted public var reminderDate: Date?
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
@@ -339,6 +340,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return !isDraft && !(isScheduledDraft ?? false)
     }
 
+    public var hasReminder: Bool {
+        return reminderDate != nil
+    }
+
     public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
         if featureAvailableProvider.isAvailable(.emojiReaction) {
             return !isDraft && isDisplayable
@@ -444,6 +449,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case scheduled
         case isScheduledDraft
         case scheduleDate
+        case reminderDate
         case forwarded
         case flagged
         case hasUnsubscribeLink
@@ -519,6 +525,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         scheduled = try values.decode(Bool.self, forKey: .scheduled)
         isScheduledDraft = try values.decodeIfPresent(Bool.self, forKey: .isScheduledDraft)
         scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
+        reminderDate = try values.decodeIfPresent(Date.self, forKey: .reminderDate)
         forwarded = try values.decode(Bool.self, forKey: .forwarded)
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
@@ -570,6 +577,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         scheduled: Bool,
         isScheduledDraft: Bool? = nil,
         scheduleDate: Date? = nil,
+        reminderDate: Date? = nil,
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
@@ -611,6 +619,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.scheduled = scheduled
         self.isScheduledDraft = isScheduledDraft
         self.scheduleDate = scheduleDate
+        self.reminderDate = reminderDate
         self.forwarded = forwarded
         self.flagged = flagged
         self.hasUnsubscribeLink = hasUnsubscribeLink
