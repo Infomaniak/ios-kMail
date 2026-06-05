@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Wed, 03 Jun 2026 16:49:17 +0200
+ * Exported at: Thu, 04 Jun 2026 16:18:12 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1078,6 +1078,9 @@
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Later this morning";
 
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "and";
+
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Loading…";
 
@@ -1347,6 +1350,18 @@
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recent searches";
+
+/* loco:6a215874fe133c053105c086 */
+"reminderAfterHeaderTitle" = "%1$@ is awaiting a reply since %2$@";
+
+/* loco:6a215cec5983e40edf0d2d92 */
+"reminderAfterHeaderTitle-plural" = "%1$@ are awaiting a reply since %2$@";
+
+/* loco:6a215873199011ec1c03ecf2 */
+"reminderBeforeHeaderTitle" = "%1$s is awaiting a reply by %2$s";
+
+/* loco:6a215cec7c626a0c6e001732 */
+"reminderBeforeHeaderTitle-plural" = "%1$s are awaiting a reply by %2$s";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Rename the folder";
