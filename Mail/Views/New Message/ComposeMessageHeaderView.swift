@@ -92,6 +92,23 @@ struct ComposeMessageHeaderView: View {
                 type: .subject
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
+
+            if let scheduleDate = draft.scheduleDate {
+                ComposeMessageDateHeaderView(
+                    date: $draft.scheduleDate,
+                    icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.scheduleSendingHeaderTitle(scheduleDate
+                        .formatted(.messageHeader))
+                )
+            }
+
+            if let reminderDate = draft.reminderDate {
+                ComposeMessageDateHeaderView(
+                    date: $draft.reminderDate,
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader))
+                )
+            }
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty

@@ -1133,6 +1133,9 @@
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Senere i morges";
 
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "og";
+
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Indlæser…";
 
