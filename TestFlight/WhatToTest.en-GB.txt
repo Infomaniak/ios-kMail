@@ -1,6 +1,2 @@
-- Email summarization with Euria
-- Email translation with Euria
-- Improved reaction notifications
-- Toolbar customization on iPadOS and macOS
-- Display of emails currently being sent
+- Emails now support Dark Mode, with an option to force Light Mode if needed
 - Bug fixes and improvements

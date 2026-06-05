@@ -1,6 +1,2 @@
-- Résumé de mail avec Euria
-- Traduction de mail avec Euria
-- Amélioration notification de réaction
-- Personnalisation de la barre d'outils sur iPadOS et macOS 
-- Affichage des mails en cours d'envoi
+- Les e-mails sont désormais adaptés au mode sombre, avec la possibilité de forcer le mode clair si nécessaire
 - Correction de bugs et améliorations
