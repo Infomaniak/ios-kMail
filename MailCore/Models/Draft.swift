@@ -89,6 +89,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var delay: Int?
     @Persisted public var rawSignature: String?
     @Persisted public var scheduleDate: Date?
+    @Persisted public var reminderDate: Date?
     @Persisted public var emojiReaction: String?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
@@ -160,6 +161,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case action
         case delay
         case scheduleDate
+        case reminderDate
         case emojiReaction
         case encrypted
         case encryptionPassword
@@ -193,6 +195,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
         scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
+        reminderDate = try values.decodeIfPresent(Date.self, forKey: .reminderDate)
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
@@ -336,6 +339,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encode(action, forKey: .action)
         try container.encodeIfPresent(delay, forKey: .delay)
         try container.encodeIfPresent(scheduleDate, forKey: .scheduleDate)
+        try container.encodeIfPresent(reminderDate, forKey: .reminderDate)
         try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
