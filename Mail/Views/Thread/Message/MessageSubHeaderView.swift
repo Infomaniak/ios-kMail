@@ -42,6 +42,10 @@ struct MessageSubHeaderView: View {
             result.append(.schedule(scheduleDate: scheduleDate, draftResource: draftResource))
         }
 
+        if let reminderDate = message.reminderDate {
+            result.append(.reminder(reminderDate: reminderDate, senderNames: message.from.map { $0.name }))
+        }
+
         if let spamType = spamTypeFor(message: message) {
             result.append(.spam(spamType: spamType))
         }
