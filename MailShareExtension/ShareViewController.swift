@@ -92,6 +92,6 @@ final class ShareNavigationViewController: UIViewController {
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        extensionContext!.completeRequest(returningItems: nil, completionHandler: nil)
+        extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
     }
 }
