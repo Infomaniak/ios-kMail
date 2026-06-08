@@ -49,16 +49,18 @@ struct ThreadCellChip: View {
     var body: some View {
         chipItem.icon
             .iconSize(.medium)
+            .foregroundStyle(UserDefaults.shared.accentColor.primary)
+            .padding(chipItem == .reminder ? IKPadding.micro : 0)
             .background {
                 UserDefaults.shared.accentColor.secondary.swiftUIColor
                     .cornerRadius(IKRadius.small)
-                    .scaleEffect(1.5)
+                    .scaleEffect(chipItem == .reminder ? 1 : 1.5)
             }
-            .foregroundStyle(UserDefaults.shared.accentColor.primary)
             .accessibilityLabel(chipItem.contentDescription)
     }
 }
 
 #Preview {
     ThreadCellChip(chipItem: .tag)
+    ThreadCellChip(chipItem: .reminder)
 }
