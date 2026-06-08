@@ -1,2 +1,1 @@
-- Emails now support Dark Mode, with an option to force Light Mode if needed
-- Bug fixes and improvements
+- Fix crash opening notification preview

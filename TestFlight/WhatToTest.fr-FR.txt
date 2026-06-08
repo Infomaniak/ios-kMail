@@ -1,2 +1,1 @@
-- Les e-mails sont désormais adaptés au mode sombre, avec la possibilité de forcer le mode clair si nécessaire
-- Correction de bugs et améliorations
+- Correction d'un crash à l'ouverture de la preview d'une notification
