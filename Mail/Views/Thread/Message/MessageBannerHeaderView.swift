@@ -29,6 +29,7 @@ import SwiftUI
 
 struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var isUnsubscribeSuccessful = false
     @State private var isAcknowledgeSuccessful = false
@@ -101,11 +102,13 @@ struct MessageBannerHeaderView: View {
                         ) {}
                     }
                 }
-            case .reminder(let reminderDate, let senderNames):
+            case .reminder(let reminderDate, let senders):
                 MessageReminderHeaderView(
-                    reminderDate: reminderDate + 3600,
-                    senderNames: senderNames,
-                    showBottomSeparator: showBottomSeparator
+                    reminderDate: reminderDate,
+                    senders: senders,
+                    to: message.to.toArray(),
+                    showBottomSeparator: showBottomSeparator,
+                    followUpAction: followUp
                 )
             }
         }
@@ -158,6 +161,14 @@ struct MessageBannerHeaderView: View {
     private func trackBannerEvent(for banner: MessageBanner) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .messageBanner, name: banner.matomoName)
+    }
+
+    private func followUp() {
+        Task {
+            Task { @MainActor in
+                mainViewState.composeMessageIntent = .followUp(message: message, originMailboxManager: mailboxManager)
+            }
+        }
     }
 }
 

@@ -126,6 +126,14 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     aliases: mailboxManager.mailbox.aliases.toArray()
                 )
             }
+        case .followUp(let messageUid):
+            if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
+                let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: .followUp)
+                maybeMessageReply = messageReply
+                draftToWrite = Draft.replying(
+                    reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email
+                )
+            }
         }
 
         if composeMessageIntent.isFromOutsideOfApp {

@@ -22,6 +22,8 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import OrderedCollections
+import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
@@ -32,39 +34,64 @@ struct MessageReminderHeaderView: View {
     @State private var isShowingReschedulePanel = false
 
     let reminderDate: Date
-    let senderNames: [String]
+    let senders: [Recipient]
+    let to: [Recipient]
     let showBottomSeparator: Bool
+    let followUpAction: () -> Void
+
+    private var isMyMessage: Bool {
+        return senders.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
+    }
 
     private var message: String {
+        let senderNames = senders.map(\.name)
+        let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+        let formattedNames = formatNames(senderNames)
         if reminderDate < .now && senderNames.count > 1 {
             return MailResourcesStrings.Localizable.reminderBeforeHeaderTitlePlural(
-                formatNames(senderNames),
-                DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                formattedNames, formattedDate
             )
         } else if reminderDate < .now {
             return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(
-                formatNames(senderNames),
-                DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                formattedNames, formattedDate
             )
         } else if reminderDate >= .now && senderNames.count > 1 {
             return MailResourcesStrings.Localizable.reminderAfterHeaderTitlePlural(
-                formatNames(senderNames),
-                DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                formattedNames, formattedDate
             )
         } else {
             return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(
-                formatNames(senderNames),
-                DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                formattedNames, formattedDate
             )
         }
     }
 
     var body: some View {
-        MessageHeaderActionView(
-            icon: MailResourcesAsset.alarmClock.swiftUIImage,
-            message: message,
-            showBottomSeparator: showBottomSeparator
-        ) {}
+        if isMyMessage && reminderDate < .now {
+            MessageHeaderActionView(
+                icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
+                    formatNames(to.map(\.name)),
+                    DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                ),
+                showBottomSeparator: showBottomSeparator
+            ) {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
+                        MessageHeaderDivider()
+                        Button(MailResourcesStrings.Localizable.reminderPostponeButton("18:00")) {}
+                    }
+                    Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton) {}
+                }
+            }
+        } else if !isMyMessage {
+            MessageHeaderActionView(
+                icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                message: message,
+                showBottomSeparator: showBottomSeparator
+            ) {}
+        }
     }
 
     private func formatNames(_ names: [String]) -> String {
@@ -81,7 +108,7 @@ struct MessageReminderHeaderView: View {
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderDate: .now, senderNames: [""], showBottomSeparator: true)
+    MessageReminderHeaderView(reminderDate: .now, senders: [Recipient](), to: [Recipient](), showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
             mailboxManager: PreviewHelper.sampleMailboxManager,

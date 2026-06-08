@@ -1466,6 +1466,22 @@
 /* loco:6a3d482c1162ca4a4e0a10c3 */
 "reminderVisibilityTitle" = "Ορατότητα υπενθύμισης";
 
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Παρακολούθηση";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Γεια σας,\nΕίναι δυνατόν να λάβετε κάποια ανατροφοδότηση για αυτό το θέμα;\nΣας ευχαριστώ εκ των προτέρων.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Σημείωση ως ολοκληρωμένο";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Υπενθύμιση: καμία απάντηση από %1$s σε αυτό το email από τις %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Αναβολή μέχρι αύριο %s";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Μετονομασία φακέλου";
 

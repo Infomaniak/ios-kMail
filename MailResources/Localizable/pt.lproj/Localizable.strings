@@ -1466,6 +1466,22 @@
 /* loco:6a3d482c1162ca4a4e0a10c3 */
 "reminderVisibilityTitle" = "Visibilidade do lembrete";
 
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Relançar";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Olá,\nÉ possível obter algum feedback sobre este assunto?\nObrigado desde já.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Marcar como concluído";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Lembrete: nenhuma resposta de %1$s a este email desde %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Adiar até amanhã às %s";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Renomear pasta";
 
