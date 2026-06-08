@@ -26,6 +26,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         case mailTo(mailToURLComponents: URLComponents)
         case writeTo(recipient: Recipient)
         case reply(messageUid: String, replyMode: ReplyMode, euriaReply: String?)
+        case followUp(messageUid: String)
     }
 
     public let id: UUID
@@ -114,6 +115,14 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
             type: .reply(messageUid: messageUid, replyMode: replyMode, euriaReply: euriaReply)
+        )
+    }
+
+    public static func followUp(message: Message, originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+        return ComposeMessageIntent(
+            userId: originMailboxManager.mailbox.userId,
+            mailboxId: originMailboxManager.mailbox.mailboxId,
+            type: .followUp(messageUid: message.uid)
         )
     }
 }

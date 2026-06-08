@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import RealmSwift
 import SwiftUI
+
 
 public enum MessageBanner: Equatable, Identifiable, Hashable {
     public var id: Int {
@@ -49,7 +51,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case encrypted
     case unsubscribeLink
     case acknowledge
-    case reminder(reminderDate: Date, senderNames: [String])
+    case reminder(reminderDate: Date, senders: [Recipient])
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -65,8 +67,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return true
         case (.acknowledge, .acknowledge):
             return true
-        case (.reminder(let date1, let names1), .reminder(let date2, let names2)):
-            return date1 == date2 && names1 == names2
+        case (.reminder(let date1, let senders1), .reminder(let date2, let senders2)):
+            return date1 == date2 && senders1 == senders2
         default:
             return false
         }

@@ -52,6 +52,7 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
 public enum ReplyMode: String, Codable, Hashable, Equatable {
     case reply, replyAll
     case forward
+    case followUp
 
     public var isReply: Bool {
         return self == .reply || self == .replyAll
@@ -292,6 +293,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
             if !subject.starts(with: "Fwd: ") {
                 subject = "Fwd: \(subject)"
             }
+        case .followUp:
+            break
         }
 
         var recipientHolder = RecipientHolder()
@@ -302,6 +305,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                 currentMailboxEmail: currentMailboxEmail,
                 aliases: aliases
             )
+        } else if mode == .followUp {
+            recipientHolder = message.recipientsForFollowUp(currentMailboxEmail: currentMailboxEmail)
         }
 
         return Draft(localUUID: UUID().uuidString,
