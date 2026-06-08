@@ -30,12 +30,7 @@ struct ThreadCellDetailsView: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             if hasReminder {
-                MailResourcesAsset.alarmClock
-                    .iconSize(.medium)
-                    .foregroundStyle(UserDefaults.shared.accentColor.primary)
-                    .padding(IKPadding.micro)
-                    .background(UserDefaults.shared.accentColor.secondary.swiftUIColor)
-                    .cornerRadius(IKRadius.small)
+                ThreadCellChip(chipItem: .reminder)
             }
             if hasAttachments {
                 MailResourcesAsset.attachment
