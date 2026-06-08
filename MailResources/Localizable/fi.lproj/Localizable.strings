@@ -634,6 +634,9 @@
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Uusi";
 
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "On muistutus";
+
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Vastaus";
 
@@ -1362,6 +1365,22 @@
 
 /* loco:6a215cec7c626a0c6e001732 */
 "reminderBeforeHeaderTitle-plural" = "%1$s odottavat vastausta mennessä %2$s";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Seuraa";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hei,\nOnko mahdollista saada palautetta tästä aiheesta?\nKiitos etukäteen.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Merkitse valmiiksi";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Muistutus: ei vastausta %1$s:ltä tähän sähköpostiin lähtien %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Lykätä huomiseen klo %s";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Nimeä kansio uudelleen";

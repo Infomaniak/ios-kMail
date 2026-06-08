@@ -289,15 +289,22 @@ public extension DraftContentManager {
 
 extension DraftContentManager {
     private func formatReplyingBody(of message: Message, replyingMode: ReplyMode) async throws -> String {
+        var placeholderText = ""
         let content: String
         switch replyingMode {
         case .reply, .replyAll:
             content = try await formatReply(message: message)
         case .forward:
             content = try await formatForward(message: message)
+        case .followUp:
+            content = try await formatForward(message: message)
+            placeholderText = MailResourcesStrings.Localizable.reminderFollowUpPlaceholderText.replacingOccurrences(
+                of: "\n",
+                with: "<br>"
+            )
         }
 
-        return "\(Constants.editorFirstLines)\(content)"
+        return "\(placeholderText)\(Constants.editorFirstLines)\(content)"
     }
 
     private func formatReply(message: Message) async throws -> String {

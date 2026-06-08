@@ -394,6 +394,19 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return holder
     }
 
+    public func recipientsForFollowUp(currentMailboxEmail: String) -> RecipientHolder {
+        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+
+        var holder = RecipientHolder()
+        holder.cc = cleanedCc
+        holder.to = cleanedTo
+
+        return holder
+    }
+
     public func computeReference() {
         if let references {
             linkedUids.insert(objectsIn: references.parseMessageIds())
