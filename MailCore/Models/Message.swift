@@ -395,9 +395,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public func recipientsForFollowUp(currentMailboxEmail: String) -> RecipientHolder {
-        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
         let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
         let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
 
         var holder = RecipientHolder()
