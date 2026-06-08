@@ -29,9 +29,6 @@ import SwiftUI
 
 struct MessageReminderHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var mainViewState: MainViewState
-
-    @State private var isShowingReschedulePanel = false
 
     let reminderDate: Date
     let senders: [Recipient]

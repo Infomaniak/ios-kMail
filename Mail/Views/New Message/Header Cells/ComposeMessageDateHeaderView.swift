@@ -22,10 +22,6 @@ import MailResources
 import SwiftUI
 
 struct ComposeMessageDateHeaderView: View {
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @Binding var date: Date?
 
     let icon: Image
