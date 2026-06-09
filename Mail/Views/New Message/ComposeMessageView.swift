@@ -286,6 +286,7 @@ struct ComposeMessageView: View {
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                    isShowingSchedulePanel: $isShowingSchedulePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor,
                     selectedText: selectedText
@@ -410,9 +411,8 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
-        .scheduleFloatingPanel(
+        .sendOptionFloatingPanel(
             isPresented: $isShowingSchedulePanel,
-            type: .scheduledDraft,
             isUpdating: false,
             initialDate: draft.scheduleDate,
             completionHandler: didScheduleDraft

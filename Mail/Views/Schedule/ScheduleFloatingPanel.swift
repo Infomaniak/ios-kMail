@@ -35,6 +35,8 @@ extension ScheduleType {
             return MailResourcesStrings.Localizable.scheduleSendingTitle
         case .snooze:
             return MailResourcesStrings.Localizable.actionSnooze
+        case .reminder:
+            return MailResourcesStrings.Localizable.actionCallIfNoResponse
         }
     }
 }
