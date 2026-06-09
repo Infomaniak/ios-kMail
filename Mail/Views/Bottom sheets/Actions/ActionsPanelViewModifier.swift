@@ -61,8 +61,6 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
 
-    @State private var isShowingMyKSuiteUpgrade = false
-
     @Binding var messages: [Message]?
     let originFolder: Folder?
     let panelSource: ActionOrigin.FloatingPanelSource

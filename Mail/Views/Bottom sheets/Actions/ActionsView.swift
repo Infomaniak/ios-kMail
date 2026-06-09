@@ -35,8 +35,6 @@ struct ActionsView: View {
     private let completionHandler: ((Action) -> Void)?
     private let userLocalPack: LocalPack?
 
-    @Binding var isShowingMyKSuiteUpgrade: Bool
-
     init(
         mailboxManager: MailboxManager,
         user: UserProfile,
@@ -57,8 +55,6 @@ struct ActionsView: View {
             colorScheme: colorScheme,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
-
-        _isShowingMyKSuiteUpgrade = isShowingMyKSuiteUpgrade
         quickActions = actions.quickActions
         listActions = actions.listActions
 
@@ -97,8 +93,7 @@ struct ActionsView: View {
                         origin: origin,
                         isMultipleSelection: isMultipleSelection,
                         completionHandler: completionHandler,
-                        userLocalPack: userLocalPack,
-                        isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade
+                        userLocalPack: userLocalPack
                     )
                 }
             }
@@ -201,8 +196,6 @@ struct MessageActionView: View {
     var completionHandler: ((Action) -> Void)?
     let userLocalPack: LocalPack?
 
-    @Binding var isShowingMyKSuiteUpgrade: Bool
-
     private var isShowingMyKSuiteBadge: Bool {
         userLocalPack == .myKSuiteFree && action == .shareMailLink
     }
@@ -216,13 +209,6 @@ struct MessageActionView: View {
 
     private func didTapButton() {
         dismiss()
-
-        if userLocalPack == .myKSuiteFree && action == .shareMailLink {
-            isShowingMyKSuiteUpgrade = true
-            @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "shareMailLink")
-            return
-        }
 
         Task {
             await tryOrDisplayError {
