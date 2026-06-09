@@ -37,6 +37,7 @@ enum EditorToolbarAction: Identifiable {
     case addPhoto
     case takePhoto
     case encryption
+    case sendOptions
 
     var id: Self {
         self
@@ -72,6 +73,8 @@ enum EditorToolbarAction: Identifiable {
             return MailResourcesAsset.cancelFormat
         case .encryption:
             return MailResourcesAsset.lockSquare
+        case .sendOptions:
+            return MailResourcesAsset.plusActions
         }
     }
 
@@ -148,6 +151,8 @@ enum EditorToolbarAction: Identifiable {
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         case .encryption:
             return MailResourcesStrings.Localizable.encryptedStatePanelTitle
+        case .sendOptions:
+            return MailResourcesStrings.Localizable.buttonMore
         }
     }
 
@@ -167,7 +172,7 @@ enum EditorToolbarAction: Identifiable {
             return KeyboardShortcut("K", modifiers: [.command, .shift])
         case .addFile:
             return KeyboardShortcut("P", modifiers: [.command, .shift])
-        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat, .encryption:
+        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat, .encryption, .sendOptions:
             return nil
         }
     }
@@ -187,7 +192,7 @@ enum EditorToolbarAction: Identifiable {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat, .encryption:
+        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat, .encryption, .sendOptions:
             return false
         }
     }
