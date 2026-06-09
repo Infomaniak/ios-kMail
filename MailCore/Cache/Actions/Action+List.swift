@@ -133,6 +133,7 @@ extension Action: CaseIterable {
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
+                                          featureAvailableProvider: FeatureAvailableProvider, canShareMailLink: Bool)
                                           threadViewState: ThreadViewState,
                                           colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider)
@@ -163,7 +164,7 @@ extension Action: CaseIterable {
             spamAction,
             isFromMe ? nil : .phishing,
             isFromMe || isInSpamFolder ? nil : .blockList,
-            userLocalPack == .myKSuiteFree ? nil : .shareMailLink,
+            canShareMailLink ? .shareMailLink : nil,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
