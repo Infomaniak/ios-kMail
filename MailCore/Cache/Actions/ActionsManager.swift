@@ -251,16 +251,23 @@ public class ActionsManager: ObservableObject {
             origin.messagesToDownload?.wrappedValue = messages
         case .shareMailLink:
             let userLocalPack = mailboxManager.mailbox.pack
-            guard userLocalPack != .myKSuiteFree else {
+            switch userLocalPack {
+            case .myKSuiteFree:
                 Task { @MainActor in
                     mainViewState?.isShowingMyKSuiteUpgrade = true
                 }
                 return
-            }
-            guard let message = messagesWithDuplicates.first else { return }
-            let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
-            Task { @MainActor in
-                origin.nearestShareMailLinkPanel?.wrappedValue = result
+            case .kSuiteFree, .starterPack:
+                Task { @MainActor in
+                    mainViewState?.isShowingKSuiteProUpgrade = true
+                }
+                return
+            default:
+                guard let message = messagesWithDuplicates.first else { return }
+                let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
+                Task { @MainActor in
+                    origin.nearestShareMailLinkPanel?.wrappedValue = result
+                }
             }
         case .snooze, .modifySnooze:
             Task { @MainActor in

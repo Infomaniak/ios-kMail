@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -33,7 +34,6 @@ struct ActionsView: View {
     private let origin: ActionOrigin
     private let isMultipleSelection: Bool
     private let completionHandler: ((Action) -> Void)?
-    private let userLocalPack: LocalPack?
 
     init(
         mailboxManager: MailboxManager,
@@ -62,7 +62,6 @@ struct ActionsView: View {
         self.isMultipleSelection = isMultipleSelection
         self.origin = origin
         self.completionHandler = completionHandler
-        userLocalPack = mailboxManager.mailbox.pack
     }
 
     var body: some View {
@@ -92,8 +91,7 @@ struct ActionsView: View {
                         action: action,
                         origin: origin,
                         isMultipleSelection: isMultipleSelection,
-                        completionHandler: completionHandler,
-                        userLocalPack: userLocalPack
+                        completionHandler: completionHandler
                     )
                 }
             }
@@ -188,21 +186,29 @@ struct MessageActionView: View {
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
     let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
-    let userLocalPack: LocalPack?
 
-    private var isShowingMyKSuiteBadge: Bool {
-        userLocalPack == .myKSuiteFree && action == .shareMailLink
+    private var badgeType: ActionButtonLabel.BadgeType {
+        if action == .shareMailLink {
+            let userLocalPack = mailboxManager.mailbox.pack
+            if userLocalPack == .kSuiteFree || userLocalPack == .starterPack {
+                return .kSuitePro
+            } else if userLocalPack == .myKSuiteFree {
+                return .myKSuite
+            }
+        }
+        return .none
     }
 
     var body: some View {
         Button(action: didTapButton) {
-            ActionButtonLabel(action: action, isShowingMyKSuiteBadge: isShowingMyKSuiteBadge)
+            ActionButtonLabel(action: action, badgeType: badgeType)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
@@ -233,12 +239,21 @@ struct MessageActionView: View {
 }
 
 struct ActionButtonLabel: View {
-    let action: Action
-    let isShowingMyKSuiteBadge: Bool
+    enum BadgeType {
+        case none, myKSuite, kSuitePro
+    }
 
-    init(action: Action, isShowingMyKSuiteBadge: Bool = false) {
+    let action: Action
+    let badgeType: BadgeType
+
+    init(action: Action, badgeType: BadgeType) {
         self.action = action
-        self.isShowingMyKSuiteBadge = isShowingMyKSuiteBadge
+        self.badgeType = badgeType
+    }
+
+    init(action: Action) {
+        self.action = action
+        badgeType = .none
     }
 
     var iconColor: MailResourcesColors {
@@ -274,8 +289,10 @@ struct ActionButtonLabel: View {
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if isShowingMyKSuiteBadge {
+            if self.badgeType == .myKSuite {
                 MyKSuitePlusChip()
+            } else if self.badgeType == .kSuitePro {
+                KSuiteProUpgradeChip()
             }
         }
         .padding(value: .medium)
