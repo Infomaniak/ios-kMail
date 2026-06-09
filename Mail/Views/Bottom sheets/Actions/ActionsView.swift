@@ -289,9 +289,9 @@ struct ActionButtonLabel: View {
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if self.badgeType == .myKSuite {
+            if badgeType == .myKSuite {
                 MyKSuitePlusChip()
-            } else if self.badgeType == .kSuitePro {
+            } else if badgeType == .kSuitePro {
                 KSuiteProUpgradeChip()
             }
         }

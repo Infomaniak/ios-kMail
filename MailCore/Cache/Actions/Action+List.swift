@@ -133,7 +133,6 @@ extension Action: CaseIterable {
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String,
-                                          featureAvailableProvider: FeatureAvailableProvider, canShareMailLink: Bool)
                                           threadViewState: ThreadViewState,
                                           colorScheme: ColorScheme,
                                           featureAvailableProvider: FeatureAvailableProvider)
@@ -164,7 +163,7 @@ extension Action: CaseIterable {
             spamAction,
             isFromMe ? nil : .phishing,
             isFromMe || isInSpamFolder ? nil : .blockList,
-            canShareMailLink ? .shareMailLink : nil,
+            .shareMailLink,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
@@ -323,11 +322,15 @@ extension Action: CaseIterable {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, threadViewState: threadViewState, colorScheme: colorScheme,
+            return actionsForMessage(message, origin: origin,
+                                     userIsStaff: userIsStaff,
+                                     userEmail: userEmail,
+                                     threadViewState: threadViewState,
+                                     colorScheme: colorScheme,
                                      featureAvailableProvider: featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
+            return actionsForMessagesInDifferentThreads(messages,
+                                                        originFolder: origin.frozenFolder,
                                                         userEmail: userEmail,
                                                         featureAvailableProvider: featureAvailableProvider)
         } else {
