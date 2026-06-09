@@ -22,6 +22,7 @@ import InfomaniakCoreCommonUI
 enum ScheduleType: Sendable {
     case scheduledDraft
     case snooze
+    case reminder
 
     var matomoCategory: MatomoUtils.EventCategory {
         switch self {
@@ -29,6 +30,8 @@ enum ScheduleType: Sendable {
             return .scheduleSend
         case .snooze:
             return .snooze
+        case .reminder:
+            return .scheduleSend
         }
     }
 
@@ -38,6 +41,8 @@ enum ScheduleType: Sendable {
             return \.lastCustomScheduledDraftDate
         case .snooze:
             return \.lastCustomSnoozeDate
+        case .reminder:
+            return \.lastCustomScheduledDraftDate
         }
     }
 }
@@ -54,6 +59,8 @@ extension ScheduleType {
         case .scheduledDraft:
             return 60 * 60 * 24 * 365 * 10 // 10 years
         case .snooze:
+            return 60 * 60 * 24 * 365 // 1 year
+        case .reminder:
             return 60 * 60 * 24 * 365 // 1 year
         }
     }
