@@ -46,6 +46,8 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
 
+    @State private var cannotReply = false
+
     private let frozenThread: Thread
 
     private let isFlagged: Bool
@@ -144,6 +146,11 @@ struct LargeToolbarModifier: ViewModifier {
             }
             .mailCustomAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
+            }
+            .mailCustomAlert(isPresented: $cannotReply) {
+                NoReplyAlertView {
+                    didTap(action: .reply)
+                }
             }
             .sheet(item: $shareMailLink) { shareMailLinkResult in
                 ActivityView(activityItems: [shareMailLinkResult.url])
@@ -368,7 +375,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ToolbarContentBuilder
     private func toolbarItemReply() -> some CustomizableToolbarContent {
         ToolbarItem(id: "thread.reply.reply", placement: .topBarLeading) {
-            Button { didTap(action: .reply) } label: {
+            Button { verifyReplyAction(action: .reply) } label: {
                 Label(Action.reply.title, asset: Action.reply.icon)
             }
             .disabled(!canPerformAction(Action.reply))
@@ -385,7 +392,7 @@ struct LargeToolbarModifier: ViewModifier {
 
         if canReplyAll {
             ToolbarItem(id: "thread.reply.replyAll", placement: .topBarLeading) {
-                Button { didTap(action: .replyAll) } label: {
+                Button { verifyReplyAction(action: .replyAll) } label: {
                     Label(Action.replyAll.title, asset: Action.replyAll.icon)
                 }
                 .disabled(!canPerformAction(Action.replyAll))
@@ -470,5 +477,23 @@ struct LargeToolbarModifier: ViewModifier {
         default:
             return true
         }
+    }
+
+    private func verifyReplyAction(action: Action) {
+        guard let message = frozenMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else {
+            return
+        }
+        guard NoReplyAlert.verifySenders(
+            message: message,
+            action: action,
+            currentMailboxEmail: mailboxManager.mailbox.email
+        ) else {
+            didTap(action: action)
+            return
+        }
+        cannotReply = true
     }
 }

@@ -39,6 +39,7 @@ struct CompactToolbarModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var replyOrReplyAllMessage: Message?
+    @State private var cannotReply = false
 
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
@@ -112,7 +113,11 @@ struct CompactToolbarModifier: ViewModifier {
                 ToolbarItemGroup(placement: .bottomBar) {
                     ForEach(toolbarActions) { action in
                         Button {
-                            didTap(action: action)
+                            if action == .reply || action == .replyAll {
+                                verifyReplyAction(action: action)
+                            } else {
+                                didTap(action: action)
+                            }
                         } label: {
                             Label(action.title, asset: action.icon)
                         }
@@ -126,6 +131,11 @@ struct CompactToolbarModifier: ViewModifier {
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
+            }
+            .mailCustomAlert(isPresented: $cannotReply) {
+                NoReplyAlertView {
+                    didTap(action: .reply)
+                }
             }
             .sheet(item: $messagesToMove) { messages in
                 MoveEmailView(
@@ -195,5 +205,23 @@ struct CompactToolbarModifier: ViewModifier {
         default:
             return true
         }
+    }
+
+    private func verifyReplyAction(action: Action) {
+        guard let message = frozenMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else {
+            return
+        }
+        guard NoReplyAlert.verifySenders(
+            message: message,
+            action: action,
+            currentMailboxEmail: mailboxManager.mailbox.email
+        ) else {
+            didTap(action: action)
+            return
+        }
+        cannotReply = true
     }
 }

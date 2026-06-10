@@ -30,10 +30,10 @@ public extension URLComponents {
 }
 
 public struct RecipientHolder {
-    public let from = [Recipient]()
-    public let to = [Recipient]()
-    public let cc = [Recipient]()
-    public let bcc = [Recipient]()
+    public var from = [Recipient]()
+    public var to = [Recipient]()
+    public var cc = [Recipient]()
+    public var bcc = [Recipient]()
 }
 
 public enum RecipientError: Error {

@@ -27,7 +27,6 @@ import SwiftUI
 struct ReplyActionsView: View {
     let quickActions: [Action] = [.reply, .replyAll]
     let message: Message
-    let currentMailboxEmail: String
 
     var body: some View {
         HStack(alignment: .top, spacing: IKPadding.medium) {
@@ -36,8 +35,7 @@ struct ReplyActionsView: View {
                     targetMessages: [message],
                     action: action,
                     origin: .floatingPanel(source: .messageList),
-                    isMultipleSelection: false,
-                    currentMailboxEmail: currentMailboxEmail
+                    isMultipleSelection: false
                 )
             }
 
@@ -49,6 +47,6 @@ struct ReplyActionsView: View {
 }
 
 #Preview {
-    ReplyActionsView(message: PreviewHelper.sampleMessage, currentMailboxEmail: PreviewHelper.sampleMailboxManager.mailbox.email)
+    ReplyActionsView(message: PreviewHelper.sampleMessage)
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
