@@ -40,6 +40,7 @@ enum ScheduleOption: Identifiable, Equatable {
     case nextMondayMorning
     case nextMondayAfternoon
     case lastSchedule(value: Date)
+    case custom(date: Date)
 
     var id: String { title }
 
@@ -61,6 +62,8 @@ enum ScheduleOption: Identifiable, Equatable {
             return MailResourcesStrings.Localizable.mondayAfternoon
         case .lastSchedule:
             return MailResourcesStrings.Localizable.lastSelectedSchedule
+        case .custom:
+            return MailResourcesStrings.Localizable.buttonCustomSchedule
         }
     }
 
@@ -82,6 +85,8 @@ enum ScheduleOption: Identifiable, Equatable {
             return MailResourcesAsset.sunFilledRighthalf.swiftUIImage
         case .lastSchedule:
             return MailResourcesAsset.clockCounterclockwise.swiftUIImage
+        case .custom:
+            return MailResourcesAsset.calendar.swiftUIImage
         }
     }
 
@@ -103,6 +108,8 @@ enum ScheduleOption: Identifiable, Equatable {
             "nextMondayAfternoon"
         case .lastSchedule:
             "lastSelectedSchedule"
+        case .custom:
+            "customSchedule"
         }
     }
 
@@ -122,6 +129,8 @@ enum ScheduleOption: Identifiable, Equatable {
             return nextMonday(at: 14)
         case .lastSchedule(let date):
             return date
+        case .custom(let date):
+            return date
         }
     }
 
@@ -138,9 +147,16 @@ enum ScheduleOption: Identifiable, Equatable {
             return !isInWeekend
         case .nextMondayMorning, .nextMondayAfternoon:
             return isInWeekend
-        case .lastSchedule:
+        case .lastSchedule, .custom:
             return true
         }
+    }
+
+    var isCustom: Bool {
+        if case .custom = self {
+            return true
+        }
+        return false
     }
 
     private func specificHour(at hour: Int, from date: Date) -> Date? {
