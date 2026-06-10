@@ -248,25 +248,6 @@ struct ComposeMessageView: View {
                 }
             }
 
-            ToolbarItem(placement: .topBarTrailing) {
-                if mailboxManager.featureFlagsManager.isEnabled(.scheduleSendDraft) {
-                    Button {
-                        if draft.encrypted {
-                            snackbarPresenter
-                                .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
-                        } else {
-                            isShowingSchedulePanel = true
-                        }
-                    } label: {
-                        Label(
-                            MailResourcesStrings.Localizable.scheduleSendingTitle,
-                            asset: MailResourcesAsset.clockPaperplane.swiftUIImage
-                        )
-                    }
-                    .disabled(isScheduleSendButtonDisabled)
-                }
-            }
-
             ToolbarItem(placement: .confirmationAction) {
                 Button {
                     trySendingMessage()
