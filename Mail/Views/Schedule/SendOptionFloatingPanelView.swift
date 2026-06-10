@@ -26,9 +26,6 @@ import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
     @Binding var isShowingCustomScheduleAlert: Bool
-    @Binding var isShowingMyKSuiteUpgrade: Bool
-    @Binding var isShowingKSuiteProUpgrade: Bool
-    @Binding var isShowingMailPremiumUpgrade: Bool
     @Binding var isScheduleEnabled: Bool
     @Binding var selectedReminderOption: ReminderOption?
     @Binding var selectedScheduleOption: ScheduleOption?
@@ -38,7 +35,6 @@ struct SendOptionFloatingPanelView: View {
     @State private var isReminderEnabled = false
 
     let initialDate: Date?
-    let completionHandler: (Date) -> Void
 
     private var scheduleOptions: [ScheduleOption] {
         var seenDateOptions = Set<Date>()
@@ -180,15 +176,12 @@ struct SendOptionFloatingPanelView: View {
 #Preview {
     SendOptionFloatingPanelView(
         isShowingCustomScheduleAlert: .constant(false),
-        isShowingMyKSuiteUpgrade: .constant(false),
-        isShowingKSuiteProUpgrade: .constant(false),
-        isShowingMailPremiumUpgrade: .constant(false),
         isScheduleEnabled: .constant(true),
         selectedReminderOption: .constant(.oneDay),
         selectedScheduleOption: .constant(nil),
         customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
         initialDate: nil
-    ) { _ in }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
