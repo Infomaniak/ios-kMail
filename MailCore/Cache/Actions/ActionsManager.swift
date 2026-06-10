@@ -250,10 +250,22 @@ public class ActionsManager: ObservableObject {
             guard !platformDetector.isMac else { return }
             origin.messagesToDownload?.wrappedValue = messages
         case .shareMailLink:
-            guard let message = messagesWithDuplicates.first else { return }
-            let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
-            Task { @MainActor in
-                origin.nearestShareMailLinkPanel?.wrappedValue = result
+            let userLocalPack = mailboxManager.mailbox.pack
+            switch userLocalPack {
+            case .myKSuiteFree:
+                Task { @MainActor in
+                    mainViewState?.isShowingMyKSuiteUpgrade = true
+                }
+            case .kSuiteFree, .starterPack:
+                Task { @MainActor in
+                    mainViewState?.isShowingKSuiteProUpgrade = true
+                }
+            default:
+                guard let message = messagesWithDuplicates.first else { return }
+                let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
+                Task { @MainActor in
+                    origin.nearestShareMailLinkPanel?.wrappedValue = result
+                }
             }
         case .snooze, .modifySnooze:
             Task { @MainActor in

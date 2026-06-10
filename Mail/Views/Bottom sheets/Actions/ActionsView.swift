@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -185,6 +186,7 @@ struct MessageActionView: View {
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let targetMessages: [Message]
     let action: Action
@@ -192,9 +194,21 @@ struct MessageActionView: View {
     let isMultipleSelection: Bool
     var completionHandler: ((Action) -> Void)?
 
+    private var badgeType: ActionButtonLabel.BadgeType {
+        if action == .shareMailLink {
+            let userLocalPack = mailboxManager.mailbox.pack
+            if userLocalPack == .kSuiteFree || userLocalPack == .starterPack {
+                return .kSuitePro
+            } else if userLocalPack == .myKSuiteFree {
+                return .myKSuite
+            }
+        }
+        return .none
+    }
+
     var body: some View {
         Button(action: didTapButton) {
-            ActionButtonLabel(action: action)
+            ActionButtonLabel(action: action, badgeType: badgeType)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
@@ -225,7 +239,22 @@ struct MessageActionView: View {
 }
 
 struct ActionButtonLabel: View {
+    enum BadgeType {
+        case none, myKSuite, kSuitePro
+    }
+
     let action: Action
+    let badgeType: BadgeType
+
+    init(action: Action, badgeType: BadgeType) {
+        self.action = action
+        self.badgeType = badgeType
+    }
+
+    init(action: Action) {
+        self.action = action
+        badgeType = .none
+    }
 
     var iconColor: MailResourcesColors {
         switch action {
@@ -254,10 +283,17 @@ struct ActionButtonLabel: View {
             action.icon
                 .iconSize(.large)
                 .foregroundStyle(iconColor)
+
             Text(action.title)
                 .foregroundStyle(titleColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            if badgeType == .myKSuite {
+                MyKSuitePlusChip()
+            } else if badgeType == .kSuitePro {
+                KSuiteProUpgradeChip()
+            }
         }
         .padding(value: .medium)
     }

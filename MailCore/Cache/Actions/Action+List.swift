@@ -322,11 +322,15 @@ extension Action: CaseIterable {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return draftActions(hasMultipleMessages: messages.count > 1)
         } else if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff,
-                                     userEmail: userEmail, threadViewState: threadViewState, colorScheme: colorScheme,
+            return actionsForMessage(message, origin: origin,
+                                     userIsStaff: userIsStaff,
+                                     userEmail: userEmail,
+                                     threadViewState: threadViewState,
+                                     colorScheme: colorScheme,
                                      featureAvailableProvider: featureAvailableProvider)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder,
+            return actionsForMessagesInDifferentThreads(messages,
+                                                        originFolder: origin.frozenFolder,
                                                         userEmail: userEmail,
                                                         featureAvailableProvider: featureAvailableProvider)
         } else {
