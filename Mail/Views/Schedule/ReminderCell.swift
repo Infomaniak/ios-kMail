@@ -38,8 +38,7 @@ struct ReminderCell: View {
                             .textStyle(.bodySmallSecondary)
                     }
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isSelected {
                     MailResourcesAsset.check.iconSize(.medium)
