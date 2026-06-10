@@ -9,6 +9,7 @@ let packageSettings = PackageSettings(
     productTypes: [
         "Alamofire": .framework,
         "Algorithms": .staticFramework,
+        "AppLock": .framework,
         "Atlantis": .staticFramework,
         "DesignSystem": .framework,
         "DeviceAssociation": .framework,
