@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "branch" : "chore/upgrade-realm",
-        "revision" : "9aab6d54cb3edccd46ed3679c32a07489b10bd0c"
+        "revision" : "da017d3a8f2a44c2602e5880d3edca552b4a8e96",
+        "version" : "18.12.0"
       }
     },
     {
