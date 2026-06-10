@@ -123,7 +123,9 @@ struct SendOptionFloatingPanelView: View {
                 }
             }
 
-            IKDivider(type: .item)
+            if !isReminderEnabled {
+                IKDivider(type: .item)
+            }
 
             Toggle(isOn: $isScheduleEnabled) {
                 Label {
