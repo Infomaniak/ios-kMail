@@ -72,11 +72,11 @@ struct SendOptionFloatingPanelView: View {
             IKDivider(type: .item)
 
             Toggle(isOn: $isReminderEnabled) {
-                HStack(spacing: IKPadding.mini) {
+                Label {
+                    Text(ScheduleType.reminder.floatingPanelTitle)
+                } icon: {
                     MailResourcesAsset.alarmClock.iconSize(.large)
                         .foregroundStyle(Color.accentColor)
-                    Text(ScheduleType.reminder.floatingPanelTitle)
-                        .textStyle(.body)
                 }
             }
             .tint(.accentColor)
