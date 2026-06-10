@@ -29,8 +29,6 @@ import SwiftUI
 public enum RootViewType: Equatable {
     public static func == (lhs: RootViewType, rhs: RootViewType) -> Bool {
         switch (lhs, rhs) {
-        case (.appLocked, .appLocked):
-            return true
         case (.onboarding, .onboarding):
             return true
         case (.authorization, .authorization):
@@ -50,7 +48,6 @@ public enum RootViewType: Equatable {
         }
     }
 
-    case appLocked
     case mainView(UserProfile, MainViewState)
     case onboarding
     case authorization
@@ -63,8 +60,6 @@ public enum RootViewType: Equatable {
 /// Something that represents the state of the root view
 @MainActor
 public class RootViewState: ObservableObject {
-    @LazyInjectService private var appLockHelper: AppLockHelper
-
     private var accountManagerObservation: AnyCancellable?
 
     @Published public private(set) var state: RootViewType
@@ -128,13 +123,6 @@ public class RootViewState: ObservableObject {
             } else {
                 transitionToRootViewState(.preloading)
             }
-        }
-    }
-
-    public func transitionToLockViewIfNeeded() {
-        @InjectService var accountManager: AccountManager
-        if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked && !accountManager.accounts.isEmpty {
-            transitionToRootViewState(.appLocked)
         }
     }
 }

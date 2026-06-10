@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppLock
 import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -36,7 +37,6 @@ extension VerticalAlignment {
 }
 
 struct PreloadingView: View {
-    @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var accountManager: AccountManager
@@ -80,12 +80,6 @@ struct PreloadingView: View {
 
         guard let currentAccount = accountManager.getCurrentAccount() else {
             rootViewState.transitionToRootViewState(.onboarding)
-            return
-        }
-
-        let isAppLocked = UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked
-        guard !isAppLocked else {
-            rootViewState.transitionToRootViewState(.appLocked)
             return
         }
 

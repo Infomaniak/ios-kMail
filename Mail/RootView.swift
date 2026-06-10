@@ -27,8 +27,6 @@ struct RootView: View {
     var body: some View {
         ZStack {
             switch rootViewState.state {
-            case .appLocked:
-                LockedAppView()
             case .mainView(let currentUser, let mainViewState):
                 SplitView(mailboxManager: mainViewState.mailboxManager)
                     .environmentObject(mainViewState)

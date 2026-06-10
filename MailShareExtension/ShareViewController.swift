@@ -16,10 +16,12 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppLock
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import Social
 import SwiftUI
 import UIKit
@@ -68,7 +70,7 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
-        /// Realm migration if needed
+        // Realm migration if needed
         ModelMigrator().migrateRealmIfNeeded()
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
@@ -89,9 +91,21 @@ final class ShareNavigationViewController: UIViewController {
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        unlockApp()
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    }
+
+    func unlockApp() {
+        @LazyInjectService var appLockHelper: AppLockHelping
+        Task {
+            guard await appLockHelper.evaluatePolicyInAppLockExtension(reason: MailResourcesStrings.Localizable.lockAppTitle)
+            else {
+                dismiss(animated: true)
+                return
+            }
+        }
     }
 }

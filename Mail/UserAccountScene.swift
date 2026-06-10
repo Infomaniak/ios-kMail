@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppLock
 import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -33,7 +34,7 @@ import UIKit
 import VersionChecker
 
 struct UserAccountScene: Scene {
-    @LazyInjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var appLockHelper: AppLockHelping
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
@@ -70,17 +71,17 @@ struct UserAccountScene: Scene {
     }
 
     private func willEnterForeground() {
+        appLockHelper.startObservation()
         if rootViewState.state != .onboarding && rootViewState.state != .preloading {
             appLaunchCounter.increase()
             reviewManager.decreaseActionUntilReview()
         }
-        rootViewState.transitionToLockViewIfNeeded()
         checkAppVersion()
     }
 
     private func didEnterBackground() {
         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
+        if UserDefaults.shared.isAppLockEnabled {
             appLockHelper.setTime()
         }
     }
