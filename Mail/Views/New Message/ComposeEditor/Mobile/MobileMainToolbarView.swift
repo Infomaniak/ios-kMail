@@ -34,7 +34,6 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
-
     @Binding var isShowingSchedulePanel: Bool
 
     let draft: Draft
