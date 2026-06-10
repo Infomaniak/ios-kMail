@@ -375,7 +375,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ToolbarContentBuilder
     private func toolbarItemReply() -> some CustomizableToolbarContent {
         ToolbarItem(id: "thread.reply.reply", placement: .topBarLeading) {
-            Button { verifyReplyAction(action: .reply) } label: {
+            Button { didTap(action: .reply) } label: {
                 Label(Action.reply.title, asset: Action.reply.icon)
             }
             .disabled(!canPerformAction(Action.reply))
@@ -392,7 +392,7 @@ struct LargeToolbarModifier: ViewModifier {
 
         if canReplyAll {
             ToolbarItem(id: "thread.reply.replyAll", placement: .topBarLeading) {
-                Button { verifyReplyAction(action: .replyAll) } label: {
+                Button { didTap(action: .replyAll) } label: {
                     Label(Action.replyAll.title, asset: Action.replyAll.icon)
                 }
                 .disabled(!canPerformAction(Action.replyAll))
@@ -458,28 +458,6 @@ struct LargeToolbarModifier: ViewModifier {
     private func didTap(action: Action) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
-
-        Task {
-            await tryOrDisplayError {
-                try await actionsManager.performAction(
-                    target: frozenMessages,
-                    action: action,
-                    origin: origin
-                )
-            }
-        }
-    }
-
-    private func canPerformAction(_ action: Action) -> Bool {
-        switch action {
-        case .reply, .forward, .replyAll:
-            return actionsManager.canSendEmails
-        default:
-            return true
-        }
-    }
-
-    private func verifyReplyAction(action: Action) {
         guard let message = frozenMessages.lastMessageToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
@@ -491,9 +469,26 @@ struct LargeToolbarModifier: ViewModifier {
             action: action,
             currentMailboxEmail: mailboxManager.mailbox.email
         ) else {
-            didTap(action: action)
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: frozenMessages,
+                        action: action,
+                        origin: origin
+                    )
+                }
+            }
             return
         }
         cannotReply = true
+    }
+
+    private func canPerformAction(_ action: Action) -> Bool {
+        switch action {
+        case .reply, .forward, .replyAll:
+            return actionsManager.canSendEmails
+        default:
+            return true
+        }
     }
 }

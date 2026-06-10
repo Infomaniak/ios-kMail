@@ -113,11 +113,7 @@ struct CompactToolbarModifier: ViewModifier {
                 ToolbarItemGroup(placement: .bottomBar) {
                     ForEach(toolbarActions) { action in
                         Button {
-                            if action == .reply || action == .replyAll {
-                                verifyReplyAction(action: action)
-                            } else {
-                                didTap(action: action)
-                            }
+                            didTap(action: action)
                         } label: {
                             Label(action.title, asset: action.icon)
                         }
@@ -177,25 +173,34 @@ struct CompactToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
+        guard let message = frozenMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else { return }
         if action == .reply,
-           let message = frozenMessages.lastMessageToExecuteAction(
-               currentMailboxEmail: mailboxManager.mailbox.email,
-               featureAvailableProvider: mailboxManager.featureAvailableProvider
-           ),
+
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
             return
         }
 
-        Task {
-            await tryOrDisplayError {
-                try await actionsManager.performAction(
-                    target: frozenMessages,
-                    action: action,
-                    origin: origin
-                )
+        guard NoReplyAlert.verifySenders(
+            message: message,
+            action: action,
+            currentMailboxEmail: mailboxManager.mailbox.email
+        ) else {
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: frozenMessages,
+                        action: action,
+                        origin: origin
+                    )
+                }
             }
+            return
         }
+        cannotReply = true
     }
 
     private func canPerformAction(_ action: Action) -> Bool {
@@ -205,23 +210,5 @@ struct CompactToolbarModifier: ViewModifier {
         default:
             return true
         }
-    }
-
-    private func verifyReplyAction(action: Action) {
-        guard let message = frozenMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        ) else {
-            return
-        }
-        guard NoReplyAlert.verifySenders(
-            message: message,
-            action: action,
-            currentMailboxEmail: mailboxManager.mailbox.email
-        ) else {
-            didTap(action: action)
-            return
-        }
-        cannotReply = true
     }
 }

@@ -21,6 +21,8 @@
 import XCTest
 
 final class NoReplyAlertTests: XCTestCase {
+    let currentMailBoxEmail = "test@example.com"
+
     // MARK: - Helpers
 
     private func createMessage(from: [String], cc: [String] = []) -> Message {
@@ -45,7 +47,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertTrue(result, "Expected \(email) to be detected as no-reply")
@@ -65,7 +67,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertTrue(result, "Expected \(email) to be detected as no-reply (case insensitive)")
@@ -84,7 +86,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertTrue(result, "Expected \(email) to be detected as no-reply")
@@ -105,7 +107,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertFalse(result, "Expected \(email) to NOT be detected as no-reply")
@@ -123,7 +125,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertFalse(result, "Expected \(email) to NOT be detected as no-reply (prefix in domain only)")
@@ -143,7 +145,7 @@ final class NoReplyAlertTests: XCTestCase {
             let message = createMessage(from: [email])
 
             // WHEN
-            let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
             // THEN
             XCTAssertTrue(result, "Expected \(email) to be detected as no-reply (prefix match)")
@@ -157,7 +159,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["john@example.com", "noreply@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertTrue(result, "Expected detection when at least one sender is no-reply")
@@ -168,7 +170,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["john@example.com", "jane@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertFalse(result, "Expected no detection when no sender is no-reply")
@@ -181,7 +183,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["john@example.com"], cc: ["noreply@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertFalse(result, "Reply action should only check FROM recipients")
@@ -192,7 +194,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["john@example.com"], cc: ["noreply@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll)
+        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertTrue(result, "ReplyAll action should check FROM and CC recipients")
@@ -203,7 +205,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["noreply@example.com"], cc: ["jane@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll)
+        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertTrue(result, "ReplyAll should detect no-reply in FROM")
@@ -214,7 +216,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["john@example.com"], cc: ["jane@example.com"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll)
+        let result = NoReplyAlert.verifySenders(message: message, action: .replyAll, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertFalse(result, "ReplyAll should return false when no no-reply addresses")
@@ -227,7 +229,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: [])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertFalse(result, "Empty from list should return false")
@@ -238,7 +240,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: [""])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertFalse(result, "Empty email should return false")
@@ -249,7 +251,7 @@ final class NoReplyAlertTests: XCTestCase {
         let message = createMessage(from: ["noreply"])
 
         // WHEN
-        let result = NoReplyAlert.verifySenders(message: message, action: .reply)
+        let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
 
         // THEN
         XCTAssertTrue(result, "Email without @ should still check prefix on whole string")
