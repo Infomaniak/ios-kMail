@@ -25,7 +25,7 @@ import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
-    @LazyInjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var appLockHelper: AppLockHelping
 
     let title: String
     let subtitle: String?

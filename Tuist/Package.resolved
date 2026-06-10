@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "24f1d37409f91593f751c8c51527cf3cb82b9966",
-        "version" : "8.10.1"
+        "branch" : "fix/app-lock-construction",
+        "revision" : "88fd3faf1f39c92d21bcde80dfed28c6b2ec9291"
       }
     },
     {

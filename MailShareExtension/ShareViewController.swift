@@ -70,7 +70,7 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
-        /// Realm migration if needed
+        // Realm migration if needed
         ModelMigrator().migrateRealmIfNeeded()
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
@@ -99,11 +99,10 @@ final class ShareNavigationViewController: UIViewController {
     }
 
     func unlockApp() {
-        @LazyInjectService var appLockHelper: AppLockHelper
+        @LazyInjectService var appLockHelper: AppLockHelping
         Task {
             guard await appLockHelper.evaluatePolicyInAppLockExtension(reason: MailResourcesStrings.Localizable.lockAppTitle)
             else {
-                print("On dismiss pour une raison inconnue")
                 dismiss(animated: true)
                 return
             }

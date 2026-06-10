@@ -55,7 +55,7 @@ open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
             Factory(type: ReviewManageable.self) { _, _ in
                 ReviewManager(userDefaults: UserDefaults.shared, actionBeforeFirstReview: 50)
             },
-            Factory(type: AppLockHelper.self) { _, _ in
+            Factory(type: AppLockHelping.self) { _, _ in
                 AppLockHelper(
                     appLockUIConfiguration: AppLockUIConfiguration(
                         logoImage: MailResourcesAsset.logoText.swiftUIImage,
