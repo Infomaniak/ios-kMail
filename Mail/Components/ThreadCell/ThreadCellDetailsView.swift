@@ -25,9 +25,13 @@ import SwiftUI
 struct ThreadCellDetailsView: View {
     let hasAttachments: Bool
     let isFlagged: Bool
+    let isMentioned: Bool
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
+            if isMentioned {
+                ThreadCellChip(chipItem: .tag)
+            }
             if hasAttachments {
                 MailResourcesAsset.attachment
                     .iconSize(.medium)
@@ -42,18 +46,34 @@ struct ThreadCellDetailsView: View {
     }
 }
 
-#Preview("Attachments, Flagged") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: true)
+#Preview("Attachments, Flagged, Mentioned") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: true)
 }
 
-#Preview("Attachments, Not flagged") {
-    ThreadCellDetailsView(hasAttachments: true, isFlagged: false)
+#Preview("Attachments, Flagged, Not Mentioned") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: true, isMentioned: false)
 }
 
-#Preview("No Attachment, Flagged") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: true)
+#Preview("Attachments, Not Flagged, Mentioned") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: true)
 }
 
-#Preview("No Attachment, Not flagged") {
-    ThreadCellDetailsView(hasAttachments: false, isFlagged: false)
+#Preview("Attachments, Not Flagged, Not Mentioned") {
+    ThreadCellDetailsView(hasAttachments: true, isFlagged: false, isMentioned: false)
+}
+
+#Preview("No Attachment, Flagged, Mentioned") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: true)
+}
+
+#Preview("No Attachment, Flagged, Not Mentioned") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: true, isMentioned: false)
+}
+
+#Preview("No Attachment, Not Flagged, Mentioned") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: true)
+}
+
+#Preview("No Attachment, Not Flagged, Not Mentioned") {
+    ThreadCellDetailsView(hasAttachments: false, isFlagged: false, isMentioned: false)
 }

@@ -123,7 +123,8 @@ public enum PreviewHelper {
                                               forwarded: false,
                                               flagged: false,
                                               hasUnsubscribeLink: true,
-                                              acknowledge: "pending")
+                                              acknowledge: "pending",
+                                              mentions: [])
 
     public static let sampleMessages = Array(
         repeating: PreviewHelper.sampleMessage,
