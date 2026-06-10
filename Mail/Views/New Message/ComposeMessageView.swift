@@ -99,7 +99,7 @@ struct ComposeMessageView: View {
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-    @State private var isShowingSchedulePanel = false
+    @State private var isShowingSendOptionsPanel = false
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
     @State private var isShowingMailPremiumPanel = false
@@ -267,7 +267,7 @@ struct ComposeMessageView: View {
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
-                    isShowingSchedulePanel: $isShowingSchedulePanel,
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor,
                     selectedText: selectedText
@@ -393,7 +393,7 @@ struct ComposeMessageView: View {
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
         .sendOptionFloatingPanel(
-            isPresented: $isShowingSchedulePanel,
+            isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
             initialDate: draft.scheduleDate,
             completionHandler: didScheduleDraft
