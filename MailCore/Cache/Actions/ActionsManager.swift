@@ -256,12 +256,10 @@ public class ActionsManager: ObservableObject {
                 Task { @MainActor in
                     mainViewState?.isShowingMyKSuiteUpgrade = true
                 }
-                return
             case .kSuiteFree, .starterPack:
                 Task { @MainActor in
                     mainViewState?.isShowingKSuiteProUpgrade = true
                 }
-                return
             default:
                 guard let message = messagesWithDuplicates.first else { return }
                 let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
