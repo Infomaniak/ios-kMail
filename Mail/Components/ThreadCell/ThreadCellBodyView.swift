@@ -31,6 +31,7 @@ struct ThreadCellBodyView: View, Equatable {
     let lastAction: ThreadLastAction?
     let hasAttachments: Bool
     let isFlagged: Bool
+    let isMentioned: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.micro) {
@@ -43,7 +44,7 @@ struct ThreadCellBodyView: View, Equatable {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
                     MessageFolderTag(title: folderName)
-                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
+                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged, isMentioned: isMentioned)
                 }
             } else {
                 if let email {
@@ -53,7 +54,7 @@ struct ThreadCellBodyView: View, Equatable {
                 HStack(spacing: IKPadding.micro) {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
-                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
+                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged, isMentioned: isMentioned)
                 }
 
                 HStack(spacing: IKPadding.micro) {

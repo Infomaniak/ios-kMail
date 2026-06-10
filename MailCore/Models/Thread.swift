@@ -72,6 +72,8 @@ public class Thread: Object, Decodable, Identifiable {
 
     @Persisted public var numberOfScheduledDraft = 0
 
+    @Persisted public var isMentioned = false
+
     public var id: String {
         return uid
     }
@@ -397,6 +399,10 @@ public extension Thread {
             }
 
             updateSnooze(from: message)
+        }
+
+        isMentioned = messages.contains {
+            !$0.seen && $0.mentions.contains { $0 == currentAccountEmail }
         }
 
         for duplicate in duplicates {
