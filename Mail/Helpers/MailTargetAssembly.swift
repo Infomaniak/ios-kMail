@@ -60,6 +60,7 @@ open class CommonAppAndShareTargetAssembly: MailAppTargetAssembly {
                     appLockUIConfiguration: AppLockUIConfiguration(
                         logoImage: MailResourcesAsset.logoText.swiftUIImage,
                         lockImage: MailResourcesAsset.lock.swiftUIImage,
+                        lockImageSize: 128,
                         ikButtonTheme: .mail
                     ),
                     userDefaults: UserDefaults.shared
