@@ -34,7 +34,7 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
-    @Binding var isShowingSchedulePanel: Bool
+    @Binding var isShowingSendOptionsPanel: Bool
 
     let draft: Draft
     let isEditorFocused: Bool
@@ -132,7 +132,7 @@ struct MobileMainToolbarView: View {
             if draft.encrypted {
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
             } else {
-                isShowingSchedulePanel = true
+                isShowingSendOptionsPanel = true
             }
         }
     }
@@ -155,7 +155,7 @@ struct MobileMainToolbarView: View {
         isShowingMyKSuitePanel: .constant(false),
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
-        isShowingSchedulePanel: .constant(false),
+        isShowingSendOptionsPanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
     )
