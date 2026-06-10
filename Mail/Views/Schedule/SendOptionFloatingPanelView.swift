@@ -31,11 +31,12 @@ struct SendOptionFloatingPanelView: View {
     @Binding var isShowingMailPremiumUpgrade: Bool
     @Binding var isScheduleEnabled: Bool
     @Binding var selectedReminderOption: ReminderOption?
+    @Binding var selectedScheduleOption: ScheduleOption?
+    @Binding var customAlertType: ScheduleType
     @Binding var contentHeight: CGFloat
 
     @State private var isReminderEnabled = false
 
-    let type: ScheduleType
     let initialDate: Date?
     let completionHandler: (Date) -> Void
 
@@ -55,7 +56,7 @@ struct SendOptionFloatingPanelView: View {
             }
         }
 
-        let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
+        let lastScheduledDate = UserDefaults.shared[keyPath: ScheduleType.scheduledDraft.lastCustomScheduleDateKeyPath]
         let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
         if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
             filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
@@ -108,6 +109,7 @@ struct SendOptionFloatingPanelView: View {
                             isSelected: isSelected
                         ) {
                             if option.isCustom {
+                                customAlertType = .reminder
                                 isShowingCustomScheduleAlert = true
                             } else {
                                 selectedReminderOption = option
@@ -125,7 +127,7 @@ struct SendOptionFloatingPanelView: View {
 
             Toggle(isOn: $isScheduleEnabled) {
                 Label {
-                    Text(type.floatingPanelTitle)
+                    Text(ScheduleType.scheduledDraft.floatingPanelTitle)
                 } icon: {
                     MailResourcesAsset.clockPaperplane.iconSize(.large)
                         .foregroundStyle(Color.accentColor)
@@ -135,7 +137,32 @@ struct SendOptionFloatingPanelView: View {
             .padding(value: .medium)
 
             if isScheduleEnabled {
-                scheduleOptionsView
+                IKDivider(type: .item)
+                VStack(spacing: 0) {
+                    ForEach(scheduleOptions) { option in
+                        ScheduleCell(
+                            option: option,
+                            isSelected: selectedScheduleOption == option
+                        ) {
+                            selectedScheduleOption = option
+                        }
+
+                        IKDivider(type: .item)
+                    }
+
+                    let customOption: ScheduleOption = selectedScheduleOption?.isCustom == true
+                        ? selectedScheduleOption!
+                        : .custom(date: .now)
+                    let isCustomSelected = selectedScheduleOption?.isCustom == true
+
+                    ScheduleCell(
+                        option: customOption,
+                        isSelected: isCustomSelected
+                    ) {
+                        customAlertType = .scheduledDraft
+                        isShowingCustomScheduleAlert = true
+                    }
+                }
             }
         }
         .background {
@@ -144,26 +171,6 @@ struct SendOptionFloatingPanelView: View {
                     .onAppear { contentHeight = geometry.size.height }
                     .onChange(of: geometry.size.height) { contentHeight = $0 }
             }
-        }
-    }
-
-    private var scheduleOptionsView: some View {
-        VStack(spacing: 0) {
-            IKDivider(type: .item)
-
-            ForEach(scheduleOptions) { option in
-                ScheduleOptionView(type: type, option: option, completionHandler: completionHandler)
-
-                IKDivider(type: .item)
-            }
-
-            CustomScheduleButton(
-                isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
-                isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
-                isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
-                isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
-                type: type
-            )
         }
     }
 }
@@ -176,8 +183,9 @@ struct SendOptionFloatingPanelView: View {
         isShowingMailPremiumUpgrade: .constant(false),
         isScheduleEnabled: .constant(true),
         selectedReminderOption: .constant(.oneDay),
+        selectedScheduleOption: .constant(nil),
+        customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
-        type: .scheduledDraft,
         initialDate: nil
     ) { _ in }
         .environmentObject(PreviewHelper.sampleMailboxManager)

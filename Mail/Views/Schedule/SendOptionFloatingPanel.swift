@@ -58,9 +58,11 @@ struct SendOptionFloatingPanel: ViewModifier {
     @State private var panelShouldBeShown = false
     @State private var isScheduleEnabled = false
     @State private var selectedReminderOption: ReminderOption?
+    @State private var selectedScheduleOption: ScheduleOption?
     @State private var contentHeight: CGFloat = 0
     @State private var selectedDetent: PresentationDetent = .medium
     @State private var isShowingCustomScheduleAlert = false
+    @State private var customAlertType: ScheduleType = .scheduledDraft
 
     @Binding var isShowingFloatingPanel: Bool
 
@@ -68,8 +70,6 @@ struct SendOptionFloatingPanel: ViewModifier {
     let initialDate: Date?
     let dismissView: (() -> Void)?
     let completionHandler: (Date) -> Void
-
-    private let type: ScheduleType = .scheduledDraft
 
     private var isShowingAnyPanel: Bool {
         return isShowingFloatingPanel || isShowingCustomScheduleAlert
@@ -90,8 +90,9 @@ struct SendOptionFloatingPanel: ViewModifier {
                         isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                         isScheduleEnabled: $isScheduleEnabled,
                         selectedReminderOption: $selectedReminderOption,
+                        selectedScheduleOption: $selectedScheduleOption,
+                        customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
-                        type: type,
                         initialDate: initialDate,
                         completionHandler: completionHandler
                     )
@@ -112,9 +113,18 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
                 .mailCustomAlert(isPresented: $isShowingCustomScheduleAlert) {
-                    CustomScheduleAlertView(type: type, date: initialDate, isUpdating: isUpdating, confirmAction: { date in
-                        selectedReminderOption = .custom(date: date)
-                    }) {
+                    CustomScheduleAlertView(
+                        type: customAlertType,
+                        date: initialDate,
+                        isUpdating: isUpdating,
+                        confirmAction: { date in
+                            if customAlertType == .scheduledDraft {
+                                selectedScheduleOption = .custom(date: date)
+                            } else {
+                                selectedReminderOption = .custom(date: date)
+                            }
+                        }
+                    ) {
                         panelShouldBeShown = true
                     }
                 }
