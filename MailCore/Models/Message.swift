@@ -253,6 +253,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var summary: String?
 
+    @Persisted public var mentions: List<String>
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -458,6 +460,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case emojiReactionNotAllowedReason
         case headers
         case acknowledge
+        case mentions
     }
 
     override init() {
@@ -539,6 +542,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
+        mentions = try values.decode(List<String>.self, forKey: .mentions)
     }
 
     public convenience init(
@@ -579,7 +583,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeEndDate: Date? = nil,
         emojiReaction: String? = nil,
         emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
-        acknowledge: String? = nil
+        acknowledge: String? = nil,
+        mentions: [String]
     ) {
         self.init()
 
@@ -622,6 +627,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.emojiReaction = emojiReaction
         self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
         self.acknowledge = acknowledge
+        self.mentions = mentions.toRealmList()
     }
 
     public func toThread() -> Thread {
