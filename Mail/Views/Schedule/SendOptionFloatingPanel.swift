@@ -85,16 +85,12 @@ struct SendOptionFloatingPanel: ViewModifier {
                 ScrollView {
                     SendOptionFloatingPanelView(
                         isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
-                        isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
-                        isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
-                        isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                         isScheduleEnabled: $isScheduleEnabled,
                         selectedReminderOption: $selectedReminderOption,
                         selectedScheduleOption: $selectedScheduleOption,
                         customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
-                        initialDate: initialDate,
-                        completionHandler: completionHandler
+                        initialDate: initialDate
                     )
                 }
                 .scrollBounceBehavior(.basedOnSize)
