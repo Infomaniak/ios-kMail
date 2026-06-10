@@ -42,7 +42,7 @@
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
         "branch" : "chore/upgrade-realm",
-        "revision" : "d9c14f63978ce9f5cf18eb068fcc1822ccfe626e"
+        "revision" : "9aab6d54cb3edccd46ed3679c32a07489b10bd0c"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "fix/app-lock-construction",
-        "revision" : "88fd3faf1f39c92d21bcde80dfed28c6b2ec9291"
+        "revision" : "365d443c33f6ba1def1ac120bd2b3f7b7d206cec",
+        "version" : "8.11.0"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "cef29e94feb00b1b712514443d6d70b09ef20355",
-        "version" : "9.15.0"
+        "revision" : "e6d00b6171c0c055debdf278554db035ae958926",
+        "version" : "9.16.1"
       }
     },
     {
@@ -230,8 +230,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "fea17c02d767f46b23070fdfdacc28a03a39232a",
-        "version" : "1.5.1"
+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+        "version" : "1.6.0"
       }
     },
     {
