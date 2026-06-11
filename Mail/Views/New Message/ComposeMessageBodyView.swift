@@ -45,6 +45,7 @@ struct ComposeMessageBodyView: View {
     let draft: Draft
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
+    @Binding var mentionQuery: String
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
 
@@ -89,6 +90,9 @@ struct ComposeMessageBodyView: View {
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
                 .mailCustomAlert(item: $isShowingLink) { link in
                     AddLinkView(selectionLink: link, actionHandler: didCreateLink)
+                }
+                .onMentionQueryChange { query in
+                    mentionQuery = query
                 }
 
                 .sheet(isPresented: $isShowingFileSelection) {
@@ -176,6 +180,7 @@ struct ComposeMessageBodyView: View {
         draft: draft,
         isShowingAI: .constant(false),
         selectedText: .constant(""),
+        mentionQuery: .constant(""),
         editor: .init(wrappedValue: nil),
         messageReply: nil
     )
