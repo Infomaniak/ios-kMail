@@ -26,13 +26,12 @@ import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
     @Binding var isShowingCustomScheduleAlert: Bool
+    @Binding var isReminderEnabled: Bool
     @Binding var isScheduleEnabled: Bool
     @Binding var selectedReminderOption: ReminderOption?
     @Binding var selectedScheduleOption: ScheduleOption?
     @Binding var customAlertType: ScheduleType
     @Binding var contentHeight: CGFloat
-
-    @State private var isReminderEnabled = false
 
     let initialDate: Date?
 
@@ -92,36 +91,33 @@ struct SendOptionFloatingPanelView: View {
 
                 IKDivider(type: .item)
                 VStack(spacing: 0) {
-                    ForEach(ReminderOption.allCases) { option in
-                        let displayOption = option.isCustom && selectedReminderOption?.isCustom == true
-                            ? selectedReminderOption!
-                            : option
-                        let isSelected = option.isCustom
-                            ? selectedReminderOption?.isCustom == true
-                            : selectedReminderOption == option
-
+                    ForEach(ReminderOption.presetCases) { option in
                         ReminderCell(
-                            option: displayOption,
-                            isSelected: isSelected
+                            option: option,
+                            isSelected: selectedReminderOption == option
                         ) {
-                            if option.isCustom {
-                                customAlertType = .reminder
-                                isShowingCustomScheduleAlert = true
-                            } else {
-                                selectedReminderOption = option
-                            }
+                            selectedReminderOption = option
                         }
 
-                        if option != ReminderOption.allCases.last {
-                            IKDivider(type: .item)
-                        }
+                        IKDivider(type: .item)
+                    }
+
+                    let customOption: ReminderOption = selectedReminderOption?.isCustom == true
+                        ? selectedReminderOption!
+                        : .custom(date: .now)
+                    let isCustomSelected = selectedReminderOption?.isCustom == true
+
+                    ReminderCell(
+                        option: customOption,
+                        isSelected: isCustomSelected
+                    ) {
+                        customAlertType = .reminder
+                        isShowingCustomScheduleAlert = true
                     }
                 }
             }
 
-            if !isReminderEnabled {
-                IKDivider(type: .item)
-            }
+            IKDivider(type: .item)
 
             Toggle(isOn: $isScheduleEnabled) {
                 Label {
@@ -170,12 +166,41 @@ struct SendOptionFloatingPanelView: View {
                     .onChange(of: geometry.size.height) { contentHeight = $0 }
             }
         }
+        .onChange(of: isReminderEnabled) { newValue in
+            if newValue {
+                // Auto-select first option when toggled ON
+                selectedReminderOption = .oneDay
+            } else {
+                // Reset when toggled OFF
+                selectedReminderOption = nil
+            }
+        }
+        .onChange(of: isScheduleEnabled) { newValue in
+            if newValue {
+                // Auto-select first available option when toggled ON
+                selectedScheduleOption = scheduleOptions.first
+            } else {
+                // Reset when toggled OFF
+                selectedScheduleOption = nil
+            }
+        }
+        .onChange(of: selectedScheduleOption) { newScheduleOption in
+            // Only adjust custom reminder if it becomes invalid (before schedule date)
+            guard isReminderEnabled,
+                  let reminderOption = selectedReminderOption,
+                  reminderOption.isCustom,
+                  let reminderDate = reminderOption.date,
+                  let scheduleDate = newScheduleOption?.date,
+                  reminderDate <= scheduleDate else { return }
+            selectedReminderOption = .oneDay
+        }
     }
 }
 
 #Preview {
     SendOptionFloatingPanelView(
         isShowingCustomScheduleAlert: .constant(false),
+        isReminderEnabled: .constant(true),
         isScheduleEnabled: .constant(true),
         selectedReminderOption: .constant(.oneDay),
         selectedScheduleOption: .constant(nil),

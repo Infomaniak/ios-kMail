@@ -46,6 +46,7 @@ struct CustomScheduleAlertView: View {
 
     let type: ScheduleType
     let isUpdating: Bool
+    let minimumDate: Date
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
@@ -61,14 +62,17 @@ struct CustomScheduleAlertView: View {
         type: ScheduleType,
         date: Date?,
         isUpdating: Bool,
+        minimumDate: Date? = nil,
         confirmAction: @escaping (Date) -> Void,
         cancelAction: (() -> Void)? = nil
     ) {
-        _selectedDate = .init(wrappedValue: date ?? type.minimumDate)
         self.type = type
         self.isUpdating = isUpdating
+        self.minimumDate = minimumDate ?? type.minimumDate
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
+
+        _selectedDate = .init(wrappedValue: date ?? self.minimumDate)
     }
 
     var body: some View {
@@ -80,11 +84,13 @@ struct CustomScheduleAlertView: View {
             DatePicker(
                 MailResourcesStrings.Localizable.datePickerTitle,
                 selection: $selectedDate,
-                in: type.minimumDate ... type.maximumDate
+                in: minimumDate ... type.maximumDate
             )
             .labelsHidden()
             .onChange(of: selectedDate) { newDate in
-                isShowingError = !type.isDateInValidTimeframe(newDate)
+                if isShowingError, type.isDateInValidTimeframe(newDate) {
+                    isShowingError = false
+                }
             }
 
             Text(type.alertErrorMessage)
