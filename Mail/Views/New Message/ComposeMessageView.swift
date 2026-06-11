@@ -94,6 +94,8 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSendOptionsPanel = false
+    @State private var selectedScheduleOption: ScheduleOption?
+    @State private var selectedReminderOption: ReminderOption?
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
     @State private var isShowingMailPremiumPanel = false
@@ -433,7 +435,8 @@ struct ComposeMessageView: View {
             isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
             initialDate: draft.scheduleDate,
-            completionHandler: didScheduleDraft
+            selectedScheduleOption: $selectedScheduleOption,
+            selectedReminderOption: $selectedReminderOption
         )
     }
 
@@ -467,17 +470,6 @@ struct ComposeMessageView: View {
             await draftContentManager.saveCurrentDraftBody()
             dismissMessageView()
         }
-    }
-
-    private func didScheduleDraft(_ date: Date) {
-        if let liveDraft = draft.thaw() {
-            try? liveDraft.realm?.write {
-                liveDraft.scheduleDate = date
-                liveDraft.action = .schedule
-            }
-        }
-
-        dismissMessageView()
     }
 
     private func trySendingMessage(skipSubjectCheck: Bool = false, skipAttachmentsCheck: Bool = false) {
@@ -566,7 +558,17 @@ struct ComposeMessageView: View {
 
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
+                if let scheduleDate = selectedScheduleOption?.date {
+                    liveDraft.scheduleDate = scheduleDate
+                    liveDraft.action = .schedule
+                } else {
+                    liveDraft.action = .send
+                }
+
+                // TODO: Store reminder option when backend is ready
+                // if let reminderOption = selectedReminderOption {
+                //     liveDraft.reminderDate = selectedReminderOption?.date
+                // }
             }
         }
     }
