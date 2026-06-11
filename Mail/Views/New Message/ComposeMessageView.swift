@@ -110,6 +110,10 @@ struct ComposeMessageView: View {
 
     @State private var selectedText = ""
 
+    @State private var mentionQuery = ""
+    @State private var mentionSuggestions = [Recipient]()
+
+    @Weak private var scrollView: UIScrollView?
     @Weak private var editor: RichHTMLEditorView?
 
     @StateObject private var draftContentManager: DraftContentManager
@@ -210,6 +214,7 @@ struct ComposeMessageView: View {
                         draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
+                        mentionQuery: $mentionQuery,
                         editor: _editor,
                         messageReply: messageReply
                     )
@@ -278,22 +283,41 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if !platformDetector.isMac {
-                EditorMobileToolbarView(
-                    textAttributes: textAttributes,
-                    isShowingAI: $aiModel.isShowingPrompt,
-                    isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
-                    isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
-                    isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
-                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
-                    draft: draft,
-                    isEditorFocused: focusedField == .editor,
-                    selectedText: selectedText
-                )
-                .environmentObject(attachmentsManager)
+            VStack(alignment: .trailing, spacing: 0) {
+                if !mentionSuggestions.isEmpty {
+                    ComposeMessageContactList(
+                        mentionQuery: mentionQuery,
+                        mentionSuggestions: mentionSuggestions
+                    ) { recipient in
+                        if let liveDraft = draft.thaw(),
+                           let realm = liveDraft.realm {
+                            try? realm.write {
+                                liveDraft.mentions.append(recipient.email)
+                            }
+                            mentionQuery = ""
+                        }
+                    }
+                }
+
+                if !platformDetector.isMac {
+                    EditorMobileToolbarView(
+                        textAttributes: textAttributes,
+                        isShowingAI: $aiModel.isShowingPrompt,
+                        isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
+                        isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
+                        isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
+                        isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                        draft: draft,
+                        isEditorFocused: focusedField == .editor,
+                        selectedText: selectedText
+                    )
+                    .environmentObject(attachmentsManager)
+                }
             }
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .overlay(alignment: .trailingLastTextBaseline) {}
         .overlay {
             if isLoadingContent || isSyncingDrafts {
                 progressView
@@ -326,6 +350,25 @@ struct ComposeMessageView: View {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
             }
+        }
+        .task(id: mentionQuery) {
+            guard !mentionQuery.isEmpty else {
+                mentionSuggestions = []
+                return
+            }
+
+            let contacts = mailboxManager.contactManager.frozenContacts(matching: mentionQuery,
+                                                                        fetchLimit: 10,
+                                                                        sorted: nil)
+
+//            let contactsManagerable = await MailboxManager.frozenContacts.searchAllAutocompletable(
+//                matching: mentionQuery,
+//                fetchLimit: 1
+//            )
+
+            let recipients = contacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+
+            mentionSuggestions = recipients
         }
         .onAppear {
             attachmentsManager.importAttachments(
