@@ -38,6 +38,7 @@ struct SettingsView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -207,6 +208,17 @@ struct SettingsView: View {
                             keyPath: \.theme,
                             matomoCategory: .settingsTheme,
                             matomoName: \.rawValue
+                        )
+                    }
+
+                    // MARK: Mail theme
+
+                    if colorScheme == .dark {
+                        SettingsToggleCell(
+                            title: MailResourcesStrings.Localizable.settingsEnableMailDarkMode,
+                            userDefaults: \.shouldShowDarkMode,
+                            matomoCategory: .settingsTheme,
+                            matomoName: "mailDarkMode"
                         )
                     }
 
