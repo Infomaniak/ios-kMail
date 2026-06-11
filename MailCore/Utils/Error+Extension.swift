@@ -39,9 +39,10 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 }
 
 private func displayErrorIfNeeded(error: Error) {
-    @InjectService var snackbarPresenter: IKSnackBarPresentable
+    guard !Bundle.main.isExtension else { return }
     if let error = error as? MailError {
         if error.shouldDisplay, let errorDescription = error.errorDescription {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: errorDescription)
         } else {
             SentryDebug.logInternalErrorToSentry(
@@ -52,6 +53,7 @@ private func displayErrorIfNeeded(error: Error) {
         }
         Logger.general.error("MailError: \(error)")
     } else if error.shouldDisplay {
+        @InjectService var snackbarPresenter: IKSnackBarPresentable
         snackbarPresenter.show(message: error.localizedDescription)
         Logger.general.error("Error: \(error)")
     }
