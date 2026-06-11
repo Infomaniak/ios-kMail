@@ -1502,7 +1502,7 @@
 "settingsDisabled" = "Disabled";
 
 /* loco:6a2a56a47111b4a768088ad2 */
-"settingsEnableMailDarkMode" = "Displaying emails in dark mode";
+"settingsEnableMailDarkMode" = "Show emails in dark mode";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Enable notifications";

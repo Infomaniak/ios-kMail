@@ -297,7 +297,8 @@ extension Action: CaseIterable {
         )
     }
 
-    private static func lightThemeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
+    private static func lightThemeAction(message: Message,
+                                         threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
         guard colorScheme == .dark && UserDefaults.shared.shouldShowDarkMode else { return nil }
         if !threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
             return .forceLightMode
