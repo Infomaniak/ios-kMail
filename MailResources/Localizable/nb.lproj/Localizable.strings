@@ -4,7 +4,7 @@
  * Locale: nb, Norwegian Bokmål
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Thu, 28 May 2026 10:19:52 +0200
+ * Exported at: Thu, 11 Jun 2026 08:46:12 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1500,6 +1500,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Deaktivert";
+
+/* loco:6a2a56a47111b4a768088ad2 */
+"settingsEnableMailDarkMode" = "Visning av e-poster i mørk modus";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Aktiver varsler";
