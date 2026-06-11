@@ -92,6 +92,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var emojiReaction: String?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
+    @Persisted public var mentions: List<String>
 
     public var allRecipients: [Recipient] {
         return to.toArray() + cc.toArray() + bcc.toArray()
@@ -163,6 +164,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case emojiReaction
         case encrypted
         case encryptionPassword
+        case mentions
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -196,6 +198,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
+        mentions = try values.decode(List<String>.self, forKey: .mentions)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -219,7 +222,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                             attachments: [Attachment]? = nil,
                             action: SaveDraftOption? = nil,
                             emojiReaction: String? = nil,
-                            encrypted: Bool = false) {
+                            encrypted: Bool = false,
+                            mentions: [String] = []) {
         self.init()
 
         self.localUUID = localUUID
@@ -245,6 +249,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         self.emojiReaction = emojiReaction
         self.encrypted = encrypted
         encryptionPassword = ""
+        self.mentions = mentions.toRealmList()
     }
 
     public static func mailTo(urlComponents: URLComponents) -> Draft {
@@ -339,6 +344,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
+        try container.encode(mentions, forKey: .mentions)
     }
 }
 
