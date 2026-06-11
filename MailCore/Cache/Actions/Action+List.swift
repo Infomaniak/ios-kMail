@@ -67,7 +67,6 @@ extension Action: CaseIterable {
         .snooze,
         .modifySnooze,
         .cancelSnooze,
-        .forceDarkMode,
         .forceLightMode,
         .summarize
     ]
@@ -167,7 +166,7 @@ extension Action: CaseIterable {
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
-            themeAction(message: message, threadViewState: threadViewState, colorScheme: colorScheme),
+            lightThemeAction(message: message, threadViewState: threadViewState, colorScheme: colorScheme),
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
@@ -298,13 +297,13 @@ extension Action: CaseIterable {
         )
     }
 
-    private static func themeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
-        guard colorScheme == .dark else { return nil }
-        if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
-            return .forceDarkMode
-        } else {
+    private static func lightThemeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
+        guard colorScheme == .dark && UserDefaults.shared.shouldShowDarkMode else { return nil }
+        if !threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
             return .forceLightMode
         }
+
+        return nil
     }
 
     private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
@@ -596,12 +595,6 @@ public extension Action {
     static let forceLightMode = Action(
         id: "forceLightMode",
         title: MailResourcesStrings.Localizable.actionViewInLight,
-        iconResource: MailResourcesAsset.viewInLight,
-        matomoName: ""
-    )
-    static let forceDarkMode = Action(
-        id: "forceDarkMode",
-        title: MailResourcesStrings.Localizable.actionViewInDark,
         iconResource: MailResourcesAsset.viewInLight,
         matomoName: ""
     )
