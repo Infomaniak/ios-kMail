@@ -185,10 +185,24 @@ struct UnreadToggleStyle: ToggleStyle {
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
             .padding(.vertical, IKPadding.micro)
             .padding(.horizontal, IKPadding.mini)
-            .background(
-                Capsule()
-                    .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
-            )
+            .background {
+                if #unavailable(iOS 26.0) {
+                    Capsule()
+                        .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
+                }
+            }
+            .glassCapsule(configuration.isOn ? .accentColor : nil)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private extension View {
+    func glassCapsule(_ color: Color?) -> some View {
+        if #available(iOS 26.0, *) {
+            return glassEffect(.regular.interactive().tint(color), in: .capsule)
+        } else {
+            return self
         }
     }
 }
