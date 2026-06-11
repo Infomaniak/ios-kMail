@@ -25,9 +25,7 @@ enum ReminderOption: Identifiable, Equatable {
     case sevenDays
     case custom(date: Date)
 
-    static var allCases: [ReminderOption] {
-        [.oneDay, .threeDays, .sevenDays, .custom(date: .now)]
-    }
+    static let presetCases: [ReminderOption] = [.oneDay, .threeDays, .sevenDays]
 
     var id: String { title }
 
@@ -44,24 +42,21 @@ enum ReminderOption: Identifiable, Equatable {
         }
     }
 
-    var delayInDays: Int? {
-        switch self {
-        case .oneDay:
-            return 1
-        case .threeDays:
-            return 3
-        case .sevenDays:
-            return 7
-        case .custom:
-            return nil
+    var date: Date? {
+        if case .custom(let date) = self {
+            return date
         }
+        return nil
     }
 
-    var date: Date? {
+    func reminderDate(sentAt sendDate: Date) -> Date? {
         switch self {
-        case .oneDay, .threeDays, .sevenDays:
-            guard let delayInDays else { return nil }
-            return Calendar.current.date(byAdding: .day, value: delayInDays, to: .now)
+        case .oneDay:
+            return Calendar.current.date(byAdding: .day, value: 1, to: sendDate)
+        case .threeDays:
+            return Calendar.current.date(byAdding: .day, value: 3, to: sendDate)
+        case .sevenDays:
+            return Calendar.current.date(byAdding: .day, value: 7, to: sendDate)
         case .custom(let date):
             return date
         }

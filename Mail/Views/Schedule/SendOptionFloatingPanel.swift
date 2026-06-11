@@ -35,15 +35,17 @@ extension View {
         isUpdating: Bool,
         initialDate: Date? = nil,
         dismissView: (() -> Void)? = nil,
-        completionHandler: @escaping (Date) -> Void
+        selectedScheduleOption: Binding<ScheduleOption?>,
+        selectedReminderOption: Binding<ReminderOption?>
     ) -> some View {
         modifier(
             SendOptionFloatingPanel(
                 isShowingFloatingPanel: isPresented,
+                selectedScheduleOption: selectedScheduleOption,
+                selectedReminderOption: selectedReminderOption,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
-                dismissView: dismissView,
-                completionHandler: completionHandler
+                dismissView: dismissView
             )
         )
     }
@@ -56,20 +58,20 @@ struct SendOptionFloatingPanel: ViewModifier {
     @State private var isShowingKSuiteProUpgrade = false
     @State private var isShowingMailPremiumUpgrade = false
     @State private var panelShouldBeShown = false
+    @State private var isReminderEnabled = false
     @State private var isScheduleEnabled = false
-    @State private var selectedReminderOption: ReminderOption?
-    @State private var selectedScheduleOption: ScheduleOption?
     @State private var contentHeight: CGFloat = 0
     @State private var selectedDetent: PresentationDetent = .medium
     @State private var isShowingCustomScheduleAlert = false
     @State private var customAlertType: ScheduleType = .scheduledDraft
 
     @Binding var isShowingFloatingPanel: Bool
+    @Binding var selectedScheduleOption: ScheduleOption?
+    @Binding var selectedReminderOption: ReminderOption?
 
     let isUpdating: Bool
     let initialDate: Date?
     let dismissView: (() -> Void)?
-    let completionHandler: (Date) -> Void
 
     private var isShowingAnyPanel: Bool {
         return isShowingFloatingPanel || isShowingCustomScheduleAlert
@@ -85,6 +87,7 @@ struct SendOptionFloatingPanel: ViewModifier {
                 ScrollView {
                     SendOptionFloatingPanelView(
                         isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
+                        isReminderEnabled: $isReminderEnabled,
                         isScheduleEnabled: $isScheduleEnabled,
                         selectedReminderOption: $selectedReminderOption,
                         selectedScheduleOption: $selectedScheduleOption,
@@ -109,10 +112,12 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
                 .mailCustomAlert(isPresented: $isShowingCustomScheduleAlert) {
+                    let reminderMinDate = selectedScheduleOption?.date?.addingTimeInterval(ScheduleType.reminder.minimumInterval)
                     CustomScheduleAlertView(
                         type: customAlertType,
                         date: initialDate,
                         isUpdating: isUpdating,
+                        minimumDate: customAlertType == .reminder ? reminderMinDate : nil,
                         confirmAction: { date in
                             if customAlertType == .scheduledDraft {
                                 selectedScheduleOption = .custom(date: date)
