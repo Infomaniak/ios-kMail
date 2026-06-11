@@ -24,13 +24,11 @@ import SwiftUI
 
 extension View {
     func euriaFloatingPanel(
-        user: UserProfile,
         messages: Binding<[Message]?>,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
-                user: user,
                 messages: messages,
                 completionHandler: completionHandler
             )
@@ -39,15 +37,10 @@ extension View {
 }
 
 struct EuriaFloatingPanel: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
-
-    @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsProvider: ActionsProvider
-    @EnvironmentObject private var threadViewState: ThreadViewState
 
     @State private var isShowingPanel = false
 
-    let user: UserProfile
     @Binding var messages: [Message]?
     let completionHandler: ((Action) -> Void)?
 
@@ -85,7 +78,5 @@ struct EuriaFloatingPanel: ViewModifier {
         guard let messages else { return [] }
 
         return actionsProvider.actionsFor(origin: origin, messages: messages)
-
-        
     }
 }

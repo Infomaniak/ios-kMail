@@ -40,8 +40,6 @@ struct CompactToolbarModifier: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
-    private let frozenThread: Thread
-
     private let isFlagged: Bool
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
@@ -71,8 +69,6 @@ struct CompactToolbarModifier: ViewModifier {
     }
 
     init(frozenThread: Thread) {
-        self.frozenThread = frozenThread
-
         isFlagged = frozenThread.flagged
         frozenFolder = frozenThread.folder
         frozenMessages = frozenThread.messages.toArray()

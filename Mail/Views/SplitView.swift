@@ -63,6 +63,7 @@ struct SplitView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
     @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -233,7 +234,9 @@ struct SplitView: View {
             currentUser: currentUser.value,
             featureAvailableProvider: mailboxManager.featureAvailableProvider,
             currentEmail: mailboxManager.mailbox.email,
-            threadViewState: threadViewState
+            threadViewState: threadViewState,
+            colorScheme: colorScheme
+
         ))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }

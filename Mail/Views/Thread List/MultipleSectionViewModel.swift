@@ -29,12 +29,10 @@ class MultipleSelectionViewModel: ObservableObject {
     @Published var isEnabled = false
     @Published var selectedItems = [String: Thread]()
 
-    let fromArchiveFolder: Bool
     let fromSearch: Bool
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(fromArchiveFolder: Bool = false, fromSearch: Bool = false) {
-        self.fromArchiveFolder = fromArchiveFolder
+    init(fromSearch: Bool = false) {
         self.fromSearch = fromSearch
     }
 

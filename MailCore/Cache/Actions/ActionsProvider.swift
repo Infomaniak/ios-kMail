@@ -39,17 +39,20 @@ public class ActionsProvider: ObservableObject {
     let currentEmail: String
     let featureAvailableProvider: FeatureAvailableProvider
     let threadViewState: ThreadViewState
+    let colorScheme: ColorScheme
 
     public init(
         currentUser: UserProfile,
         featureAvailableProvider: FeatureAvailableProvider,
         currentEmail: String,
-        threadViewState: ThreadViewState
+        threadViewState: ThreadViewState,
+        colorScheme: ColorScheme
     ) {
         self.currentUser = currentUser
         self.currentEmail = currentEmail
         self.featureAvailableProvider = featureAvailableProvider
         self.threadViewState = threadViewState
+        self.colorScheme = colorScheme
     }
 
     public let rightClickActions: [Action] = [
@@ -169,6 +172,7 @@ public class ActionsProvider: ObservableObject {
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
+            themeAction(message: message),
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             currentUser.isStaff == true ? .reportDisplayProblem : nil
         ]
@@ -252,6 +256,15 @@ public class ActionsProvider: ObservableObject {
             return [.modifySnooze, .cancelSnooze]
         } else {
             return [.snooze]
+        }
+    }
+
+    private func themeAction(message: Message) -> Action? {
+        guard colorScheme == .dark else { return nil }
+        if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
+            return .forceDarkMode
+        } else {
+            return .forceLightMode
         }
     }
 

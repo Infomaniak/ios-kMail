@@ -35,12 +35,8 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
-    @Environment(\.currentUser) private var currentUser
-    @Environment(\.colorScheme) private var colorScheme
-
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var threadViewState: ThreadViewState
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
@@ -73,7 +69,7 @@ struct ThreadListCellContextMenu: ViewModifier {
             messagesToDownload: $messagesToDownload
         )
     }
-    
+
     private var listActionOrigin: ActionOrigin {
         .floatingPanelListAction(
             source: .threadList,
@@ -90,18 +86,6 @@ struct ThreadListCellContextMenu: ViewModifier {
         )
     }
 
-    private func actions(for thread: Thread) -> Action.MessageActions {
-        return Action.actionsForMessages(
-            thread.messages.toArray(),
-            origin: origin,
-            userIsStaff: currentUser.value.isStaff ?? false,
-            userEmail: currentUser.value.email,
-            threadViewState: threadViewState,
-            colorScheme: colorScheme,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
-    }
-
     private var initialSnoozedDate: Date? {
         guard let messagesToSnooze,
               let initialDate = messagesToSnooze.first?.snoozeEndDate,
@@ -115,9 +99,12 @@ struct ThreadListCellContextMenu: ViewModifier {
         content
             .contextMenu(forSelectionType: Thread.self) { selectedThreads in
                 if let myThread = selectedThreads.first {
-                    let quickActions = actionsProvider.actionsFor(origin: quickActionOrigin, messages: myThread.messages.toArray())
+                    let quickActions = actionsProvider.actionsFor(
+                        origin: quickActionOrigin,
+                        messages: myThread.messages.toArray()
+                    )
                     let listActions = actionsProvider.actionsFor(origin: listActionOrigin, messages: myThread.messages.toArray())
-                    
+
                     ControlGroup {
                         ForEach(quickActions) { action in
                             ContextMenuActionButtonView(
