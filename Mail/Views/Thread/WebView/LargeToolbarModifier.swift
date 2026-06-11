@@ -31,7 +31,6 @@ extension View {
 }
 
 struct LargeToolbarModifier: ViewModifier {
-    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var actionsProvider: ActionsProvider
@@ -147,10 +146,6 @@ struct LargeToolbarModifier: ViewModifier {
         return actionsProvider.actionsFor(origin: moveOrigin, messages: frozenMessages)
     }
 
-    private var replyActions: [Action] {
-        return actionsProvider.actionsFor(origin: replyOrigin, messages: frozenMessages)
-    }
-
     private var reportActions: [Action] {
         return actionsProvider.actionsFor(origin: reportOrigin, messages: frozenMessages)
     }
@@ -248,7 +243,6 @@ struct LargeToolbarModifier: ViewModifier {
                 folder: frozenFolder?.freezeIfNeeded()
             )
             .euriaFloatingPanel(
-                user: currentUser.value,
                 messages: $messagesToProcessWithEuria
             )
     }

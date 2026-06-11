@@ -43,8 +43,6 @@ struct ActionsView: View {
         listActionOrigin: ActionOrigin,
         quickActionOrigin: ActionOrigin,
         isMultipleSelection: Bool,
-        threadViewState: ThreadViewState,
-        colorScheme: ColorScheme,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         targetMessages = messages

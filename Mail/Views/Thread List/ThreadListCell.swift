@@ -122,7 +122,7 @@ struct ThreadListCell: View {
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
-        multipleSelectionViewModel: MultipleSelectionViewModel(fromArchiveFolder: true),
+        multipleSelectionViewModel: MultipleSelectionViewModel(),
         thread: PreviewHelper.sampleThread,
         threadDensity: .large,
         accentColor: .pink,

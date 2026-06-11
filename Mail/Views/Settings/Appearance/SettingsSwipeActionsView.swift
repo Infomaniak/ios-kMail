@@ -45,7 +45,6 @@ struct SettingsSwipeActionsView: View {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var trailing = DefaultPreferences.swipeTrailing
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var fullTrailing = DefaultPreferences.swipeFullTrailing
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
     var body: some View {

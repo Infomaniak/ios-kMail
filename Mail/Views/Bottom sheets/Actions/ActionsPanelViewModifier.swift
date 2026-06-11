@@ -44,9 +44,6 @@ extension View {
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
-    @Environment(\.currentUser) private var currentUser
-    @Environment(\.colorScheme) private var colorScheme
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -71,7 +68,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     var completionHandler: ((Action) -> Void)?
 
     private var listActionOrigin: ActionOrigin {
-        .floatingPanelListAction(   
+        .floatingPanelListAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestDestructiveAlert: $destructiveAlert,
@@ -129,8 +126,6 @@ struct ActionsPanelViewModifier: ViewModifier {
                 listActionOrigin: listActionOrigin,
                 quickActionOrigin: quickActionOrigin,
                 isMultipleSelection: isMultipleSelection,
-                threadViewState: threadViewState,
-                colorScheme: colorScheme,
                 completionHandler: completionHandler
             )
             .environmentObject(mailboxManager)
@@ -191,7 +186,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             completionHandler: completionHandler
         )
         .euriaFloatingPanel(
-            user: currentUser.value,
             messages: $messagesToProcessWithEuria,
             completionHandler: completionHandler
         )

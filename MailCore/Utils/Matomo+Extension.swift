@@ -124,7 +124,9 @@ public extension MatomoUtils {
     }
 
     func trackThreadBottomSheetAction(action: Action, origin: ActionOrigin, numberOfItems: Int, isMultipleSelection: Bool) {
-        let category: MatomoUtils.EventCategory = (origin.type == .floatingPanelListAction(source: .message) || origin.type == .floatingPanelQuickAction(source: .message))
+        let category: MatomoUtils
+            .EventCategory = (origin.type == .floatingPanelListAction(source: .message) || origin
+                .type == .floatingPanelQuickAction(source: .message))
             ? .bottomSheetMessageActions
             : .bottomSheetThreadActions
 
