@@ -35,18 +35,15 @@ public enum MessageWebViewUtils {
         var resources = [String]()
 
         if let style = MailResourcesResources.bundle.loadCSS(filename: "style") {
-            var variables = """
+            let variables = """
             :root {
                 --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
 
-            if case .message(let theme) = target {
-                variables.append("""
-                :root {
-                    color-scheme: \(theme.cssProperty);
-                }
-                """)
+            if case .message(.auto) = target,
+               let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+                resources.append(darkModeCSS)
             }
 
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
@@ -57,8 +54,10 @@ public enum MessageWebViewUtils {
             resources.append(fixDisplayCSS)
         }
 
-        if case .editor = target, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor") {
+        if case .editor = target, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor"),
+           let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
             resources.append(editorCSS)
+            resources.append(darkModeCSS)
         }
 
         return resources

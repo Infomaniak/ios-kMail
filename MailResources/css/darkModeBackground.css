@@ -1,0 +1,5 @@
+@media (prefers-color-scheme: dark) {
+    html {
+        background-color: #101010;
+    }
+}
