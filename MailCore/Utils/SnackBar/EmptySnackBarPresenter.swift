@@ -20,12 +20,14 @@ import InfomaniakCoreCommonUI
 import SnackBar
 import UIKit
 
-struct EmptySnackBarPresenter: IKSnackBarPresentable {
-    func show(message: String) {}
+public struct EmptySnackBarPresenter: IKSnackBarPresentable {
+    public init() {}
 
-    func show(message: String, action: IKSnackBar.Action?) {}
+    public func show(message: String) {}
 
-    func show(
+    public func show(message: String, action: IKSnackBar.Action?) {}
+
+    public func show(
         message: String,
         duration: SnackBar.Duration,
         action: IKSnackBar.Action?,

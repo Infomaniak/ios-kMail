@@ -18,6 +18,16 @@
 
 import Foundation
 import InfomaniakDI
+import InfomaniakCoreCommonUI
+import MailCore
 
 // periphery:ignore - Used by DI
-class NotificationContentExtensionTargetAssembly: CommonAppAndShareTargetAssembly {}
+class NotificationContentExtensionTargetAssembly: CommonAppAndShareTargetAssembly {
+    override class func getTargetServices() -> [Factory] {
+        return [
+            Factory(type: IKSnackBarPresentable.self) { _, _ in
+                EmptySnackBarPresenter()
+            }
+        ]
+    }
+}
