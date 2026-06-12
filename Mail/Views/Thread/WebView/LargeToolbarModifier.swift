@@ -45,6 +45,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
+    @ModalState private var noReplyAlert: NoReplyAlertState?
 
     private let frozenThread: Thread
 
@@ -76,6 +77,7 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             originFolder: frozenFolder,
             nearestDestructiveAlert: $destructiveAlert,
+            nearestNoReplyAlert: $noReplyAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
@@ -144,6 +146,9 @@ struct LargeToolbarModifier: ViewModifier {
             }
             .mailCustomAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
+            }
+            .mailCustomAlert(item: $noReplyAlert) { state in
+                NoReplyAlertView(action: state.action)
             }
             .sheet(item: $shareMailLink) { shareMailLinkResult in
                 ActivityView(activityItems: [shareMailLinkResult.url])

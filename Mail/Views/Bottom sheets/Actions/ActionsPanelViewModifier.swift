@@ -61,6 +61,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
+    @ModalState private var noReplyAlert: NoReplyAlertState?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -74,6 +75,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestDestructiveAlert: $destructiveAlert,
+            nearestNoReplyAlert: $noReplyAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
@@ -157,6 +159,9 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .mailCustomAlert(item: $messagesToDownload) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
+        }
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in
             ActivityView(activityItems: [shareMailLinkResult.url])

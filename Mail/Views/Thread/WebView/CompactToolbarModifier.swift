@@ -42,6 +42,7 @@ struct CompactToolbarModifier: ViewModifier {
 
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
+    @ModalState private var noReplyAlert: NoReplyAlertState?
 
     private let frozenThread: Thread
 
@@ -75,6 +76,7 @@ struct CompactToolbarModifier: ViewModifier {
         .toolbarCompact(
             originFolder: frozenFolder,
             nearestDestructiveAlert: $destructiveAlert,
+            nearestNoReplyAlert: $noReplyAlert,
             nearestMessagesToMoveSheet: $messagesToMove
         )
     }
@@ -126,6 +128,9 @@ struct CompactToolbarModifier: ViewModifier {
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
+            }
+            .mailCustomAlert(item: $noReplyAlert) { state in
+                NoReplyAlertView(action: state.action)
             }
             .sheet(item: $messagesToMove) { messages in
                 MoveEmailView(

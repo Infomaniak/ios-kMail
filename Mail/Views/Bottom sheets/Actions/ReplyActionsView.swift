@@ -22,9 +22,12 @@ import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
+import SwiftModalPresentation
 import SwiftUI
 
 struct ReplyActionsView: View {
+    @ModalState private var noReplyAlert: NoReplyAlertState?
+
     let quickActions: [Action] = [.reply, .replyAll]
     let message: Message
 
@@ -34,7 +37,7 @@ struct ReplyActionsView: View {
                 QuickActionView(
                     targetMessages: [message],
                     action: action,
-                    origin: .floatingPanel(source: .messageList),
+                    origin: .floatingPanel(source: .messageList, nearestNoReplyAlert: $noReplyAlert),
                     isMultipleSelection: false
                 )
             }
@@ -42,6 +45,9 @@ struct ReplyActionsView: View {
             Spacer()
         }
         .padding(.horizontal, value: .large)
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
+        }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReplyActionsView"])
     }
 }

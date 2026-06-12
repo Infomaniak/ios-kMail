@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notiser inaktiverade";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Observera att avsändaren av detta e-postmeddelande verkar inte vilja ha ett svar.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Skydda åtkomsten till din app genom att aktivera din telefons lås.";
 

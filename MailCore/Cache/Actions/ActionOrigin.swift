@@ -40,6 +40,7 @@ public struct ActionOrigin {
 
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestDestructiveAlert: Binding<DestructiveActionAlertState?>?
+    private(set) var nearestNoReplyAlert: Binding<NoReplyAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
     private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
     private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
@@ -55,6 +56,7 @@ public struct ActionOrigin {
         folder: Folder? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
         nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
@@ -69,6 +71,7 @@ public struct ActionOrigin {
         frozenFolder = folder?.freezeIfNeeded()
         self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
         self.nearestDestructiveAlert = nearestDestructiveAlert
+        self.nearestNoReplyAlert = nearestNoReplyAlert
         self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
         self.nearestBlockSenderAlert = nearestBlockSenderAlert
         self.nearestBlockSendersList = nearestBlockSendersList
@@ -83,6 +86,7 @@ public struct ActionOrigin {
     public static func toolbarLarge(
         originFolder: Folder? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
         nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
@@ -97,6 +101,7 @@ public struct ActionOrigin {
             type: .toolbar,
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestBlockSenderAlert: nearestBlockSenderAlert,
             nearestBlockSendersList: nearestBlockSendersList,
@@ -112,12 +117,14 @@ public struct ActionOrigin {
     public static func toolbarCompact(
         originFolder: Folder? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar,
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
         )
     }
@@ -125,6 +132,7 @@ public struct ActionOrigin {
     public static func floatingPanel(source: FloatingPanelSource,
                                      originFolder: Folder? = nil,
                                      nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+                                     nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
                                      nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
@@ -138,6 +146,7 @@ public struct ActionOrigin {
             type: .floatingPanel(source: source),
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestBlockSenderAlert: nearestBlockSenderAlert,
             nearestBlockSendersList: nearestBlockSendersList,
@@ -152,11 +161,13 @@ public struct ActionOrigin {
 
     public static func multipleSelection(originFolder: Folder? = nil,
                                          nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+                                         nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
                                          nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .multipleSelection,
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
         )
     }
@@ -166,6 +177,7 @@ public struct ActionOrigin {
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
@@ -173,18 +185,33 @@ public struct ActionOrigin {
             folder: originFolder,
             nearestMessagesActionsPanel: nearestMessagesActionsPanel,
             nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestMessagesToSnooze: nearestMessagesToSnooze
         )
     }
 
     public static func shortcut(originFolder: Folder? = nil,
-                                nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil) -> ActionOrigin {
-        ActionOrigin(type: .shortcut, folder: originFolder, nearestDestructiveAlert: nearestDestructiveAlert)
+                                nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+                                nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil) -> ActionOrigin {
+        ActionOrigin(
+            type: .shortcut,
+            folder: originFolder,
+            nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestNoReplyAlert: nearestNoReplyAlert
+        )
     }
 
-    public static func threadHeader(originFolder: Folder? = nil,
-                                    nearestMessagesToSnooze: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .threadHeader, folder: originFolder, nearestMessagesToSnooze: nearestMessagesToSnooze)
+    public static func threadHeader(
+        originFolder: Folder? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(
+            type: .threadHeader,
+            folder: originFolder,
+            nearestNoReplyAlert: nearestNoReplyAlert,
+            nearestMessagesToSnooze: nearestMessagesToSnooze
+        )
     }
 }

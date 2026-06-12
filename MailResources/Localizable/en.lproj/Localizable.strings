@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notifications disabled";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Caution, the sender of this email appears not to want a reply.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Protect access to your app by enabling your phone lock.";
 

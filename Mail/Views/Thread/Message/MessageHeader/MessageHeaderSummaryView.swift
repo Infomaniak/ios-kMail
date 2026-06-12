@@ -25,6 +25,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct MessageHeaderSummaryView: View {
@@ -34,9 +35,11 @@ struct MessageHeaderSummaryView: View {
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @ObservedRealmObject var message: Message
+
+    @ModalState private var noReplyAlert: NoReplyAlertState?
 
     @State private var replyOrReplyAllMessage: Message?
 
@@ -127,7 +130,7 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
-                    Button(action: replyToMessage) {
+                    Button(action: replyTo) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
@@ -147,19 +150,23 @@ struct MessageHeaderSummaryView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
+        }
     }
 
-    private func replyToMessage() {
+    private func replyTo() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
-
         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
         } else {
-            mainViewState.composeMessageIntent = .replyingTo(
-                message: message,
-                replyMode: .reply,
-                originMailboxManager: mailboxManager
-            )
+            Task {
+                try? await actionsManager.performAction(
+                    target: [message],
+                    action: .reply,
+                    origin: .threadHeader(nearestNoReplyAlert: $noReplyAlert)
+                )
+            }
         }
     }
 
@@ -169,9 +176,7 @@ struct MessageHeaderSummaryView: View {
             contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         )
-        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-
-        return contact
+        return CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
     }
 }
 
