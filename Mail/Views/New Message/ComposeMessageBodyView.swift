@@ -47,8 +47,6 @@ struct ComposeMessageBodyView: View {
     @Binding var selectedText: String
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
-
-    @State private var inlineAttachmentHandler: InlineAttachmentHandler?
     @State private var bodyImageProcessor = BodyImageProcessor()
 
     @Weak var editor: RichHTMLEditorView?
