@@ -24,6 +24,7 @@ import SwiftUI
 struct MessageBodyView: View {
     @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var threadViewState: ThreadViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingLoadingError = false
 
@@ -54,6 +55,11 @@ struct MessageBodyView: View {
         return translatedPresentableBody == nil
     }
 
+    private var mentionAddresses: [String] {
+        Set([mailboxManager.mailbox.email] + Array(mailboxManager.mailbox.aliases))
+            .map { $0 }
+    }
+
     var body: some View {
         ZStack {
             if isTranslationInProgress {
@@ -70,7 +76,8 @@ struct MessageBodyView: View {
                     presentableBody: messagesWorker.presentableBody(for: messageUid, isShowingTranslated: isShowingTranslated),
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid,
-                    messageTheme: messageTheme
+                    messageTheme: messageTheme,
+                    mentionAddresses: mentionAddresses
                 )
                 .id(messageTheme.cssProperty)
             }

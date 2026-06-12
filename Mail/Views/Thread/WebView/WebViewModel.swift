@@ -37,8 +37,9 @@ final class WebViewModel: NSObject, ObservableObject {
     let contentBlocker: ContentBlocker
 
     var theme: MessageTheme = .auto
+    var addresses: [String] = []
 
-    lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme))
+    lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme, addresses: addresses))
 
     enum LoadResult: Equatable {
         case remoteContentBlocked
@@ -49,9 +50,10 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorParsingBody
     }
 
-    convenience init(theme: MessageTheme) {
+    convenience init(theme: MessageTheme, addresses: [String]) {
         self.init()
         self.theme = theme
+        self.addresses = addresses
     }
 
     override init() {
