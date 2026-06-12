@@ -124,20 +124,19 @@ struct BodyImageProcessor {
             return nil
         }
 
-        for attachment in attachments {
-            guard let contentId = attachment.contentId else {
-                continue
-            }
-            let expectedSource = "cid:\(contentId)"
-            for imageElement in imageElements.array() {
-                guard (try? imageElement.attr("src")) == expectedSource else {
-                    continue
-                }
-                _ = try? imageElement.attr("data-cid", contentId)
-            }
+        for imageElement in imageElements.array() {
+            guard let src = try? imageElement.attr("src"),
+                  src.hasPrefix("cid:") else { continue }
+
+            let contentId = String(src.dropFirst("cid:".count))
+
+            guard attachments.contains(where: { $0.contentId == contentId }) else { continue }
+
+            _ = try? imageElement.attr("data-cid", contentId)
         }
 
-        guard let updatedBody = try? htmlBody.outerHtml(), (try? await SwiftSoup.parse(updatedBody)) != nil else {
+        guard let updatedBody = try? htmlBody.outerHtml(),
+              await (try? SwiftSoup.parse(updatedBody)) != nil else {
             return nil
         }
 
