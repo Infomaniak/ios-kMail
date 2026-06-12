@@ -165,21 +165,27 @@ struct QuickActionView: View {
     }
 
     private func didTapButton() {
-        switch action {
-        case .reply, .replyAll:
-            guard let lastMessage = targetMessages.last else { return }
-            guard NoReplyAlert.verifySenders(
-                message: lastMessage,
-                action: action,
-                currentMailboxEmail: mailboxManager.mailbox.email
-            )
-            else {
-                performAction()
-                return
-            }
-            cannotReply = true
+        if action == .reply || action == .replyAll {
+            checkIfRecipientsWantToBeContacted()
+            return
+        }
 
-        default:
+        performAction()
+    }
+
+    private func checkIfRecipientsWantToBeContacted() {
+        let mailboxEmail = mailboxManager.mailbox.email
+        guard let targetMessage = targetMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxEmail,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else {
+            performAction()
+            return
+        }
+
+        if NoReplyAlert.verifySenders(message: targetMessage, action: action, currentMailboxEmail: mailboxEmail) {
+            cannotReply = true
+        } else {
             performAction()
         }
     }
