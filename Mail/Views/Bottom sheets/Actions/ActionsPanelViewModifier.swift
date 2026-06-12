@@ -49,6 +49,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -114,6 +115,8 @@ struct ActionsPanelViewModifier: ViewModifier {
                 colorScheme: colorScheme,
                 completionHandler: completionHandler
             )
+            .environmentObject(mailboxManager)
+            .environmentObject(actionsManager)
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(
