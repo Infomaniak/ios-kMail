@@ -490,7 +490,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
 
-        /// Preprocessing body with a ProxyBody
+        // Preprocessing body with a ProxyBody
         let jsonBody = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
         body = jsonBody?.realmObject()
 

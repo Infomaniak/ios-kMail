@@ -293,7 +293,9 @@ struct ComposeMessageView: View {
                            let realm = liveDraft.realm {
                             try? realm.write {
                                 liveDraft.mentions.append(recipient.email)
+                                liveDraft.to.append(recipient)
                             }
+                            editor?.insertMention(email: recipient.email, name: recipient.name)
                             mentionQuery = ""
                         }
                     }
@@ -357,16 +359,14 @@ struct ComposeMessageView: View {
                 return
             }
 
-            let contacts = mailboxManager.contactManager.frozenContacts(matching: mentionQuery,
-                                                                        fetchLimit: 10,
-                                                                        sorted: nil)
+            let contacts = await mailboxManager.contactManager.searchAllAutocompletable(
+                matching: mentionQuery,
+                fetchLimit: 10
+            )
 
-//            let contactsManagerable = await MailboxManager.frozenContacts.searchAllAutocompletable(
-//                matching: mentionQuery,
-//                fetchLimit: 1
-//            )
+            let mergedContacts = contacts.compactMap { $0 as? MergedContact }
 
-            let recipients = contacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+            let recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
 
             mentionSuggestions = recipients
         }
