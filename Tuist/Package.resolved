@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "f6c92f7ed021d3a875083da9f2079f8fd0d00113",
-        "version" : "17.0.1"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "8deb3a6a5b78c92169c2de4e7466f79d00181b43"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "6c1affc73e19b7c781261603578d52414cc05605",
-        "version" : "24.13.0"
+        "branch" : "chore/bump",
+        "revision" : "e8013b144910c5993fc7e84ba55b67e1ed126423"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "45dfbaf58e09c281684939370adbdb59b0fc8c44",
-        "version" : "23.3.0"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "674faa57c7773621c3b4424a198dc63944405333"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "365d443c33f6ba1def1ac120bd2b3f7b7d206cec",
-        "version" : "8.11.0"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "823ee7e4fbd15ea054ed2e2ea0051014f3c7ed1f"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "ec1b031ef4115e80e79216b9127d3f6d87e949a6",
-        "version" : "16.0.0"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "80dd05a787db25ecec6aafc3859cfcc4e190e235"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm",
       "state" : {
-        "revision" : "69faaefa7721fba9e434a52c16adf4329c9084db",
-        "version" : "4.6.0"
+        "revision" : "0aff16288f8dc1e3dab35cbf5cf45979673fd3df",
+        "version" : "4.6.1"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "4cc46f8607516226e5465062fdacd088fbd94552",
-        "version" : "20.1.4"
+        "revision" : "b4192c46305570577c4d08df790fddec5ab3aa04",
+        "version" : "20.1.5"
       }
     },
     {
@@ -176,8 +176,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "600e187711e5fa4e8e2c0429cacee27e8e44f112",
-        "version" : "20.0.4"
+        "revision" : "ca03df491ec5e4bb8af0bca1e9957d08c10ec2da",
+        "version" : "20.0.5"
       }
     },
     {
