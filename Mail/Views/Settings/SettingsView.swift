@@ -201,13 +201,20 @@ struct SettingsView: View {
                     // MARK: Theme
 
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsThemeTitle, subtitle: theme.title) {
-                        SettingsOptionView<Theme>(
+                        SettingsOptionView(
                             title: MailResourcesStrings.Localizable.settingsThemeTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
                             keyPath: \.theme,
                             matomoCategory: .settingsTheme,
                             matomoName: \.rawValue
-                        )
+                        ) {
+                            SettingsToggleCell(
+                                title: MailResourcesStrings.Localizable.settingsEnableMailDarkMode,
+                                userDefaults: \.shouldAdaptMailToDarkMode,
+                                matomoCategory: .settingsTheme,
+                                matomoName: "mailDarkMode"
+                            )
+                        }
                     }
 
                     // MARK: Accent Color

@@ -22,13 +22,15 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, OptionEnum: Equatable, OptionEnum: RawRepresentable,
-    OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection, OptionEnum.RawValue: Hashable {
+struct SettingsOptionView<OptionEnum, Content>: View where OptionEnum: CaseIterable, OptionEnum: Equatable,
+    OptionEnum: RawRepresentable, OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection,
+    OptionEnum.RawValue: Hashable, Content: View {
     private let title: String
     private let subtitle: String?
     private let allValues: [OptionEnum]
     private let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
     private let excludedKeyPaths: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
+    private let content: Content?
 
     private let matomoCategory: MatomoUtils.EventCategory?
     private let matomoValue: Float?
@@ -51,14 +53,17 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
     }
 
-    init(title: String,
-         subtitle: String? = nil,
-         values: [OptionEnum] = Array(OptionEnum.allCases),
-         keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
-         excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
-         matomoCategory: MatomoUtils.EventCategory? = nil,
-         matomoName: KeyPath<OptionEnum, String>? = nil,
-         matomoValue: Float? = nil) {
+    init(
+        title: String,
+        subtitle: String? = nil,
+        values: [OptionEnum] = Array(OptionEnum.allCases),
+        keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
+        excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
+        matomoCategory: MatomoUtils.EventCategory? = nil,
+        matomoName: KeyPath<OptionEnum, String>? = nil,
+        matomoValue: Float? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
@@ -71,6 +76,32 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
 
         _values = State(wrappedValue: values)
         _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
+        self.content = content()
+    }
+
+    init(
+        title: String,
+        subtitle: String? = nil,
+        values: [OptionEnum] = Array(OptionEnum.allCases),
+        keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
+        excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
+        matomoCategory: MatomoUtils.EventCategory? = nil,
+        matomoName: KeyPath<OptionEnum, String>? = nil,
+        matomoValue: Float? = nil
+    ) where Content == EmptyView {
+        self.title = title
+        self.subtitle = subtitle
+        self.keyPath = keyPath
+        excludedKeyPaths = excludedKeyPath
+        allValues = values
+
+        self.matomoCategory = matomoCategory
+        self.matomoName = matomoName
+        self.matomoValue = matomoValue
+
+        _values = State(wrappedValue: values)
+        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
+        content = nil
     }
 
     var body: some View {
@@ -90,6 +121,11 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                         selectedValue = value
                     }
                 }
+
+                if let content {
+                    content
+                        .settingsCell()
+                }
             }
             .listStyle(.plain)
             .environment(\.defaultMinListRowHeight, 1)
@@ -106,5 +142,5 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
 }
 
 #Preview {
-    SettingsOptionView<Theme>(title: "Theme", subtitle: "Theme", keyPath: \.theme)
+    SettingsOptionView(title: "Theme", subtitle: "Theme", keyPath: \.theme)
 }

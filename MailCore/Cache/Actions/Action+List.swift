@@ -67,8 +67,8 @@ extension Action: CaseIterable {
         .snooze,
         .modifySnooze,
         .cancelSnooze,
-        .forceDarkMode,
         .forceLightMode,
+        .forceDarkMode,
         .summarize
     ]
 
@@ -299,7 +299,7 @@ extension Action: CaseIterable {
     }
 
     private static func themeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
-        guard colorScheme == .dark else { return nil }
+        guard colorScheme == .dark && UserDefaults.shared.shouldAdaptMailToDarkMode else { return nil }
         if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
             return .forceDarkMode
         } else {
@@ -599,6 +599,7 @@ public extension Action {
         iconResource: MailResourcesAsset.viewInLight,
         matomoName: ""
     )
+
     static let forceDarkMode = Action(
         id: "forceDarkMode",
         title: MailResourcesStrings.Localizable.actionViewInDark,

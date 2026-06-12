@@ -35,7 +35,11 @@ struct MessageBodyView: View {
     let messageUid: String
 
     private var messageTheme: MessageTheme {
-        threadViewState.forcedLightModes.contains(messageUid) ? .light : .auto
+        if UserDefaults.shared.shouldAdaptMailToDarkMode && !threadViewState.forcedLightModes.contains(messageUid) {
+            .auto
+        } else {
+            .light
+        }
     }
 
     private var translatedPresentableBody: PresentableBody? {
