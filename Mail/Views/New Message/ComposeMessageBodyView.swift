@@ -52,6 +52,7 @@ struct ComposeMessageBodyView: View {
     let editorBox: EditorBox
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
+    @State private var bodyImageProcessor = BodyImageProcessor()
 
     let messageReply: MessageReply?
     let mailboxManager: MailboxManager
