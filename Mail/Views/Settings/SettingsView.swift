@@ -202,24 +202,22 @@ struct SettingsView: View {
                     // MARK: Theme
 
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsThemeTitle, subtitle: theme.title) {
-                        SettingsOptionView<Theme>(
+                        SettingsOptionView(
                             title: MailResourcesStrings.Localizable.settingsThemeTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
                             keyPath: \.theme,
                             matomoCategory: .settingsTheme,
                             matomoName: \.rawValue
-                        )
-                    }
+                        ) {
+                            // MARK: Mail theme
 
-                    // MARK: Mail theme
-
-                    if colorScheme == .dark {
-                        SettingsToggleCell(
-                            title: MailResourcesStrings.Localizable.settingsEnableMailDarkMode,
-                            userDefaults: \.shouldShowDarkMode,
-                            matomoCategory: .settingsTheme,
-                            matomoName: "mailDarkMode"
-                        )
+                            SettingsToggleCell(
+                                title: MailResourcesStrings.Localizable.settingsEnableMailDarkMode,
+                                userDefaults: \.shouldShowDarkMode,
+                                matomoCategory: .settingsTheme,
+                                matomoName: "mailDarkMode"
+                            )
+                        }
                     }
 
                     // MARK: Accent Color
