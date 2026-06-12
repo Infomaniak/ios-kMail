@@ -1,1 +1,5 @@
-- Correction d'un crash à l'ouverture de la preview d'une notification
+- L'app adopte davantage Liquid Glass
+- Nouveau paramètre pour activer l'affichage des mails au dark mode
+- Meilleure gestion des pièces jointes inline lors de la rédaction
+- Affichage d'une alerte lorsqu'on tente de répondre à une adresse no-reply
+- Correction d'un crash sur Infomaniak Mail Lite
