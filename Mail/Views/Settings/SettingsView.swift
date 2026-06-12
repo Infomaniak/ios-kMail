@@ -210,7 +210,7 @@ struct SettingsView: View {
                         ) {
                             SettingsToggleCell(
                                 title: MailResourcesStrings.Localizable.settingsEnableMailDarkMode,
-                                userDefaults: \.shouldShowDarkMode,
+                                userDefaults: \.shoulAdaptMailToDarkMode,
                                 matomoCategory: .settingsTheme,
                                 matomoName: "mailDarkMode"
                             )

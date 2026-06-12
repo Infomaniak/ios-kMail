@@ -299,7 +299,7 @@ extension Action: CaseIterable {
     }
 
     private static func themeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
-        guard colorScheme == .dark else { return nil }
+        guard colorScheme == .dark && UserDefaults.shared.shoulAdaptMailToDarkMode else { return nil }
         if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
             return .forceDarkMode
         } else {

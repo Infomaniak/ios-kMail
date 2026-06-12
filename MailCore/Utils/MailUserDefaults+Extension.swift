@@ -57,7 +57,7 @@ public extension UserDefaults.Keys {
     static let hasDismissedMacDisclaimerView = UserDefaults.Keys(rawValue: "hasDismissedMacDisclaimerView")
     static let lastCustomScheduledDraftDate = UserDefaults.Keys(rawValue: "lastCustomScheduledDraftDate")
     static let lastCustomSnoozeDate = UserDefaults.Keys(rawValue: "lastCustomSnoozeDate")
-    static let shouldShowDarkMode = UserDefaults.Keys(rawValue: "shouldShowDarkMode")
+    static let shouldAdaptMailToDarkMode = UserDefaults.Keys(rawValue: "shouldAdaptMailToDarkMode")
     static func notificationsEnabled(userId: Int) -> UserDefaults.Keys {
         return UserDefaults.Keys(rawValue: "notificationsEnabled-\(userId)")
     }
@@ -368,15 +368,15 @@ public extension UserDefaults {
         }
     }
 
-    var shouldShowDarkMode: Bool {
+    var shouldAdaptMailToDarkMode: Bool {
         get {
-            if object(forKey: key(.shouldShowDarkMode)) == nil {
-                set(false, forKey: key(.shouldShowDarkMode))
+            if object(forKey: key(.shouldAdaptMailToDarkMode)) == nil {
+                set(false, forKey: key(.shouldAdaptMailToDarkMode))
             }
-            return bool(forKey: key(.shouldShowDarkMode))
+            return bool(forKey: key(.shouldAdaptMailToDarkMode))
         }
         set {
-            set(newValue, forKey: key(.shouldShowDarkMode))
+            set(newValue, forKey: key(.shouldAdaptMailToDarkMode))
         }
     }
 }
