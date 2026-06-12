@@ -160,7 +160,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         .mailCustomAlert(item: $messagesToDownload) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
-        .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in
             ActivityView(activityItems: [shareMailLinkResult.url])

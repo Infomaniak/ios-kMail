@@ -130,9 +130,7 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
-                    Button {
-                        replyTo()
-                    } label: {
+                    Button(action: replyTo) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionIconReply)
@@ -152,7 +150,8 @@ struct MessageHeaderSummaryView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
         }
     }
 

@@ -27,6 +27,7 @@ import SwiftUI
 
 struct ReplyActionsView: View {
     @ModalState private var noReplyAlert: NoReplyAlertState?
+
     let quickActions: [Action] = [.reply, .replyAll]
     let message: Message
 

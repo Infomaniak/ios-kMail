@@ -21,6 +21,7 @@ import Foundation
 public struct NoReplyAlertState: Identifiable, Equatable {
     public let id = UUID()
     public let action: () -> Void
+
     public init(action: @escaping () -> Void) {
         self.action = action
     }

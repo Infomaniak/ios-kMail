@@ -463,13 +463,12 @@ public class ActionsManager: ObservableObject {
             currentMailboxEmail: mailboxManager.mailbox.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         )
-        else {
-            throw MailError.localMessageNotFound
-        }
+        else { throw MailError.localMessageNotFound }
 
-        if mode != .forward {
+        if mode == .reply || mode == .replyAll {
             let action: Action = mode == .reply ? .reply : .replyAll
             let mailboxEmail = mailboxManager.mailbox.email
+
             if NoReplyAlert.verifySenders(message: replyingMessage, action: action, currentMailboxEmail: mailboxEmail) {
                 origin.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
                     self.composeMessage(message: replyingMessage, mode: mode)
@@ -477,6 +476,7 @@ public class ActionsManager: ObservableObject {
                 return
             }
         }
+
         composeMessage(message: replyingMessage, mode: mode)
     }
 

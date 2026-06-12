@@ -26,10 +26,11 @@ struct NoReplyAlertView: View {
     let action: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.alertSenderNoReply)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
+
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,

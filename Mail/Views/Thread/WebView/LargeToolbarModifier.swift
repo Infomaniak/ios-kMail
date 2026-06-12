@@ -147,7 +147,8 @@ struct LargeToolbarModifier: ViewModifier {
             .mailCustomAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
             }
-            .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
+            .mailCustomAlert(item: $noReplyAlert) { state in
+                NoReplyAlertView(action: state.action)
             }
             .sheet(item: $shareMailLink) { shareMailLinkResult in
                 ActivityView(activityItems: [shareMailLinkResult.url])
@@ -455,12 +456,6 @@ struct LargeToolbarModifier: ViewModifier {
     private func didTap(action: Action) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
-        guard let message = frozenMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        ) else {
-            return
-        }
 
         Task {
             await tryOrDisplayError {

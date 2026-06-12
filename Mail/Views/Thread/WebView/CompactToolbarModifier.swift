@@ -129,7 +129,8 @@ struct CompactToolbarModifier: ViewModifier {
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
-            .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
+            .mailCustomAlert(item: $noReplyAlert) { state in
+                NoReplyAlertView(action: state.action)
             }
             .sheet(item: $messagesToMove) { messages in
                 MoveEmailView(
@@ -171,12 +172,11 @@ struct CompactToolbarModifier: ViewModifier {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
 
-        guard let message = frozenMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        ) else { return }
-
         if action == .reply,
+           let message = frozenMessages.lastMessageToExecuteAction(
+               currentMailboxEmail: mailboxManager.mailbox.email,
+               featureAvailableProvider: mailboxManager.featureAvailableProvider
+           ),
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
             return
