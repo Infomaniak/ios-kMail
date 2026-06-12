@@ -22,29 +22,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum NoReplyAlert {
-    static let noReplyPrefixes: Set = ["no-reply", "noreply", "postmaster", "catchall"]
-
-    private static func isNoReply(email: String) -> Bool {
-        let normalizedEmail = email.lowercased()
-        let localPart = normalizedEmail.split(separator: "@", maxSplits: 1).first.map(String.init) ?? normalizedEmail
-        return noReplyPrefixes.contains { prefix in
-            localPart.hasPrefix(prefix)
-        }
-    }
-
-    static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
-        let isReplyingAll = action == .replyAll
-        let recipientHolder = message.recipientsForReplyTo(replyAll: isReplyingAll, currentMailboxEmail: currentMailboxEmail)
-
-        let recipientsToCheck = recipientHolder.cc + recipientHolder.to
-
-        return recipientsToCheck.contains { sender in
-            isNoReply(email: sender.email)
-        }
-    }
-}
-
 struct NoReplyAlertView: View {
     let action: () -> Void
 

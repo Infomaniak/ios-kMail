@@ -45,8 +45,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
-
-    @State private var cannotReply = false
+    @ModalState private var noReplyAlert: NoReplyAlertState?
 
     private let frozenThread: Thread
 
@@ -78,6 +77,7 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             originFolder: frozenFolder,
             nearestDestructiveAlert: $destructiveAlert,
+            nearestNoReplyAlert: $noReplyAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
@@ -147,10 +147,7 @@ struct LargeToolbarModifier: ViewModifier {
             .mailCustomAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
             }
-            .mailCustomAlert(isPresented: $cannotReply) {
-                NoReplyAlertView {
-                    didTap(action: .reply)
-                }
+            .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
             }
             .sheet(item: $shareMailLink) { shareMailLinkResult in
                 ActivityView(activityItems: [shareMailLinkResult.url])
@@ -464,23 +461,16 @@ struct LargeToolbarModifier: ViewModifier {
         ) else {
             return
         }
-        guard NoReplyAlert.verifySenders(
-            message: message,
-            action: action,
-            currentMailboxEmail: mailboxManager.mailbox.email
-        ) else {
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: frozenMessages,
-                        action: action,
-                        origin: origin
-                    )
-                }
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: frozenMessages,
+                    action: action,
+                    origin: origin
+                )
             }
-            return
         }
-        cannotReply = true
     }
 
     private func canPerformAction(_ action: Action) -> Bool {

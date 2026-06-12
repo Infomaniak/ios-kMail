@@ -25,6 +25,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct MessageHeaderSummaryView: View {
@@ -34,12 +35,13 @@ struct MessageHeaderSummaryView: View {
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @ObservedRealmObject var message: Message
 
+    @ModalState private var noReplyAlert: NoReplyAlertState?
+
     @State private var replyOrReplyAllMessage: Message?
-    @State private var cannotReply = false
 
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
@@ -129,17 +131,7 @@ struct MessageHeaderSummaryView: View {
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
                     Button {
-                        let action: Action = message
-                            .canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) ? .replyAll : .reply
-                        guard NoReplyAlert.verifySenders(
-                            message: message,
-                            action: action,
-                            currentMailboxEmail: mailboxManager.mailbox.email
-                        ) else {
-                            replyToMessage()
-                            return
-                        }
-                        cannotReply = true
+                        replyTo()
                     } label: {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
@@ -160,24 +152,22 @@ struct MessageHeaderSummaryView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .mailCustomAlert(isPresented: $cannotReply) {
-            NoReplyAlertView {
-                replyToMessage()
-            }
+        .mailCustomAlert(item: $noReplyAlert) { state in NoReplyAlertView(action: state.action)
         }
     }
 
-    private func replyToMessage() {
+    private func replyTo() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
-
         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
         } else {
-            mainViewState.composeMessageIntent = .replyingTo(
-                message: message,
-                replyMode: .reply,
-                originMailboxManager: mailboxManager
-            )
+            Task {
+                try? await actionsManager.performAction(
+                    target: [message],
+                    action: .reply,
+                    origin: .threadHeader(nearestNoReplyAlert: $noReplyAlert)
+                )
+            }
         }
     }
 

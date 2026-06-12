@@ -118,9 +118,6 @@ struct QuickActionView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @State private var cannotReply = false
 
     let targetMessages: [Message]
     let action: Action
@@ -159,38 +156,9 @@ struct QuickActionView: View {
         }
         .disabled(isActionInactive)
         .accessibilityIdentifier(action.accessibilityIdentifier)
-        .mailCustomAlert(isPresented: $cannotReply) {
-            NoReplyAlertView(action: performAction)
-        }
     }
 
     private func didTapButton() {
-        if action == .reply || action == .replyAll {
-            checkIfRecipientsWantToBeContacted()
-            return
-        }
-
-        performAction()
-    }
-
-    private func checkIfRecipientsWantToBeContacted() {
-        let mailboxEmail = mailboxManager.mailbox.email
-        guard let targetMessage = targetMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxEmail,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        ) else {
-            performAction()
-            return
-        }
-
-        if NoReplyAlert.verifySenders(message: targetMessage, action: action, currentMailboxEmail: mailboxEmail) {
-            cannotReply = true
-        } else {
-            performAction()
-        }
-    }
-
-    private func performAction() {
         dismiss()
 
         Task {

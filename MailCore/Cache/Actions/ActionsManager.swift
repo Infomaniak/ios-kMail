@@ -155,11 +155,11 @@ public class ActionsManager: ObservableObject {
 
             try await performDelete(messages: messagesWithDuplicates, originFolder: origin.frozenFolder)
         case .reply:
-            try replyOrForward(messages: messagesWithDuplicates, mode: .reply)
+            try replyOrForward(messages: messagesWithDuplicates, mode: .reply, origin: origin)
         case .replyAll:
-            try replyOrForward(messages: messagesWithDuplicates, mode: .replyAll)
+            try replyOrForward(messages: messagesWithDuplicates, mode: .replyAll, origin: origin)
         case .forward:
-            try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
+            try replyOrForward(messages: messagesWithDuplicates, mode: .forward, origin: origin)
         case .archive:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
             guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
@@ -458,7 +458,7 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
+    private func replyOrForward(messages: [Message], mode: ReplyMode, origin: ActionOrigin) throws {
         guard let replyingMessage = messages.lastMessageToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
@@ -467,9 +467,23 @@ public class ActionsManager: ObservableObject {
             throw MailError.localMessageNotFound
         }
 
+        if mode != .forward {
+            let action: Action = mode == .reply ? .reply : .replyAll
+            let mailboxEmail = mailboxManager.mailbox.email
+            if NoReplyAlert.verifySenders(message: replyingMessage, action: action, currentMailboxEmail: mailboxEmail) {
+                origin.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
+                    self.composeMessage(message: replyingMessage, mode: mode)
+                }
+                return
+            }
+        }
+        composeMessage(message: replyingMessage, mode: mode)
+    }
+
+    private func composeMessage(message: Message, mode: ReplyMode) {
         Task { @MainActor in
             mainViewState?.composeMessageIntent = .replyingTo(
-                message: replyingMessage,
+                message: message,
                 replyMode: mode,
                 originMailboxManager: mailboxManager
             )
