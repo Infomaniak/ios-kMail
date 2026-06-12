@@ -24,17 +24,18 @@ import WebKit
 final class InlineAttachmentHandler: NSObject, WKScriptMessageHandler {
     private let attachmentsManager: AttachmentsManager
 
+    static let messageName = "inlineAttachmentDelete"
+
     init(attachmentsManager: AttachmentsManager) {
         self.attachmentsManager = attachmentsManager
         super.init()
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.name == "inlineAttachmentDelete",
+        guard message.name == InlineAttachmentHandler.messageName,
               let stringBody = message.body as? String,
-              let data = stringBody.data(using: .utf8) else {
-            return
-        }
+              let data = stringBody.data(using: .utf8)
+        else { return }
 
         do {
             let cidArray: [String] = try JSONDecoder().decode([String].self, from: data)

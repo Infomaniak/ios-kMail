@@ -23,16 +23,6 @@ import RealmSwift
 // MARK: - Draft
 
 public extension MailboxManager {
-    private func performInlineAttachment(for attachment: Attachment, body: String) -> Bool {
-        if attachment.disposition == .attachment || attachment.contentId == nil {
-            return false
-        } else if let contentId = attachment.contentId {
-            return !contentId.isEmpty && body.contains(contentId)
-        } else {
-            return true
-        }
-    }
-
     func draftWithPendingAction() -> Results<Draft> {
         fetchResults(ofType: Draft.self) { partial in
             partial.where { $0.action != nil }
@@ -214,7 +204,7 @@ public extension MailboxManager {
         let draft = try await apiFetcher.draft(from: message)
 
         for attachment in draft.attachments {
-            attachment.isInline = performInlineAttachment(for: attachment, body: draft.body)
+            attachment.isInline = isAttachmentInline(for: attachment, body: draft.body)
         }
 
         draft.localUUID = incompleteDraft.localUUID
@@ -234,7 +224,7 @@ public extension MailboxManager {
         let draft = try await apiFetcher.draft(draftResource: draftResource)
 
         for attachment in draft.attachments {
-            attachment.isInline = performInlineAttachment(for: attachment, body: draft.body)
+            attachment.isInline = isAttachmentInline(for: attachment, body: draft.body)
         }
 
         try? writeTransaction { realm in
@@ -276,5 +266,15 @@ public extension MailboxManager {
         }
 
         return result.filter { !$0.isInfomaniakHosted }.count
+    }
+
+    func isAttachmentInline(for attachment: Attachment, body: String?) -> Bool {
+        if attachment.disposition == .attachment || attachment.contentId == nil {
+            return false
+        } else if let contentId = attachment.contentId {
+            return !contentId.isEmpty && body?.contains(contentId) == true
+        } else {
+            return true
+        }
     }
 }

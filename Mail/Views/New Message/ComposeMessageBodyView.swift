@@ -115,7 +115,7 @@ struct ComposeMessageBodyView: View {
 
             if inlineAttachmentHandler == nil {
                 let handler = InlineAttachmentHandler(attachmentsManager: attachmentsManager)
-                editor.webView.configuration.userContentController.add(handler, name: "inlineAttachmentDelete")
+                editor.webView.configuration.userContentController.add(handler, name: InlineAttachmentHandler.messageName)
                 inlineAttachmentHandler = handler
             }
 
