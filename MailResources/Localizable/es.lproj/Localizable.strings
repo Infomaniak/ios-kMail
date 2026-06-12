@@ -1481,7 +1481,7 @@
 "settingsCancellationPeriodDescription" = "Tiene la posibilidad de cancelar el envío de su correo electrónico hasta 30 segundos";
 
 /* loco:627a53b37b420855254af032 */
-"settingsCancellationPeriodTitle" = "Enviar plazo de anulación";
+"settingsCancellationPeriodTitle" = "Plazo de anulación del envío";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestión de datos";

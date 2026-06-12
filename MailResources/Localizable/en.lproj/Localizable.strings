@@ -236,7 +236,7 @@
 "alertNotificationsDisabledTitle" = "Notifications disabled";
 
 /* loco:69fc99576244242e970744a2 */
-"alertSenderNoReply" = "Caution, the sender of this email appears not to want a reply.";
+"alertSenderNoReply" = "Please note: The sender of this email does not appear to want a response.";
 
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Protect access to your app by enabling your phone lock.";
