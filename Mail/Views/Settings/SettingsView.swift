@@ -38,7 +38,6 @@ struct SettingsView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.currentUser) private var currentUser
-    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mainViewState: MainViewState
 

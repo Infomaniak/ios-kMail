@@ -22,8 +22,9 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SettingsOptionView<OptionEnum, Content>: View where OptionEnum: CaseIterable, OptionEnum: Equatable, OptionEnum: RawRepresentable,
-    OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection, OptionEnum.RawValue: Hashable, Content: View {
+struct SettingsOptionView<OptionEnum, Content>: View where OptionEnum: CaseIterable, OptionEnum: Equatable,
+    OptionEnum: RawRepresentable, OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection,
+    OptionEnum.RawValue: Hashable, Content: View {
     private let title: String
     private let subtitle: String?
     private let allValues: [OptionEnum]
