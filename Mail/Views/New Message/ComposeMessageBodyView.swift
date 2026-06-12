@@ -125,11 +125,9 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
-            #if os(macOS) || targetEnvironment(macCatalyst)
             Task { @MainActor in
                 self.editor = editor
             }
-            #endif
         }
     }
 
