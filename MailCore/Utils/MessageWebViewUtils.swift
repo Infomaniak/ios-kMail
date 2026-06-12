@@ -22,7 +22,7 @@ import SwiftSoup
 
 public enum MessageWebViewUtils {
     public enum WebViewTarget {
-        case message(theme: MessageTheme)
+        case message(theme: MessageTheme, addresses: [String])
         case editor
     }
 
@@ -41,9 +41,27 @@ public enum MessageWebViewUtils {
             }
             """
 
-            if case .message(.auto) = target,
-               let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
-                resources.append(darkModeCSS)
+            if case .message(let theme, let addresses) = target {
+				if theme == .auto {
+               		let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+                		resources.append(darkModeCSS)
+					}
+				}
+                variables.append("""
+                :root {
+                    color-scheme: \(theme.cssProperty);
+                }
+                """)
+                for address in addresses {
+
+                    variables.append("""
+                    a[data-ik-mention-ref='\(address)'] {
+                        --mail-content-mention-background-color: #ffc9df;
+                        --mail-content-mention-text-color: #5f142f;
+                        --mail-content-mention-font-weight: 500;
+                    }
+                    """)
+                }
             }
 
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")

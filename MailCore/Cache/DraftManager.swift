@@ -425,7 +425,7 @@ public final class DraftManager {
 
         do {
             let document = try await SwiftSoup.parse(liveDraft.body)
-            let mentions = try await document.select("a[data-ik-tag]")
+            let mentions = try await document.select("a[data-ik-mention-ref]")
 
             for mention in mentions {
                 try mention.removeAttr("data-not-clickable")
