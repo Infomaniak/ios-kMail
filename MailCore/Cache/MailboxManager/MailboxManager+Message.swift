@@ -31,13 +31,7 @@ public extension MailboxManager {
         completedMessage.fullyDownloaded = true
 
         for attachment in completedMessage.attachments {
-            if attachment.disposition == .attachment || attachment.contentId == nil {
-                attachment.isInline = false
-            } else if let contentId = attachment.contentId {
-                attachment.isInline = completedMessage.body?.value?.contains(contentId) == true
-            } else {
-                attachment.isInline = true
-            }
+            attachment.isInline = isAttachmentInline(for: attachment, body: completedMessage.body?.value)
         }
 
         // Update message in Realm

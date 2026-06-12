@@ -200,8 +200,33 @@ public extension MailboxManager {
         await refreshFolderContent(scheduledDraftsFolder.freezeIfNeeded())
     }
 
+    func loadRemotely(fromMessage message: Message, incompleteDraft: Draft) async throws -> Draft {
+        let draft = try await apiFetcher.draft(from: message)
+
+        for attachment in draft.attachments {
+            attachment.isInline = isAttachmentInline(for: attachment, body: draft.body)
+        }
+
+        draft.localUUID = incompleteDraft.localUUID
+        draft.action = .save
+        draft.delay = incompleteDraft.delay
+
+        let detachedDraft = draft.detached()
+
+        try writeTransaction { realm in
+            realm.add(detachedDraft, update: .modified)
+        }
+
+        return draft
+    }
+
     func loadRemotely(from draftResource: String) async throws -> Draft? {
         let draft = try await apiFetcher.draft(draftResource: draftResource)
+
+        for attachment in draft.attachments {
+            attachment.isInline = isAttachmentInline(for: attachment, body: draft.body)
+        }
+
         try? writeTransaction { realm in
             realm.add(draft, update: .modified)
         }
@@ -241,5 +266,15 @@ public extension MailboxManager {
         }
 
         return result.filter { !$0.isInfomaniakHosted }.count
+    }
+
+    func isAttachmentInline(for attachment: Attachment, body: String?) -> Bool {
+        if attachment.disposition == .attachment || attachment.contentId == nil {
+            return false
+        } else if let contentId = attachment.contentId {
+            return !contentId.isEmpty && body?.contains(contentId) == true
+        } else {
+            return true
+        }
     }
 }

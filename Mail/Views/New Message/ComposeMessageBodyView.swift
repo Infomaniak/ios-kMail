@@ -46,6 +46,8 @@ struct ComposeMessageBodyView: View {
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
 
+    @State private var inlineAttachmentHandler: InlineAttachmentHandler?
+
     @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
@@ -110,6 +112,14 @@ struct ComposeMessageBodyView: View {
             disableDragAndDrop(editor: editor)
 
             editor.webView.loadUserScript(.fixEmailStyle)
+
+            if inlineAttachmentHandler == nil {
+                let handler = InlineAttachmentHandler(attachmentsManager: attachmentsManager)
+                editor.webView.configuration.userContentController.add(handler, name: InlineAttachmentHandler.messageName)
+                inlineAttachmentHandler = handler
+            }
+
+            editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
             #if os(macOS) || targetEnvironment(macCatalyst)
             Task { @MainActor in

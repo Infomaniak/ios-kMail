@@ -311,9 +311,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
             return []
         }
         return liveDraft.attachments.filter { attachment in
-            guard !attachment.isInvalidated else { return false }
-            guard let contentId = attachment.contentId else { return true }
-            return contentId.isEmpty
+            return !attachment.isInvalidated
         }.toArray()
     }
 

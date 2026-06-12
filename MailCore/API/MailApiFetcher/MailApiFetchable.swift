@@ -141,8 +141,6 @@ public protocol MailApiExtendedFetchable {
 
     func attachment(attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data
 
-    func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft
-
     func draft(draftResource: String) async throws -> Draft
 
     func draft(from message: Message) async throws -> Draft

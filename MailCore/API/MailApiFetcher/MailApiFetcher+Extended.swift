@@ -162,10 +162,6 @@ public extension MailApiFetcher {
         )))
     }
 
-    func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft {
-        try await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftUuid)))
-    }
-
     func draft(from message: Message) async throws -> Draft {
         guard let resource = message.draftResource else {
             throw MailError.resourceError
