@@ -25,7 +25,7 @@ public struct EmptySnackBarPresenter: IKSnackBarPresentable {
 
     public func show(message: String) {}
 
-    public func show(message: String, action: IKSnackBar.Action?) {}
+    public func show(message _: String, action _: IKSnackBar.Action?) {}
 
     public func show(
         message: String,

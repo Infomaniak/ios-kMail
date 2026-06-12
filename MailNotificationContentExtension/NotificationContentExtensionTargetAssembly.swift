@@ -17,8 +17,8 @@
  */
 
 import Foundation
-import InfomaniakDI
 import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 
 // periphery:ignore - Used by DI
