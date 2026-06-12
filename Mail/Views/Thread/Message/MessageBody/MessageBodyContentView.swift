@@ -43,7 +43,8 @@ struct MessageBodyContentView: View {
         presentableBody: PresentableBody?,
         blockRemoteContent: Bool,
         messageUid: String,
-        messageTheme: MessageTheme
+        messageTheme: MessageTheme,
+        mentionAddresses: [String]
     ) {
         _displayContentBlockedActionView = displayContentBlockedActionView
         _initialContentLoading = initialContentLoading
@@ -51,7 +52,7 @@ struct MessageBodyContentView: View {
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
 
-        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme))
+        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, addresses: mentionAddresses))
     }
 
     var body: some View {
@@ -134,6 +135,7 @@ struct MessageBodyContentView: View {
         presentableBody: PreviewHelper.samplePresentableBody,
         blockRemoteContent: false,
         messageUid: "message_uid",
-        messageTheme: .auto
+        messageTheme: .auto,
+        mentionAddresses: []
     )
 }
