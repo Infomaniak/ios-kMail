@@ -30,8 +30,6 @@ import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
-    static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
-
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -42,10 +40,11 @@ struct ComposeMessageBodyView: View {
 
     @FocusState var focusedField: ComposeViewFieldType?
     @Binding var draftBody: String
-    let draft: Draft
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
     @Binding var mentionQuery: String
+    let draft: Draft
+    let aliases: [String]
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
 
@@ -63,6 +62,10 @@ struct ComposeMessageBodyView: View {
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
+    private var customCSS: String {
+        return MessageWebViewUtils.loadCSS(for: .editor(aliases: aliases)).joined()
     }
 
     var body: some View {
@@ -85,7 +88,7 @@ struct ComposeMessageBodyView: View {
                            autoCorrectEnabled: !isEnvironmentCatalyst)
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
-                .editorCSS(Self.customCSS)
+                .editorCSS(customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
                 .mailCustomAlert(item: $isShowingLink) { link in
@@ -175,10 +178,11 @@ struct ComposeMessageBodyView: View {
         textAttributes: TextAttributes(),
         focusedField: .init(),
         draftBody: .constant(""),
-        draft: draft,
         isShowingAI: .constant(false),
         selectedText: .constant(""),
         mentionQuery: .constant(""),
+        draft: draft,
+        aliases: [],
         editor: .init(wrappedValue: nil),
         messageReply: nil
     )

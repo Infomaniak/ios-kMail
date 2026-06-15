@@ -55,11 +55,6 @@ struct MessageBodyView: View {
         return translatedPresentableBody == nil
     }
 
-    private var mentionAddresses: [String] {
-        Set([mailboxManager.mailbox.email] + Array(mailboxManager.mailbox.aliases))
-            .map { $0 }
-    }
-
     var body: some View {
         ZStack {
             if isTranslationInProgress {
@@ -77,7 +72,7 @@ struct MessageBodyView: View {
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid,
                     messageTheme: messageTheme,
-                    mentionAddresses: mentionAddresses
+                    mailboxAliases: mailboxManager.mailbox.aliases.toArray()
                 )
                 .id(messageTheme.cssProperty)
             }
