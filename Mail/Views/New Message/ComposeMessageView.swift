@@ -109,7 +109,6 @@ struct ComposeMessageView: View {
 
     @State private var selectedText = ""
 
-    @Weak private var scrollView: UIScrollView?
     @Weak private var editor: RichHTMLEditorView?
 
     @StateObject private var draftContentManager: DraftContentManager
@@ -229,6 +228,7 @@ struct ComposeMessageView: View {
                 }
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .gesture(
             SpatialTapGesture()
                 .onEnded { event in
@@ -299,17 +299,6 @@ struct ComposeMessageView: View {
             }
         }
         .onDrop(of: [.data], isTargeted: nil, perform: handleDrop(of:))
-        .introspect(.scrollView, on: .iOS(.v16, .v17, .v18, .v26, .v27)) { scrollView in
-            guard self.scrollView != scrollView else { return }
-            self.scrollView = scrollView
-            scrollView.keyboardDismissMode = .interactive
-        }
-        .onChange(of: autocompletionType) { newValue in
-            guard newValue != nil else { return }
-
-            let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
-            scrollView?.scrollRectToVisible(rectTop, animated: true)
-        }
         .safeAreaInset(edge: .bottom) {
             ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
         }
