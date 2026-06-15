@@ -39,6 +39,9 @@ struct ComposeMessageBodyView: View {
     @ObservedObject var textAttributes: TextAttributes
 
     @FocusState var focusedField: ComposeViewFieldType?
+
+    @State private var mentionDeletionHandler: MentionDeletionHandler?
+
     @Binding var draftBody: String
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
@@ -120,6 +123,12 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.fixEmailStyle)
 
+            if mentionDeletionHandler == nil {
+                let handler = MentionDeletionHandler(draft: draft)
+                editor.webView.configuration.userContentController.add(handler, name: MentionDeletionHandler.messageName)
+                mentionDeletionHandler = handler
+            }
+            editor.webView.loadUserScript(.observeMentionDeletion)
             if inlineAttachmentHandler == nil {
                 let handler = InlineAttachmentHandler(attachmentsManager: attachmentsManager)
                 editor.webView.configuration.userContentController.add(handler, name: InlineAttachmentHandler.messageName)
