@@ -39,7 +39,7 @@ struct OnboardingThemePickerView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17, .v18, .v26)) { segmentedControl in
+            .introspect(.picker(style: .segmented), on: .iOS(.v16, .v17, .v18, .v26, .v27)) { segmentedControl in
                 setSegmentedControlStyle(segmentedControl)
             }
             .padding(.top, value: .huge)

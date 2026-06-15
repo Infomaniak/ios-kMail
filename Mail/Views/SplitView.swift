@@ -200,7 +200,7 @@ struct SplitView: View {
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .introspect(.navigationView(style: .columns), on: .iOS(.v15, .v16, .v17, .v18, .v26)) { splitViewController in
+        .introspect(.navigationView(style: .columns), on: .iOS(.v16, .v17, .v18, .v26, .v27)) { splitViewController in
             guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation else { return }
             guard self.splitViewController != splitViewController else { return }
             self.splitViewController = splitViewController
