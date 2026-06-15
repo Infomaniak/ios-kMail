@@ -299,7 +299,7 @@ struct ComposeMessageView: View {
             }
         }
         .onDrop(of: [.data], isTargeted: nil, perform: handleDrop(of:))
-        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
+        .introspect(.scrollView, on: .iOS(.v16, .v17, .v18, .v26, .v27)) { scrollView in
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive

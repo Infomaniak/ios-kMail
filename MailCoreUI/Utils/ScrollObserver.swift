@@ -97,7 +97,6 @@ public struct ScrollObserverModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .introspect(.list, on: .iOS(.v15)) { scrollObserver.observeValue(scrollView: $0) }
-            .introspect(.list, on: .iOS(.v16, .v17, .v18, .v26)) { scrollObserver.observeValue(scrollView: $0) }
+            .introspect(.list, on: .iOS(.v16, .v17, .v18, .v26, .v27)) { scrollObserver.observeValue(scrollView: $0) }
     }
 }
