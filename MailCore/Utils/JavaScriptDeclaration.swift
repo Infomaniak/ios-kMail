@@ -26,6 +26,7 @@ public enum UserScript: String {
     case fixEmailStyle
     case captureLog
     case observeInlineAttachmentsDeletion
+    case observeMentionDeletion
 }
 
 public enum JavaScriptDeclaration {
