@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 28 May 2026 10:19:52 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Mon, 15 Jun 2026 13:05:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -628,6 +628,10 @@
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Reenviado";
 
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "Has sido mencionado.";
+
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nuevo";
 
@@ -639,10 +643,6 @@
 
 /* loco:642430a9ce12f43b026e7ef2 */
 "contentDescriptionSelectedItem" = "Selección";
-
-/* loco:6a26ca31cd1868366600c4c2
- * Used in accessibility labels for mention indicators */
-"contentDescriptionTagMention" = "Has sido mencionado.";
 
 /* loco:64a4240f5579c83f7b070182 */
 "contentDescriptionUnreadPastille" = "Esta carpeta contiene mensajes no leídos";
