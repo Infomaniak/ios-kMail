@@ -27,7 +27,7 @@ public enum ThreadCellChipItem: String {
     var contentDescription: String {
         switch self {
         case .tag:
-            return MailResourcesStrings.Localizable.contentDescriptionTagMention
+            return MailResourcesStrings.Localizable.contentDescriptionIconMention
         }
     }
 
