@@ -542,7 +542,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
-        mentions = try values.decode(List<String>.self, forKey: .mentions)
+
+        if let mentions = try? values.decode(List<String>.self, forKey: .mentions) {
+            self.mentions = mentions
+        } else {
+            mentions = List()
+        }
     }
 
     public convenience init(
