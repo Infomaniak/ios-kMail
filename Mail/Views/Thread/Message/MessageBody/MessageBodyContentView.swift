@@ -44,7 +44,7 @@ struct MessageBodyContentView: View {
         blockRemoteContent: Bool,
         messageUid: String,
         messageTheme: MessageTheme,
-        mentionAddresses: [String]
+        mailboxAliases: [String]
     ) {
         _displayContentBlockedActionView = displayContentBlockedActionView
         _initialContentLoading = initialContentLoading
@@ -52,7 +52,7 @@ struct MessageBodyContentView: View {
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
 
-        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, addresses: mentionAddresses))
+        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, aliases: mailboxAliases))
     }
 
     var body: some View {
@@ -136,6 +136,6 @@ struct MessageBodyContentView: View {
         blockRemoteContent: false,
         messageUid: "message_uid",
         messageTheme: .auto,
-        mentionAddresses: []
+        mailboxAliases: []
     )
 }

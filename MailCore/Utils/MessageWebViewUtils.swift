@@ -22,8 +22,8 @@ import SwiftSoup
 
 public enum MessageWebViewUtils {
     public enum WebViewTarget {
-        case message(theme: MessageTheme, addresses: [String])
-        case editor
+        case message(theme: MessageTheme, aliases: [String])
+        case editor(aliases: [String])
     }
 
     public static func loadAndFormatCSS(for target: WebViewTarget) -> String {
@@ -64,6 +64,16 @@ public enum MessageWebViewUtils {
                 }
             }
 
+            let aliases: [String]
+            switch target {
+            case .message(_, let mails):
+                aliases = mails
+            case .editor(let mails):
+                aliases = mails
+            }
+
+            variables.append(generateMentionCSS(for: aliases))
+
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
             resources.append(processedStyle)
         }
@@ -79,6 +89,22 @@ public enum MessageWebViewUtils {
         }
 
         return resources
+    }
+
+    private static func generateMentionCSS(for aliases: [String]) -> String {
+        guard !aliases.isEmpty else { return "" }
+
+        var css = ""
+        for mail in aliases {
+            css.append("""
+            a[data-ik-mention-ref='\(mail)'] {
+                --mail-content-mention-text-color: #5f142f;
+                --mail-content-mention-background-color: #ffc9df;
+                --mail-content-mention-font-weight: 500;
+            }
+            """)
+        }
+        return css
     }
 
     public static func createHTMLForPlainText(text: String) async throws -> String {

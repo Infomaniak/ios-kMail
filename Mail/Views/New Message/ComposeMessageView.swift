@@ -159,6 +159,10 @@ struct ComposeMessageView: View {
         return autocompletionType == nil && !isLoadingContent
     }
 
+    private var aliases: [String] {
+        return mailboxManager.mailbox.aliases.toArray()
+    }
+
     // MARK: - Init
 
     init(
@@ -211,10 +215,11 @@ struct ComposeMessageView: View {
                         textAttributes: textAttributes,
                         focusedField: _focusedField,
                         draftBody: $draftContentManager.draftContent,
-                        draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
                         mentionQuery: $mentionQuery,
+                        draft: draft,
+                        aliases: aliases,
                         editor: _editor,
                         messageReply: messageReply
                     )
@@ -289,15 +294,7 @@ struct ComposeMessageView: View {
                         mentionQuery: mentionQuery,
                         mentionSuggestions: mentionSuggestions
                     ) { recipient in
-                        if let liveDraft = draft.thaw(),
-                           let realm = liveDraft.realm {
-                            try? realm.write {
-                                liveDraft.mentions.append(recipient.email)
-                                liveDraft.to.append(recipient)
-                            }
-                            editor?.insertMention(email: recipient.email, name: recipient.name)
-                            mentionQuery = ""
-                        }
+                        addMention(for: recipient)
                     }
                 }
 
@@ -661,6 +658,24 @@ struct ComposeMessageView: View {
     private func handleDrop(of itemProviders: [NSItemProvider]) -> Bool {
         attachmentsManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
         return true
+    }
+
+    private func addMention(for recipient: Recipient) {
+        if let liveDraft = draft.thaw(),
+           let realm = liveDraft.realm {
+            try? realm.write {
+                if !liveDraft.mentions.contains(recipient.email) {
+                    liveDraft.mentions.append(recipient.email)
+                }
+
+                let alreadyInTo = liveDraft.to.contains { $0.email.lowercased() == recipient.email.lowercased() }
+                if !alreadyInTo {
+                    liveDraft.to.append(recipient)
+                }
+            }
+            editor?.insertMention(email: recipient.email, name: recipient.name)
+            mentionQuery = ""
+        }
     }
 }
 
