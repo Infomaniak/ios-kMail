@@ -19,6 +19,8 @@
 import Foundation
 import MailResources
 import SwiftSoup
+import SwiftUI
+import UIKit
 
 public enum MessageWebViewUtils {
     public enum WebViewTarget {
@@ -94,13 +96,29 @@ public enum MessageWebViewUtils {
     private static func generateMentionCSS(for aliases: [String]) -> String {
         guard !aliases.isEmpty else { return "" }
 
+        let textColor = UserDefaults.shared.accentColor.primary.color
+        let lightTextColor = Color(textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
+        let darkTextColor = Color(textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+
+        let backgroundColor = UserDefaults.shared.accentColor.secondary.color
+        let lightBackgroundColor = Color(backgroundColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
+        let darkBackgroundColor = Color(backgroundColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+
         var css = ""
         for mail in aliases {
             css.append("""
             a[data-ik-mention-ref='\(mail)'] {
-                --mail-content-mention-text-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
-                --mail-content-mention-background-color: \(UserDefaults.shared.accentColor.secondary.swiftUIColor.hexRepresentation);
+                --mail-content-mention-text-color: \(lightTextColor.hexRepresentation);
+                --mail-content-mention-background-color: \(lightBackgroundColor.hexRepresentation);
                 --mail-content-mention-font-weight: 500;
+            }
+            @media(prefers-color-scheme: dark) { 
+                a[data-ik-mention-ref='\(mail)'] {
+                    --mail-content-mention-text-color: \(darkTextColor.hexRepresentation);
+                    --mail-content-mention-background-color: \(darkBackgroundColor.hexRepresentation);
+                    --mail-content-mention-font-weight: 500;
+                }
+
             }
             """)
         }
