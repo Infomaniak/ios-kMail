@@ -47,6 +47,9 @@ a[data-ik-mention-ref] {
   background-color: var(--mail-content-mention-background-color, #f1f1f1);
   font-weight: var(--mail-content-mention-font-weight, inherit);
   text-decoration: none;
+  white-space: nowrap;
+  display: inline-block;
+  margin: 2px 0px;
 }
 
 @media (prefers-color-scheme: dark) {
