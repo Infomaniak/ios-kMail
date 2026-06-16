@@ -90,10 +90,10 @@ extension AIModel {
         conversation.append(
             AIMessage(type: .user, content: prompt, vars:
                 AIMessageVars(
-                    from: makeFromDTO(from: liveDraft),
-                    to: liveDraft?.to.map(makeRecipientDTO),
-                    cc: liveDraft?.cc.map(makeRecipientDTO),
-                    bcc: liveDraft?.bcc.map(makeRecipientDTO),
+                    from: makeFrom(from: liveDraft),
+                    to: liveDraft?.to.map { $0.detached() },
+                    cc: liveDraft?.cc.map { $0.detached() },
+                    bcc: liveDraft?.bcc.map { $0.detached() },
                     subject: liveDraft?.subject
                 ))
         )
@@ -163,10 +163,10 @@ extension AIModel {
         let liveDraft = getLiveDraft()
         conversation.insert(
             AIMessage(type: .context, content: replyingString, vars: AIMessageVars(
-                from: makeFromDTO(from: liveDraft),
-                to: liveDraft?.to.map(makeRecipientDTO),
-                cc: liveDraft?.cc.map(makeRecipientDTO),
-                bcc: liveDraft?.bcc.map(makeRecipientDTO),
+                from: makeFrom(from: liveDraft),
+                to: liveDraft?.to.map { $0.detached() },
+                cc: liveDraft?.cc.map { $0.detached() },
+                bcc: liveDraft?.bcc.map { $0.detached() },
                 subject: liveDraft?.subject
             )),
             at: 0
@@ -301,26 +301,16 @@ extension AIModel {
         return await DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
     }
 
-    private func makeRecipientDTO(_ recipient: Recipient) -> RecipientDTO {
-        RecipientDTO(
-            email: recipient.email,
-            name: recipient.name,
-            isAddedByMe: recipient.isAddedByMe,
-            hasExternalProvider: recipient.hasExternalProvider,
-            isInfomaniakHosted: recipient.isInfomaniakHosted
-        )
-    }
-
-    private func makeFromDTO(from draft: Draft?) -> RecipientDTO? {
+    private func makeFrom(from draft: Draft?) -> Recipient? {
         guard let draft else { return nil }
 
         if let identityId = draft.identityId,
            let signature = mailboxManager.getStoredSignatures().first(where: { identityId == "\($0.id)" }) {
             let email = signature.senderEmail.isEmpty ? mailboxManager.mailbox.email : signature.senderEmail
-            return RecipientDTO(email: email, name: signature.senderName)
+            return Recipient(email: email, name: signature.senderName)
         }
 
-        return RecipientDTO(email: mailboxManager.mailbox.email, name: "")
+        return Recipient(email: mailboxManager.mailbox.email, name: "")
     }
 }
 
