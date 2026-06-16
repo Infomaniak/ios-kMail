@@ -45,7 +45,6 @@ extension View {
 
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var threadViewState: ThreadViewState
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
