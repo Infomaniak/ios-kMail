@@ -96,33 +96,31 @@ public enum MessageWebViewUtils {
     private static func generateMentionCSS(for aliases: [String]) -> String {
         guard !aliases.isEmpty else { return "" }
 
-        let textColor = UserDefaults.shared.accentColor.primary.color
-        let lightTextColor = Color(textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
-        let darkTextColor = Color(textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+        let accentColor = UserDefaults.shared.accentColor
+        let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+        let darkTrait = UITraitCollection(userInterfaceStyle: .dark)
 
-        let backgroundColor = UserDefaults.shared.accentColor.secondary.color
-        let lightBackgroundColor = Color(backgroundColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
-        let darkBackgroundColor = Color(backgroundColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+        let lightText = Color(accentColor.primary.color.resolvedColor(with: lightTrait)).hexRepresentation
+        let darkText = Color(accentColor.primary.color.resolvedColor(with: darkTrait)).hexRepresentation
+        let lightBg = Color(accentColor.secondary.color.resolvedColor(with: lightTrait)).hexRepresentation
+        let darkBg = Color(accentColor.secondary.color.resolvedColor(with: darkTrait)).hexRepresentation
 
-        var css = ""
-        for mail in aliases {
+        return aliases.reduce(into: "") { css, mail in
             css.append("""
             a[data-ik-mention-ref='\(mail)'] {
-                --mail-content-mention-text-color: \(lightTextColor.hexRepresentation);
-                --mail-content-mention-background-color: \(lightBackgroundColor.hexRepresentation);
+                --mail-content-mention-text-color: \(lightText);
+                --mail-content-mention-background-color: \(lightBg);
                 --mail-content-mention-font-weight: 500;
             }
-            @media(prefers-color-scheme: dark) { 
+            @media(prefers-color-scheme: dark) {
                 a[data-ik-mention-ref='\(mail)'] {
-                    --mail-content-mention-text-color: \(darkTextColor.hexRepresentation);
-                    --mail-content-mention-background-color: \(darkBackgroundColor.hexRepresentation);
+                    --mail-content-mention-text-color: \(darkText);
+                    --mail-content-mention-background-color: \(darkBg);
                     --mail-content-mention-font-weight: 500;
                 }
-
             }
             """)
         }
-        return css
     }
 
     public static func createHTMLForPlainText(text: String) async throws -> String {
