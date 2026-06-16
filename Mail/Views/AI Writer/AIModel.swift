@@ -87,8 +87,17 @@ final class AIModel: ObservableObject {
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
-        recipientsList = getRecipientsList()
-        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
+        let liveDraft = getLiveDraft()
+        conversation.append(
+            AIMessage(type: .user, content: prompt, vars:
+                AIMessageVars(
+                    from: makeFromDTO(from: liveDraft),
+                    to: liveDraft?.to.map(makeRecipientDTO),
+                    cc: liveDraft?.cc.map(makeRecipientDTO),
+                    bcc: liveDraft?.bcc.map(makeRecipientDTO),
+                    subject: liveDraft?.subject
+                ))
+        )
         isLoading = true
     }
 
@@ -153,8 +162,15 @@ extension AIModel {
         }
 
         guard let replyingString else { return }
+        let liveDraft = getLiveDraft()
         conversation.insert(
-            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
+            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(
+                from: makeFromDTO(from: liveDraft),
+                to: liveDraft?.to.map(makeRecipientDTO),
+                cc: liveDraft?.cc.map(makeRecipientDTO),
+                bcc: liveDraft?.bcc.map(makeRecipientDTO),
+                subject: liveDraft?.subject
+            )),
             at: 0
         )
     }
@@ -287,14 +303,26 @@ extension AIModel {
         return await DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
     }
 
-    private func getRecipientsList() -> String? {
-        guard let liveDraft = getLiveDraft() else { return nil }
+    private func makeRecipientDTO(_ recipient: Recipient) -> RecipientDTO {
+        RecipientDTO(
+            email: recipient.email,
+            name: recipient.name,
+            isAddedByMe: recipient.isAddedByMe,
+            hasExternalProvider: recipient.hasExternalProvider,
+            isInfomaniakHosted: recipient.isInfomaniakHosted
+        )
+    }
 
-        let to: [String] = liveDraft.to.compactMap { recipient in
-            guard !recipient.name.isEmpty else { return nil }
-            return recipient.name
+    private func makeFromDTO(from draft: Draft?) -> RecipientDTO? {
+        guard let draft else { return nil }
+
+        if let identityId = draft.identityId,
+           let signature = mailboxManager.getStoredSignatures().first(where: { identityId == "\($0.id)" }) {
+            let email = signature.senderEmail.isEmpty ? mailboxManager.mailbox.email : signature.senderEmail
+            return RecipientDTO(email: email, name: signature.senderName)
         }
-        return to.isEmpty ? nil : to.joined(separator: ", ")
+
+        return RecipientDTO(email: mailboxManager.mailbox.email, name: "")
     }
 }
 

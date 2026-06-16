@@ -159,3 +159,29 @@ extension Recipient: ContactAutocompletable {
         return name
     }
 }
+
+public struct RecipientDTO: Codable, Equatable, Hashable, Sendable {
+    public let email: String
+    public let name: String
+    public let isAddedByMe: Bool
+    public let hasExternalProvider: Bool?
+    public let isInfomaniakHosted: Bool?
+
+    public var canAutoEncrypt: Bool {
+        (isInfomaniakHosted ?? false) || !(hasExternalProvider ?? true)
+    }
+
+    public init(
+        email: String,
+        name: String,
+        isAddedByMe: Bool = false,
+        hasExternalProvider: Bool? = nil,
+        isInfomaniakHosted: Bool? = nil
+    ) {
+        self.email = email
+        self.name = name
+        self.isAddedByMe = isAddedByMe
+        self.hasExternalProvider = hasExternalProvider
+        self.isInfomaniakHosted = isInfomaniakHosted
+    }
+}

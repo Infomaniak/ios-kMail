@@ -27,10 +27,24 @@ public enum AIMessageVarsKey: Codable {
 }
 
 public struct AIMessageVars: Codable {
-    let recipient: String?
+    let from: RecipientDTO?
+    let to: [RecipientDTO]?
+    let cc: [RecipientDTO]?
+    let bcc: [RecipientDTO]?
+    let subject: String?
 
-    public init(recipient: String?) {
-        self.recipient = recipient
+    public init(
+        from: RecipientDTO? = nil,
+        to: [RecipientDTO]? = nil,
+        cc: [RecipientDTO]? = nil,
+        bcc: [RecipientDTO]? = nil,
+        subject: String? = nil
+    ) {
+        self.from = from
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
+        self.subject = subject
     }
 }
 
