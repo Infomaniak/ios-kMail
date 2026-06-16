@@ -54,7 +54,6 @@ final class AIModel: ObservableObject {
     private let draft: Draft
 
     private var contextId: String?
-    private var recipientsList: String?
 
     var lastMessage: String {
         return conversation.last?.content ?? ""
@@ -122,7 +121,6 @@ extension AIModel {
         conversation = []
         isLoading = false
         error = nil
-        recipientsList = nil
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
