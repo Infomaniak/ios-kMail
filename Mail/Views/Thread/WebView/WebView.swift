@@ -19,6 +19,7 @@
 import Combine
 import InfomaniakDI
 import MailCore
+import MailResources
 import Sentry
 import SwiftUI
 import WebKit
@@ -33,6 +34,9 @@ final class WebViewController: UIViewController {
     private var widthSubscriber: AnyCancellable?
 
     private var hasFinishedLoading = false
+
+    private var mentionMenuAnchor: UIButton?
+    private var lastPresentedMentionID: UUID?
 
     init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
         self.messageUid = messageUid
@@ -122,6 +126,78 @@ final class WebViewController: UIViewController {
             ])
         }
     }
+
+    func presentMentionMenuIfNeeded(_ content: MentionMenuContent) {
+        guard content.id != lastPresentedMentionID else { return }
+        lastPresentedMentionID = content.id
+        presentMentionMenu(content)
+    }
+
+    func resetMentionMenuState() {
+        lastPresentedMentionID = nil
+    }
+
+    func presentMentionMenu(_ content: MentionMenuContent) {
+        let anchorRect = view.convert(content.rect, from: webView)
+
+        mentionMenuAnchor?.removeFromSuperview()
+
+        let anchor = UIButton(frame: anchorRect)
+        anchor.alpha = 0
+        view.addSubview(anchor)
+        mentionMenuAnchor = anchor
+
+        let uiActions = content.actions.map { action -> UIAction in
+            var attributes: UIMenuElement.Attributes = []
+            if action.isDestructive { attributes.insert(.destructive) }
+            if action.isDisabled { attributes.insert(.disabled) }
+            return UIAction(title: action.title, image: action.image, attributes: attributes) { _ in
+                action.handler()
+            }
+        }
+
+        let headerAction = UIAction(
+            title: content.title,
+            subtitle: content.subtitle,
+            image: content.image,
+            attributes: .disabled
+        ) { _ in }
+
+        let menuChildren: [UIMenuElement] = [
+            UIMenu(options: .displayInline, children: [headerAction]),
+            UIMenu(options: .displayInline, children: uiActions)
+        ]
+
+        anchor.menu = UIMenu(title: "", children: menuChildren)
+        anchor.showsMenuAsPrimaryAction = true
+
+        if #available(iOS 17.4, *) {
+            anchor.performPrimaryAction()
+        } else {
+            presentMentionActionSheet(content, sourceRect: anchorRect)
+        }
+    }
+
+    private func presentMentionActionSheet(_ content: MentionMenuContent, sourceRect: CGRect) {
+        let message = [content.title, content.subtitle].compactMap { $0 }.joined(separator: "\n")
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+
+        for action in content.actions {
+            let alertAction = UIAlertAction(title: action.title, style: action.isDestructive ? .destructive : .default) { _ in
+                action.handler()
+            }
+            alertAction.isEnabled = !action.isDisabled
+            alert.addAction(alertAction)
+        }
+        alert.addAction(UIAlertAction(title: MailResourcesStrings.Localizable.buttonCancel, style: .cancel))
+
+        if let popover = alert.popoverPresentationController {
+            popover.sourceView = view
+            popover.sourceRect = sourceRect
+        }
+
+        present(alert, animated: true)
+    }
 }
 
 extension WebViewController: WKNavigationDelegate {
@@ -164,11 +240,31 @@ extension WebViewController: WKNavigationDelegate {
     }
 }
 
+struct MentionMenuAction {
+    let title: String
+    let image: UIImage?
+    var isDestructive = false
+    var isDisabled = false
+    let handler: () -> Void
+}
+
+struct MentionMenuContent {
+    let id = UUID()
+    let title: String
+    let subtitle: String?
+    let image: UIImage?
+    let rect: CGRect
+    let actions: [MentionMenuAction]
+}
+
 struct WebView: UIViewControllerRepresentable {
     @Environment(\.openURL) private var openURL
 
     let webView: WKWebView
     let messageUid: String
+
+    @Binding var mentionMenuContent: MentionMenuContent?
+
     var onWebKitProcessTerminated: (() -> Void)?
 
     func makeUIViewController(context: Context) -> WebViewController {
@@ -182,6 +278,14 @@ struct WebView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: WebViewController, context: Context) {
-        // Not needed
+        guard let mentionMenuContent else {
+            uiViewController.resetMentionMenuState()
+            return
+        }
+
+        uiViewController.presentMentionMenuIfNeeded(mentionMenuContent)
+        DispatchQueue.main.async {
+            self.mentionMenuContent = nil
+        }
     }
 }
