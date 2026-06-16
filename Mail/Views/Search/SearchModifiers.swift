@@ -174,6 +174,14 @@ struct SearchToolbar: ViewModifier {
                 viewModel.refreshSearchIfNeeded(action: action)
                 multipleSelectionViewModel.disable()
             }
+            .sheet(item: $messagesToMove) { messages in
+                MoveEmailView(
+                    mailboxManager: viewModel.mailboxManager,
+                    movedMessages: messages,
+                    originFolder: viewModel.frozenSearchFolder
+                )
+                .sheetViewStyle()
+            }
             .navigationTitle(
                 multipleSelectionViewModel.isEnabled
                     ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)

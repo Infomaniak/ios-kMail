@@ -34,8 +34,10 @@ struct ThreadListBottomBarModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsProvider: ActionsProvider
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var multipleSelectedMessages: [Message]?
+    @State private var messagesToMove: [Message]? = nil
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -90,6 +92,14 @@ struct ThreadListBottomBarModifier: ViewModifier {
                 }
             }
             .bottomBarVisibility(visibility: isBottomBarVisible ? .visible : .hidden)
+            .sheet(item: $messagesToMove){ messages in
+                MoveEmailView(
+                    mailboxManager: viewModel.mailboxManager,
+                    movedMessages: messages,
+                    originFolder: viewModel.frozenFolder
+                )
+                .sheetViewStyle()
+            }
     }
 
     private var moreButton: some View {
@@ -133,7 +143,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
                 origin: .multipleSelection(
                     originFolder: originFolder,
                     nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToMoveSheet: nil
+                    nearestMessagesToMoveSheet: $messagesToMove
                 )
             )
         }
