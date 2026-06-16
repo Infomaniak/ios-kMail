@@ -43,6 +43,7 @@ struct ThreadCellChip: View {
     let chipItem: ThreadCellChipItem
     var body: some View {
         chipItem.icon
+            .renderingMode(.template)
             .iconSize(.medium)
             .foregroundStyle(UserDefaults.shared.accentColor.primary)
             .padding(IKPadding.micro)
