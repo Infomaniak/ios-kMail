@@ -57,7 +57,7 @@ enum EditorToolbarAction: Identifiable {
         case .editText:
             return MailResourcesAsset.textModes
         case .ai:
-            return MailResourcesAsset.aiWriter
+            return MailResourcesAsset.euria
         case .addAttachment:
             return MailResourcesAsset.attachment
         case .addFile:
@@ -76,11 +76,7 @@ enum EditorToolbarAction: Identifiable {
     }
 
     var foregroundStyle: Color {
-        if self == .ai {
-            return MailResourcesAsset.aiColor.swiftUIColor
-        } else {
-            return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
-        }
+        return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
     }
 
     var customTint: Color? {
