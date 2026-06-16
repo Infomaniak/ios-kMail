@@ -46,6 +46,9 @@ a[data-ik-mention-ref] {
   color: var(--mail-content-mention-text-color, #333);
   background-color: var(--mail-content-mention-background-color, #f1f1f1);
   font-weight: var(--mail-content-mention-font-weight, inherit);
+  text-decoration: none;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --mail-content-mention-text-color: #fff;
