@@ -23,12 +23,6 @@ import MailResources
 import SwiftUI
 
 public class ActionsProvider: ObservableObject {
-    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
-    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
-
-    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
-    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
-
     enum ToolbarActions {
         static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
         static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
@@ -40,6 +34,22 @@ public class ActionsProvider: ObservableObject {
     let featureAvailableProvider: FeatureAvailableProvider
     let threadViewState: ThreadViewState
     let colorScheme: ColorScheme
+
+    private var swipeFullLeading: Action {
+        UserDefaults.shared.swipeFullLeading
+    }
+
+    private var swipeLeading: Action {
+        UserDefaults.shared.swipeLeading
+    }
+
+    private var swipeFullTrailing: Action {
+        UserDefaults.shared.swipeFullTrailing
+    }
+
+    private var swipeTrailing: Action {
+        UserDefaults.shared.swipeTrailing
+    }
 
     public init(
         currentUser: UserProfile,
