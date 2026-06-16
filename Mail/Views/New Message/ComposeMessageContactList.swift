@@ -68,5 +68,5 @@ struct ComposeMessageContactList: View {
 }
 
 #Preview {
-    ComposeMessageContactList(mentionQuery: "", mentionSuggestions: [], onMentionSelected: { _ in })
+    ComposeMessageContactList(mentionQuery: "", mentionSuggestions: []) { _ in }
 }
