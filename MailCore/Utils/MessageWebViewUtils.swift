@@ -98,8 +98,8 @@ public enum MessageWebViewUtils {
         for mail in aliases {
             css.append("""
             a[data-ik-mention-ref='\(mail)'] {
-                --mail-content-mention-text-color: #5f142f;
-                --mail-content-mention-background-color: #ffc9df;
+                --mail-content-mention-text-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
+                --mail-content-mention-background-color: \(UserDefaults.shared.accentColor.secondary.swiftUIColor.hexRepresentation);
                 --mail-content-mention-font-weight: 500;
             }
             """)
