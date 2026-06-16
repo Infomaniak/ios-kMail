@@ -23,7 +23,11 @@ public enum AIMessageType: String, Codable {
 }
 
 public enum AIMessageVarsKey: Codable {
-    case recipient
+    case from
+    case to
+    case cc
+    case bcc
+    case subject
 }
 
 public struct AIMessageVars: Codable {
