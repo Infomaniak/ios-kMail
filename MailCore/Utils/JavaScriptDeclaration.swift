@@ -27,6 +27,7 @@ public enum UserScript: String {
     case captureLog
     case observeInlineAttachmentsDeletion
     case observeMentionDeletion
+    case observeMentionClick
 }
 
 public enum JavaScriptDeclaration {
