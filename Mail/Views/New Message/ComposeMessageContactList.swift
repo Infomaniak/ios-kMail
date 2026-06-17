@@ -61,7 +61,7 @@ struct ComposeMessageContactList: View {
         .listStyle(.plain)
         .frame(maxHeight: 200)
         .clipShape(
-            .rect(topLeadingRadius: 8, topTrailingRadius: 8)
+            .rect(topLeadingRadius: IKRadius.medium, topTrailingRadius: IKRadius.medium)
         )
         .shadow(color: MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor, radius: 10)
     }
