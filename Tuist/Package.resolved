@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "branch" : "chore/extract-CoreUIKit",
-        "revision" : "b3c6482155f46bd7e0b31bdb783b6b9e7c6178cf"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "ac7206b536f4e9c06f8c8cec667b28298637d16b"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "branch" : "chore/extract-CoreUIKit",
-        "revision" : "100c3c0b323f867557824ed7749aaa9f7c87d38d"
+        "revision" : "359c413cd80e8493ae4bd33f7943449cc08e5b4f",
+        "version" : "25.0.0"
       }
     },
     {
@@ -60,7 +60,7 @@
       "location" : "https://github.com/Infomaniak/ios-core-uikit",
       "state" : {
         "branch" : "feat/Move-uikit-module",
-        "revision" : "2e632886d70ce460b8189ec619cb76997f359409"
+        "revision" : "9048f037d0c485e3146dbc855299efc86412d9ff"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "branch" : "chore/extract-CoreUIKit",
-        "revision" : "be439cb9f18d425301342011658170caa3cb5713"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "fc2d2f1220821b96c05ebda4c962f180b310f61b"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "chore/extract-CoreUIKit",
-        "revision" : "62fceca0ce0a5b7ec708572a00a3b9c43e86b0ff"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "4aadfe0d2f0c066d90a22f841b8d3a2721ae6c86"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "branch" : "chore/extract-CoreUIKit",
-        "revision" : "5ab0f41802ff4ff22bb211d47ff4e96cc7d60a9e"
+        "branch" : "chore/Update-coreui-version",
+        "revision" : "e4c76954617ae5f8eb18ca3ede5c96f1db617c7e"
       }
     },
     {
@@ -280,15 +280,6 @@
       }
     },
     {
-      "identity" : "swiftbackports",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/shaps80/SwiftBackports",
-      "state" : {
-        "revision" : "ddca6a237c1ba2291d5a3cc47ec8480ce6e9f805",
-        "version" : "1.0.3"
-      }
-    },
-    {
       "identity" : "swifter",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/httpswift/swifter",
@@ -331,15 +322,6 @@
       "state" : {
         "revision" : "0226e21f9bf355d40e07e5f5e1c33679d50e167f",
         "version" : "1.5.1"
-      }
-    },
-    {
-      "identity" : "swiftuibackports",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/shaps80/SwiftUIBackports",
-      "state" : {
-        "revision" : "556d42f391b74059a354b81b8c8e19cc7cb576f4",
-        "version" : "1.15.1"
       }
     }
   ],
