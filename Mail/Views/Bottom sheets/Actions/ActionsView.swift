@@ -30,8 +30,14 @@ import SwiftUI
 struct ActionsView: View {
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
-    @State private var quickActions: [Action] = []
-    @State private var listActions: [Action] = []
+    private var quickActions: [Action] {
+        actionsProvider.actionsFor(origin: quickActionOrigin, messages: targetMessages)
+    }
+
+    private var listActions: [Action] {
+        actionsProvider.actionsFor(origin: listActionOrigin, messages: targetMessages)
+    }
+
     private let targetMessages: [Message]
     private let listActionOrigin: ActionOrigin
     private let quickActionOrigin: ActionOrigin
@@ -50,11 +56,6 @@ struct ActionsView: View {
         self.quickActionOrigin = quickActionOrigin
         self.isMultipleSelection = isMultipleSelection
         self.completionHandler = completionHandler
-    }
-
-    private func loadActions() {
-        quickActions = actionsProvider.actionsFor(origin: quickActionOrigin, messages: targetMessages)
-        listActions = actionsProvider.actionsFor(origin: listActionOrigin, messages: targetMessages)
     }
 
     var body: some View {
@@ -90,7 +91,6 @@ struct ActionsView: View {
             }
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
-        .onAppear(perform: loadActions)
     }
 }
 
