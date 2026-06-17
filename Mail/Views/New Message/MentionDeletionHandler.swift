@@ -33,7 +33,7 @@ final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
     }
 
     func userContentController(
-        _ userContentController: WKUserContentController,
+        _: WKUserContentController,
         didReceive message: WKScriptMessage
     ) {
         guard message.name == Self.messageName,

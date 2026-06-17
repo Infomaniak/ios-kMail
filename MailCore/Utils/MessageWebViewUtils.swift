@@ -106,14 +106,17 @@ public enum MessageWebViewUtils {
         let darkBg = Color(accentColor.secondary.color.resolvedColor(with: darkTrait)).hexRepresentation
 
         return aliases.reduce(into: "") { css, mail in
+            let escapedMail = mail
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
             css.append("""
-            a[data-ik-mention-ref='\(mail)'] {
+            a[data-ik-mention-ref='\(escapedMail)'] {
                 --mail-content-mention-text-color: \(lightText);
                 --mail-content-mention-background-color: \(lightBg);
                 --mail-content-mention-font-weight: 500;
             }
             @media(prefers-color-scheme: dark) {
-                a[data-ik-mention-ref='\(mail)'] {
+                a[data-ik-mention-ref='\(escapedMail)'] {
                     --mail-content-mention-text-color: \(darkText);
                     --mail-content-mention-background-color: \(darkBg);
                     --mail-content-mention-font-weight: 500;

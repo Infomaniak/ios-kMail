@@ -56,8 +56,8 @@ extension Whitelist {
                     "style",
                     "var"
                 )
-                .addAttributes(":all", "class", "dir", "id", "style", "data-ik-mention-ref")
-                .addAttributes("a", "name")
+                .addAttributes(":all", "class", "dir", "id", "style")
+                .addAttributes("a", "name", "data-ik-mention-ref")
                 // Allow all URI schemes in links. Removing all protocols makes the list of protocols empty which means allow all
                 // protocols
                 .removeProtocols("a", "href", "ftp", "http", "https", "mailto")

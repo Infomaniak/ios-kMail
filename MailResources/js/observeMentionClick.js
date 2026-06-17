@@ -58,7 +58,7 @@ function observeMentionClick() {
 }
 
 function onMentionClicked(payload) {
-    const handler = window.webkit.messageHandlers.mentionClicked;
+    const handler = window.webkit?.messageHandlers?.mentionClicked;
 
     if (handler) {
         handler.postMessage(payload);

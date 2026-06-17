@@ -316,7 +316,6 @@ struct ComposeMessageView: View {
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .overlay(alignment: .trailingLastTextBaseline) {}
         .overlay {
             if isLoadingContent || isSyncingDrafts {
                 progressView
