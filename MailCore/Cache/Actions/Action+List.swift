@@ -76,23 +76,6 @@ extension Action: CaseIterable {
             .modifySnooze
         ].contains(self)
     }
-
-    public static func allAvailableSwipeActions(_ featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
-        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
-
-        let actions: [Action?] = [
-            .delete,
-            .archive,
-            .markAsRead,
-            .openMovePanel,
-            .star,
-            hasAccessToSnoozeFeature ? .snooze : nil,
-            .spam,
-            .quickActionPanel,
-            .noAction
-        ]
-        return actions.compactMap { $0 }
-    }
 }
 
 extension Action: RawRepresentable {

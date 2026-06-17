@@ -171,8 +171,9 @@ public class ActionsProvider: ObservableObject {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanelListAction(source: .message)
+        let showEuriaActions = !euriaActions.isEmpty && origin.type == .floatingPanelListAction(source: .message)
         var tempListActions: [Action?] = [
-            euriaActions.isEmpty ? nil : .showEuriaActions,
+            showEuriaActions ? .showEuriaActions : nil,
             .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
@@ -293,9 +294,20 @@ public class ActionsProvider: ObservableObject {
     func floatingPanelQuickActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
         if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
             return []
-        } else {
+        }
+
+        let isSingleThread = messages.uniqueThreadsInFolder(origin.frozenFolder).count == 1
+
+        if origin.type == .floatingPanelQuickAction(source: .message) || isSingleThread {
             return quickActions
         }
+
+        return [
+            .openMovePanel,
+            messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead,
+            origin.frozenFolder?.role == .archive ? .moveToInbox : .archive,
+            .delete
+        ]
     }
 
     func compactToolbarActions(for messages: [Message], folder: Folder) -> [Action] {
