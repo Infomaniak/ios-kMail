@@ -132,8 +132,8 @@ struct SearchToolbar: ViewModifier {
             .toolbarSpacer(placement: .bottomBar, isVisible: isShowingBottomBarItems)
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
-                    let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                     if isShowingBottomBarItems {
+                        let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                         ForEach(actionsProvider.actionsFor(origin: origin, messages: allMessages)) { action in
                             Button {
                                 multipleSelectionViewModel.disable()
