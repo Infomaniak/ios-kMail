@@ -18,31 +18,43 @@
 observeMentionClick();
 
 function observeMentionClick() {
-    document.addEventListener('click', (event) => {
-        const mention = event.target.closest('a[data-ik-mention-ref]');
-        if (!mention) return;
+    if (document.kmailMentionClickObserved) return;
+    document.kmailMentionClickObserved = true;
 
-        event.preventDefault();
-        event.stopPropagation();
+    document.addEventListener(
+        "click",
+        (event) => {
+            const clickedNode = event.target;
+            if (!(clickedNode instanceof Element)) return;
 
-        const email = mention.getAttribute('data-ik-mention-ref') || '';
+            const mention = event.target.closest("a[data-ik-mention-ref]");
+            if (!mention) return;
 
-        let name = (mention.textContent || '').trim();
-        if (name.startsWith('@')) {
-            name = name.substring(1).trim();
-        }
-        
-        const rect = mention.getBoundingClientRect();
+            event.preventDefault();
+            event.stopPropagation();
 
-        onMentionClicked(JSON.stringify({
-            email,
-            name,
-            x: rect.left,
-            y: rect.top,
-            width: rect.width,
-            height: rect.height
-        }));
-    }, true);
+            const email = mention.getAttribute("data-ik-mention-ref") || "";
+
+            let name = (mention.textContent || "").trim();
+            if (name.startsWith("@")) {
+                name = name.substring(1).trim();
+            }
+
+            const rect = mention.getBoundingClientRect();
+
+            onMentionClicked(
+                JSON.stringify({
+                    email,
+                    name,
+                    x: rect.left,
+                    y: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                }),
+            );
+        },
+        true,
+    );
 }
 
 function onMentionClicked(payload) {
@@ -51,6 +63,6 @@ function onMentionClicked(payload) {
     if (handler) {
         handler.postMessage(payload);
     } else {
-        console.warn('WebKit handler is not available.');
+        console.warn("WebKit handler is not available.");
     }
 }
