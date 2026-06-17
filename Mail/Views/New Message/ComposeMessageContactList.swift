@@ -32,8 +32,14 @@ struct ComposeMessageContactList: View {
     let mentionSuggestions: [Recipient]
     let onMentionSelected: (Recipient) -> Void
 
+    private let maxVisibleMentions = 3
+    private let mentionRowHeight: CGFloat = 64
+
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
+
     var body: some View {
+        let visibleCount = min(mentionSuggestions.count, maxVisibleMentions)
+        let totalHeight = CGFloat(visibleCount) * mentionRowHeight
         List {
             Section {
                 ForEach(mentionSuggestions) { recipient in
@@ -59,7 +65,7 @@ struct ComposeMessageContactList: View {
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
-        .frame(maxHeight: 200)
+        .frame(height: totalHeight)
         .clipShape(
             .rect(topLeadingRadius: IKRadius.medium, topTrailingRadius: IKRadius.medium)
         )
