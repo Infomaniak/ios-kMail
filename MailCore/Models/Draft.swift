@@ -198,7 +198,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
-        mentions = try values.decode(List<String>.self, forKey: .mentions)
+        if let mentions = try? values.decode(List<String>.self, forKey: .mentions) {
+            self.mentions = mentions
+        } else {
+            mentions = List()
+        }
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -344,7 +348,9 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
-        try container.encode(mentions, forKey: .mentions)
+        if !mentions.isEmpty {
+            try container.encode(mentions, forKey: .mentions)
+        }
     }
 }
 
