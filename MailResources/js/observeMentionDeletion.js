@@ -75,7 +75,7 @@ function observeMentionDeletion() {
 }
 
 function onMentionsDeleted(refsJson) {
-    const handler = window.webkit.messageHandlers.mentionsDelete;
+    const handler = window.webkit?.messageHandlers?.mentionsDelete;
 
     if (handler) {
         handler.postMessage(refsJson);
