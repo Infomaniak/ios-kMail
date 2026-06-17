@@ -34,7 +34,6 @@ struct ThreadListBottomBarModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsProvider: ActionsProvider
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var multipleSelectedMessages: [Message]?
     @State private var messagesToMove: [Message]?
