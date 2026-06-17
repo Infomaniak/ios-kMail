@@ -138,7 +138,9 @@ final class WebViewController: UIViewController {
     }
 
     func presentMentionMenu(_ content: MentionMenuContent) {
-        let anchorRect = view.convert(content.rect, from: webView)
+        var anchorRect = view.convert(content.rect, from: webView)
+        anchorRect.origin.y += anchorRect.height + 4
+        anchorRect.size.height = 1
 
         mentionMenuAnchor?.removeFromSuperview()
 
