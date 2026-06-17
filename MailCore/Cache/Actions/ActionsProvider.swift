@@ -171,7 +171,7 @@ public class ActionsProvider: ObservableObject {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanelListAction(source: .message)
-        let showEuriaActions = !euriaActions.isEmpty && origin.type == .floatingPanelListAction(source: .message)
+        let showEuriaActions = !euriaActions.isEmpty && origin.type != .floatingPanelListAction(source: .threadList)
         var tempListActions: [Action?] = [
             showEuriaActions ? .showEuriaActions : nil,
             .openMovePanel,
@@ -341,6 +341,10 @@ public class ActionsProvider: ObservableObject {
 
                 if canUseEuriaActions {
                     actions.append(.showEuriaActions)
+                }
+
+                if messages.count == 1 {
+                    actions.append(.shareMailLink)
                 }
 
                 actions.append(.saveThreadInkDrive)
