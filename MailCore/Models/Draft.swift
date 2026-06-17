@@ -198,8 +198,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
-        if let mentions = try? values.decode(List<String>.self, forKey: .mentions) {
-            self.mentions = mentions
+        if let decodedMentions = try? values.decode(List<String>.self, forKey: .mentions) {
+            mentions = decodedMentions
         } else {
             mentions = List()
         }
