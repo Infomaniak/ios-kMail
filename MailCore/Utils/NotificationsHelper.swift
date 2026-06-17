@@ -18,6 +18,7 @@
 
 import Atlantis
 import Foundation
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreUIKit

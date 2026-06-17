@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "8deb3a6a5b78c92169c2de4e7466f79d00181b43"
+        "branch" : "chore/extract-CoreUIKit",
+        "revision" : "b3c6482155f46bd7e0b31bdb783b6b9e7c6178cf"
       }
     },
     {
@@ -50,8 +50,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "branch" : "chore/bump",
-        "revision" : "e8013b144910c5993fc7e84ba55b67e1ed126423"
+        "branch" : "chore/extract-CoreUIKit",
+        "revision" : "100c3c0b323f867557824ed7749aaa9f7c87d38d"
+      }
+    },
+    {
+      "identity" : "ios-core-uikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-core-uikit",
+      "state" : {
+        "branch" : "feat/Move-uikit-module",
+        "revision" : "2e632886d70ce460b8189ec619cb76997f359409"
       }
     },
     {
@@ -59,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "674faa57c7773621c3b4424a198dc63944405333"
+        "branch" : "chore/extract-CoreUIKit",
+        "revision" : "be439cb9f18d425301342011658170caa3cb5713"
       }
     },
     {
@@ -86,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "823ee7e4fbd15ea054ed2e2ea0051014f3c7ed1f"
+        "branch" : "chore/extract-CoreUIKit",
+        "revision" : "62fceca0ce0a5b7ec708572a00a3b9c43e86b0ff"
       }
     },
     {
@@ -122,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "80dd05a787db25ecec6aafc3859cfcc4e190e235"
+        "branch" : "chore/extract-CoreUIKit",
+        "revision" : "5ab0f41802ff4ff22bb211d47ff4e96cc7d60a9e"
       }
     },
     {

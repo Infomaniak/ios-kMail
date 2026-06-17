@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import IKSnackbar
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCoreUI

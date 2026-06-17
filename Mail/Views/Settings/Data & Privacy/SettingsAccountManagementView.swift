@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
