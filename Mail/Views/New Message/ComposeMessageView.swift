@@ -80,6 +80,10 @@ struct EditorPositionPreferenceKey: PreferenceKey {
     }
 }
 
+class EditorBox {
+    weak var editor: RichHTMLEditorView?
+}
+
 struct ComposeMessageView: View {
     @InjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var matomo: MatomoUtils
@@ -112,9 +116,9 @@ struct ComposeMessageView: View {
 
     @State private var mentionQuery = ""
     @State private var mentionSuggestions = [Recipient]()
+    @State private var editorBox = EditorBox()
 
     @Weak private var scrollView: UIScrollView?
-    @Weak private var editor: RichHTMLEditorView?
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -220,7 +224,7 @@ struct ComposeMessageView: View {
                         mentionQuery: $mentionQuery,
                         draft: draft,
                         aliases: aliases,
-                        editor: _editor,
+                        editorBox: editorBox,
                         messageReply: messageReply
                     )
                     .environmentObject(attachmentsManager)
@@ -673,7 +677,7 @@ struct ComposeMessageView: View {
                 }
             }
             Task {
-                try? await editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name))
+                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name))
             }
             mentionQuery = ""
         }
