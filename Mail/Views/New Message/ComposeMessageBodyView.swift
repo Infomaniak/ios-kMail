@@ -49,10 +49,9 @@ struct ComposeMessageBodyView: View {
     @Binding var mentionQuery: String
     let draft: Draft
     let aliases: [String]
+    let editorBox: EditorBox
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
-
-    @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
 
@@ -147,7 +146,7 @@ struct ComposeMessageBodyView: View {
             editor.webView.loadUserScript(.insertMention)
 
             Task { @MainActor in
-                self.editor = editor
+                editorBox.editor = editor
             }
         }
     }
@@ -201,7 +200,7 @@ struct ComposeMessageBodyView: View {
         mentionQuery: .constant(""),
         draft: draft,
         aliases: [],
-        editor: .init(wrappedValue: nil),
+        editorBox: EditorBox(),
         messageReply: nil
     )
     .environmentObject(AttachmentsManager(
