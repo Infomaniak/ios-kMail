@@ -23,23 +23,6 @@ import MailResources
 import SwiftUI
 
 extension Action: CaseIterable {
-    public struct MessageActions {
-        public let quickActions: [Action]
-        public let listActions: [Action]
-        public let euriaActions: [Action]
-    }
-
-    public static let rightClickActions: [Action] = [
-        .activeMultiselect,
-        .reply,
-        .replyAll,
-        .forward,
-        .openMovePanel,
-        .archive,
-        .delete
-    ]
-    public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
-
     public static let allCases: [Action] = [
         .delete,
         .reply,
@@ -93,252 +76,6 @@ extension Action: CaseIterable {
             .modifySnooze
         ].contains(self)
     }
-
-    public static func allAvailableSwipeActions(_ featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
-        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
-
-        let actions: [Action?] = [
-            .delete,
-            .archive,
-            .markAsRead,
-            .openMovePanel,
-            .star,
-            hasAccessToSnoozeFeature ? .snooze : nil,
-            .spam,
-            .quickActionPanel,
-            .noAction
-        ]
-        return actions.compactMap { $0 }
-    }
-
-    private static func euriaActionsForMessage(origin: ActionOrigin,
-                                               featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
-        let translate = featureAvailableProvider.isAvailable(.translate) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar)
-        let summarize = featureAvailableProvider.isAvailable(.summarize) &&
-            (origin.type == .floatingPanel(source: .message) || origin.type == .floatingPanel(source: .messageList)
-                || origin.type == .toolbar)
-
-        let tempEuriaActions: [Action?] = [
-            summarize ? .summarize : nil,
-            translate ? .translateMessage : nil
-        ]
-        let euriaActions = tempEuriaActions.compactMap { $0 }
-
-        return euriaActions
-    }
-
-    // swiftlint:disable:next function_parameter_count
-    private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
-                                          userIsStaff: Bool,
-                                          userEmail: String,
-                                          threadViewState: ThreadViewState,
-                                          colorScheme: ColorScheme,
-                                          featureAvailableProvider: FeatureAvailableProvider)
-        -> MessageActions {
-        @LazyInjectService var platformDetector: PlatformDetectable
-
-        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder,
-                                            featureAvailableProvider: featureAvailableProvider)
-        let euriaActions = euriaActionsForMessage(
-            origin: origin,
-            featureAvailableProvider: featureAvailableProvider
-        )
-
-        let isFromMe = message.fromMe(currentMailboxEmail: userEmail)
-        let isInSpamFolder = message.folder?.role == .spam
-        var spamAction: Action? {
-            guard !isFromMe else { return nil }
-            return isInSpamFolder ? .nonSpam : .spam
-        }
-        let archive = message.folder?.role != .archive
-        let unread = !message.seen
-        let star = message.flagged
-        let print = origin.type == .floatingPanel(source: .message)
-        var tempListActions: [Action?] = [
-            euriaActions.isEmpty ? nil : .showEuriaActions,
-            .openMovePanel,
-            unread ? .markAsRead : .markAsUnread,
-            spamAction,
-            isFromMe ? nil : .phishing,
-            isFromMe || isInSpamFolder ? nil : .blockList,
-            .shareMailLink,
-            archive ? .archive : .moveToInbox,
-            star ? .unstar : .star,
-            print ? .print : nil,
-            themeAction(message: message, threadViewState: threadViewState, colorScheme: colorScheme),
-            platformDetector.isMac ? nil : .saveThreadInkDrive,
-            userIsStaff ? .reportDisplayProblem : nil
-        ]
-
-        if message.isScheduledDraft == true {
-            tempListActions.removeAll { $0 == .archive }
-        }
-
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return MessageActions(
-            quickActions: Action.quickActions,
-            listActions: listActions,
-            euriaActions: euriaActions
-        )
-    }
-
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message],
-                                                             originFolder: Folder?,
-                                                             userEmail: String,
-                                                             featureAvailableProvider: FeatureAvailableProvider)
-        -> MessageActions {
-        let unread = messages.allSatisfy(\.seen)
-        let archive = originFolder?.role != .archive
-        var quickActions: [Action] = [
-            .openMovePanel,
-            unread ? .markAsUnread : .markAsRead,
-            archive ? .archive : .moveToInbox,
-            .delete
-        ]
-
-        let snoozedActions = snoozedActions(messages, folder: originFolder,
-                                            featureAvailableProvider: featureAvailableProvider)
-
-        let isSelfThread = isSelfThread(messages, userEmail)
-        let isInSpamFolder = originFolder?.role == .spam
-        var spamAction: Action? {
-            guard !isSelfThread else { return nil }
-            return isInSpamFolder ? .nonSpam : .spam
-        }
-        let star = messages.allSatisfy(\.flagged)
-
-        var tempListActions: [Action?] = [
-            spamAction,
-            isSelfThread ? nil : .phishing,
-            isSelfThread || isInSpamFolder ? nil : .blockList,
-            star ? .unstar : .star,
-            .saveThreadInkDrive
-        ]
-
-        if messages.contains(where: { $0.isScheduledDraft == true }) {
-            tempListActions.removeAll { $0 == .star || $0 == .unstar }
-            quickActions = quickActions.map { action in
-                if action == .archive {
-                    return star ? .unstar : .star
-                }
-                return action
-            }
-        }
-
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return MessageActions(
-            quickActions: quickActions,
-            listActions: listActions,
-            euriaActions: []
-        )
-    }
-
-    private static func actionsForMessagesInSameThreads(_ messages: [Message],
-                                                        originFolder: Folder?,
-                                                        userEmail: String,
-                                                        featureAvailableProvider: FeatureAvailableProvider)
-        -> MessageActions {
-        let archive = originFolder?.role != .archive
-        let unread = messages.allSatisfy(\.seen)
-        let showUnstar = messages.contains { $0.flagged }
-
-        let isSelfThread = isSelfThread(messages, userEmail)
-        let isInSpamFolder = originFolder?.role == .spam
-        var spamAction: Action? {
-            guard !isSelfThread else { return nil }
-            return isInSpamFolder ? .nonSpam : .spam
-        }
-
-        let snoozedActions = snoozedActions(messages, folder: originFolder,
-                                            featureAvailableProvider: featureAvailableProvider)
-
-        let tempListActions: [Action?] = [
-            .openMovePanel,
-            unread ? .markAsUnread : .markAsRead,
-            spamAction,
-            isSelfThread ? nil : .phishing,
-            isSelfThread || isInSpamFolder ? nil : .blockList,
-            archive ? .archive : .moveToInbox,
-            showUnstar ? .unstar : .star,
-            .saveThreadInkDrive
-        ]
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return MessageActions(
-            quickActions: Action.quickActions,
-            listActions: listActions,
-            euriaActions: []
-        )
-    }
-
-    private static func snoozedActions(_ messages: [Message], folder: Folder?,
-                                       featureAvailableProvider: FeatureAvailableProvider) -> [Action] {
-        guard folder?.canAccessSnoozeActions(featureAvailableProvider:
-            featureAvailableProvider) == true else { return [] }
-
-        let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
-        guard !messagesFromFolder.isEmpty else { return [] }
-
-        if messagesFromFolder.allSatisfy(\.isSnoozed) {
-            return [.modifySnooze, .cancelSnooze]
-        } else {
-            return [.snooze]
-        }
-    }
-
-    private static func draftActions(hasMultipleMessages: Bool) -> MessageActions {
-        return MessageActions(
-            quickActions: [],
-            listActions: hasMultipleMessages ? [] : [.shareMailLink] + [.saveThreadInkDrive],
-            euriaActions: []
-        )
-    }
-
-    private static func themeAction(message: Message, threadViewState: ThreadViewState, colorScheme: ColorScheme) -> Action? {
-        guard colorScheme == .dark && UserDefaults.shared.shouldAdaptMailToDarkMode else { return nil }
-        if threadViewState.forcedLightModes.contains(where: { $0 == message.uid }) {
-            return .forceDarkMode
-        } else {
-            return .forceLightMode
-        }
-    }
-
-    private static func isSelfThread(_ messages: [Message], _ userEmail: String) -> Bool {
-        return messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
-    }
-
-    // swiftlint:disable:next function_parameter_count
-    public static func actionsForMessages(_ messages: [Message],
-                                          origin: ActionOrigin,
-                                          userIsStaff: Bool,
-                                          userEmail: String,
-                                          threadViewState: ThreadViewState,
-                                          colorScheme: ColorScheme,
-                                          featureAvailableProvider: FeatureAvailableProvider) -> MessageActions {
-        if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
-            return draftActions(hasMultipleMessages: messages.count > 1)
-        } else if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin,
-                                     userIsStaff: userIsStaff,
-                                     userEmail: userEmail,
-                                     threadViewState: threadViewState,
-                                     colorScheme: colorScheme,
-                                     featureAvailableProvider: featureAvailableProvider)
-        } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages,
-                                                        originFolder: origin.frozenFolder,
-                                                        userEmail: userEmail,
-                                                        featureAvailableProvider: featureAvailableProvider)
-        } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder,
-                                                   userEmail: userEmail,
-                                                   featureAvailableProvider: featureAvailableProvider)
-        }
-    }
 }
 
 extension Action: RawRepresentable {
@@ -354,6 +91,7 @@ extension Action: RawRepresentable {
         iconName = action.iconName
         tintColorName = action.tintColorName
         matomoName = action.matomoName
+        keyboardShortcut = action.keyboardShortcut
     }
 }
 
@@ -400,13 +138,30 @@ public extension Action {
         title: MailResourcesStrings.Localizable.actionDelete,
         iconResource: MailResourcesAsset.bin,
         tintColorResource: MailResourcesAsset.swipeDeleteColor,
-        matomoName: "delete"
+        matomoName: "delete",
+        keyboardShortcut: KeyboardShortcut(key: "\u{007F}", modifiers: [])
+    )
+    static let deleteShortcut = Action(
+        id: "deleteShortcut",
+        title: MailResourcesStrings.Localizable.actionDelete,
+        iconResource: MailResourcesAsset.bin,
+        tintColorResource: MailResourcesAsset.swipeDeleteColor,
+        matomoName: "delete",
+        keyboardShortcut: KeyboardShortcut(key: .delete, modifiers: [])
+    )
+    static let refresh = Action(
+        id: "refresh",
+        title: MailResourcesStrings.Localizable.shortcutRefreshAction,
+        iconResource: MailResourcesAsset.doubleArrowsSynchronize,
+        matomoName: "refresh",
+        keyboardShortcut: KeyboardShortcut(key: "n", modifiers: [.shift, .command])
     )
     static let reply = Action(
         id: "reply",
         title: MailResourcesStrings.Localizable.actionReply,
         iconResource: MailResourcesAsset.emailActionReply,
-        matomoName: "reply"
+        matomoName: "reply",
+        keyboardShortcut: KeyboardShortcut(key: "r", modifiers: .command)
     )
     static let replyAll = Action(
         id: "replyAll",
@@ -529,7 +284,8 @@ public extension Action {
         id: "writeEmailAction",
         title: MailResourcesStrings.Localizable.contactActionWriteEmail,
         iconResource: MailResourcesAsset.pencil,
-        matomoName: "writeEmail"
+        matomoName: "writeEmail",
+        keyboardShortcut: KeyboardShortcut(key: "n", modifiers: .command)
     )
     static let addContactsAction = Action(
         id: "addContactsAction",

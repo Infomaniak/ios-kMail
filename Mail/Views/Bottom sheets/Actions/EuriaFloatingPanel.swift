@@ -24,16 +24,12 @@ import SwiftUI
 
 extension View {
     func euriaFloatingPanel(
-        user: UserProfile,
-        messages: [Message]?,
-        origin: ActionOrigin,
+        messages: Binding<[Message]?>,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
-                user: user,
                 messages: messages,
-                origin: origin,
                 completionHandler: completionHandler
             )
         )
@@ -41,17 +37,16 @@ extension View {
 }
 
 struct EuriaFloatingPanel: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
-
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var threadViewState: ThreadViewState
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var isShowingPanel = false
 
-    let user: UserProfile
-    let messages: [Message]?
-    let origin: ActionOrigin
+    @Binding var messages: [Message]?
     let completionHandler: ((Action) -> Void)?
+
+    private var origin: ActionOrigin {
+        return .euriaActions(messagesToProcessWithEuria: $messages)
+    }
 
     func body(content: Content) -> some View {
         content
@@ -82,16 +77,6 @@ struct EuriaFloatingPanel: ViewModifier {
     private func availableActions(for messages: [Message]?) -> [Action] {
         guard let messages else { return [] }
 
-        let actions = Action.actionsForMessages(
-            messages,
-            origin: origin,
-            userIsStaff: user.isStaff ?? false,
-            userEmail: user.email,
-            threadViewState: threadViewState,
-            colorScheme: colorScheme,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
-
-        return actions.euriaActions
+        return actionsProvider.actionsFor(origin: origin, messages: messages)
     }
 }

@@ -31,12 +31,9 @@ extension View {
 }
 
 struct CompactToolbarModifier: ViewModifier {
-    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
-    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
-    private static let scheduleActions: [Action] = [.delete]
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var replyOrReplyAllMessage: Message?
 
@@ -44,20 +41,12 @@ struct CompactToolbarModifier: ViewModifier {
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
     @ModalState private var noReplyAlert: NoReplyAlertState?
 
-    private let frozenThread: Thread
-
     private let isFlagged: Bool
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
 
     private var toolbarActions: [Action] {
-        if frozenThread.containsOnlyScheduledDrafts {
-            return Self.scheduleActions
-        } else if frozenFolder?.role == .archive {
-            return Self.archiveActions
-        } else {
-            return Self.standardActions
-        }
+        return actionsProvider.actionsFor(origin: origin, messages: frozenMessages)
     }
 
     private var showMoreButton: Bool {
@@ -82,8 +71,6 @@ struct CompactToolbarModifier: ViewModifier {
     }
 
     init(frozenThread: Thread) {
-        self.frozenThread = frozenThread
-
         isFlagged = frozenThread.flagged
         frozenFolder = frozenThread.folder
         frozenMessages = frozenThread.messages.toArray()

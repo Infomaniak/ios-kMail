@@ -44,12 +44,9 @@ extension View {
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
-    @Environment(\.currentUser) private var currentUser
-    @Environment(\.colorScheme) private var colorScheme
-
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var threadViewState: ThreadViewState
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -70,8 +67,25 @@ struct ActionsPanelViewModifier: ViewModifier {
     var popoverArrowEdge: Edge
     var completionHandler: ((Action) -> Void)?
 
-    private var origin: ActionOrigin {
-        .floatingPanel(
+    private var listActionOrigin: ActionOrigin {
+        .floatingPanelListAction(
+            source: panelSource,
+            originFolder: originFolder?.freezeIfNeeded(),
+            nearestDestructiveAlert: $destructiveAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            messagesToProcessWithEuria: $messagesToProcessWithEuria
+        )
+    }
+
+    private var quickActionOrigin: ActionOrigin {
+        .floatingPanelQuickAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestDestructiveAlert: $destructiveAlert,
@@ -108,17 +122,15 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $messages, style: panelStyle,
                               popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
-                mailboxManager: mailboxManager,
-                user: currentUser.value,
                 target: messages,
-                origin: origin,
+                listActionOrigin: listActionOrigin,
+                quickActionOrigin: quickActionOrigin,
                 isMultipleSelection: isMultipleSelection,
-                threadViewState: threadViewState,
-                colorScheme: colorScheme,
                 completionHandler: completionHandler
             )
             .environmentObject(mailboxManager)
             .environmentObject(actionsManager)
+            .environmentObject(actionsProvider)
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(
@@ -131,13 +143,13 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .mailFloatingPanel(item: $blockSendersList,
                            title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: listActionOrigin)
         }
         .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipients: blockSenderState.recipients,
                 reportedMessages: blockSenderState.messages,
-                origin: origin
+                origin: listActionOrigin
             )
         }
         .mailCustomAlert(
@@ -175,9 +187,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             completionHandler: completionHandler
         )
         .euriaFloatingPanel(
-            user: currentUser.value,
-            messages: messagesToProcessWithEuria,
-            origin: origin,
+            messages: $messagesToProcessWithEuria,
             completionHandler: completionHandler
         )
     }

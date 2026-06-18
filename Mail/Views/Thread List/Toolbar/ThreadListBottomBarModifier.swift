@@ -33,8 +33,10 @@ extension View {
 struct ThreadListBottomBarModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var multipleSelectedMessages: [Message]?
+    @State private var messagesToMove: [Message]?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -55,6 +57,10 @@ struct ThreadListBottomBarModifier: ViewModifier {
         return viewModel.frozenFolder.role == .scheduledDrafts || viewModel.frozenFolder.role == .draft
     }
 
+    private var origin: ActionOrigin {
+        return .multipleSelection(originFolder: viewModel.frozenFolder, nearestMessagesToMoveSheet: $multipleSelectedMessages)
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -68,7 +74,8 @@ struct ThreadListBottomBarModifier: ViewModifier {
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
                     if isShowingBottomBarItems {
-                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                        let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+                        ForEach(actionsProvider.actionsFor(origin: origin, messages: allMessages)) { action in
                             Button {
                                 performToolbarAction(action)
                             } label: {
@@ -84,6 +91,14 @@ struct ThreadListBottomBarModifier: ViewModifier {
                 }
             }
             .bottomBarVisibility(visibility: isBottomBarVisible ? .visible : .hidden)
+            .sheet(item: $messagesToMove) { messages in
+                MoveEmailView(
+                    mailboxManager: viewModel.mailboxManager,
+                    movedMessages: messages,
+                    originFolder: viewModel.frozenFolder
+                )
+                .sheetViewStyle()
+            }
     }
 
     private var moreButton: some View {
@@ -127,7 +142,7 @@ struct ThreadListBottomBarModifier: ViewModifier {
                 origin: .multipleSelection(
                     originFolder: originFolder,
                     nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToMoveSheet: nil
+                    nearestMessagesToMoveSheet: $messagesToMove
                 )
             )
         }

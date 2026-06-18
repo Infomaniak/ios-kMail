@@ -93,12 +93,10 @@ struct ThreadView: View {
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
         guard thread.hasUnseenMessages else { return }
-
-        let originFolder = thread.folder?.freezeIfNeeded()
         try? await actionsManager.performAction(
             target: thread.messages.toArray(),
             action: .markAsRead,
-            origin: .toolbarLarge(originFolder: originFolder)
+            origin: .toolbarLarge(group: .other, thread: thread)
         )
     }
 }
