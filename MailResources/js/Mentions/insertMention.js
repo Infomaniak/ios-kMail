@@ -51,7 +51,7 @@ function insertMention(userMail, userName) {
 
     const textBeforeCaret = preRange.toString();
 
-    const extractRegex = /@([^@\s]*)$/;
+    const extractRegex = /@([A-Za-z0-9._+-]*(?:@[A-Za-z0-9.-]*)?)$/;
     const match = textBeforeCaret.match(extractRegex);
     if (!match) return;
 
@@ -102,14 +102,22 @@ function insertMention(userMail, userName) {
     anchor.dataset.ikMentionRef = userMail;
     anchor.setAttribute("href", `mailto:${userMail}`);
     anchor.setAttribute("contenteditable", "false");
-    anchor.setAttribute("data-not-clickable", "true");
-    anchor.style.pointerEvents = "none";
     anchor.textContent = `@${userName}`;
 
     const trailingSpace = document.createTextNode(" ");
     replaceRange.insertNode(trailingSpace);
     replaceRange.insertNode(anchor);
 
+    
+    const previousNode = anchor.previousSibling;
+    if (previousNode &&
+        previousNode.nodeType === Node.ELEMENT_NODE &&
+        previousNode.hasAttribute("data-ik-mention-ref")) {
+        const interSpace = document.createTextNode("\u00A0");
+        anchor.parentNode.insertBefore(interSpace, anchor);
+    }
+    
+    
     const newCaretRange = document.createRange();
     newCaretRange.setStartAfter(trailingSpace);
     newCaretRange.collapse(true);
