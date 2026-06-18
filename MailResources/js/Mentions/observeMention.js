@@ -17,7 +17,8 @@
  */
 
 let lastSentValue = null;
-const validMentionCharsRegex = /^[A-Za-z0-9._+-]*$/;
+
+const validMentionCharsRegex = /^[A-Za-z0-9._+-]*(?:@[A-Za-z0-9.-]*)?$/;
 const zeroWidthCharsRegex = /[\u200B-\u200D\uFEFF]/g;
 const mentionQueryRegex = /(?:^|\s)@(\S*)$/;
 
@@ -55,6 +56,9 @@ const getTextBeforeCaret = () => {
 
     const fragment = preRange.cloneContents();
 
+    const mentions = fragment.querySelectorAll("a[data-ik-mention-ref]");
+    mentions.forEach(mention => mention.replaceWith(" "));
+
     const brs = fragment.querySelectorAll("br");
     brs.forEach(br => br.replaceWith("\n"));
 
@@ -72,8 +76,7 @@ const extractMentionQuery = (textBeforeCaret) => {
     const match = normalizedText.match(mentionQueryRegex);
     if (!match) return null;
 
-    const parts = match[1].split('@');
-    const query = parts[parts.length - 1];
+    const query = match[1];
 
     return validMentionCharsRegex.test(query) ? query : null;
 };
