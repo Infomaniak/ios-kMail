@@ -43,16 +43,17 @@ struct ComposeMessageContactList: View {
         List {
             Section {
                 ForEach(mentionSuggestions) { recipient in
-                    RecipientCell(
-                        recipient: recipient,
-                        highlight: mentionQuery,
-                        contextUser: currentUser.value,
-                        contextMailboxManager: mailboxManager
-                    )
-                    .onTapGesture {
+                    Button {
                         withAnimation {
                             onMentionSelected(recipient)
                         }
+                    } label: {
+                        RecipientCell(
+                            recipient: recipient,
+                            highlight: mentionQuery,
+                            contextUser: currentUser.value,
+                            contextMailboxManager: mailboxManager
+                        )
                     }
                 }
                 .padding(.vertical, threadDensity.cellVerticalPadding)
@@ -66,10 +67,6 @@ struct ComposeMessageContactList: View {
         .scrollIndicators(.hidden)
         .listStyle(.plain)
         .frame(height: totalHeight)
-        .clipShape(
-            .rect(topLeadingRadius: IKRadius.medium, topTrailingRadius: IKRadius.medium)
-        )
-        .shadow(color: MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor, radius: 10)
     }
 }
 
