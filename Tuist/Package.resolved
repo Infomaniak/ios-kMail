@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "ac7206b536f4e9c06f8c8cec667b28298637d16b"
+        "revision" : "9949016c59db6b6ca39b87f3c986a77a61d0b5c6",
+        "version" : "18.0.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "359c413cd80e8493ae4bd33f7943449cc08e5b4f",
-        "version" : "25.0.0"
+        "revision" : "ff55c791878a52b776b59d0de0412ff5543b6cb5",
+        "version" : "25.1.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-uikit",
       "state" : {
-        "branch" : "feat/Move-uikit-module",
-        "revision" : "9048f037d0c485e3146dbc855299efc86412d9ff"
+        "revision" : "d21644dc42c74a83caff299376ddc1c9a5fb80f8",
+        "version" : "1.0.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "fc2d2f1220821b96c05ebda4c962f180b310f61b"
+        "revision" : "3a5fd2b11e3d9b9cf36831d60a9437b6d3d228b0",
+        "version" : "24.0.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "4aadfe0d2f0c066d90a22f841b8d3a2721ae6c86"
+        "revision" : "c39ee374d38eca8c82f96f77448164f0361aa689",
+        "version" : "9.0.0"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "branch" : "chore/Update-coreui-version",
-        "revision" : "e4c76954617ae5f8eb18ca3ede5c96f1db617c7e"
+        "revision" : "b286eabfcf1a832fd801bfc7b8e1960c380ed3cb",
+        "version" : "17.0.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "2c420d31d0c31b525fa9e7c552ef0fc9d924befc",
-        "version" : "9.17.1"
+        "revision" : "43abfbf9a26089ad34604c718ad0935440caf1d4",
+        "version" : "9.18.0"
       }
     },
     {
