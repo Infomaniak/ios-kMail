@@ -672,7 +672,9 @@ struct ComposeMessageView: View {
                     liveDraft.to.append(recipient)
                 }
             }
-            editor?.insertMention(email: recipient.email, name: recipient.name)
+            Task {
+                try? await editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name))
+            }
             mentionQuery = ""
         }
     }
