@@ -17,6 +17,7 @@
  */
 
 import AppLock
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI

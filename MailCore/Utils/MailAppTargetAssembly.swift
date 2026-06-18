@@ -18,6 +18,7 @@
 
 import DeviceAssociation
 import Foundation
+import IKSnackbar
 import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore

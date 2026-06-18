@@ -17,6 +17,7 @@
  */
 
 import AuthenticationServices
+import IKSnackbar
 import InfomaniakConcurrency
 import InfomaniakCore
 import InfomaniakCoreCommonUI

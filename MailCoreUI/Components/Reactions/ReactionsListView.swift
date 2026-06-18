@@ -18,6 +18,7 @@
 
 import DesignSystem
 import ElegantEmojiPicker
+import IKSnackbar
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI

@@ -18,6 +18,7 @@
 
 import AppLock
 import Foundation
+import IKSnackbar
 import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore
