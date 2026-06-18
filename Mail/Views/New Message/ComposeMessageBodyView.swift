@@ -41,6 +41,7 @@ struct ComposeMessageBodyView: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     @State private var mentionDeletionHandler: MentionDeletionHandler?
+    @State private var mentionQueryHandler: MentionQueryHandler?
 
     @Binding var draftBody: String
     @Binding var isShowingAI: Bool
@@ -97,9 +98,6 @@ struct ComposeMessageBodyView: View {
                 .mailCustomAlert(item: $isShowingLink) { link in
                     AddLinkView(selectionLink: link, actionHandler: didCreateLink)
                 }
-                .onMentionQueryChange { query in
-                    mentionQuery = query
-                }
 
                 .sheet(isPresented: $isShowingFileSelection) {
                     DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
@@ -136,6 +134,17 @@ struct ComposeMessageBodyView: View {
             }
 
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
+
+            if mentionQueryHandler == nil {
+                let handler = MentionQueryHandler()
+                handler.onQueryChange = { query in
+                    mentionQuery = query
+                }
+                editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
+                mentionQueryHandler = handler
+            }
+            editor.webView.loadUserScript(.observeMention)
+            editor.webView.loadUserScript(.insertMention)
 
             Task { @MainActor in
                 self.editor = editor
