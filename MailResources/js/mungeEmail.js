@@ -35,8 +35,6 @@ const PREFERENCES = {
  * }
  */
 let actionsLog = {};
-let originalBaseFontSize = null;
-let isRemConversionDone = false;
 
 // Functions
 
@@ -46,10 +44,10 @@ let isRemConversionDone = false;
  */
 function setScaleCompensation(factor) {
     if (factor > 0) {
-        PREFERENCES.scaleCompensation = factor
-        logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`)
+        PREFERENCES.scaleCompensation = factor;
+        logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`);
     } else {
-        logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`)
+        logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`);
     }
 }
 
@@ -59,10 +57,10 @@ function setScaleCompensation(factor) {
  */
 function setContentSize(size) {
     if (size > 0) {
-        PREFERENCES.contentSize = size
-        logInfo(`contentSize set to ${PREFERENCES.contentSize}.`)
+        PREFERENCES.contentSize = size;
+        logInfo(`contentSize set to ${PREFERENCES.contentSize}.`);
     } else {
-        logInfo(`Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`)
+        logInfo(`Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`);
     }
 }
 
@@ -119,7 +117,7 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         if (PREFERENCES.normalizeMessageWidths) {
             let originalBaseFontSize = 17.0
             let percent = PREFERENCES.contentSize / originalBaseFontSize * 100;
-            if (percent !== 100) {
+            if (PREFERENCES.contentSize > 0 && percent !== 100) {
                 element.style.wordBreak = 'break-word';
                 let style = document.getElementById('text-size-adjust-style');
                 if (!style) {
@@ -128,17 +126,6 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
                     document.head.appendChild(style);
                 }
                 style.textContent = `body { -webkit-text-size-adjust: ${percent}% !important;\n  text-size-adjust: ${percent}% !important; }`;
-            }
-
-            if (PREFERENCES.scaleCompensation !== 1) {
-                if (originalBaseFontSize === null) {
-                    originalBaseFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
-                }
-                if (!isRemConversionDone) {
-                    convertPxFontSizesToRem(document, originalBaseFontSize);
-                    isRemConversionDone = true;
-                }
-                zoomBaseFontSize(PREFERENCES.scaleCompensation, originalBaseFontSize);
             }
 
             const newZoom = documentWidth / element.scrollWidth;
@@ -151,33 +138,6 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
             reportOverScroll(document.documentElement.clientWidth, document.documentElement.scrollWidth, messageUid);
         }
     }
-}
-
-function convertPxFontSizesToRem(root, baseFontSize) {
-    root.querySelectorAll("*").forEach(el => {
-        if (!el.style.fontSize.endsWith("px")) return;
-
-        const px = parseFloat(el.style.fontSize);
-        if (Number.isNaN(px)) return;
-        el.style.fontSize = `${px / baseFontSize}rem`;
-  });
-}
-
-function zoomBaseFontSize(scale, baseFontSize) {
-    document.documentElement.style.fontSize = `${baseFontSize * scale}px`;
-}
-
-/**
- * Browse an element to check if it has at least one direct non-empty text node child.
- * @param element Element to browse
- * @returns true if a direct non-empty text node is present
- */
-function hasDirectText(element) {
-  return Array.from(element.childNodes).some(
-    (node) =>
-      node.nodeType === Node.TEXT_NODE &&
-      node.textContent.trim().length > 0
-  );
 }
 
 
