@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "c39ee374d38eca8c82f96f77448164f0361aa689",
-        "version" : "9.0.0"
+        "revision" : "e95489fa1cb25925bccdeb2a316df59966583fe9",
+        "version" : "9.0.1"
       }
     },
     {

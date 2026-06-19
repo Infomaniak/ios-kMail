@@ -1,5 +1,1 @@
-- The app embraces more Liquid Glass
-- New setting to enable email displaying in dark mode
-- Improved handling of inline attachments when composing
-- New alert when attempting to reply to a no-reply address
-- Fixed a crash on Infomaniak Mail Lite
+- Bug fixes
