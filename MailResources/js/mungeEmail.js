@@ -117,17 +117,17 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         element.style.width = originalWidth;
 
         if (PREFERENCES.normalizeMessageWidths) {
-            if (PREFERENCES.contentSize !== 0) {
-                element.style.wordBreak = `break-word`;
-
-                element
-                .querySelectorAll("*:not(a)")
-                .forEach(el => {
-                    if (hasDirectText(el) || (el.querySelector(':scope > a'))) {
-                        el.style.fontSize = `${PREFERENCES.contentSize}px`;
-                        el.style.lineHeight = `normal`;
-                    }
-                });
+            let originalBaseFontSize = 17.0
+            let percent = PREFERENCES.contentSize / originalBaseFontSize * 100;
+            if (percent !== 100) {
+                element.style.wordBreak = 'break-word';
+                let style = document.getElementById('text-size-adjust-style');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'text-size-adjust-style';
+                    document.head.appendChild(style);
+                }
+                style.textContent = `body { -webkit-text-size-adjust: ${percent}% !important;\n  text-size-adjust: ${percent}% !important; }`;
             }
 
             if (PREFERENCES.scaleCompensation !== 1) {
