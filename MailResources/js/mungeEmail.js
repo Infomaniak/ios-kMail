@@ -22,7 +22,9 @@ const PREFERENCES = {
     mungeImages: true,
     mungeTables: true,
     minimumEffectiveRatio: 0.7,
-    undoPreviousChanges: true
+    undoPreviousChanges: true,
+    scaleCompensation: 1.0,
+    contentSize: 0.0
 };
 
 /**
@@ -35,6 +37,32 @@ const PREFERENCES = {
 let actionsLog = {};
 
 // Functions
+
+/**
+ * Sets the global text scaling compensation factor used during normalization.
+ * @param factor CGFloat of the compensation to set
+ */
+function setScaleCompensation(factor) {
+    if (factor > 0) {
+        PREFERENCES.scaleCompensation = factor;
+        logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`);
+    } else {
+        logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`);
+    }
+}
+
+/**
+ * Sets the global content size used during normalization.
+ * @param size CGFloat of the size to set
+ */
+function setContentSize(size) {
+    if (size > 0) {
+        PREFERENCES.contentSize = size;
+        logInfo(`contentSize set to ${PREFERENCES.contentSize}.`);
+    } else {
+        logInfo(`Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`);
+    }
+}
 
 /**
  * Normalize the width of the mail displayed
@@ -87,9 +115,22 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         element.style.width = originalWidth;
 
         if (PREFERENCES.normalizeMessageWidths) {
+            let originalBaseFontSize = 17.0
+            let percent = PREFERENCES.contentSize / originalBaseFontSize * 100;
+            if (PREFERENCES.contentSize > 0 && percent !== 100) {
+                element.style.wordBreak = 'break-word';
+                let style = document.getElementById('text-size-adjust-style');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'text-size-adjust-style';
+                    document.head.appendChild(style);
+                }
+                style.textContent = `body { -webkit-text-size-adjust: ${percent}% !important;\n  text-size-adjust: ${percent}% !important; }`;
+            }
+
             const newZoom = documentWidth / element.scrollWidth;
             logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
-            element.style.zoom = newZoom;
+            element.style.zoom = newZoom * PREFERENCES.scaleCompensation;
         }
 
         if (document.documentElement.scrollWidth > document.documentElement.clientWidth) {
@@ -98,6 +139,7 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         }
     }
 }
+
 
 /**
  * Transform the content of a DOM element to munge its children if they are too wide

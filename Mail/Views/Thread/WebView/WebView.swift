@@ -94,7 +94,15 @@ final class WebViewController: UIViewController {
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat, fromWidthSubscriber: Bool = false) async throws {
         guard hasFinishedLoading else { return }
+        #if targetEnvironment(macCatalyst)
+        let scaleCompensation = 100.0 / 77.0
+        try await webView.evaluateJavaScript(.setScaleCompensation(scaleCompensation))
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
+        #else
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        try await webView.evaluateJavaScript(.setContentSize(font.pointSize))
+        try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
+        #endif
 
         // Sometimes we have a width equals to zero, we want to understand what happens in this case
         if width <= 0 {
