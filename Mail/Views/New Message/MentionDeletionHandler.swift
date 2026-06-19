@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreCommonUI
 import MailCore
 import OSLog
 import RealmSwift
@@ -36,6 +37,7 @@ final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
         _: WKUserContentController,
         didReceive message: WKScriptMessage
     ) {
+        @InjectService var matomo: MatomoUtils
         guard message.name == Self.messageName,
               let stringBody = message.body as? String,
               let data = stringBody.data(using: .utf8)
@@ -50,6 +52,7 @@ final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
                         for ref in refs {
                             if let index = liveDraft.mentions.index(of: ref) {
                                 liveDraft.mentions.remove(at: index)
+                                matomo.track(eventWithCategory: .newMessage, name: "removeMention")
                             }
                         }
                     }

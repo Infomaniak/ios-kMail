@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import Sentry
@@ -43,6 +45,8 @@ extension WebViewModel: WKScriptMessageHandler {
     }
 
     private func handleMentionClicked(_ message: WKScriptMessage) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .message, name: "showMentionDetails")
         guard let payload = message.body as? String,
               let data = payload.data(using: .utf8),
               let decoded = try? JSONDecoder().decode(DecodedMention.self, from: data),
