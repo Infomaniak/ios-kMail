@@ -31,6 +31,8 @@ extension View {
 }
 
 struct LargeToolbarModifier: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var actionsProvider: ActionsProvider
@@ -216,6 +218,8 @@ struct LargeToolbarModifier: ViewModifier {
                     reportedMessages: blockSenderState.messages,
                     origin: reportOrigin
                 )
+                .environment(\.currentUser, currentUser)
+                .environmentObject(mailboxManager)
             }
             .mailCustomAlert(item: $reportedForDisplayProblemMessage) { message in
                 ReportDisplayProblemView(message: message)
