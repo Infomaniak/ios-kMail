@@ -436,7 +436,7 @@ public final class DraftManager {
                     .filter { !$0.lowercased().hasPrefix("pointer-events") }
                     .joined(separator: "; ")
 
-                let mentionStyle = "padding: 0 4px;border-radius: 100px;color: var(--mail-content-mention-text-color, #333);background-color: var(--mail-content-mention-background-color, #f1f1f1);font-weight: var(--mail-content-mention-font-weight, inherit);\(cleanedStyle)"
+                let mentionStyle = "padding: 0 4px;border-radius: 100px;color: var(--mail-content-mention-text-color, #333);background-color: var(--mail-content-mention-background-color, #f1f1f1);font-weight: var(--mail-content-mention-font-weight, inherit);work-break: break-all;\(cleanedStyle)"
                 try mention.attr("style", mentionStyle)
             }
 
