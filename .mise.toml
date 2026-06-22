@@ -1,5 +1,5 @@
 [tools]
-tuist = { version = '4.200.5', os = ["macos"] }
+tuist = { version = '4.198.3', os = ["macos"] }
 periphery = { version = '3.4.0', os = ["macos"] }
 swiftformat = { version = '0.58.7', os = ["macos", "linux"] }
 swiftlint = { version = '0.63.0', os = ["macos", "linux"] }
