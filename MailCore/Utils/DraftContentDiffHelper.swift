@@ -28,12 +28,20 @@ public struct DraftContentDiffHelper {
         self.transactionable = transactionable
     }
 
-    public func containsUserEdition() -> Bool {
-        return userBodyContainsUserEdition() || signatureHasChanged() || replyQuoteHasChanged()
+    public func containsUserEdition() async -> Bool {
+        if await userBodyContainsUserEdition() {
+            return true
+        }
+
+        if await signatureHasChanged() {
+            return true
+        }
+
+        return await replyQuoteHasChanged()
     }
 
-    public func userBodyContainsUserEdition() -> Bool {
-        guard !draft.body.isEmpty, let document = try? SwiftSoup.parse(draft.body) else {
+    public func userBodyContainsUserEdition() async -> Bool {
+        guard !draft.body.isEmpty, let document = try? await SwiftSoup.parse(draft.body) else {
             return false
         }
 
@@ -44,12 +52,12 @@ public struct DraftContentDiffHelper {
         return document.hasText()
     }
 
-    private func signatureHasChanged() -> Bool {
+    private func signatureHasChanged() async -> Bool {
         guard let savedSignature = draft.rawSignature else {
             return false
         }
 
-        guard !draft.body.isEmpty, let parsedDraftBody = try? SwiftSoup.parse(draft.body) else {
+        guard !draft.body.isEmpty, let parsedDraftBody = try? await SwiftSoup.parse(draft.body) else {
             return false
         }
 
@@ -58,31 +66,31 @@ public struct DraftContentDiffHelper {
         }
 
         let draftSignatureText = (try? signatureNode.text()) ?? ""
-        guard let parsedSavedSignature = try? SwiftSoup.parse(savedSignature),
+        guard let parsedSavedSignature = try? await SwiftSoup.parse(savedSignature),
               let savedSignatureText = try? parsedSavedSignature.text()
         else { return true }
 
         return savedSignatureText.normalizedReturns.trimmed != draftSignatureText.normalizedReturns.trimmed
     }
 
-    private func replyQuoteHasChanged() -> Bool {
+    private func replyQuoteHasChanged() async -> Bool {
         guard let inReplyToUid = draft.inReplyToUid else {
             return false
         }
 
-        return embeddedMessageHasChanged(
+        return await embeddedMessageHasChanged(
             messagePrimaryKey: inReplyToUid,
             cssSelector: ".\(Constants.replyQuoteHTMLClass) > blockquote"
         )
     }
 
-    private func embeddedMessageHasChanged(messagePrimaryKey: String, cssSelector: String) -> Bool {
+    private func embeddedMessageHasChanged(messagePrimaryKey: String, cssSelector: String) async -> Bool {
         guard let fetchedMessage = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: messagePrimaryKey) else {
             return false
         }
 
-        guard let parsedDraft = try? SwiftSoup.parse(draft.body),
-              let parsedEmbeddedMessage = try? parsedDraft.select(cssSelector).first(),
+        guard let parsedDraft = try? await SwiftSoup.parse(draft.body),
+              let parsedEmbeddedMessage = try? await parsedDraft.select(cssSelector).first(),
               let parsedEmbeddedMessageText = try? parsedEmbeddedMessage.text()
         else { return false }
 
@@ -92,8 +100,12 @@ public struct DraftContentDiffHelper {
 
         var parsedFetchedMessageText: String? = fetchedMessageBody
         if fetchedMessage.body?.type == .textHtml {
-            let parsedFetchedMessage = try? SwiftSoup.parse(fetchedMessageBody)
-            parsedFetchedMessageText = try? parsedFetchedMessage?.text()
+            if let cleanedFetchedMessageBody = try? await SwiftSoupUtils(fromHTML: fetchedMessageBody).cleanBody() {
+                parsedFetchedMessageText = try? cleanedFetchedMessageBody.text()
+            } else {
+                let parsedFetchedMessage = try? await SwiftSoup.parse(fetchedMessageBody)
+                parsedFetchedMessageText = try? parsedFetchedMessage?.text()
+            }
         }
 
         guard let parsedFetchedMessageText else {

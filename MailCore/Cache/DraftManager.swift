@@ -346,7 +346,7 @@ public final class DraftManager {
     /// Present a message with a `delete draft`  action
     @discardableResult
     private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
-        guard draftShouldBeSaved(draft: draft, mailboxManager: mailboxManager) else {
+        guard await draftShouldBeSaved(draft: draft, mailboxManager: mailboxManager) else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
@@ -514,11 +514,11 @@ public final class DraftManager {
         return liveDraft.freeze()
     }
 
-    private func draftShouldBeSaved(draft: Draft, mailboxManager: MailboxManager) -> Bool {
+    private func draftShouldBeSaved(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
         if draft.hasAttachments {
             return true
         }
 
-        return DraftContentDiffHelper(draft: draft, transactionable: mailboxManager).containsUserEdition()
+        return await DraftContentDiffHelper(draft: draft, transactionable: mailboxManager).containsUserEdition()
     }
 }
