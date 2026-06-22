@@ -85,7 +85,9 @@ public struct DraftContentDiffHelper {
     }
 
     private func embeddedMessageHasChanged(messagePrimaryKey: String, cssSelector: String) async -> Bool {
-        guard let fetchedMessage = transactionable.fetchObject(ofType: Message.self, forPrimaryKey: messagePrimaryKey) else {
+        guard let fetchedMessage = transactionable.fetchObject(
+            ofType: Message.self, forPrimaryKey: messagePrimaryKey
+        )?.freezeIfNeeded() else {
             return false
         }
 

@@ -218,7 +218,7 @@ extension AIModel {
 
 extension AIModel {
     func didTapInsert() async {
-        let shouldReplaceBody = shouldOverrideBody()
+        let shouldReplaceBody = await shouldOverrideBody()
         guard !shouldReplaceBody else {
             isShowingReplaceBodyAlert = true
             return
@@ -282,9 +282,9 @@ extension AIModel {
         return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private func shouldOverrideBody() -> Bool {
-        guard let liveDraft = getLiveDraft() else { return false }
-        return DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
+    private func shouldOverrideBody() async -> Bool {
+        guard let liveDraft = getLiveDraft()?.freezeIfNeeded() else { return false }
+        return await DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
     }
 
     private func getRecipientsList() -> String? {
