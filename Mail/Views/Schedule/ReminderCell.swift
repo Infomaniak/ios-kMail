@@ -33,9 +33,11 @@ struct ReminderCell: View {
                     Text(option.title)
                         .textStyle(.body)
 
-                    if option.isCustom, isSelected, let date = option.date {
-                        Text(date, format: .scheduleOption)
-                            .textStyle(.bodySmallSecondary)
+                    if option.isCustom {
+                        if isSelected, let subtitle = option.subtitle {
+                            Text(subtitle)
+                                .textStyle(.bodySmallSecondary)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,10 +63,12 @@ struct ReminderCell: View {
     VStack(spacing: 0) {
         ReminderCell(option: .oneDay, isSelected: false) {}
         IKDivider(type: .item)
-        ReminderCell(option: .threeDays, isSelected: false) {}
+        ReminderCell(option: .threeDays, isSelected: true) {}
         IKDivider(type: .item)
         ReminderCell(option: .sevenDays, isSelected: false) {}
         IKDivider(type: .item)
-        ReminderCell(option: .custom(date: .now), isSelected: true) {}
+        ReminderCell(option: .customHours(5), isSelected: true) {}
+        IKDivider(type: .item)
+        ReminderCell(option: .customDays(3), isSelected: false) {}
     }
 }

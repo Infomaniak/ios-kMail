@@ -539,8 +539,9 @@ struct ComposeMessageView: View {
                 }
 
                 // TODO: Store reminder option when backend is ready
-                // if let reminderOption = selectedReminderOption {
-                //     liveDraft.reminderDate = selectedReminderOption?.date
+                // if let reminderOption = selectedReminderOption,
+                //    let scheduleDate = selectedScheduleOption?.date {
+                //     liveDraft.reminderDate = reminderOption.reminderDate(sentAt: scheduleDate)
                 // }
             }
         }

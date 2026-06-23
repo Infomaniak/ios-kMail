@@ -112,21 +112,29 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
                 .mailCustomAlert(isPresented: $isShowingCustomScheduleAlert) {
-                    let reminderMinDate = selectedScheduleOption?.date?.addingTimeInterval(ScheduleType.reminder.minimumInterval)
-                    CustomScheduleAlertView(
-                        type: customAlertType,
-                        date: initialDate,
-                        isUpdating: isUpdating,
-                        minimumDate: customAlertType == .reminder ? reminderMinDate : nil,
-                        confirmAction: { date in
-                            if customAlertType == .scheduledDraft {
-                                selectedScheduleOption = .custom(date: date)
-                            } else {
-                                selectedReminderOption = .custom(date: date)
+                    if customAlertType == .reminder {
+                        CustomReminderAlertView(
+                            confirmAction: { option in
+                                selectedReminderOption = option
+                            },
+                            cancelAction: {
+                                panelShouldBeShown = true
                             }
-                        }
-                    ) {
-                        panelShouldBeShown = true
+                        )
+                    } else {
+                        CustomScheduleAlertView(
+                            type: customAlertType,
+                            date: initialDate,
+                            isUpdating: isUpdating,
+                            confirmAction: { date in
+                                if customAlertType == .scheduledDraft {
+                                    selectedScheduleOption = .custom(date: date)
+                                }
+                            },
+                            cancelAction: {
+                                panelShouldBeShown = true
+                            }
+                        )
                     }
                 }
             }
