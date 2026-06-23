@@ -143,6 +143,7 @@ struct ComposeMessageBodyView: View {
                 mentionQueryHandler = handler
             }
             editor.webView.loadUserScript(.observeMention)
+            editor.webView.loadUserScript(.observeMentionDeletion)
             editor.webView.loadUserScript(.insertMention)
 
             Task { @MainActor in

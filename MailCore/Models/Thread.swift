@@ -334,7 +334,7 @@ public extension Thread {
     typealias MessageId = String
 
     /// Re-generate `Thread` properties given the messages it contains.
-    func recomputeOrFail(currentAccountEmail: String) throws {
+    func recomputeOrFail(currentMailbox: Mailbox) throws {
         messages = messages.sortedByDate().toRealmList()
         messagesToDisplay = List()
 
@@ -390,7 +390,7 @@ public extension Thread {
                 let hasAppliedReaction = applyReactionIfPossible(
                     from: message,
                     messagesById: messagesById,
-                    currentAccountEmail: currentAccountEmail
+                    currentAccountEmail: currentMailbox.email
                 )
 
                 message.isDisplayable = !(hasAppliedReaction || message.isDraft)
@@ -401,8 +401,12 @@ public extension Thread {
             updateSnooze(from: message)
         }
 
-        isMentioned = messages.contains {
-            !$0.seen && $0.mentions.contains { $0 == currentAccountEmail }
+        isMentioned = messages.contains { message in
+            guard !message.seen else { return false }
+
+            return message.mentions.contains { mention in
+                currentMailbox.aliases.contains(mention)
+            }
         }
 
         for duplicate in duplicates {
