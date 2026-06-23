@@ -225,8 +225,7 @@ public final class DraftManager {
     ) async throws -> Date? {
         showWillSendSnackbar(action: initialDraft.action, showSnackbar: showSnackbar)
 
-        let cleanedDraft = await removeTagAttributes(draft: initialDraft)
-        let draft = updateSubjectIfNeeded(draft: cleanedDraft)
+        let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
             if draft.action == .send || draft.action == .sendReaction {
@@ -418,36 +417,6 @@ public final class DraftManager {
             liveDraft.subject = String(subject[..<index])
         }
         return liveDraft.freeze()
-    }
-
-    private func removeTagAttributes(draft: Draft) async -> Draft {
-        guard let liveDraft = draft.thaw() else { return draft }
-
-        do {
-            let document = try await SwiftSoup.parse(liveDraft.body)
-            let mentions = try await document.select("a[data-ik-mention-ref]")
-
-            for mention in mentions {
-                try mention.removeAttr("data-not-clickable")
-
-                let cleanedStyle = try mention.attr("style")
-                    .split(separator: ";")
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
-                    .filter { !$0.lowercased().hasPrefix("pointer-events") }
-                    .joined(separator: "; ")
-
-                let mentionStyle = "padding: 0 4px;border-radius: 100px;color: var(--mail-content-mention-text-color, #333);background-color: var(--mail-content-mention-background-color, #f1f1f1);font-weight: var(--mail-content-mention-font-weight, inherit);work-break: break-all;\(cleanedStyle)"
-                try mention.attr("style", mentionStyle)
-            }
-
-            try liveDraft.realm?.write {
-                liveDraft.body = try document.outerHtml()
-            }
-        } catch {
-            assertionFailure("removeTagAttributes failed: \(error)")
-        }
-
-        return liveDraft.freezeIfNeeded()
     }
 
     private func showWillSendSnackbar(action: SaveDraftOption?, showSnackbar: Bool) {

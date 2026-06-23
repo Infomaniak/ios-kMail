@@ -22,6 +22,7 @@ import MailCore
 import OSLog
 import RealmSwift
 import WebKit
+import InfomaniakDI
 
 final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
     static let messageName = "mentionsDelete"
