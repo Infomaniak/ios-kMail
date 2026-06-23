@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Thu, 11 Jun 2026 08:46:12 +0200
+ * Exported at: Thu, 28 May 2026 10:19:52 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -27,6 +27,9 @@
 
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Block sender";
+
+/* loco:6a33f011268e2e689d055ec2 */
+"actionCallIfNoResponse" = "Remind me if there is no response after sending";
 
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Cancel snooze";
@@ -117,6 +120,30 @@
 
 /* loco:668cd87ac01614f14603ac92 */
 "addLinkTextPlaceholder" = "Text to display";
+
+/* loco:69e09412a691c7f6f509e9e2 */
+"addMultipleDuplicateEmails" = "%d email has already been added";
+
+/* loco:69e0976aec92330d290f6132 */
+"addMultipleDuplicateEmails-plural" = "%d emails have already been added";
+
+/* loco:69e098862d60d708510f7482 */
+"addMultipleDuplicateEmails-plural-2" = "";
+
+/* loco:69e0988b0a88f2f1e906e342 */
+"addMultipleDuplicateEmails-plural-3" = "";
+
+/* loco:69e09d4c4090205bae063dd2 */
+"addMultipleInvalidEmails" = "%d email is invalid";
+
+/* loco:69e09d50f14f361fb505ea22 */
+"addMultipleInvalidEmails-plural" = "%d emails are invalid";
+
+/* loco:69e09d543712c5e5fe0b3ab2 */
+"addMultipleInvalidEmails-plural-2" = "";
+
+/* loco:69e09d576bc338c3de02c772 */
+"addMultipleInvalidEmails-plural-3" = "";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "The email is already used";
@@ -376,6 +403,9 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Add a folder";
 
+/* loco:6a327bedaf69f744ea0b9752 */
+"buttonCustomReminder" = "Custom reminder";
+
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Custom schedule";
 
@@ -529,6 +559,9 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organizer)";
 
+/* loco:6a33f13510c27914c80cf5d2 */
+"callIfNoResponseHeaderTitle" = "Remind me if there is no response after sending: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 
@@ -631,8 +664,15 @@
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Forwarded";
 
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "You have been mentioned.";
+
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "New";
+
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "Is reminder";
 
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Reply";
@@ -660,6 +700,9 @@
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
+
+/* loco:6a200cbc394598861c0fe902 */
+"daysBeforeSendingReminder" = "%d days";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
@@ -955,6 +998,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "The server is refusing the sender";
 
+/* loco:6a282f33edb32db70e0e4f02 */
+"errorReminderDelayTooShort" = "The reminder must be at least %d hour in the future";
+
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort" = "You can’t schedule an email less than %d minutes in the future";
 
@@ -984,6 +1030,9 @@
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "The sender’s origin has been authenticated.";
+
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Recipients within your organization will see that a response is expected.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "I understand";
@@ -1057,6 +1106,9 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "To help you";
 
+/* loco:6a200d0be50e2414ef01c585 */
+"hoursBeforeSendingReminder" = "%d hours";
+
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Inbox";
 
@@ -1077,6 +1129,9 @@
 
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Later this morning";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "and";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Loading…";
@@ -1116,6 +1171,12 @@
 
 /* loco:62b2f6bcdfa4fa28ad7bb122 */
 "menuDrawerMailboxStorage" = "%1$@ / %2$@ used";
+
+/* loco:6a339ec8d1c106218d093662 */
+"messageAlreadySummarized" = "The message is already summarized";
+
+/* loco:6a339f263bd08592e10df6f3 */
+"messageAlreadyTranslated" = "The message is already translated";
 
 /* loco:6903874c026e3f7b78066ba2 */
 "messageComesFromDiscussionList" = "This message comes from a discussion list.";
@@ -1158,6 +1219,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Message summary";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria could not summarize this message.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria could not summarize this message. Please try again.";
@@ -1348,6 +1412,49 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recent searches";
 
+/* loco:6a2beb4d91e4ffca310637d3 */
+"reminderAfterHeaderTitle" = "%1$@ is awaiting a reply since %2$@";
+
+/* loco:6a2beb4d91e4ffca310637d4 */
+"reminderAfterHeaderTitle-plural" = "%1$@ are awaiting a reply since %2$@";
+
+/* loco:6a2beb4d91e4ffca310637d5 */
+"reminderAfterHeaderTitle-plural-2" = "";
+
+/* loco:6a2beb4d91e4ffca310637d6 */
+"reminderAfterHeaderTitle-plural-3" = "";
+
+/* loco:6a2bebd42122fe8388063648 */
+"reminderBeforeHeaderTitle" = "%1$@ is awaiting a reply by %2$@";
+
+/* loco:6a2bebd42122fe8388063649 */
+"reminderBeforeHeaderTitle-plural" = "%1$@ are awaiting a reply by %2$@";
+
+/* loco:6a2bebd42122fe838806364a */
+"reminderBeforeHeaderTitle-plural-2" = "";
+
+/* loco:6a2bebd42122fe838806364b */
+"reminderBeforeHeaderTitle-plural-3" = "";
+
+/* loco:6a3a51f912ad97935e085212 */
+"reminderBottomSheetTitle" = "Delay the reminder";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Follow up";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hello,\nIs it possible to get some feedback on this subject?\nThank you in advance.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Mark as done";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Reminder: no response from %1$s to this email since %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Postpone until tomorrow %s";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Rename the folder";
 
@@ -1377,6 +1484,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Save in kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Scheduled sending: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schedule sending";
@@ -1419,6 +1529,9 @@
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Send the confirmation";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Send options";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Sent messages";
@@ -1756,6 +1869,12 @@
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaction %@ sent";
 
+/* loco:6a2912145e8865f2bb0e1ff2 */
+"snackbarReminder" = "The reminder is being created";
+
+/* loco:6a2915941b110d7b1d08a1d2 */
+"snackbarReminderSaved" = "The reminder is set for %s";
+
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Successfully reported";
 
@@ -1942,6 +2061,12 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Unblock";
 
+/* loco:6a338845e65f8f17b50b77f2 */
+"unitDays" = "Days";
+
+/* loco:6a33888838ea102266012d12 */
+"unitHours" = "Hours";
+
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Unknown expeditor";
 
@@ -1968,6 +2093,9 @@
 
 /* loco:6633460708b9ff4adf0726b2 */
 "updateVersionTitle" = "Your experience may be degraded because your device is out of date";
+
+/* loco:6a33bf72315d7d3dea09c7b3 */
+"urgencyReminderDescription" = "Get notified if your recipient hasn’t replied by a chosen date.";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Create a hyperlink";
