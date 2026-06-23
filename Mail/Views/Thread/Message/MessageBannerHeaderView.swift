@@ -84,20 +84,22 @@ struct MessageBannerHeaderView: View {
                     )
                 }
             case .acknowledge:
-                if !isAcknowledgeSuccessful && message.hasPendingAcknowledgement {
-                    MessageHeaderAsyncActionView(
-                        icon: MailResourcesAsset.envelope.swiftUIImage,
-                        message: MailResourcesStrings.Localizable.acknowledgementMessage,
-                        actionTitle: MailResourcesStrings.Localizable.sendConfirmationAction,
-                        showBottomSeparator: showBottomSeparator,
-                        asyncAction: acknowledgeAction
-                    )
-                } else {
-                    MessageHeaderActionView(
-                        icon: MailResourcesAsset.check.swiftUIImage,
-                        message: MailResourcesStrings.Localizable.acknowledgementMessageSent,
-                        showBottomSeparator: showBottomSeparator
-                    ) {}
+                if !message.fromMe(currentMailboxEmail: mailbox.email) {
+                    if !isAcknowledgeSuccessful && message.hasPendingAcknowledgement {
+                        MessageHeaderAsyncActionView(
+                            icon: MailResourcesAsset.envelope.swiftUIImage,
+                            message: MailResourcesStrings.Localizable.acknowledgementMessage,
+                            actionTitle: MailResourcesStrings.Localizable.sendConfirmationAction,
+                            showBottomSeparator: showBottomSeparator,
+                            asyncAction: acknowledgeAction
+                        )
+                    } else {
+                        MessageHeaderActionView(
+                            icon: MailResourcesAsset.check.swiftUIImage,
+                            message: MailResourcesStrings.Localizable.acknowledgementMessageSent,
+                            showBottomSeparator: showBottomSeparator
+                        ) {}
+                    }
                 }
             }
         }
