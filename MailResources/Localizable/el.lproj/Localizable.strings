@@ -28,8 +28,8 @@
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Αποκλεισμός αποστολέα";
 
-/* loco:6a1ff9313bbd5078f00b5912 */
-"actionCallIfNoResponse" = "Θύμισέ μου αν δεν υπάρξει απάντηση";
+/* loco:6a33f011268e2e689d055ec2 */
+"actionCallIfNoResponse" = "Υπενθύμισέ μου αν δεν υπάρξει απάντηση μετά την αποστολή";
 
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Ακύρωση αναβολής";
@@ -120,6 +120,30 @@
 
 /* loco:668cd87ac01614f14603ac92 */
 "addLinkTextPlaceholder" = "Κείμενο για εμφάνιση";
+
+/* loco:69e09412a691c7f6f509e9e2 */
+"addMultipleDuplicateEmails" = "%d email έχει ήδη προστεθεί";
+
+/* loco:69e0976aec92330d290f6132 */
+"addMultipleDuplicateEmails-plural" = "%d emails έχουν ήδη προστεθεί";
+
+/* loco:69e098862d60d708510f7482 */
+"addMultipleDuplicateEmails-plural-2" = "";
+
+/* loco:69e0988b0a88f2f1e906e342 */
+"addMultipleDuplicateEmails-plural-3" = "";
+
+/* loco:69e09d4c4090205bae063dd2 */
+"addMultipleInvalidEmails" = "%d email είναι μη έγκυρο";
+
+/* loco:69e09d50f14f361fb505ea22 */
+"addMultipleInvalidEmails-plural" = "%d emails είναι μη έγκυρα";
+
+/* loco:69e09d543712c5e5fe0b3ab2 */
+"addMultipleInvalidEmails-plural-2" = "";
+
+/* loco:69e09d576bc338c3de02c772 */
+"addMultipleInvalidEmails-plural-3" = "";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "Το e-mail χρησιμοποιείται ήδη";
@@ -379,7 +403,7 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Προσθήκη φακέλου";
 
-/* loco:6a27d7f60e7b4dc01d097f18 */
+/* loco:6a327bedaf69f744ea0b9752 */
 "buttonCustomReminder" = "Προσαρμοσμένη υπενθύμιση";
 
 /* loco:6723a4468cf8e4d10e094606 */
@@ -535,8 +559,8 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Διοργανωτής)";
 
-/* loco:6a202b5d27e1689d6f097ef3 */
-"callIfNoResponseHeaderTitle" = "Θύμισέ μου αν δεν υπάρξει απάντηση: %s";
+/* loco:6a33f13510c27914c80cf5d2 */
+"callIfNoResponseHeaderTitle" = "Υπενθύμισέ μου αν δεν υπάρξει απάντηση μετά την αποστολή: %s";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Κοινοποίηση:";
@@ -640,6 +664,10 @@
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Προωθήθηκε";
 
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "Έχετε αναφερθεί.";
+
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Νέο";
 
@@ -654,10 +682,6 @@
 
 /* loco:642430a9ce12f43b026e7ef2 */
 "contentDescriptionSelectedItem" = "Επιλεγμένο";
-
-/* loco:6a26ca31cd1868366600c4c2
- * Used in accessibility labels for mention indicators */
-"contentDescriptionTagMention" = "Έχετε αναφερθεί.";
 
 /* loco:64a4240f5579c83f7b070182 */
 "contentDescriptionUnreadPastille" = "Αυτός ο φάκελος περιέχει μη αναγνωσμένα μηνύματα";
@@ -974,6 +998,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "Ο διακομιστής απορρίπτει τον αποστολέα";
 
+/* loco:6a282f33edb32db70e0e4f02 */
+"errorReminderDelayTooShort" = "Η υπενθύμιση πρέπει να είναι τουλάχιστον %d ώρα στο μέλλον";
+
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort" = "Δεν μπορείτε να προγραμματίσετε email σε λιγότερο από %d λεπτά";
 
@@ -1144,6 +1171,12 @@
 
 /* loco:62b2f6bcdfa4fa28ad7bb122 */
 "menuDrawerMailboxStorage" = "%1$@ / %2$@ χρησιμοποιημένα";
+
+/* loco:6a339ec8d1c106218d093662 */
+"messageAlreadySummarized" = "Το μήνυμα είναι ήδη συνοψισμένο";
+
+/* loco:6a339f263bd08592e10df6f3 */
+"messageAlreadyTranslated" = "Το μήνυμα είναι ήδη μεταφρασμένο";
 
 /* loco:6903874c026e3f7b78066ba2 */
 "messageComesFromDiscussionList" = "Αυτό το μήνυμα προέρχεται από λίστα συζήτησης.";
@@ -1379,17 +1412,32 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Πρόσφατες αναζητήσεις";
 
-/* loco:6a215874fe133c053105c086 */
-"reminderAfterHeaderTitle" = "%1$@ περιμένει απάντηση από τις %2$@";
+/* loco:6a2beb4d91e4ffca310637d3 */
+"reminderAfterHeaderTitle" = "%1$@ περιμένει απάντηση από %2$@";
 
-/* loco:6a215cec5983e40edf0d2d92 */
-"reminderAfterHeaderTitle-plural" = "%1$@ περιμένουν απάντηση από τις %2$@";
+/* loco:6a2beb4d91e4ffca310637d4 */
+"reminderAfterHeaderTitle-plural" = "%1$@ περιμένουν απάντηση από %2$@";
 
-/* loco:6a215873199011ec1c03ecf2 */
-"reminderBeforeHeaderTitle" = "%1$s περιμένει απάντηση έως τις %2$s";
+/* loco:6a2beb4d91e4ffca310637d5 */
+"reminderAfterHeaderTitle-plural-2" = "";
 
-/* loco:6a215cec7c626a0c6e001732 */
-"reminderBeforeHeaderTitle-plural" = "%1$s περιμένουν απάντηση έως τις %2$s";
+/* loco:6a2beb4d91e4ffca310637d6 */
+"reminderAfterHeaderTitle-plural-3" = "";
+
+/* loco:6a2bebd42122fe8388063648 */
+"reminderBeforeHeaderTitle" = "%1$@ περιμένει απάντηση έως %2$@";
+
+/* loco:6a2bebd42122fe8388063649 */
+"reminderBeforeHeaderTitle-plural" = "%1$@ περιμένουν απάντηση έως %2$@";
+
+/* loco:6a2bebd42122fe838806364a */
+"reminderBeforeHeaderTitle-plural-2" = "";
+
+/* loco:6a2bebd42122fe838806364b */
+"reminderBeforeHeaderTitle-plural-3" = "";
+
+/* loco:6a3a51f912ad97935e085212 */
+"reminderBottomSheetTitle" = "Αναβολή της υπενθύμισης";
 
 /* loco:6a22b723fa69bc57450beaa2 */
 "reminderFollowUpButton" = "Παρακολούθηση";
@@ -1568,6 +1616,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Απενεργοποιημένο";
+
+/* loco:6a2a56a47111b4a768088ad2 */
+"settingsEnableMailDarkMode" = "Εμφάνιση μηνυμάτων ηλεκτρονικού ταχυδρομείου σε σκοτεινή λειτουργία";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Ενεργοποίηση ειδοποιήσεων";
@@ -1818,6 +1869,12 @@
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Η αντίδραση %@ στάλθηκε";
 
+/* loco:6a2912145e8865f2bb0e1ff2 */
+"snackbarReminder" = "Η υπενθύμιση δημιουργείται";
+
+/* loco:6a2915941b110d7b1d08a1d2 */
+"snackbarReminderSaved" = "Η υπενθύμιση έχει οριστεί για %s";
+
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Η αναφορά ολοκληρώθηκε με επιτυχία";
 
@@ -2004,6 +2061,12 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Ξεμπλοκάρισμα";
 
+/* loco:6a338845e65f8f17b50b77f2 */
+"unitDays" = "Ημέρες";
+
+/* loco:6a33888838ea102266012d12 */
+"unitHours" = "Ώρες";
+
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Άγνωστος αποστολέας";
 
@@ -2030,6 +2093,9 @@
 
 /* loco:6633460708b9ff4adf0726b2 */
 "updateVersionTitle" = "Η εμπειρία σας μπορεί να υποβαθμιστεί επειδή η συσκευή σας δεν είναι ενημερωμένη";
+
+/* loco:6a33bf72315d7d3dea09c7b3 */
+"urgencyReminderDescription" = "Ενημερωθείτε εάν ο παραλήπτης σας δεν έχει απαντήσει μέχρι μια επιλεγμένη ημερομηνία.";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Δημιουργία υπερσύνδεσμου";
