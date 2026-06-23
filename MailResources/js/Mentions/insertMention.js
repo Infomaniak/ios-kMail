@@ -28,10 +28,9 @@ function insertMention(userMail, userName) {
     const editor = getEditor();
 
     const getBlockParent = (node) => {
-        const blockTags = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "H5", "H6", "LI", "BLOCKQUOTE", "TD", "TR"]);
         let current = node;
         while (current && current !== editor && current.nodeType !== Node.DOCUMENT_NODE) {
-            if (current.nodeType === Node.ELEMENT_NODE && blockTags.has(current.tagName.toUpperCase())) {
+            if (current.nodeType === Node.ELEMENT_NODE) {
                 return current;
             }
             current = current.parentNode;
@@ -67,7 +66,7 @@ function insertMention(userMail, userName) {
         while (currentNode) {
             lastNode = currentNode;
             const currentLength = currentNode.textContent.length;
-            
+
             if (traversed + currentLength >= targetOffset) {
                 return {
                     node: currentNode,
@@ -102,22 +101,19 @@ function insertMention(userMail, userName) {
     anchor.dataset.ikMentionRef = userMail;
     anchor.setAttribute("href", `mailto:${userMail}`);
     anchor.setAttribute("contenteditable", "false");
+    anchor.setAttribute(
+        "style",
+        "padding: 0 4px; border-radius: 100px; color: var(--mail-content-mention-text-color, #333); " +
+            "background-color: var(--mail-content-mention-background-color, #f1f1f1); " +
+            "font-weight: var(--mail-content-mention-font-weight, inherit);",
+    );
     anchor.textContent = `@${userName}`;
 
-    const trailingSpace = document.createTextNode(" ");
-    replaceRange.insertNode(trailingSpace);
     replaceRange.insertNode(anchor);
 
-    
-    const previousNode = anchor.previousSibling;
-    if (previousNode &&
-        previousNode.nodeType === Node.ELEMENT_NODE &&
-        previousNode.hasAttribute("data-ik-mention-ref")) {
-        const interSpace = document.createTextNode("\u00A0");
-        anchor.parentNode.insertBefore(interSpace, anchor);
-    }
-    
-    
+    const trailingSpace = document.createTextNode("\u00A0");
+    anchor.after(trailingSpace);
+
     const newCaretRange = document.createRange();
     newCaretRange.setStartAfter(trailingSpace);
     newCaretRange.collapse(true);

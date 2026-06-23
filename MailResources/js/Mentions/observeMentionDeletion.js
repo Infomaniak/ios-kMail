@@ -17,6 +17,63 @@
  */
 observeMentionDeletion();
 
+function getMentionBeforeCaret() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return null;
+    const range = selection.getRangeAt(0);
+    if (!range.collapsed) return null;
+
+    const node = range.startContainer;
+    const offset = range.startOffset;
+
+    const isAtTextStart =
+        node.nodeType === Node.TEXT_NODE &&
+        node.textContent.slice(0, offset).replace(/\u200B/g, "").length === 0;
+
+    let probe = null;
+    if (isAtTextStart) {
+        probe = node.previousSibling;
+    } else if (node.nodeType === Node.ELEMENT_NODE && offset > 0) {
+        probe = node.childNodes[offset - 1];
+    }
+
+    while (probe && probe.nodeType === Node.TEXT_NODE &&
+           probe.textContent.replace(/\u200B/g, "").length === 0) {
+        probe = probe.previousSibling;
+    }
+
+    return probe && probe.nodeType === Node.ELEMENT_NODE &&
+           probe.matches?.("a[data-ik-mention-ref]") ? probe : null;
+}
+
+
+
+function handleMentionBackspace(event) {
+    if (event.key !== "Backspace") return;
+
+    const mention = getMentionBeforeCaret();
+    if (!mention) return;
+
+    event.preventDefault();
+
+    const range = document.createRange();
+    range.setStartBefore(mention);
+    range.collapse(true);
+    
+    let allMentions = document.querySelectorAll("a[data-ik-mention-ref]");
+    if (allMentions.length <= 1) {
+        let br = document.createElement("br");
+        mention.replaceWith(br);
+    }else {
+        mention.remove();
+    }
+
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+
 function observeMentionDeletion() {
     const extractRemovedRefs = (node, refsCollection) => {
         if (node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-ik-mention-ref")) {
@@ -72,7 +129,9 @@ function observeMentionDeletion() {
     } else {
         document.addEventListener("DOMContentLoaded", setupObserver);
     }
+    document.addEventListener("keydown", handleMentionBackspace);
 }
+
 
 function onMentionsDeleted(refsJson) {
     const handler = window.webkit?.messageHandlers?.mentionsDelete;

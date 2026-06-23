@@ -22,13 +22,13 @@ const validMentionCharsRegex = /^[A-Za-z0-9._+-]*(?:@[A-Za-z0-9.-]*)?$/;
 const zeroWidthCharsRegex = /[\u200B-\u200D\uFEFF]/g;
 const mentionQueryRegex = /(?:^|\s)@(\S*)$/;
 
+// We get the parent block to get the correct range to look for the @
 const getBlockParent = (node) => {
     const editor = getEditor();
-    const blockTags = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "H5", "H6", "LI", "BLOCKQUOTE", "TD", "TR"]);
     let current = node;
-    
+
     while (current && current !== editor && current.nodeType !== Node.DOCUMENT_NODE) {
-        if (current.nodeType === Node.ELEMENT_NODE && blockTags.has(current.tagName.toUpperCase())) {
+        if (current.nodeType === Node.ELEMENT_NODE) {
             return current;
         }
         current = current.parentNode;
@@ -45,34 +45,26 @@ const getTextBeforeCaret = () => {
 
     const block = getBlockParent(range.startContainer);
     const preRange = range.cloneRange();
-    
+
     try {
         preRange.setStart(block, 0);
     } catch (e) {
         preRange.selectNodeContents(getEditor());
     }
-    
+
     preRange.setEnd(range.endContainer, range.endOffset);
 
     const fragment = preRange.cloneContents();
-
+    // Replace all the existing mentions with a space to ignore them when extracting the query
     const mentions = fragment.querySelectorAll("a[data-ik-mention-ref]");
-    mentions.forEach(mention => mention.replaceWith(" "));
-
-    const brs = fragment.querySelectorAll("br");
-    brs.forEach(br => br.replaceWith("\n"));
-
-    const blocks = fragment.querySelectorAll("div, p, li, blockquote");
-    blocks.forEach(b => {
-        b.prepend(document.createTextNode("\n"));
-    });
+    mentions.forEach((mention) => mention.replaceWith(" "));
 
     return fragment.textContent;
 };
 
 const extractMentionQuery = (textBeforeCaret) => {
     const normalizedText = textBeforeCaret.replace(zeroWidthCharsRegex, "");
-    
+
     const match = normalizedText.match(mentionQueryRegex);
     if (!match) return null;
 
@@ -80,30 +72,8 @@ const extractMentionQuery = (textBeforeCaret) => {
 
     return validMentionCharsRegex.test(query) ? query : null;
 };
-const isInsideMentionLink = () => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return false;
-
-    const range = selection.getRangeAt(0);
-    const node = range.startContainer.nodeType === Node.ELEMENT_NODE
-        ? range.startContainer
-        : range.startContainer.parentElement;
-
-    return !!node?.closest("a[data-ik-mention-ref]");
-};
-
-const resetMentionQuery = () => {
-    if (lastSentValue === null) return;
-    lastSentValue = null;
-    reportMentionQueryChanged("");
-};
 
 const notifyIfChanged = () => {
-    if (isInsideMentionLink()) {
-        resetMentionQuery();
-        return;
-    }
-
     const textBeforeCaret = getTextBeforeCaret();
     const query = extractMentionQuery(textBeforeCaret);
 
@@ -112,6 +82,57 @@ const notifyIfChanged = () => {
 
     reportMentionQueryChanged(query != null ? query : "");
 };
+// Check if the caret is right before a mention node
+function isCaretBeforeMention() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return false;
+    const range = selection.getRangeAt(0);
+    if (!range.collapsed) return false;
+
+    const node = range.startContainer;
+    const offset = range.startOffset;
+    if (offset !== node.textContent.length) return false;
+
+    const next = node.nextSibling;
+    if (!next || next.nodeType !== Node.ELEMENT_NODE) return false;
+
+    return next.matches?.("a[data-ik-mention-ref]") || false;
+}
+
+const handleMentionBoundaryKeydown = (event) => {
+    if (event.key === "Enter" && isCaretBeforeMention()) {
+        handleEnter(event);
+    }
+}
+
+// Handle Enter key to split the block if the caret is before a mention.
+// This is used to avoid creating an extra empty line in between the mentions.
+const handleEnter = (event) => {
+    event.preventDefault();
+    
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const block = getBlockParent(range.startContainer);
+    
+    const newBlock = document.createElement('div');
+    
+    const mentionNode = range.startContainer.nextSibling;
+    let current = mentionNode;
+    while (current) {
+        const next = current.nextSibling;
+        newBlock.appendChild(current);
+        current = next;
+    }
+    
+    block.parentNode.insertBefore(newBlock, block.nextSibling);
+    
+    const newRange = document.createRange();
+    newRange.setStart(newBlock, 1);
+    newRange.collapse(true);
+    
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+}
 
 const observeMention = () => {
     if (globalThis.__swiftRichHTMLEditorMentionDetectionInitialized) return;
@@ -119,6 +140,7 @@ const observeMention = () => {
 
     document.addEventListener("selectionchange", notifyIfChanged);
     document.addEventListener("input", notifyIfChanged);
+    document.addEventListener("keydown", handleMentionBoundaryKeydown);
 };
 
 function reportMentionQueryChanged(query) {
