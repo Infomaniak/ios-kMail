@@ -138,9 +138,12 @@ struct MobileMainToolbarView: View {
     }
 
     private func isDisabled(_ action: EditorToolbarAction) -> Bool {
-        if action == .editText {
+        switch action {
+        case .editText:
             return !isEditorFocused
-        } else {
+        case .sendOptions:
+            return draft.recipientsAreEmpty
+        default:
             return false
         }
     }
