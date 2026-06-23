@@ -91,7 +91,7 @@ struct SendOptionFloatingPanelView: View {
 
                 IKDivider(type: .item)
                 VStack(spacing: 0) {
-                    ForEach(ReminderOption.presetCases) { option in
+                    ForEach(ReminderOption.presetCases, id: \.self) { option in
                         ReminderCell(
                             option: option,
                             isSelected: selectedReminderOption == option
@@ -102,14 +102,9 @@ struct SendOptionFloatingPanelView: View {
                         IKDivider(type: .item)
                     }
 
-                    let customOption: ReminderOption = selectedReminderOption?.isCustom == true
-                        ? selectedReminderOption!
-                        : .custom(date: .now)
-                    let isCustomSelected = selectedReminderOption?.isCustom == true
-
                     ReminderCell(
-                        option: customOption,
-                        isSelected: isCustomSelected
+                        option: selectedReminderOption?.isCustom == true ? selectedReminderOption! : .custom,
+                        isSelected: selectedReminderOption?.isCustom == true
                     ) {
                         customAlertType = .reminder
                         isShowingCustomScheduleAlert = true
@@ -183,16 +178,6 @@ struct SendOptionFloatingPanelView: View {
                 // Reset when toggled OFF
                 selectedScheduleOption = nil
             }
-        }
-        .onChange(of: selectedScheduleOption) { newScheduleOption in
-            // Only adjust custom reminder if it becomes invalid (before schedule date)
-            guard isReminderEnabled,
-                  let reminderOption = selectedReminderOption,
-                  reminderOption.isCustom,
-                  let reminderDate = reminderOption.date,
-                  let scheduleDate = newScheduleOption?.date,
-                  reminderDate <= scheduleDate else { return }
-            selectedReminderOption = .oneDay
         }
     }
 }

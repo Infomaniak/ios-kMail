@@ -19,15 +19,15 @@
 import Foundation
 import MailResources
 
-enum ReminderOption: Identifiable, Equatable {
+enum ReminderOption: Hashable {
     case oneDay
     case threeDays
     case sevenDays
-    case custom(date: Date)
+    case custom
+    case customHours(Int)
+    case customDays(Int)
 
     static let presetCases: [ReminderOption] = [.oneDay, .threeDays, .sevenDays]
-
-    var id: String { title }
 
     var title: String {
         switch self {
@@ -37,35 +37,71 @@ enum ReminderOption: Identifiable, Equatable {
             return MailResourcesStrings.Localizable.daysBeforeSendingReminder(3)
         case .sevenDays:
             return MailResourcesStrings.Localizable.daysBeforeSendingReminder(7)
-        case .custom:
+        case .custom, .customHours, .customDays:
             return MailResourcesStrings.Localizable.buttonCustomSchedule
         }
     }
 
-    var date: Date? {
-        if case .custom(let date) = self {
-            return date
-        }
-        return nil
-    }
-
-    func reminderDate(sentAt sendDate: Date) -> Date? {
+    var subtitle: String? {
         switch self {
-        case .oneDay:
-            return Calendar.current.date(byAdding: .day, value: 1, to: sendDate)
-        case .threeDays:
-            return Calendar.current.date(byAdding: .day, value: 3, to: sendDate)
-        case .sevenDays:
-            return Calendar.current.date(byAdding: .day, value: 7, to: sendDate)
-        case .custom(let date):
-            return date
+        case .customHours(let value):
+            return MailResourcesStrings.Localizable.hoursBeforeSendingReminder(value)
+        case .customDays(let value):
+            return MailResourcesStrings.Localizable.daysBeforeSendingReminder(value)
+        case .oneDay, .threeDays, .sevenDays, .custom:
+            return nil
         }
     }
 
     var isCustom: Bool {
-        if case .custom = self {
+        switch self {
+        case .custom, .customHours, .customDays:
             return true
+        case .oneDay, .threeDays, .sevenDays:
+            return false
         }
-        return false
+    }
+
+    func reminderDate(sentAt sendDate: Date) -> Date? {
+        let calendar = Calendar.current
+        switch self {
+        case .oneDay:
+            return calendar.date(byAdding: .day, value: 1, to: sendDate)
+        case .threeDays:
+            return calendar.date(byAdding: .day, value: 3, to: sendDate)
+        case .sevenDays:
+            return calendar.date(byAdding: .day, value: 7, to: sendDate)
+        case .customHours(let value):
+            return calendar.date(byAdding: .hour, value: value, to: sendDate)
+        case .customDays(let value):
+            return calendar.date(byAdding: .day, value: value, to: sendDate)
+        case .custom:
+            return nil
+        }
+    }
+
+    /// Unit for custom reminder picker
+    enum CustomUnit: CaseIterable {
+        case hours
+        case days
+
+        var range: ClosedRange<Int> {
+            switch self {
+            case .hours: return 1 ... 12
+            case .days: return 1 ... 30
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .hours: return MailResourcesStrings.Localizable.unitHours
+            case .days: return MailResourcesStrings.Localizable.unitDays
+            }
+        }
+
+        func makeOption(value: Int) -> ReminderOption {
+            let clamped = min(max(value, range.lowerBound), range.upperBound)
+            return self == .hours ? .customHours(clamped) : .customDays(clamped)
+        }
     }
 }
