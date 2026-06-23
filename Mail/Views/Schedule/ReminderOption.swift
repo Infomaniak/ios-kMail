@@ -38,7 +38,7 @@ enum ReminderOption: Hashable {
         case .sevenDays:
             return MailResourcesStrings.Localizable.daysBeforeSendingReminder(7)
         case .custom, .customHours, .customDays:
-            return MailResourcesStrings.Localizable.buttonCustomSchedule
+            return MailResourcesStrings.Localizable.buttonCustomReminder
         }
     }
 
