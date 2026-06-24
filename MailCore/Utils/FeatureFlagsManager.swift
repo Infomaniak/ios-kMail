@@ -32,6 +32,7 @@ public enum FeatureFlag: String, Codable {
     case mailEmojiReaction = "mail-emoji-reaction"
     case mailEmailSummary = "mail-email-summary"
     case mailTranslateEmail = "mail-translate-email"
+    case mailComposeMention = "mail-composer-uses-mentions"
     case unknown
 
     public init(from decoder: Decoder) throws {
