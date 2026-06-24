@@ -24,6 +24,7 @@ import SwiftUI
 struct ReminderCell: View {
     let option: ReminderOption
     let isSelected: Bool
+    var showUpgradeChip = false
     let action: () -> Void
 
     var body: some View {
@@ -47,7 +48,9 @@ struct ReminderCell: View {
                         .foregroundStyle(Color.accentColor)
                 }
 
-                if option.isCustom, !isSelected {
+                if showUpgradeChip {
+                    MyKSuitePlusChip()
+                } else if option.isCustom, !isSelected {
                     ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
                 }
             }
@@ -69,6 +72,6 @@ struct ReminderCell: View {
         IKDivider(type: .item)
         ReminderCell(option: .customHours(5), isSelected: true) {}
         IKDivider(type: .item)
-        ReminderCell(option: .customDays(3), isSelected: false) {}
+        ReminderCell(option: .custom, isSelected: false, showUpgradeChip: true) {}
     }
 }

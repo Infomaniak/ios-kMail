@@ -17,16 +17,9 @@
  */
 
 import DesignSystem
-import InfomaniakCoreCommonUI
-import InfomaniakCoreSwiftUI
-import InfomaniakDI
-import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
-import MyKSuite
-import RealmSwift
-import SwiftModalPresentation
 import SwiftUI
 
 extension View {
@@ -87,6 +80,9 @@ struct SendOptionFloatingPanel: ViewModifier {
                 ScrollView {
                     SendOptionFloatingPanelView(
                         isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
+                        isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
+                        isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
+                        isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                         isReminderEnabled: $isReminderEnabled,
                         isScheduleEnabled: $isScheduleEnabled,
                         selectedReminderOption: $selectedReminderOption,
@@ -138,13 +134,5 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
             }
-            .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
-            .kSuitePanel(
-                isPresented: $isShowingKSuiteProUpgrade,
-                backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
-                configuration: .standard,
-                isAdmin: mailboxManager.mailbox.ownerOrAdmin
-            )
-            .mailPremiumPanel(isPresented: $isShowingMailPremiumUpgrade)
     }
 }
