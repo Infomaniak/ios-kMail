@@ -17,15 +17,23 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
 import RealmSwift
 import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @Binding var isShowingCustomScheduleAlert: Bool
+    @Binding var isShowingMyKSuiteUpgrade: Bool
+    @Binding var isShowingKSuiteProUpgrade: Bool
+    @Binding var isShowingMailPremiumUpgrade: Bool
     @Binding var isReminderEnabled: Bool
     @Binding var isScheduleEnabled: Bool
     @Binding var selectedReminderOption: ReminderOption?
@@ -34,6 +42,11 @@ struct SendOptionFloatingPanelView: View {
     @Binding var contentHeight: CGFloat
 
     let initialDate: Date?
+
+    private var isCustomOptionLimited: Bool {
+        let pack = mailboxManager.mailbox.pack
+        return pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack
+    }
 
     private var scheduleOptions: [ScheduleOption] {
         var seenDateOptions = Set<Date>()
@@ -104,10 +117,15 @@ struct SendOptionFloatingPanelView: View {
 
                     ReminderCell(
                         option: selectedReminderOption?.isCustom == true ? selectedReminderOption! : .custom,
-                        isSelected: selectedReminderOption?.isCustom == true
+                        isSelected: selectedReminderOption?.isCustom == true,
+                        showUpgradeChip: isCustomOptionLimited
                     ) {
-                        customAlertType = .reminder
-                        isShowingCustomScheduleAlert = true
+                        if isCustomOptionLimited {
+                            showUpgradeBottomSheet()
+                        } else {
+                            customAlertType = .reminder
+                            isShowingCustomScheduleAlert = true
+                        }
                     }
                 }
             }
@@ -146,10 +164,15 @@ struct SendOptionFloatingPanelView: View {
 
                     ScheduleCell(
                         option: customOption,
-                        isSelected: isCustomSelected
+                        isSelected: isCustomSelected,
+                        showUpgradeChip: isCustomOptionLimited
                     ) {
-                        customAlertType = .scheduledDraft
-                        isShowingCustomScheduleAlert = true
+                        if isCustomOptionLimited {
+                            showUpgradeBottomSheet()
+                        } else {
+                            customAlertType = .scheduledDraft
+                            isShowingCustomScheduleAlert = true
+                        }
                     }
                 }
             }
@@ -179,12 +202,41 @@ struct SendOptionFloatingPanelView: View {
                 selectedScheduleOption = nil
             }
         }
+        .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
+        .kSuitePanel(
+            isPresented: $isShowingKSuiteProUpgrade,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            configuration: .standard,
+            isAdmin: mailboxManager.mailbox.ownerOrAdmin
+        )
+        .mailPremiumPanel(isPresented: $isShowingMailPremiumUpgrade)
+    }
+
+    private func showUpgradeBottomSheet() {
+        @InjectService var matomo: MatomoUtils
+
+        switch mailboxManager.mailbox.pack {
+        case .myKSuiteFree:
+            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "customOption")
+            isShowingMyKSuiteUpgrade = true
+        case .kSuiteFree:
+            matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "customOption")
+            isShowingKSuiteProUpgrade = true
+        case .starterPack:
+            matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: "customOption")
+            isShowingMailPremiumUpgrade = true
+        default:
+            break
+        }
     }
 }
 
 #Preview {
     SendOptionFloatingPanelView(
         isShowingCustomScheduleAlert: .constant(false),
+        isShowingMyKSuiteUpgrade: .constant(false),
+        isShowingKSuiteProUpgrade: .constant(false),
+        isShowingMailPremiumUpgrade: .constant(false),
         isReminderEnabled: .constant(true),
         isScheduleEnabled: .constant(true),
         selectedReminderOption: .constant(.oneDay),
