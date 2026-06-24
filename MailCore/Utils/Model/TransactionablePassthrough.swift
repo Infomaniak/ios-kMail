@@ -43,6 +43,10 @@ extension TransactionablePassthrough {
         return transactionExecutor.fetchResults(ofType: type, filtering: filtering)
     }
 
+    public func writeTransaction(withExpiringActivity enabled: Bool, withRealm realmClosure: (Realm) throws -> Void) throws {
+        try transactionExecutor.writeTransaction(withExpiringActivity: enabled, withRealm: realmClosure)
+    }
+
     public func writeTransaction(withRealm realmClosure: (Realm) throws -> Void) throws {
         try transactionExecutor.writeTransaction(withRealm: realmClosure)
     }
