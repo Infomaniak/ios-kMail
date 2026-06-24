@@ -24,6 +24,7 @@ import SwiftUI
 struct ScheduleCell: View {
     let option: ScheduleOption
     let isSelected: Bool
+    var showUpgradeChip = false
     let action: () -> Void
 
     var body: some View {
@@ -50,7 +51,9 @@ struct ScheduleCell: View {
                         .foregroundStyle(Color.accentColor)
                 }
 
-                if option.isCustom, !isSelected {
+                if showUpgradeChip {
+                    MyKSuitePlusChip()
+                } else if option.isCustom, !isSelected {
                     ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
                 }
             }
@@ -69,5 +72,7 @@ struct ScheduleCell: View {
         ScheduleCell(option: .thisEvening, isSelected: true) {}
         IKDivider(type: .item)
         ScheduleCell(option: .tomorrowMorning, isSelected: false) {}
+        IKDivider(type: .item)
+        ScheduleCell(option: .custom(date: .now), isSelected: false, showUpgradeChip: true) {}
     }
 }

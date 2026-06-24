@@ -46,7 +46,7 @@ struct CustomReminderAlertView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
+            Text(MailResourcesStrings.Localizable.buttonCustomReminder)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
