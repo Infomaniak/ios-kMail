@@ -31,6 +31,7 @@ import SwiftUI
 
 struct ComposeMessageBodyView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingLink: SelectionLink?
@@ -120,10 +121,8 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.fixEmailStyle)
 
-            if mentionDeletionHandler == nil {
-                let handler = MentionDeletionHandler(draft: draft)
-                editor.webView.configuration.userContentController.add(handler, name: MentionDeletionHandler.messageName)
-                mentionDeletionHandler = handler
+            if mailboxManager.featureFlagsManager.isEnabled(.mailComposeMention) {
+                activateMentions(for: editor)
             }
             editor.webView.loadUserScript(.observeMentionDeletion)
             if inlineAttachmentHandler == nil {
@@ -187,6 +186,25 @@ struct ComposeMessageBodyView: View {
                 "Executed JS Function": function
             ])
         }
+    }
+
+    private func activateMentions(for editor: RichHTMLEditorView) {
+        if mentionDeletionHandler == nil {
+            let handler = MentionDeletionHandler(draft: draft)
+            editor.webView.configuration.userContentController.add(handler, name: MentionDeletionHandler.messageName)
+            mentionDeletionHandler = handler
+        }
+        if mentionQueryHandler == nil {
+            let handler = MentionQueryHandler()
+            handler.onQueryChange = { query in
+                mentionQuery = query
+            }
+            editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
+            mentionQueryHandler = handler
+        }
+        editor.webView.loadUserScript(.observeMention)
+        editor.webView.loadUserScript(.observeMentionDeletion)
+        editor.webView.loadUserScript(.insertMention)
     }
 }
 
