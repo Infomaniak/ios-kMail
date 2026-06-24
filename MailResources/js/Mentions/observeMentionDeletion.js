@@ -73,56 +73,41 @@ function handleMentionBackspace(event) {
     selection.addRange(range);
 }
 
+const extractRemovedRefs = (node, refsCollection) => {
+    if (node.nodeType === Node.ELEMENT_NODE && node.dataset.ikMentionRef) {
+        refsCollection.push(node.dataset.ikMentionRef);
+    }
+
+    if (node.nodeType === Node.ELEMENT_NODE) {
+        const mentions = node.querySelectorAll("[data-ik-mention-ref]");
+        mentions.forEach((mention) => {
+            refsCollection.push(mention.dataset.ikMentionRef);
+        });
+    }
+};
+
+const handleMutationRecords = (mutationRecords) => {
+    const removedRefs = mutationRecords
+        .flatMap(({ removedNodes }) => [...removedNodes])
+        .filter((node) => node.nodeType === Node.ELEMENT_NODE)
+        .reduce((refs, node) => {
+            extractRemovedRefs(node, refs);
+            return refs;
+        }, []);
+
+    if (removedRefs.length > 0) {
+        onMentionsDeleted(JSON.stringify(removedRefs));
+    }
+};
 
 function observeMentionDeletion() {
-    const extractRemovedRefs = (node, refsCollection) => {
-        if (node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-ik-mention-ref")) {
-            refsCollection.push(node.getAttribute("data-ik-mention-ref"));
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const mentions = node.querySelectorAll("[data-ik-mention-ref]");
-            mentions.forEach((mention) => {
-                refsCollection.push(mention.getAttribute("data-ik-mention-ref"));
-            });
-        }
-    };
-
     const setupObserver = () => {
         const rootElement = document.body;
         if (!rootElement) return;
-
-        let pendingRefs = new Set();
-        let debounceTimer = null;
-
-        const mutationObserver = new MutationObserver((mutationRecords) => {
-            const removedRefs = mutationRecords
-                .flatMap(({ removedNodes }) => [...removedNodes])
-                .filter((node) => node.nodeType === Node.ELEMENT_NODE)
-                .reduce((refs, node) => {
-                    extractRemovedRefs(node, refs);
-                    return refs;
-                }, []);
-
-            removedRefs.forEach((ref) => pendingRefs.add(ref));
-
-            clearTimeout(debounceTimer);
-
-            debounceTimer = setTimeout(() => {
-                const actuallyRemovedRefs = [...pendingRefs].filter((ref) => {
-                    return !document.querySelector(`[data-ik-mention-ref="${ref}"]`);
-                });
-
-                pendingRefs.clear();
-
-                if (actuallyRemovedRefs.length > 0) {
-                    onMentionsDeleted(JSON.stringify(actuallyRemovedRefs));
-                }
-            }, 300);
-        });
-
+        
+        const mutationObserver = new MutationObserver(handleMutationRecords);
         mutationObserver.observe(rootElement, { childList: true, subtree: true });
-    };
+    }
 
     if (document.body) {
         setupObserver();
