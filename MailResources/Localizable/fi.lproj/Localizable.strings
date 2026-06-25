@@ -1477,10 +1477,10 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Muistutus: ei vastausta %1$s:ltä tähän sähköpostiin lähtien %2$s";
+"reminderNoResponseHeaderTitle" = "Muistutus: ei vastausta %1$@:ltä tähän sähköpostiin lähtien %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Lykätä huomiseen klo %s";
+"reminderPostponeButton" = "Lykkää ajankohtaan %@";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Nimeä kansio uudelleen";
@@ -1513,7 +1513,7 @@
 "saveMailInkDrive" = "Tallenna kDriveen";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Ajastettu lähetys: %s";
+"scheduleSendingHeaderTitle" = "Ajastettu lähetys: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Ajasta lähetys";

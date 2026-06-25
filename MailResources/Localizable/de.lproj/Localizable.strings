@@ -1477,10 +1477,10 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Erinnerung: keine Antwort von %1$s auf diese E-Mail seit dem %2$s";
+"reminderNoResponseHeaderTitle" = "Erinnerung: keine Antwort von %1$@ auf diese E-Mail seit dem %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Auf morgen %s Uhr verschieben";
+"reminderPostponeButton" = "Verschieben bis %@";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Benennen Sie den Ordner um";
@@ -1513,7 +1513,7 @@
 "saveMailInkDrive" = "Speichern im kDrive";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Geplante Sendung: %s";
+"scheduleSendingHeaderTitle" = "Geplante Sendung: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Planen Sie den Versand";

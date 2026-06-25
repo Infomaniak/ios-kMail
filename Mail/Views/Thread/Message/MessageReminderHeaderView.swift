@@ -68,7 +68,7 @@ struct MessageReminderHeaderView: View {
                     HStack {
                         Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
                         MessageHeaderDivider()
-                        Button(MailResourcesStrings.Localizable.reminderPostponeButton("18:00")) {}
+                        Button(MailResourcesStrings.Localizable.reminderPostponeButton("Tomorrow 18:00")) {}
                     }
                     Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton) {}
                 }
