@@ -399,8 +399,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
 
         var holder = RecipientHolder()
-        holder.cc = cleanedCc
         holder.to = cleanedTo
+        holder.cc = cleanedCc
 
         return holder
     }
