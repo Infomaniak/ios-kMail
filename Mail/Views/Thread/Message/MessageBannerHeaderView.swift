@@ -161,10 +161,8 @@ struct MessageBannerHeaderView: View {
     }
 
     private func followUp() {
-        Task {
-            Task { @MainActor in
-                mainViewState.composeMessageIntent = .followUp(message: message, originMailboxManager: mailboxManager)
-            }
+        Task { @MainActor in
+            mainViewState.composeMessageIntent = .followUp(message: message, originMailboxManager: mailboxManager)
         }
     }
 }
