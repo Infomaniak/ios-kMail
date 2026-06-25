@@ -16,15 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreCommonUI
-import InfomaniakCoreSwiftUI
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import OrderedCollections
-import RealmSwift
-import SwiftModalPresentation
 import SwiftUI
 
 struct MessageReminderHeaderView: View {
@@ -44,22 +38,19 @@ struct MessageReminderHeaderView: View {
         let senderNames = senders.map(\.name)
         let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
         let formattedNames = formatNames(senderNames)
-        if reminderDate < .now && senderNames.count > 1 {
-            return MailResourcesStrings.Localizable.reminderBeforeHeaderTitlePlural(
-                formattedNames, formattedDate
-            )
-        } else if reminderDate < .now {
-            return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(
-                formattedNames, formattedDate
-            )
-        } else if reminderDate >= .now && senderNames.count > 1 {
-            return MailResourcesStrings.Localizable.reminderAfterHeaderTitlePlural(
-                formattedNames, formattedDate
-            )
+
+        if reminderDate < .now {
+            if senderNames.count > 1 {
+                return MailResourcesStrings.Localizable.reminderAfterHeaderTitlePlural(formattedNames, formattedDate)
+            } else {
+                return MailResourcesStrings.Localizable.reminderAfterHeaderTitle(formattedNames, formattedDate)
+            }
         } else {
-            return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(
-                formattedNames, formattedDate
-            )
+            if senderNames.count > 1 {
+                return MailResourcesStrings.Localizable.reminderBeforeHeaderTitlePlural(formattedNames, formattedDate)
+            } else {
+                return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(formattedNames, formattedDate)
+            }
         }
     }
 
@@ -93,13 +84,15 @@ struct MessageReminderHeaderView: View {
 
     private func formatNames(_ names: [String]) -> String {
         switch names.count {
+        case 0:
+            return ""
         case 1:
-            return "\(names[0])"
+            return names[0]
         case 2:
             return "\(names[0]) \(MailResourcesStrings.Localizable.linkingWord) \(names[1])"
         default:
             let allButLast = names.dropLast()
-            return "\(allButLast.joined(separator: ", ")) \(MailResourcesStrings.Localizable.linkingWord) \(names.last!)"
+            return "\(allButLast.joined(separator: ", ")) \(MailResourcesStrings.Localizable.linkingWord) \(names.last ?? "")"
         }
     }
 }
