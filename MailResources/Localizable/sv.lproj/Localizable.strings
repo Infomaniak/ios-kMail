@@ -1513,7 +1513,7 @@
 "saveMailInkDrive" = "Spara i kDrive";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Schemalagd sändning: %s";
+"scheduleSendingHeaderTitle" = "Schemalagd sändning: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schemalägg sändning";
