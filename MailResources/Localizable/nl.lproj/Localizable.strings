@@ -4,7 +4,7 @@
  * Locale: nl, Dutch; Flemish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Thu, 04 Jun 2026 16:18:12 +0200
+ * Exported at: Thu, 25 Jun 2026 14:06:47 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -526,8 +526,8 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organisator)";
 
-/* loco:6a202b5d27e1689d6f097ef3 */
-"callIfNoResponseHeaderTitle" = "Me terugbellen als er geen antwoord is: %s";
+/* loco:6a33f13510c27914c80cf5d2 */
+"callIfNoResponseHeaderTitle" = "Herinner me als er geen reactie is na het verzenden: %s";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -1354,17 +1354,32 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recente zoekopdrachten";
 
-/* loco:6a215874fe133c053105c086 */
-"reminderAfterHeaderTitle" = "%1$@ wacht op een antwoord sinds %2$@";
+/* loco:6a2beb4d91e4ffca310637d3 */
+"reminderAfterHeaderTitle" = "%1$@ wacht sinds %2$@ op een antwoord";
 
-/* loco:6a215cec5983e40edf0d2d92 */
-"reminderAfterHeaderTitle-plural" = "%1$@ wachten op een antwoord sinds %2$@";
+/* loco:6a2beb4d91e4ffca310637d4 */
+"reminderAfterHeaderTitle-plural" = "%1$@ wachten sinds %2$@ op een antwoord";
 
-/* loco:6a215873199011ec1c03ecf2 */
-"reminderBeforeHeaderTitle" = "%1$s wacht op een antwoord vóór %2$s";
+/* loco:6a2beb4d91e4ffca310637d5 */
+"reminderAfterHeaderTitle-plural-2" = "";
 
-/* loco:6a215cec7c626a0c6e001732 */
-"reminderBeforeHeaderTitle-plural" = "%1$s wachten op een antwoord vóór %2$s";
+/* loco:6a2beb4d91e4ffca310637d6 */
+"reminderAfterHeaderTitle-plural-3" = "";
+
+/* loco:6a2bebd42122fe8388063648 */
+"reminderBeforeHeaderTitle" = "%1$@ wacht op een antwoord voor %2$@";
+
+/* loco:6a2bebd42122fe8388063649 */
+"reminderBeforeHeaderTitle-plural" = "%1$@ wachten op een antwoord voor %2$@";
+
+/* loco:6a2bebd42122fe838806364a */
+"reminderBeforeHeaderTitle-plural-2" = "";
+
+/* loco:6a2bebd42122fe838806364b */
+"reminderBeforeHeaderTitle-plural-3" = "";
+
+/* loco:6a3a51f912ad97935e085212 */
+"reminderBottomSheetTitle" = "Herinnering uitstellen";
 
 /* loco:6a22b723fa69bc57450beaa2 */
 "reminderFollowUpButton" = "Opvolgen";
@@ -1377,10 +1392,10 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Herinnering: geen reactie van %1$s op deze e-mail sinds %2$s";
+"reminderNoResponseHeaderTitle" = "Herinnering: geen reactie van %1$@ op deze e-mail sinds %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Uitstellen tot morgen %s";
+"reminderPostponeButton" = "Uitstellen tot %@";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "De map hernoemen";
@@ -1413,7 +1428,7 @@
 "saveMailInkDrive" = "Opslaan in kDrive";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Geplande verzending: %s";
+"scheduleSendingHeaderTitle" = "Geplande verzending: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Verzending plannen";
