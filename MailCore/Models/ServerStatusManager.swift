@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ServerStatusEndpoint {
+public enum ServerStatusEndpoint: Hashable, Sendable {
     case mailboxes
     case folders
 }
