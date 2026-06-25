@@ -59,15 +59,19 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
         return allStatus
     }()
 
-    public func performAndMonitor<T: Decodable>(request: DataRequest, overrideDecoder: JSONDecoder? = nil) async throws -> T {
+    public func performAndMonitor<T: Decodable>(
+        request: DataRequest,
+        overrideDecoder: JSONDecoder? = nil,
+        endpoint: ServerStatusEndpoint
+    ) async throws -> T {
         @InjectService var serverStatusManager: ServerStatusManager
         do {
             let result: T = try await perform(request: request, overrideDecoder: overrideDecoder).validApiResponse.data
-            await serverStatusManager.setServerAvailable(true)
+            await serverStatusManager.setEndpointAvailable(true, for: endpoint)
             return result
         } catch {
             if let httpStatus = (error as? MailServerError)?.httpStatus, httpStatus >= 500 {
-                await serverStatusManager.setServerAvailable(false)
+                await serverStatusManager.setEndpointAvailable(false, for: endpoint)
             }
 
             throw error
