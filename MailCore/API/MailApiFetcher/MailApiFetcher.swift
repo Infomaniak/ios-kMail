@@ -70,8 +70,12 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
             await serverStatusManager.setEndpointAvailable(true, for: endpoint)
             return result
         } catch {
-            if let httpStatus = (error as? MailServerError)?.httpStatus, httpStatus >= 500 {
-                await serverStatusManager.setEndpointAvailable(false, for: endpoint)
+            if let httpStatus = (error as? MailServerError)?.httpStatus {
+                if httpStatus >= 500 {
+                    await serverStatusManager.setEndpointAvailable(false, for: endpoint)
+                } else {
+                    await serverStatusManager.setEndpointAvailable(true, for: endpoint)
+                }
             }
 
             throw error
