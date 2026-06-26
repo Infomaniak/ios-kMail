@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 struct ReminderVisibilityCell: View {
-    let visibility: ReminderVisibility?
+    let visibility: ReminderVisibility
     let isSelected: Bool
     let isInModal: Bool
     let action: () -> Void
@@ -32,18 +32,16 @@ struct ReminderVisibilityCell: View {
         Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
-                    if let visibility {
-                        if !isInModal {
-                            Text(MailResourcesStrings.Localizable.reminderVisibilityTitle)
-                                .textStyle(.body)
-                        }
-                        Text(visibility.label)
-                            .textStyle(isInModal ? .body : .bodySmallSecondary)
+                    if !isInModal {
+                        Text(MailResourcesStrings.Localizable.reminderVisibilityTitle)
+                            .textStyle(.body)
+                    }
+                    Text(visibility.label)
+                        .textStyle(isInModal ? .body : .bodySmallSecondary)
 
-                        if isInModal, let description = visibility.description {
-                            Text(description)
-                                .textStyle(.bodySmallSecondary)
-                        }
+                    if isInModal, let description = visibility.description {
+                        Text(description)
+                            .textStyle(.bodySmallSecondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
