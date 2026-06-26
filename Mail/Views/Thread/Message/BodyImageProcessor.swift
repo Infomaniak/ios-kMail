@@ -19,6 +19,7 @@
 import Foundation
 import MailCore
 import OSLog
+import SwiftSoup
 import UIKit
 
 struct BodyImageProcessor {
@@ -112,6 +113,34 @@ struct BodyImageProcessor {
             )
         }
         return workingBody
+    }
+
+    func addContentIdAttributesInBody(body: String?, attachments: [Attachment]) async -> String? {
+        guard let body, !body.isEmpty else {
+            return nil
+        }
+
+        guard let htmlBody = try? await SwiftSoup.parse(body), let imageElements = try? await htmlBody.select("img[src]") else {
+            return nil
+        }
+
+        for imageElement in imageElements.array() {
+            guard let src = try? imageElement.attr("src"),
+                  src.hasPrefix("cid:") else { continue }
+
+            let contentId = String(src.dropFirst("cid:".count))
+
+            guard attachments.contains(where: { $0.contentId == contentId }) else { continue }
+
+            _ = try? imageElement.attr("data-cid", contentId)
+        }
+
+        guard let updatedBody = try? htmlBody.outerHtml(),
+              await (try? SwiftSoup.parse(updatedBody)) != nil else {
+            return nil
+        }
+
+        return updatedBody
     }
 }
 
