@@ -56,7 +56,8 @@ struct CustomReminderVisibilityAlertView: View {
 
             VStack(alignment: .leading) {
                 ForEach(ReminderVisibility.allCases, id: \.self) { visibility in
-                    ReminderVisibilityCell(visibility: visibility, isSelected: selectedVisibility == visibility, isInModal: true) {
+                    ReminderVisibilityCell(visibility: visibility, isSelected: selectedVisibility == visibility,
+                                           isInModal: true) {
                         selectedVisibility = visibility
                     }
                     if ReminderVisibility.allCases.last != visibility {
