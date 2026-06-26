@@ -2075,11 +2075,17 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Débloquer";
 
-/* loco:6a338845e65f8f17b50b77f2 */
-"unitDays" = "Jours";
+/* loco:6a3d0acdd4f530b3c10f0852 */
+"unitDays" = "Jour";
 
-/* loco:6a33888838ea102266012d12 */
-"unitHours" = "Heures";
+/* loco:6a3d0acdd4f530b3c10f0853 */
+"unitDays-plural" = "Jours";
+
+/* loco:6a3d0ac7e0a0910b0c07eda2 */
+"unitHours" = "Heure";
+
+/* loco:6a3d0ac7e0a0910b0c07eda3 */
+"unitHours-plural" = "Heures";
 
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Expéditeur inconnu";
