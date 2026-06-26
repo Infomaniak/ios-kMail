@@ -65,7 +65,7 @@ struct CustomReminderVisibilityAlertView: View {
                     }
                 }
             }
-            .frame(height: Constants.contentHeight)
+            .frame(minHeight: Constants.contentHeight)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
