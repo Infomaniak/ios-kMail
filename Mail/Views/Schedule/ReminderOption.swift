@@ -92,10 +92,18 @@ enum ReminderOption: Hashable {
             }
         }
 
-        var title: String {
+        func title(for value: Int) -> String {
             switch self {
-            case .hours: return MailResourcesStrings.Localizable.unitHours
-            case .days: return MailResourcesStrings.Localizable.unitDays
+            case .hours:
+                if value > 1 {
+                    return MailResourcesStrings.Localizable.unitHoursPlural
+                }
+                return MailResourcesStrings.Localizable.unitHours
+            case .days:
+                if value > 1 {
+                    return MailResourcesStrings.Localizable.unitDaysPlural
+                }
+                return MailResourcesStrings.Localizable.unitDays
             }
         }
 
