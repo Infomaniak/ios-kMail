@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: sv, Swedish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 28 May 2026 10:19:52 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Fri, 26 Jun 2026 09:16:18 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -712,6 +712,9 @@
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Ta bort mapp";
+
+/* loco:6a3e28614ee0b919b8084352 */
+"descriptionReminderRecipientsAndMe" = "Endast inom organisationen";
 
 /* loco:672e3534c133d192fb0acc92 */
 "disabledFeatureFlagDescription" = "Du kommer snart att kunna låsa upp begränsningarna för din ik.me e-postadress\n(lagringsgräns, anpassat schema, sändning och mer…)";
@@ -1454,6 +1457,8 @@
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Skjut upp till imorgon %s";
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Påminnelsens synlighet";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Byt namn på mappen";
@@ -1523,6 +1528,15 @@
 
 /* loco:662f89ba8e8c8321190ae342 */
 "selectSignatureNone" = "Ingen signatur";
+
+/* loco:6a3e245112c225d11e036142 */
+"selectionReminderMeOnly" = "Bara jag";
+
+/* loco:6a3e27ee5cfac3b713061a22 */
+"selectionReminderRecipientsAndMe" = "Mottagare och mig";
+
+/* loco:6a3e22a05bac9d22d10398d2 */
+"selectionReminderTitle" = "Välj vem som kan se påminnelsen";
 
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Skicka";
