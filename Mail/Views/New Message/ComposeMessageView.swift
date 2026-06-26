@@ -102,6 +102,7 @@ struct ComposeMessageView: View {
     @State private var isShowingSendOptionsPanel = false
     @State private var selectedScheduleOption: ScheduleOption?
     @State private var selectedReminderOption: ReminderOption?
+    @State private var selectedReminderVisibility: ReminderVisibility?
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
     @State private var isShowingMailPremiumPanel = false
@@ -399,7 +400,8 @@ struct ComposeMessageView: View {
             isUpdating: false,
             initialDate: draft.scheduleDate,
             selectedScheduleOption: $selectedScheduleOption,
-            selectedReminderOption: $selectedReminderOption
+            selectedReminderOption: $selectedReminderOption,
+            selectedReminderVisibility: $selectedReminderVisibility
         )
     }
 
@@ -528,11 +530,13 @@ struct ComposeMessageView: View {
                     liveDraft.action = .send
                 }
 
-                // TODO: Store reminder option when backend is ready
+                // TODO: Store reminder option and visibiliy when backend is ready
                 // if let reminderOption = selectedReminderOption,
-                //    let scheduleDate = selectedScheduleOption?.date {
+                //    let scheduleDate = selectedScheduleOption?.date, let reminderVisibility = selectedReminderVisibility {
                 //     liveDraft.reminderDate = reminderOption.reminderDate(sentAt: scheduleDate)
+                //     liveDraft.reminderVisibility = reminderVisibility
                 // }
+                //
             }
         }
     }

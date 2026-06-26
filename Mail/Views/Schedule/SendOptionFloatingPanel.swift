@@ -29,13 +29,15 @@ extension View {
         initialDate: Date? = nil,
         dismissView: (() -> Void)? = nil,
         selectedScheduleOption: Binding<ScheduleOption?>,
-        selectedReminderOption: Binding<ReminderOption?>
+        selectedReminderOption: Binding<ReminderOption?>,
+        selectedReminderVisibility: Binding<ReminderVisibility?>
     ) -> some View {
         modifier(
             SendOptionFloatingPanel(
                 isShowingFloatingPanel: isPresented,
                 selectedScheduleOption: selectedScheduleOption,
                 selectedReminderOption: selectedReminderOption,
+                selectedReminderVisibility: selectedReminderVisibility,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
                 dismissView: dismissView
@@ -61,6 +63,7 @@ struct SendOptionFloatingPanel: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
     @Binding var selectedScheduleOption: ScheduleOption?
     @Binding var selectedReminderOption: ReminderOption?
+    @Binding var selectedReminderVisibility: ReminderVisibility?
 
     let isUpdating: Bool
     let initialDate: Date?
@@ -87,6 +90,7 @@ struct SendOptionFloatingPanel: ViewModifier {
                         isScheduleEnabled: $isScheduleEnabled,
                         selectedReminderOption: $selectedReminderOption,
                         selectedScheduleOption: $selectedScheduleOption,
+                        selectedReminderVisibility: $selectedReminderVisibility,
                         customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
                         initialDate: initialDate
@@ -108,7 +112,7 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
                 .mailCustomAlert(isPresented: $isShowingCustomScheduleAlert) {
-                    if customAlertType == .reminder {
+                    if customAlertType == .reminder(type: .option) {
                         CustomReminderAlertView(
                             confirmAction: { option in
                                 selectedReminderOption = option
@@ -117,6 +121,13 @@ struct SendOptionFloatingPanel: ViewModifier {
                                 panelShouldBeShown = true
                             }
                         )
+                    } else if customAlertType == .reminder(type: .visibility) {
+                        CustomReminderVisibilityAlertView(currentVisibility: selectedReminderVisibility) { visibility in
+                            selectedReminderVisibility = visibility
+                        } cancelAction: {
+                            panelShouldBeShown = true
+                        }
+
                     } else {
                         CustomScheduleAlertView(
                             type: customAlertType,
