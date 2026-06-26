@@ -19,10 +19,15 @@
 import Foundation
 import InfomaniakCoreCommonUI
 
-enum ScheduleType: Sendable {
+enum ScheduleType: Sendable, Equatable {
     case scheduledDraft
     case snooze
-    case reminder
+    case reminder(type: ReminderType)
+
+    enum ReminderType: Equatable {
+        case option
+        case visibility
+    }
 
     var matomoCategory: MatomoUtils.EventCategory {
         switch self {
