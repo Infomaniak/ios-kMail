@@ -62,7 +62,7 @@ struct CustomReminderAlertView: View {
 
                 Picker("", selection: $selectedUnit) {
                     ForEach(ReminderOption.CustomUnit.allCases, id: \.self) { unit in
-                        Text(unit.title).tag(unit)
+                        Text(unit.title(for: selectedValue)).tag(unit)
                     }
                 }
                 .pickerStyle(.wheel)
