@@ -87,7 +87,7 @@ enum ReminderOption: Hashable {
 
         var range: ClosedRange<Int> {
             switch self {
-            case .hours: return 1 ... 12
+            case .hours: return 1 ... 23
             case .days: return 1 ... 30
             }
         }
