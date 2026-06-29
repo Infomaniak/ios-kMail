@@ -16,8 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function insertMention(userMail, userName) {
-    if (!userMail || !userName) return;
+function insertMention(userMail, userName, query) {
+    if (!userMail || !userName || query === undefined) return;
 
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
@@ -50,12 +50,12 @@ function insertMention(userMail, userName) {
 
     const textBeforeCaret = preRange.toString();
 
-    const extractRegex = /@([A-Za-z0-9._+-]*(?:@[A-Za-z0-9.-]*)?)$/;
-    const match = textBeforeCaret.match(extractRegex);
-    if (!match) return;
+    const searchText = "@" + query;
+    const searchIndex = textBeforeCaret.lastIndexOf(searchText);
+    if (searchIndex < 0) return;
 
-    const deleteCount = match[0].length;
-    const mentionStartOffset = textBeforeCaret.length - deleteCount;
+    const deleteCount = searchText.length;
+    const mentionStartOffset = searchIndex;
 
     const getDomPositionForTextOffset = (targetOffset) => {
         const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
