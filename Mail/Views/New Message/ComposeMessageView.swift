@@ -361,7 +361,8 @@ struct ComposeMessageView: View {
 
             let contacts = await mailboxManager.contactManager.searchAllAutocompletable(
                 matching: mentionQuery,
-                fetchLimit: 10
+                fetchLimit: 10,
+                shouldTrim: false
             )
 
             let mergedContacts = contacts.compactMap { $0 as? MergedContact }
@@ -677,7 +678,7 @@ struct ComposeMessageView: View {
                 }
             }
             Task {
-                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name))
+                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name, mentionQuery))
             }
             mentionQuery = ""
             matomo.track(eventWithCategory: .newMessage, name: "insertMention")

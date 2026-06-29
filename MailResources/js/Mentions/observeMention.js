@@ -18,9 +18,7 @@
 
 let lastSentValue = null;
 
-const validMentionCharsRegex = /^[A-Za-z0-9._+-]*(?:@[A-Za-z0-9.-]*)?$/;
 const zeroWidthCharsRegex = /[\u200B-\u200D\uFEFF]/g;
-const mentionQueryRegex = /(?:^|\s)@(\S*)$/;
 
 // We get the parent block to get the correct range to look for the @
 const getBlockParent = (node) => {
@@ -65,12 +63,22 @@ const getTextBeforeCaret = () => {
 const extractMentionQuery = (textBeforeCaret) => {
     const normalizedText = textBeforeCaret.replace(zeroWidthCharsRegex, "");
 
-    const match = normalizedText.match(mentionQueryRegex);
-    if (!match) return null;
+    let lastAtPos = -1;
+    for (let i = normalizedText.length - 1; i >= 0; i--) {
+        if (normalizedText[i] === "@" && (i === 0 || normalizedText[i - 1] === " " || normalizedText[i - 1] === "\u00A0")) {
+            lastAtPos = i;
+            break;
+        }
+    }
 
-    const query = match[1];
+    if (lastAtPos < 0) return null;
 
-    return validMentionCharsRegex.test(query) ? query : null;
+    let query = normalizedText.slice(lastAtPos + 1);
+    if (!query.trim().includes(" ")) {
+        query = query.trim();
+    }
+    
+    return query.length > 0 ? query : null;
 };
 
 const notifyIfChanged = () => {
