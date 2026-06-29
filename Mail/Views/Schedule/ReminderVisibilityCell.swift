@@ -56,10 +56,10 @@ struct ReminderVisibilityCell: View {
                 }
             }
             .padding(.leading, !isInModal ? IKIconSize.large.rawValue + IKPadding.mini : 0)
-            .padding(.trailing, value: .medium)
+            .padding(.trailing, !isInModal ? IKPadding.medium : 0)
         }
         .padding(.vertical, !isInModal ? IKPadding.medium : 0)
-        .padding(.leading, value: .medium)
+        .padding(.leading, !isInModal ? IKPadding.medium : 0)
     }
 }
 
