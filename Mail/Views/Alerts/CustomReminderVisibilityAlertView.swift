@@ -61,7 +61,7 @@ struct CustomReminderVisibilityAlertView: View {
                         selectedVisibility = visibility
                     }
                     if ReminderVisibility.allCases.last != visibility {
-                        IKDivider(type: .item)
+                        IKDivider(type: .full)
                     }
                 }
             }
