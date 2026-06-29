@@ -48,10 +48,12 @@ struct ScheduleFloatingPanelView: View {
             }
         }
 
-        let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
-        let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
-        if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
-            filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
+        if let keyPath = type.lastCustomScheduleDateKeyPath {
+            let lastScheduledDate = UserDefaults.shared[keyPath: keyPath]
+            let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
+            if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
+                filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
+            }
         }
 
         return filteredOptions
