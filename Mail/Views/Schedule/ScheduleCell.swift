@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DesignSystem
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -27,41 +26,26 @@ struct ScheduleCell: View {
     var showUpgradeChip = false
     let action: () -> Void
 
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                VStack(alignment: .leading, spacing: IKPadding.micro) {
-                    Text(option.title)
-                        .textStyle(.body)
-
-                    if option.isCustom {
-                        if isSelected, let date = option.date {
-                            Text(date, format: .scheduleOption)
-                                .textStyle(.bodySmallSecondary)
-                        }
-                    } else if let date = option.date {
-                        Text(date, format: .scheduleOption)
-                            .textStyle(.bodySmallSecondary)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                if isSelected {
-                    MailResourcesAsset.check.iconSize(.medium)
-                        .foregroundStyle(Color.accentColor)
-                }
-
-                if showUpgradeChip {
-                    MyKSuitePlusChip()
-                } else if option.isCustom, !isSelected {
-                    ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                }
-            }
-            .padding(.leading, IKIconSize.large.rawValue + IKPadding.mini)
-            .padding(.trailing, value: .medium)
+    private var shouldShowDate: Bool {
+        if option.isCustom {
+            return isSelected && option.date != nil
         }
-        .padding(.vertical, value: .medium)
-        .padding(.leading, value: .medium)
+        return option.date != nil
+    }
+
+    var body: some View {
+        SelectableRow(
+            title: option.title,
+            isSelected: isSelected,
+            showUpgradeChip: showUpgradeChip,
+            showChevron: option.isCustom && !isSelected,
+            action: action
+        ) {
+            if shouldShowDate, let date = option.date {
+                Text(date, format: .scheduleOption)
+                    .textStyle(.bodySmallSecondary)
+            }
+        }
     }
 }
 
