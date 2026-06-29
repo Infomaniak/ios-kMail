@@ -47,6 +47,20 @@ struct SendOptionFloatingPanelView: View {
         return pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack
     }
 
+    private var displayedReminderOption: ReminderOption {
+        if let option = selectedReminderOption, option.isCustom {
+            return option
+        }
+        return .custom
+    }
+
+    private var displayedScheduleOption: ScheduleOption {
+        if let option = selectedScheduleOption, option.isCustom {
+            return option
+        }
+        return .custom(date: .now)
+    }
+
     private var scheduleOptions: [ScheduleOption] {
         var seenDateOptions = Set<Date>()
         if let initialDate {
@@ -117,7 +131,7 @@ struct SendOptionFloatingPanelView: View {
                     }
 
                     ReminderCell(
-                        option: selectedReminderOption?.isCustom == true ? selectedReminderOption! : .custom,
+                        option: displayedReminderOption,
                         isSelected: selectedReminderOption?.isCustom == true,
                         showUpgradeChip: isCustomOptionLimited
                     ) {
@@ -158,13 +172,10 @@ struct SendOptionFloatingPanelView: View {
                         IKDivider(type: .item)
                     }
 
-                    let customOption: ScheduleOption = selectedScheduleOption?.isCustom == true
-                        ? selectedScheduleOption!
-                        : .custom(date: .now)
                     let isCustomSelected = selectedScheduleOption?.isCustom == true
 
                     ScheduleCell(
-                        option: customOption,
+                        option: displayedScheduleOption,
                         isSelected: isCustomSelected,
                         showUpgradeChip: isCustomOptionLimited
                     ) {
