@@ -4,7 +4,7 @@
  * Locale: da, Danish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Fri, 26 Jun 2026 09:16:18 +0200
+ * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -698,6 +698,12 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Dato:";
 
+/* loco:6a3d1152248f560be8062d22 */
+"daysBeforeSendingReminder" = "%d dag";
+
+/* loco:6a3d1152248f560be8062d23 */
+"daysBeforeSendingReminder-plural" = "%d dage";
+
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Sletningen af din konto vil være endelig. Du vil ikke kunne genaktivere din konto.";
 
@@ -1099,6 +1105,12 @@
 
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "For at hjælpe dig";
+
+/* loco:6a3d14fef750fb5df20ebc72 */
+"hoursBeforeSendingReminder" = "%d time";
+
+/* loco:6a3d14fef750fb5df20ebc73 */
+"hoursBeforeSendingReminder-plural" = "%d timer";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Indbakke";
