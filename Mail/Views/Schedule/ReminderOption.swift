@@ -32,11 +32,11 @@ enum ReminderOption: Hashable {
     var title: String {
         switch self {
         case .oneDay:
-            return MailResourcesStrings.Localizable.hoursBeforeSendingReminder(24)
+            return MailResourcesStrings.Localizable.hoursBeforeSendingReminderPlural(24)
         case .threeDays:
-            return MailResourcesStrings.Localizable.daysBeforeSendingReminder(3)
+            return MailResourcesStrings.Localizable.daysBeforeSendingReminderPlural(3)
         case .sevenDays:
-            return MailResourcesStrings.Localizable.daysBeforeSendingReminder(7)
+            return MailResourcesStrings.Localizable.daysBeforeSendingReminderPlural(7)
         case .custom, .customHours, .customDays:
             return MailResourcesStrings.Localizable.buttonCustomReminder
         }
@@ -45,8 +45,14 @@ enum ReminderOption: Hashable {
     var subtitle: String? {
         switch self {
         case .customHours(let value):
+            if value > 1 {
+                return MailResourcesStrings.Localizable.hoursBeforeSendingReminderPlural(value)
+            }
             return MailResourcesStrings.Localizable.hoursBeforeSendingReminder(value)
         case .customDays(let value):
+            if value > 1 {
+                return MailResourcesStrings.Localizable.daysBeforeSendingReminderPlural(value)
+            }
             return MailResourcesStrings.Localizable.daysBeforeSendingReminder(value)
         case .oneDay, .threeDays, .sevenDays, .custom:
             return nil
