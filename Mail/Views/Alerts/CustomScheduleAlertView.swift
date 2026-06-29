@@ -35,7 +35,7 @@ extension ScheduleType {
         case .snooze:
             return MailResourcesStrings.Localizable.errorScheduledSnoozeDelayTooShort(limit)
         case .reminder:
-            return MailResourcesStrings.Localizable.errorScheduleDelayTooShort(limit)
+            return MailResourcesStrings.Localizable.errorReminderDelayTooShort(limit)
         }
     }
 }
