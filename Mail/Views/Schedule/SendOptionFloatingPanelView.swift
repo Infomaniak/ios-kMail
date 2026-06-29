@@ -24,7 +24,6 @@ import MailCore
 import MailCoreUI
 import MailResources
 import MyKSuite
-import RealmSwift
 import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
