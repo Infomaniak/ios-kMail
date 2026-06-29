@@ -16,9 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DesignSystem
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct ReminderCell: View {
@@ -28,37 +26,18 @@ struct ReminderCell: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack {
-                VStack(alignment: .leading, spacing: IKPadding.micro) {
-                    Text(option.title)
-                        .textStyle(.body)
-
-                    if option.isCustom {
-                        if isSelected, let subtitle = option.subtitle {
-                            Text(subtitle)
-                                .textStyle(.bodySmallSecondary)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                if isSelected {
-                    MailResourcesAsset.check.iconSize(.medium)
-                        .foregroundStyle(Color.accentColor)
-                }
-
-                if showUpgradeChip {
-                    MyKSuitePlusChip()
-                } else if option.isCustom, !isSelected {
-                    ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                }
+        SelectableRow(
+            title: option.title,
+            isSelected: isSelected,
+            showUpgradeChip: showUpgradeChip,
+            showChevron: option.isCustom && !isSelected,
+            action: action
+        ) {
+            if option.isCustom, isSelected, let subtitle = option.subtitle {
+                Text(subtitle)
+                    .textStyle(.bodySmallSecondary)
             }
-            .padding(.leading, IKIconSize.large.rawValue + IKPadding.mini)
-            .padding(.trailing, value: .medium)
         }
-        .padding(.vertical, value: .medium)
-        .padding(.leading, value: .medium)
     }
 }
 
