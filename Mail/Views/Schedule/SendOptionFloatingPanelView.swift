@@ -64,10 +64,12 @@ struct SendOptionFloatingPanelView: View {
             }
         }
 
-        let lastScheduledDate = UserDefaults.shared[keyPath: ScheduleType.scheduledDraft.lastCustomScheduleDateKeyPath]
-        let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
-        if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
-            filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
+        if let keyPath = ScheduleType.scheduledDraft.lastCustomScheduleDateKeyPath {
+            let lastScheduledDate = UserDefaults.shared[keyPath: keyPath]
+            let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
+            if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
+                filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
+            }
         }
 
         return filteredOptions
