@@ -37,6 +37,7 @@ struct SendOptionFloatingPanelView: View {
     @Binding var isScheduleEnabled: Bool
     @Binding var selectedReminderOption: ReminderOption?
     @Binding var selectedScheduleOption: ScheduleOption?
+    @Binding var selectedReminderVisibility: ReminderVisibility?
     @Binding var customAlertType: ScheduleType
     @Binding var contentHeight: CGFloat
 
@@ -100,7 +101,7 @@ struct SendOptionFloatingPanelView: View {
 
             Toggle(isOn: $isReminderEnabled) {
                 Label {
-                    Text(ScheduleType.reminder.floatingPanelTitle)
+                    Text(ScheduleType.reminder(type: .option).floatingPanelTitle)
                 } icon: {
                     MailResourcesAsset.alarmClock.iconSize(.large)
                         .foregroundStyle(Color.accentColor)
@@ -110,12 +111,18 @@ struct SendOptionFloatingPanelView: View {
             .padding(value: .medium)
 
             if isReminderEnabled {
-                Text(MailResourcesStrings.Localizable.explanationActionCallIfNoResponse)
-                    .textStyle(.bodySmallSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, IKPadding.medium + IKIconSize.large.rawValue + IKPadding.mini)
-                    .padding(.trailing, value: .medium)
-                    .padding(.bottom, value: .small)
+                ReminderVisibilityCell(
+                    visibility: selectedReminderVisibility ?? .recipientsAndMe,
+                    isSelected: false,
+                    isInModal: false
+                ) {
+                    if isCustomOptionLimited {
+                        showUpgradeBottomSheet()
+                    } else {
+                        customAlertType = .reminder(type: .visibility)
+                        isShowingCustomScheduleAlert = true
+                    }
+                }
 
                 IKDivider(type: .item)
                 VStack(spacing: 0) {
@@ -126,8 +133,6 @@ struct SendOptionFloatingPanelView: View {
                         ) {
                             selectedReminderOption = option
                         }
-
-                        IKDivider(type: .item)
                     }
 
                     ReminderCell(
@@ -138,7 +143,7 @@ struct SendOptionFloatingPanelView: View {
                         if isCustomOptionLimited {
                             showUpgradeBottomSheet()
                         } else {
-                            customAlertType = .reminder
+                            customAlertType = .reminder(type: .option)
                             isShowingCustomScheduleAlert = true
                         }
                     }
@@ -168,8 +173,6 @@ struct SendOptionFloatingPanelView: View {
                         ) {
                             selectedScheduleOption = option
                         }
-
-                        IKDivider(type: .item)
                     }
 
                     let isCustomSelected = selectedScheduleOption?.isCustom == true
@@ -200,9 +203,11 @@ struct SendOptionFloatingPanelView: View {
             if newValue {
                 // Auto-select first option when toggled ON
                 selectedReminderOption = .oneDay
+                selectedReminderVisibility = .recipientsAndMe
             } else {
                 // Reset when toggled OFF
                 selectedReminderOption = nil
+                selectedReminderVisibility = nil
             }
         }
         .onChange(of: isScheduleEnabled) { newValue in
@@ -253,6 +258,7 @@ struct SendOptionFloatingPanelView: View {
         isScheduleEnabled: .constant(true),
         selectedReminderOption: .constant(.oneDay),
         selectedScheduleOption: .constant(nil),
+        selectedReminderVisibility: .constant(.recipientsAndMe),
         customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
         initialDate: nil
