@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Fri, 26 Jun 2026 09:16:18 +0200
+ * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -701,8 +701,11 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
 
-/* loco:6a200cbc394598861c0fe902 */
-"daysBeforeSendingReminder" = "%d days";
+/* loco:6a3d1152248f560be8062d22 */
+"daysBeforeSendingReminder" = "%d day";
+
+/* loco:6a3d1152248f560be8062d23 */
+"daysBeforeSendingReminder-plural" = "%d days";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
@@ -1109,8 +1112,11 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "To help you";
 
-/* loco:6a200d0be50e2414ef01c585 */
-"hoursBeforeSendingReminder" = "%d hours";
+/* loco:6a3d14fef750fb5df20ebc72 */
+"hoursBeforeSendingReminder" = "%d hour";
+
+/* loco:6a3d14fef750fb5df20ebc73 */
+"hoursBeforeSendingReminder-plural" = "%d hours";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Inbox";
@@ -2075,11 +2081,17 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Unblock";
 
-/* loco:6a338845e65f8f17b50b77f2 */
-"unitDays" = "Days";
+/* loco:6a3d0acdd4f530b3c10f0852 */
+"unitDays" = "Day";
 
-/* loco:6a33888838ea102266012d12 */
-"unitHours" = "Hours";
+/* loco:6a3d0acdd4f530b3c10f0853 */
+"unitDays-plural" = "Days";
+
+/* loco:6a3d0ac7e0a0910b0c07eda2 */
+"unitHours" = "Hour";
+
+/* loco:6a3d0ac7e0a0910b0c07eda3 */
+"unitHours-plural" = "Hours";
 
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Unknown expeditor";

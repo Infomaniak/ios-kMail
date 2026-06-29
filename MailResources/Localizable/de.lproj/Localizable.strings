@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Fri, 26 Jun 2026 09:16:18 +0200
+ * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -701,8 +701,11 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Datum:";
 
-/* loco:6a200cbc394598861c0fe902 */
-"daysBeforeSendingReminder" = "%d Tage";
+/* loco:6a3d1152248f560be8062d22 */
+"daysBeforeSendingReminder" = "%d Tag";
+
+/* loco:6a3d1152248f560be8062d23 */
+"daysBeforeSendingReminder-plural" = "%d Tage";
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Die Löschung Ihres Kontos ist endgültig. Sie werden nicht in der Lage sein, Ihr Konto zu reaktivieren.";
@@ -1109,8 +1112,11 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Um Ihnen zu helfen";
 
-/* loco:6a200d0be50e2414ef01c585 */
-"hoursBeforeSendingReminder" = "%d Stunden";
+/* loco:6a3d14fef750fb5df20ebc72 */
+"hoursBeforeSendingReminder" = "%d Stunde";
+
+/* loco:6a3d14fef750fb5df20ebc73 */
+"hoursBeforeSendingReminder-plural" = "%d Stunden";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Posteingang";
@@ -2075,11 +2081,17 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Entsperren";
 
-/* loco:6a338845e65f8f17b50b77f2 */
-"unitDays" = "Tage";
+/* loco:6a3d0acdd4f530b3c10f0852 */
+"unitDays" = "Tag";
 
-/* loco:6a33888838ea102266012d12 */
-"unitHours" = "Stunden";
+/* loco:6a3d0acdd4f530b3c10f0853 */
+"unitDays-plural" = "Tage";
+
+/* loco:6a3d0ac7e0a0910b0c07eda2 */
+"unitHours" = "Stunde";
+
+/* loco:6a3d0ac7e0a0910b0c07eda3 */
+"unitHours-plural" = "Stunden";
 
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Unbekannter Spediteur";
