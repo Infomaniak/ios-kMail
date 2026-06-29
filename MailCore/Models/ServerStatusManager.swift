@@ -18,13 +18,28 @@
 
 import Foundation
 
+public enum ServerStatusEndpoint: Hashable, Sendable {
+    case mailboxes
+    case folders
+}
+
 @MainActor
 public final class ServerStatusManager: ObservableObject {
     @Published public private(set) var serverAvailable = true
+    private var endpointsWithError = Set<ServerStatusEndpoint>()
 
     public nonisolated init() {}
 
-    public func setServerAvailable(_ serverAvailable: Bool) {
+    private func setServerAvailable(_ serverAvailable: Bool) {
         self.serverAvailable = serverAvailable
+    }
+
+    public func setEndpointAvailable(_ endpointAvailable: Bool, for endpoint: ServerStatusEndpoint) {
+        if endpointAvailable {
+            endpointsWithError.remove(endpoint)
+        } else {
+            endpointsWithError.insert(endpoint)
+        }
+        setServerAvailable(endpointsWithError.isEmpty)
     }
 }
