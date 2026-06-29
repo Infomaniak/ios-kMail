@@ -35,14 +35,14 @@ enum ScheduleType: Sendable {
         }
     }
 
-    var lastCustomScheduleDateKeyPath: ReferenceWritableKeyPath<UserDefaults, Date> {
+    var lastCustomScheduleDateKeyPath: ReferenceWritableKeyPath<UserDefaults, Date>? {
         switch self {
         case .scheduledDraft:
             return \.lastCustomScheduledDraftDate
         case .snooze:
             return \.lastCustomSnoozeDate
         case .reminder:
-            return \.lastCustomScheduledDraftDate
+            return nil
         }
     }
 }
