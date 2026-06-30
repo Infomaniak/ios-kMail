@@ -91,6 +91,12 @@ struct MobileMainToolbarView: View {
                 ) {
                     snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptionDisabledByScheduledOrReminder)
                 }
+                .buttonStyle(
+                    .mobileToolbar(
+                        isActivated: false,
+                        customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
+                    )
+                )
                 .opacity(isScheduleOrReminderActive ? 0.25 : 1)
             case .ai:
                 AIToolbarButton {
@@ -177,4 +183,5 @@ struct MobileMainToolbarView: View {
         draftLocalUUID: "",
         mailboxManager: PreviewHelper.sampleMailboxManager
     ))
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
