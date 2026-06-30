@@ -87,11 +87,10 @@ struct MobileMainToolbarView: View {
                 EncryptionButton(
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
-                    isDisabled: isScheduleOrReminderActive,
-                    disabledTapHandler: {
-                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptionDisabledByScheduledOrReminder)
-                    }
-                )
+                    isDisabled: isScheduleOrReminderActive
+                ) {
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptionDisabledByScheduledOrReminder)
+                }
                 .opacity(isScheduleOrReminderActive ? 0.25 : 1)
             case .ai:
                 AIToolbarButton {
