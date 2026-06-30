@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 11 Jun 2026 08:46:12 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -27,6 +27,9 @@
 
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Absender blockieren";
+
+/* loco:6a33f011268e2e689d055ec2 */
+"actionCallIfNoResponse" = "Erinnern, wenn nach dem Senden keine Antwort kommt";
 
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Schlummern abbrechen";
@@ -117,6 +120,30 @@
 
 /* loco:668cd87ac01614f14603ac92 */
 "addLinkTextPlaceholder" = "Anzuzeigender Text";
+
+/* loco:69e09412a691c7f6f509e9e2 */
+"addMultipleDuplicateEmails" = "%d E-Mail wurde bereits hinzugefügt";
+
+/* loco:69e0976aec92330d290f6132 */
+"addMultipleDuplicateEmails-plural" = "%d E-Mails wurden bereits hinzugefügt";
+
+/* loco:69e098862d60d708510f7482 */
+"addMultipleDuplicateEmails-plural-2" = "";
+
+/* loco:69e0988b0a88f2f1e906e342 */
+"addMultipleDuplicateEmails-plural-3" = "";
+
+/* loco:69e09d4c4090205bae063dd2 */
+"addMultipleInvalidEmails" = "%d E-Mail ist ungültig";
+
+/* loco:69e09d50f14f361fb505ea22 */
+"addMultipleInvalidEmails-plural" = "%d E-Mails sind ungültig";
+
+/* loco:69e09d543712c5e5fe0b3ab2 */
+"addMultipleInvalidEmails-plural-2" = "";
+
+/* loco:69e09d576bc338c3de02c772 */
+"addMultipleInvalidEmails-plural-3" = "";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "Die E-Mail wird bereits verwendet";
@@ -376,6 +403,9 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Einen Ordner hinzufügen";
 
+/* loco:6a327bedaf69f744ea0b9752 */
+"buttonCustomReminder" = "Benutzerdefinierte Erinnerung";
+
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Benutzerdefinierter Zeitplan";
 
@@ -529,6 +559,9 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organisator)";
 
+/* loco:6a33f13510c27914c80cf5d2 */
+"callIfNoResponseHeaderTitle" = "Mich erinnern, wenn nach dem Senden keine Antwort erfolgt: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 
@@ -631,8 +664,15 @@
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Weitergeleitet";
 
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "Du wurdest erwähnt.";
+
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Neu";
+
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "Ist eine Erinnerung";
 
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Antwort";
@@ -661,6 +701,12 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Datum:";
 
+/* loco:6a3d1152248f560be8062d22 */
+"daysBeforeSendingReminder" = "%d Tag";
+
+/* loco:6a3d1152248f560be8062d23 */
+"daysBeforeSendingReminder-plural" = "%d Tage";
+
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Die Löschung Ihres Kontos ist endgültig. Sie werden nicht in der Lage sein, Ihr Konto zu reaktivieren.";
 
@@ -669,6 +715,9 @@
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Löschen Sie den Ordner";
+
+/* loco:6a3e28614ee0b919b8084352 */
+"descriptionReminderRecipientsAndMe" = "Nur innerhalb der Organisation";
 
 /* loco:672e3534c133d192fb0acc92 */
 "disabledFeatureFlagDescription" = "In Kürze können Sie die Beschränkungen Ihrer ik.me-E-Mail-Adresse entsperren\n(Speicherlimit, benutzerdefinierter Zeitplan, Senden und mehr…)";
@@ -955,6 +1004,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "Der Server lehnt den Absender ab";
 
+/* loco:6a282f33edb32db70e0e4f02 */
+"errorReminderDelayTooShort" = "Die Erinnerung muss mindestens %d Stunde in der Zukunft liegen";
+
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort" = "Wählen Sie ein zukünftiges Datum, das mindestens %d Minuten in der Zukunft liegt";
 
@@ -984,6 +1036,9 @@
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Die Herkunft dieses Absenders wurde authentifiziert.";
+
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Empfänger in deiner Organisation werden sehen, dass eine Antwort erwartet wird.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Ich habe verstanden";
@@ -1057,6 +1112,12 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Um Ihnen zu helfen";
 
+/* loco:6a3d14fef750fb5df20ebc72 */
+"hoursBeforeSendingReminder" = "%d Stunde";
+
+/* loco:6a3d14fef750fb5df20ebc73 */
+"hoursBeforeSendingReminder-plural" = "%d Stunden";
+
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Posteingang";
 
@@ -1077,6 +1138,9 @@
 
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Später heute Morgen";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "und";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Laden…";
@@ -1116,6 +1180,12 @@
 
 /* loco:62b2f6bcdfa4fa28ad7bb122 */
 "menuDrawerMailboxStorage" = "%1$@ / %2$@ verwendet";
+
+/* loco:6a339ec8d1c106218d093662 */
+"messageAlreadySummarized" = "Die Nachricht ist bereits zusammengefasst";
+
+/* loco:6a339f263bd08592e10df6f3 */
+"messageAlreadyTranslated" = "Die Nachricht ist bereits übersetzt";
 
 /* loco:6903874c026e3f7b78066ba2 */
 "messageComesFromDiscussionList" = "Diese Nachricht stammt aus einer Diskussionsliste.";
@@ -1158,6 +1228,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Zusammenfassung der Nachricht";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria konnte diese Nachricht nicht zusammenfassen.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria konnte diese Nachricht nicht zusammenfassen. Bitte versuchen Sie es erneut.";
@@ -1348,6 +1421,51 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Letzte Suchen";
 
+/* loco:6a2beb4d91e4ffca310637d3 */
+"reminderAfterHeaderTitle" = "%1$@ wartet seit %2$@ auf eine Antwort";
+
+/* loco:6a2beb4d91e4ffca310637d4 */
+"reminderAfterHeaderTitle-plural" = "%1$@ warten seit %2$@ auf eine Antwort";
+
+/* loco:6a2beb4d91e4ffca310637d5 */
+"reminderAfterHeaderTitle-plural-2" = "";
+
+/* loco:6a2beb4d91e4ffca310637d6 */
+"reminderAfterHeaderTitle-plural-3" = "";
+
+/* loco:6a2bebd42122fe8388063648 */
+"reminderBeforeHeaderTitle" = "%1$@ erwartet eine Antwort bis %2$@";
+
+/* loco:6a2bebd42122fe8388063649 */
+"reminderBeforeHeaderTitle-plural" = "%1$@ erwarten eine Antwort bis %2$@";
+
+/* loco:6a2bebd42122fe838806364a */
+"reminderBeforeHeaderTitle-plural-2" = "";
+
+/* loco:6a2bebd42122fe838806364b */
+"reminderBeforeHeaderTitle-plural-3" = "";
+
+/* loco:6a3a51f912ad97935e085212 */
+"reminderBottomSheetTitle" = "Erinnerung verschieben";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Nachfassen";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hallo,\nIst es möglich, ein Feedback zu diesem Thema zu erhalten?\nVielen Dank im Voraus.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Als erledigt markieren";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Erinnerung: keine Antwort von %1$s auf diese E-Mail seit dem %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Auf morgen %s Uhr verschieben";
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Sichtbarkeit der Erinnerung";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Benennen Sie den Ordner um";
 
@@ -1377,6 +1495,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Speichern im kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Geplante Sendung: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Planen Sie den Versand";
@@ -1414,11 +1535,23 @@
 /* loco:662f89ba8e8c8321190ae342 */
 "selectSignatureNone" = "Keine Unterschrift";
 
+/* loco:6a3e245112c225d11e036142 */
+"selectionReminderMeOnly" = "Nur ich";
+
+/* loco:6a3e27ee5cfac3b713061a22 */
+"selectionReminderRecipientsAndMe" = "Empfänger und mich";
+
+/* loco:6a3e22a05bac9d22d10398d2 */
+"selectionReminderTitle" = "Wählen, wer die Erinnerung sehen kann";
+
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Senden Sie";
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Senden Sie die Bestätigung";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Sendeoptionen";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Gesendete Nachrichten";
@@ -1756,6 +1889,12 @@
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaktion %@ gesendet";
 
+/* loco:6a2912145e8865f2bb0e1ff2 */
+"snackbarReminder" = "Die Erinnerung wird erstellt";
+
+/* loco:6a2915941b110d7b1d08a1d2 */
+"snackbarReminderSaved" = "Die Erinnerung ist für den %s eingestellt";
+
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Erfolgreich gemeldet";
 
@@ -1942,6 +2081,18 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Entsperren";
 
+/* loco:6a3d0acdd4f530b3c10f0852 */
+"unitDays" = "Tag";
+
+/* loco:6a3d0acdd4f530b3c10f0853 */
+"unitDays-plural" = "Tage";
+
+/* loco:6a3d0ac7e0a0910b0c07eda2 */
+"unitHours" = "Stunde";
+
+/* loco:6a3d0ac7e0a0910b0c07eda3 */
+"unitHours-plural" = "Stunden";
+
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Unbekannter Spediteur";
 
@@ -1968,6 +2119,9 @@
 
 /* loco:6633460708b9ff4adf0726b2 */
 "updateVersionTitle" = "Ihr Erlebnis kann sich verschlechtern, weil Ihr Gerät veraltet ist";
+
+/* loco:6a33bf72315d7d3dea09c7b3 */
+"urgencyReminderDescription" = "Benachrichtigung erhalten, wenn Ihr Empfänger bis zum gewählten Datum nicht geantwortet hat.";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Einen Hyperlink erstellen";

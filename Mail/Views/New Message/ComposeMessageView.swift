@@ -99,7 +99,10 @@ struct ComposeMessageView: View {
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-    @State private var isShowingSchedulePanel = false
+    @State private var isShowingSendOptionsPanel = false
+    @State private var selectedScheduleOption: ScheduleOption?
+    @State private var selectedReminderOption: ReminderOption?
+    @State private var selectedReminderVisibility: ReminderVisibility?
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
     @State private var isShowingMailPremiumPanel = false
@@ -249,25 +252,6 @@ struct ComposeMessageView: View {
                 }
             }
 
-            ToolbarItem(placement: .topBarTrailing) {
-                if mailboxManager.featureFlagsManager.isEnabled(.scheduleSendDraft) {
-                    Button {
-                        if draft.encrypted {
-                            snackbarPresenter
-                                .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
-                        } else {
-                            isShowingSchedulePanel = true
-                        }
-                    } label: {
-                        Label(
-                            MailResourcesStrings.Localizable.scheduleSendingTitle,
-                            asset: MailResourcesAsset.clockPaperplane.swiftUIImage
-                        )
-                    }
-                    .disabled(isScheduleSendButtonDisabled)
-                }
-            }
-
             ToolbarItem(placement: .confirmationAction) {
                 Button {
                     trySendingMessage()
@@ -286,6 +270,7 @@ struct ComposeMessageView: View {
                     isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor,
                     selectedText: selectedText
@@ -410,12 +395,13 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
-        .scheduleFloatingPanel(
-            isPresented: $isShowingSchedulePanel,
-            type: .scheduledDraft,
+        .sendOptionFloatingPanel(
+            isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
             initialDate: draft.scheduleDate,
-            completionHandler: didScheduleDraft
+            selectedScheduleOption: $selectedScheduleOption,
+            selectedReminderOption: $selectedReminderOption,
+            selectedReminderVisibility: $selectedReminderVisibility
         )
     }
 
@@ -449,17 +435,6 @@ struct ComposeMessageView: View {
             await draftContentManager.saveCurrentDraftBody()
             dismissMessageView()
         }
-    }
-
-    private func didScheduleDraft(_ date: Date) {
-        if let liveDraft = draft.thaw() {
-            try? liveDraft.realm?.write {
-                liveDraft.scheduleDate = date
-                liveDraft.action = .schedule
-            }
-        }
-
-        dismissMessageView()
     }
 
     private func trySendingMessage(skipSubjectCheck: Bool = false, skipAttachmentsCheck: Bool = false) {
@@ -548,7 +523,20 @@ struct ComposeMessageView: View {
 
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
+                if let scheduleDate = selectedScheduleOption?.date {
+                    liveDraft.scheduleDate = scheduleDate
+                    liveDraft.action = .schedule
+                } else {
+                    liveDraft.action = .send
+                }
+
+                // TODO: Store reminder option and visibiliy when backend is ready
+                // if let reminderOption = selectedReminderOption,
+                //    let scheduleDate = selectedScheduleOption?.date, let reminderVisibility = selectedReminderVisibility {
+                //     liveDraft.reminderDate = reminderOption.reminderDate(sentAt: scheduleDate)
+                //     liveDraft.reminderVisibility = reminderVisibility
+                // }
+                //
             }
         }
     }

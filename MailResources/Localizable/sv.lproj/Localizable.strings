@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: sv, Swedish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 11 Jun 2026 08:46:12 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -27,6 +27,9 @@
 
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Blockera avsändare";
+
+/* loco:6a33f011268e2e689d055ec2 */
+"actionCallIfNoResponse" = "Påminn mig om jag inte får svar efter att ha skickat";
 
 /* loco:67e690c60b27fb17340e57b2 */
 "actionCancelSnooze" = "Avbryt vänteläge";
@@ -117,6 +120,30 @@
 
 /* loco:668cd87ac01614f14603ac92 */
 "addLinkTextPlaceholder" = "Text att visa";
+
+/* loco:69e09412a691c7f6f509e9e2 */
+"addMultipleDuplicateEmails" = "%d email har redan lagts till";
+
+/* loco:69e0976aec92330d290f6132 */
+"addMultipleDuplicateEmails-plural" = "%d emails har redan lagts till";
+
+/* loco:69e098862d60d708510f7482 */
+"addMultipleDuplicateEmails-plural-2" = "";
+
+/* loco:69e0988b0a88f2f1e906e342 */
+"addMultipleDuplicateEmails-plural-3" = "";
+
+/* loco:69e09d4c4090205bae063dd2 */
+"addMultipleInvalidEmails" = "%d email är ogiltig";
+
+/* loco:69e09d50f14f361fb505ea22 */
+"addMultipleInvalidEmails-plural" = "%d emails är ogiltiga";
+
+/* loco:69e09d543712c5e5fe0b3ab2 */
+"addMultipleInvalidEmails-plural-2" = "";
+
+/* loco:69e09d576bc338c3de02c772 */
+"addMultipleInvalidEmails-plural-3" = "";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "E-postadressen används redan";
@@ -376,6 +403,9 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Lägg till en mapp";
 
+/* loco:6a327bedaf69f744ea0b9752 */
+"buttonCustomReminder" = "Anpassad påminnelse";
+
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Anpassat schema";
 
@@ -529,6 +559,9 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Arrangör)";
 
+/* loco:6a33f13510c27914c80cf5d2 */
+"callIfNoResponseHeaderTitle" = "Påminn mig om det inte kommer svar efter sändning: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Kopia:";
 
@@ -631,8 +664,15 @@
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Vidarebefordrad";
 
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "Du har blivit omnämnd.";
+
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Ny";
+
+/* loco:6a267fb0061628408106eb44 */
+"contentDescriptionIconReminder" = "Är en påminnelse";
 
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Svara";
@@ -661,6 +701,12 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Datum:";
 
+/* loco:6a3d1152248f560be8062d22 */
+"daysBeforeSendingReminder" = "%d dag";
+
+/* loco:6a3d1152248f560be8062d23 */
+"daysBeforeSendingReminder-plural" = "%d dagar";
+
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Raderingen av ditt konto blir slutgiltig. Du kommer inte att kunna återaktivera ditt konto.";
 
@@ -669,6 +715,9 @@
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Ta bort mapp";
+
+/* loco:6a3e28614ee0b919b8084352 */
+"descriptionReminderRecipientsAndMe" = "Endast inom organisationen";
 
 /* loco:672e3534c133d192fb0acc92 */
 "disabledFeatureFlagDescription" = "Du kommer snart att kunna låsa upp begränsningarna för din ik.me e-postadress\n(lagringsgräns, anpassat schema, sändning och mer…)";
@@ -955,6 +1004,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "Servern vägrar avsändaren";
 
+/* loco:6a282f33edb32db70e0e4f02 */
+"errorReminderDelayTooShort" = "Påminnelsen måste vara minst %d timme fram i tiden";
+
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort" = "Du kan inte schemalägga ett e-postmeddelande mindre än %d minuter framåt i tiden";
 
@@ -984,6 +1036,9 @@
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Avsändarens ursprung har autentiserats.";
+
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Mottagare inom din organisation kommer att se att ett svar förväntas.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Jag förstår";
@@ -1057,6 +1112,12 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "För att hjälpa dig";
 
+/* loco:6a3d14fef750fb5df20ebc72 */
+"hoursBeforeSendingReminder" = "%d timme";
+
+/* loco:6a3d14fef750fb5df20ebc73 */
+"hoursBeforeSendingReminder-plural" = "%d timmar";
+
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Inkorg";
 
@@ -1077,6 +1138,9 @@
 
 /* loco:672e306d38f5c72b20044c32 */
 "laterThisMorning" = "Senare i morse";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "och";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Laddar…";
@@ -1116,6 +1180,12 @@
 
 /* loco:62b2f6bcdfa4fa28ad7bb122 */
 "menuDrawerMailboxStorage" = "%1$@ / %2$@ använt";
+
+/* loco:6a339ec8d1c106218d093662 */
+"messageAlreadySummarized" = "Meddelandet är redan sammanfattat";
+
+/* loco:6a339f263bd08592e10df6f3 */
+"messageAlreadyTranslated" = "Meddelandet är redan översatt";
 
 /* loco:6903874c026e3f7b78066ba2 */
 "messageComesFromDiscussionList" = "Detta meddelande kommer från en diskussionslista.";
@@ -1158,6 +1228,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Meddelandesammanfattning";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria kunde inte sammanfatta detta meddelande.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria kunde inte sammanfatta detta meddelande. Försök igen.";
@@ -1348,6 +1421,51 @@
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Senaste sökningar";
 
+/* loco:6a2beb4d91e4ffca310637d3 */
+"reminderAfterHeaderTitle" = "%1$@ väntar på svar sedan %2$@";
+
+/* loco:6a2beb4d91e4ffca310637d4 */
+"reminderAfterHeaderTitle-plural" = "%1$@ väntar på svar sedan %2$@";
+
+/* loco:6a2beb4d91e4ffca310637d5 */
+"reminderAfterHeaderTitle-plural-2" = "";
+
+/* loco:6a2beb4d91e4ffca310637d6 */
+"reminderAfterHeaderTitle-plural-3" = "";
+
+/* loco:6a2bebd42122fe8388063648 */
+"reminderBeforeHeaderTitle" = "%1$@ väntar på svar senast %2$@";
+
+/* loco:6a2bebd42122fe8388063649 */
+"reminderBeforeHeaderTitle-plural" = "%1$@ väntar på svar senast %2$@";
+
+/* loco:6a2bebd42122fe838806364a */
+"reminderBeforeHeaderTitle-plural-2" = "";
+
+/* loco:6a2bebd42122fe838806364b */
+"reminderBeforeHeaderTitle-plural-3" = "";
+
+/* loco:6a3a51f912ad97935e085212 */
+"reminderBottomSheetTitle" = "Skjut upp påminnelsen";
+
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Uppföljning";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hej,\nÄr det möjligt att få feedback om detta ämne?\nTack på förhand.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Markera som klar";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Påminnelse: inget svar från %1$s på detta e-postmeddelande sedan %2$s";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Skjut upp till imorgon %s";
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Påminnelsens synlighet";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Byt namn på mappen";
 
@@ -1377,6 +1495,9 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Spara i kDrive";
+
+/* loco:6a203e7cc8fda76cf6026a53 */
+"scheduleSendingHeaderTitle" = "Schemalagd sändning: %s";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schemalägg sändning";
@@ -1414,11 +1535,23 @@
 /* loco:662f89ba8e8c8321190ae342 */
 "selectSignatureNone" = "Ingen signatur";
 
+/* loco:6a3e245112c225d11e036142 */
+"selectionReminderMeOnly" = "Bara jag";
+
+/* loco:6a3e27ee5cfac3b713061a22 */
+"selectionReminderRecipientsAndMe" = "Mottagare och mig";
+
+/* loco:6a3e22a05bac9d22d10398d2 */
+"selectionReminderTitle" = "Välj vem som kan se påminnelsen";
+
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Skicka";
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Skicka bekräftelsen";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Skicka-alternativ";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Skickade meddelanden";
@@ -1756,6 +1889,12 @@
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaktion %@ skickad";
 
+/* loco:6a2912145e8865f2bb0e1ff2 */
+"snackbarReminder" = "Påminnelsen skapas";
+
+/* loco:6a2915941b110d7b1d08a1d2 */
+"snackbarReminderSaved" = "Påminnelsen är inställd för %s";
+
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Rapportering genomförd";
 
@@ -1942,6 +2081,18 @@
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Avblockera";
 
+/* loco:6a3d0acdd4f530b3c10f0852 */
+"unitDays" = "Dag";
+
+/* loco:6a3d0acdd4f530b3c10f0853 */
+"unitDays-plural" = "Dagar";
+
+/* loco:6a3d0ac7e0a0910b0c07eda2 */
+"unitHours" = "Timme";
+
+/* loco:6a3d0ac7e0a0910b0c07eda3 */
+"unitHours-plural" = "Timmar";
+
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Okänd avsändare";
 
@@ -1968,6 +2119,9 @@
 
 /* loco:6633460708b9ff4adf0726b2 */
 "updateVersionTitle" = "Din upplevelse kan försämras eftersom din enhet inte är uppdaterad";
+
+/* loco:6a33bf72315d7d3dea09c7b3 */
+"urgencyReminderDescription" = "Få en notis om din mottagare inte har svarat senast på ett valt datum.";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Skapa en hyperlänk";

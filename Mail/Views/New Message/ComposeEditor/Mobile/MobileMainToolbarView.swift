@@ -17,10 +17,12 @@
  */
 
 import DesignSystem
+import IKSnackbar
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 struct MobileMainToolbarView: View {
@@ -33,9 +35,12 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
+    @Binding var isShowingSendOptionsPanel: Bool
 
     let draft: Draft
     let isEditorFocused: Bool
+
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     private var leadingActions: [EditorToolbarAction] {
         var availableOptions: [EditorToolbarAction] = [.editText, .addAttachment]
@@ -52,6 +57,10 @@ struct MobileMainToolbarView: View {
 
         if mailboxManager.featureFlagsManager.isEnabled(.mailComposeEncrypted) {
             availableOptions.append(.encryption)
+        }
+
+        if mailboxManager.featureFlagsManager.isEnabled(.scheduleSendDraft) {
+            availableOptions.append(.sendOptions)
         }
 
         return availableOptions
@@ -120,13 +129,22 @@ struct MobileMainToolbarView: View {
             break
         case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
             break
+        case .sendOptions:
+            if draft.encrypted {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
+            } else {
+                isShowingSendOptionsPanel = true
+            }
         }
     }
 
     private func isDisabled(_ action: EditorToolbarAction) -> Bool {
-        if action == .editText {
+        switch action {
+        case .editText:
             return !isEditorFocused
-        } else {
+        case .sendOptions:
+            return draft.recipientsAreEmpty
+        default:
             return false
         }
     }
@@ -141,6 +159,7 @@ struct MobileMainToolbarView: View {
         isShowingMyKSuitePanel: .constant(false),
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
+        isShowingSendOptionsPanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
     )
