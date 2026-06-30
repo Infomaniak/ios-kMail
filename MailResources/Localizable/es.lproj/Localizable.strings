@@ -559,8 +559,8 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organizador)";
 
-/* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Recordarme si no hay respuesta después de enviar: %@";
+/* loco:6a43bb24b9f14ec0ce0ae566 */
+"callIfNoResponseHeaderTitle" = "Recordarme si no hay respuesta: %s después del envío";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";

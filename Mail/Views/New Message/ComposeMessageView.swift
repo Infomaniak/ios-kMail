@@ -195,7 +195,10 @@ struct ComposeMessageView: View {
                     draft: draft,
                     focusedField: _focusedField,
                     autocompletionType: $autocompletionType,
-                    currentSignature: $currentSignature
+                    currentSignature: $currentSignature,
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
+                    selectedReminderOption: $selectedReminderOption,
+                    selectedScheduleOption: $selectedScheduleOption
                 )
                 .environment(\.draftEncryption, draft.encrypted ?
                     .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :

@@ -144,6 +144,14 @@ struct SendOptionFloatingPanel: ViewModifier {
                         )
                     }
                 }
+                .onAppear {
+                    if selectedReminderOption == nil {
+                        isReminderEnabled = false
+                    }
+                    if selectedScheduleOption == nil {
+                        isScheduleEnabled = false
+                    }
+                }
             }
     }
 }

@@ -559,8 +559,8 @@
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Arrangør)";
 
-/* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Påminn meg hvis det ikke kommer svar etter sending: %@";
+/* loco:6a43bb24b9f14ec0ce0ae566 */
+"callIfNoResponseHeaderTitle" = "Påminn meg hvis det ikke er svar: %s etter sending";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
