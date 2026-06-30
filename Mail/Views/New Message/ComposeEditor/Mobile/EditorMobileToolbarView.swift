@@ -117,4 +117,5 @@ struct EditorMobileToolbarView: View {
         draftLocalUUID: "",
         mailboxManager: PreviewHelper.sampleMailboxManager
     ))
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
