@@ -92,6 +92,11 @@ struct MobileMainToolbarView: View {
                 AIToolbarButton {
                     performToolbarAction(action)
                 }
+            case .sendOptions:
+                MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
+                    performToolbarAction(action)
+                }
+                .opacity(draft.encrypted ? 0.25 : 1)
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
