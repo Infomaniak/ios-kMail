@@ -6,10 +6,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
   
+env:
+  TUIST_TOKEN: ${{ secrets.TUIST_TOKEN }}
+
 jobs:
   build:
     name: Build and Test project
     runs-on: [ self-hosted, iOS ]
+    env:
+      DERIVED_DATA_PATH: ${{ github.workspace }}/DerivedData
 
     steps:
       - name: Checkout
@@ -35,7 +40,15 @@ jobs:
         run: tuist install && tuist generate
       - name: Check implicit imports
         run: tuist inspect implicit-imports
-      - name: Build
-        run: tuist build --clean "Infomaniak Mail"
+      - name: Build iOS / iPadOS
+        run: tuist build --clean --derived-data-path "$DERIVED_DATA_PATH" "Infomaniak Mail"
+      - name: Build macOS
+        run: tuist build "Infomaniak Mail Lite" --derived-data-path "$DERIVED_DATA_PATH" -- -destination 'platform=macOS,arch=arm64,variant=Mac Catalyst,name=My Mac' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
       - name: Unit and Integration Tests
-        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests --no-selective-testing
+        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests --no-selective-testing --derived-data-path "$DERIVED_DATA_PATH"
+      - name: Periphery
+        run: |
+          INDEX_STORE_PATH="$DERIVED_DATA_PATH/Index.noindex/DataStore"
+          test -d "$INDEX_STORE_PATH"
+          periphery scan --retain-codable-properties --format github-actions --relative-results --strict --skip-build --index-store-path "$INDEX_STORE_PATH"
+
