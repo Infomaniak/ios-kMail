@@ -4,7 +4,7 @@
  * Locale: pt, Portuguese
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Organizador)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Lembrar-me se não houver resposta após o envio: %s";
+"callIfNoResponseHeaderTitle" = "Lembrar-me se não houver resposta após o envio: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Proteger";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "O envio agendado e os lembretes não estão disponíveis para mensagens cifradas";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "O envio programado não está disponível para mensagens encriptadas";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Encriptação";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "A encriptação não está disponível se o envio agendado ou o lembrete estiver ativo";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Introduzir palavra-passe";
@@ -1459,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Lembrete: nenhuma resposta de %1$s a este email desde %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Adiar até amanhã às %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Visibilidade do lembrete";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Relançar";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Olá,\nÉ possível obter algum feedback sobre este assunto?\nObrigado desde já.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Marcar como concluído";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Lembrete: nenhuma resposta de %1$@ a este email desde %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Adiar até %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Os destinatários e eu";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Visibilidade do lembrete";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Renomear pasta";
@@ -1909,7 +1903,7 @@
 "snackbarReminder" = "O lembrete está a ser criado";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "O lembrete está agendado para %s";
+"snackbarReminderSaved" = "O lembrete está agendado para %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Reporte efetuado com sucesso";

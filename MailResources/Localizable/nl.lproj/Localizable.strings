@@ -4,7 +4,7 @@
  * Locale: nl, Dutch; Flemish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Organisator)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Herinner me als er geen reactie is na het verzenden: %s";
+"callIfNoResponseHeaderTitle" = "Herinner me als er geen reactie is na het verzenden: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Beschermen";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Geplande verzending en herinneringen zijn niet beschikbaar voor versleutelde berichten";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Geplande e-mails niet beschikbaar voor versleutelde berichten";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Versleuteling";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Versleuteling is niet beschikbaar als geplande verzending of herinnering is ingeschakeld";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Wachtwoord invoeren";
@@ -1459,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Herinnering: geen reactie van %1$s op deze e-mail sinds %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Uitstellen tot morgen %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Zichtbaarheid van de herinnering";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Opvolgen";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Hallo,\nIs het mogelijk om feedback te krijgen over dit onderwerp?\nBij voorbaat dank.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Markeer als voltooid";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Herinnering: geen reactie van %1$@ op deze e-mail sinds %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Uitstellen tot %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Ontvangers en ik";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Zichtbaarheid van de herinnering";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "De map hernoemen";
@@ -1909,7 +1903,7 @@
 "snackbarReminder" = "De herinnering wordt aangemaakt";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "De herinnering is ingesteld voor %s";
+"snackbarReminderSaved" = "De herinnering is ingesteld voor %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Succesvol gemeld";

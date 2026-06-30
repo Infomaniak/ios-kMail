@@ -4,7 +4,7 @@
  * Locale: da, Danish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Arrangør)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Påmind mig, hvis der ikke er svar efter afsendelse: %s";
+"callIfNoResponseHeaderTitle" = "Påmind mig, hvis der ikke er svar efter afsendelse: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Beskyt";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Planlagt afsendelse og påmindelser er ikke tilgængelige for krypterede beskeder";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Planlagte e-mails er ikke tilgængelige for krypterede beskeder";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Kryptering";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Kryptering er ikke tilgængelig, hvis planlagt afsendelse eller påmindelse er aktiveret";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Indtast adgangskode";
@@ -1036,6 +1042,9 @@
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Afsenderens oprindelse er blevet autentificeret.";
+
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Modtagere i din organisation vil se, at der forventes et svar.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Jeg forstår";
@@ -1453,28 +1462,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Påmindelse: intet svar fra %1$s på denne e-mail siden %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Udsæt til i morgen kl. %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Påmindelsens synlighed";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Følg op";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Hej,\nEr det muligt at få feedback om dette emne?\nPå forhånd tak.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Marker som udført";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Påmindelse: intet svar fra %1$@ på denne e-mail siden %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Udskyd til %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Modtagere og mig";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Påmindelsens synlighed";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Omdøb mappen";
@@ -1559,6 +1556,9 @@
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Send bekræftelsen";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Sendevalg";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Sendte beskeder";
@@ -1900,7 +1900,7 @@
 "snackbarReminder" = "Påmindelsen oprettes";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "Påmindelsen er indstillet til %s";
+"snackbarReminderSaved" = "Påmindelsen er indstillet til %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Succesfuldt rapporteret";

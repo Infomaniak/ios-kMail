@@ -4,7 +4,7 @@
  * Locale: fi, Finnish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Järjestäjä)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Muistuta minua, jos vastausta ei tule lähettämisen jälkeen: %s";
+"callIfNoResponseHeaderTitle" = "Muistuta minua, jos vastausta ei tule lähettämisen jälkeen: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Kopio:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Suojaa";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Ajastettu lähetys ja muistutukset eivät ole käytettävissä salatuille viesteille";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Ajastettu lähetys ei ole käytettävissä salatuille viesteille";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Salaus";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Salaus ei ole käytettävissä, jos ajastettu lähetys tai muistutus on käytössä";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Anna salasana";
@@ -1459,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Muistutus: ei vastausta %1$s:ltä tähän sähköpostiin lähtien %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Lykätä huomiseen klo %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Muistutuksen näkyvyys";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Seuraa";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Hei,\nOnko mahdollista saada palautetta tästä aiheesta?\nKiitos etukäteen.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Merkitse valmiiksi";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Muistutus: ei vastausta %1$@:ltä tähän sähköpostiin lähtien %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Lykkää ajankohtaan %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Vastaanottajat ja minä";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Muistutuksen näkyvyys";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Nimeä kansio uudelleen";
@@ -1909,7 +1903,7 @@
 "snackbarReminder" = "Muistutusta luodaan";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "Muistutus on asetettu ajalle %s";
+"snackbarReminderSaved" = "Muistutus on asetettu ajalle %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Ilmoitus tehty onnistuneesti";
