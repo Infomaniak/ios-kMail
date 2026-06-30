@@ -678,7 +678,11 @@ struct ComposeMessageView: View {
                 }
             }
             Task {
-                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(recipient.email, recipient.name, mentionQuery))
+                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(
+                    recipient.email,
+                    recipient.name,
+                    mentionQuery
+                ))
             }
             mentionQuery = ""
             matomo.track(eventWithCategory: .newMessage, name: "insertMention")

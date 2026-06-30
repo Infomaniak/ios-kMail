@@ -37,6 +37,11 @@ struct ComposeMessageContactList: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
+    private var normalizedMentionQuery: String {
+        let lowerCasedQuery = mentionQuery.lowercased()
+        return lowerCasedQuery.applyingTransform(.stripDiacritics, reverse: false) ?? lowerCasedQuery
+    }
+
     var body: some View {
         let visibleCount = min(mentionSuggestions.count, maxVisibleMentions)
         let totalHeight = CGFloat(visibleCount) * mentionRowHeight
@@ -50,7 +55,7 @@ struct ComposeMessageContactList: View {
                     } label: {
                         RecipientCell(
                             recipient: recipient,
-                            highlight: mentionQuery,
+                            highlight: normalizedMentionQuery,
                             contextUser: currentUser.value,
                             contextMailboxManager: mailboxManager
                         )
