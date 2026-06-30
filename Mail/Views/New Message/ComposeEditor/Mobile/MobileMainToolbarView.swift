@@ -39,6 +39,8 @@ struct MobileMainToolbarView: View {
 
     let draft: Draft
     let isEditorFocused: Bool
+    let selectedScheduleOption: ScheduleOption?
+    let selectedReminderOption: ReminderOption?
 
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
@@ -81,17 +83,30 @@ struct MobileMainToolbarView: View {
             case .addAttachment:
                 AddAttachmentMenu(draft: draft)
             case .encryption:
-                EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
-                    .buttonStyle(
-                        .mobileToolbar(
-                            isActivated: false,
-                            customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
-                        )
+                let isScheduleOrReminderActive = selectedScheduleOption != nil || selectedReminderOption != nil
+                EncryptionButton(
+                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                    draft: draft,
+                    isDisabled: isScheduleOrReminderActive
+                ) {
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptionDisabledByScheduledOrReminder)
+                }
+                .buttonStyle(
+                    .mobileToolbar(
+                        isActivated: false,
+                        customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
                     )
+                )
+                .opacity(isScheduleOrReminderActive ? 0.25 : 1)
             case .ai:
                 AIToolbarButton {
                     performToolbarAction(action)
                 }
+            case .sendOptions:
+                MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
+                    performToolbarAction(action)
+                }
+                .opacity(draft.encrypted ? 0.25 : 1)
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
@@ -131,7 +146,8 @@ struct MobileMainToolbarView: View {
             break
         case .sendOptions:
             if draft.encrypted {
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledReminderUnavailable)
             } else {
                 isShowingSendOptionsPanel = true
             }
@@ -142,8 +158,6 @@ struct MobileMainToolbarView: View {
         switch action {
         case .editText:
             return !isEditorFocused
-        case .sendOptions:
-            return draft.recipientsAreEmpty
         default:
             return false
         }
@@ -161,10 +175,9 @@ struct MobileMainToolbarView: View {
         isShowingEncryptStatePanel: .constant(false),
         isShowingSendOptionsPanel: .constant(false),
         draft: Draft(),
-        isEditorFocused: true
+        isEditorFocused: true,
+        selectedScheduleOption: nil,
+        selectedReminderOption: nil
     )
-    .environmentObject(AttachmentsManager(
-        draftLocalUUID: "",
-        mailboxManager: PreviewHelper.sampleMailboxManager
-    ))
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

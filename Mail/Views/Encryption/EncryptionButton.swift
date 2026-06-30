@@ -42,6 +42,8 @@ struct EncryptionButton: View {
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
+    var isDisabled = false
+    var disabledTapHandler: (() -> Void)?
 
     private var count: Int? {
         guard draft.encrypted && draft.encryptionPassword.isEmpty else { return nil }
@@ -53,7 +55,7 @@ struct EncryptionButton: View {
     private let badgeWidth: CGFloat = 16
 
     var body: some View {
-        Button(action: didTapEncrypt) {
+        Button(action: handleTap) {
             Label {
                 Text(MailResourcesStrings.Localizable.encryptedStatePanelTitle)
             } icon: {
@@ -105,6 +107,14 @@ struct EncryptionButton: View {
             ) {
                 disableEncryption()
             }
+        }
+    }
+
+    private func handleTap() {
+        if isDisabled {
+            disabledTapHandler?()
+        } else {
+            didTapEncrypt()
         }
     }
 
