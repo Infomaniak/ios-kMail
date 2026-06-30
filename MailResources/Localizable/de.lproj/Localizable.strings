@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Organisator)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Mich erinnern, wenn nach dem Senden keine Antwort erfolgt: %s";
+"callIfNoResponseHeaderTitle" = "Mich erinnern, wenn nach dem Senden keine Antwort erfolgt: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Schützen Sie";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Geplanter Versand und Erinnerungen sind für verschlüsselte Nachrichten nicht verfügbar";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Geplante E-Mails für verschlüsselte Nachrichten nicht verfügbar";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Verschlüsselung";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Verschlüsselung ist nicht verfügbar, wenn der geplante Versand oder die Erinnerung aktiviert ist";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Geben Sie das Passwort ein";
@@ -1459,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Erinnerung: keine Antwort von %1$s auf diese E-Mail seit dem %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Auf morgen %s Uhr verschieben";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Sichtbarkeit der Erinnerung";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Nachfassen";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Hallo,\nIst es möglich, ein Feedback zu diesem Thema zu erhalten?\nVielen Dank im Voraus.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Als erledigt markieren";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Erinnerung: keine Antwort von %1$@ auf diese E-Mail seit dem %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Verschieben bis %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Empfänger und ich";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Sichtbarkeit der Erinnerung";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Benennen Sie den Ordner um";
@@ -1909,7 +1903,7 @@
 "snackbarReminder" = "Die Erinnerung wird erstellt";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "Die Erinnerung ist für den %s eingestellt";
+"snackbarReminderSaved" = "Die Erinnerung ist für den %@ eingestellt";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Erfolgreich gemeldet";

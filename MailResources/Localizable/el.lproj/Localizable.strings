@@ -4,7 +4,7 @@
  * Locale: el, Greek
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Διοργανωτής)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Υπενθύμισέ μου αν δεν υπάρξει απάντηση μετά την αποστολή: %s";
+"callIfNoResponseHeaderTitle" = "Υπενθύμισέ μου αν δεν υπάρξει απάντηση μετά την αποστολή: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Κοινοποίηση:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Προστασία";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Η προγραμματισμένη αποστολή και οι υπενθυμίσεις δεν είναι διαθέσιμες για κρυπτογραφημένα μηνύματα";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Τα προγραμματισμένα email δεν είναι διαθέσιμα για κρυπτογραφημένα μηνύματα";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Κρυπτογράφηση";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Η κρυπτογράφηση δεν είναι διαθέσιμη αν η προγραμματισμένη αποστολή ή η υπενθύμιση είναι ενεργοποιημένη";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Εισαγωγή κωδικού πρόσβασης";
@@ -1459,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Υπενθύμιση: καμία απάντηση από %1$s σε αυτό το email από τις %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Αναβολή μέχρι αύριο %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Ορατότητα υπενθύμισης";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Παρακολούθηση";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Γεια σας,\nΕίναι δυνατόν να λάβετε κάποια ανατροφοδότηση για αυτό το θέμα;\nΣας ευχαριστώ εκ των προτέρων.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Σημείωση ως ολοκληρωμένο";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Υπενθύμιση: καμία απάντηση από %1$@ σε αυτό το email από τις %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Αναβολή έως %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Οι παραλήπτες και εγώ";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Ορατότητα υπενθύμισης";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Μετονομασία φακέλου";
@@ -1909,7 +1903,7 @@
 "snackbarReminder" = "Η υπενθύμιση δημιουργείται";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "Η υπενθύμιση έχει οριστεί για %s";
+"snackbarReminderSaved" = "Η υπενθύμιση έχει οριστεί για %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Η αναφορά ολοκληρώθηκε με επιτυχία";

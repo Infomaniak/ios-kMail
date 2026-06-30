@@ -4,7 +4,7 @@
  * Locale: nb, Norwegian Bokmål
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Mon, 29 Jun 2026 13:38:37 +0200
+ * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Arrangør)";
 
 /* loco:6a33f13510c27914c80cf5d2 */
-"callIfNoResponseHeaderTitle" = "Påminn meg hvis det ikke kommer svar etter sending: %s";
+"callIfNoResponseHeaderTitle" = "Påminn meg hvis det ikke kommer svar etter sending: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -848,6 +848,9 @@
 /* loco:68779ae099c3ce2b380a2c03 */
 "encryptedMessageSnackbarProtectAction" = "Beskytt";
 
+/* loco:6a42536a1e1800d49004854f */
+"encryptedMessageSnackbarScheduledReminderUnavailable" = "Planlagt sending og påminnelser er ikke tilgjengelig for krypterte meldinger";
+
 /* loco:68622a761d6dd808720712e2 */
 "encryptedMessageSnackbarScheduledUnavailable" = "Planlagte e-poster er ikke tilgjengelig for krypterte meldinger";
 
@@ -883,6 +886,9 @@
 
 /* loco:68356b25c1fd44c3770940c2 */
 "encryptedStatePanelTitle" = "Kryptering";
+
+/* loco:6a4251921681d4fa71091152 */
+"encryptionDisabledByScheduledOrReminder" = "Kryptering er ikke tilgjengelig hvis planlagt sending eller påminnelse er aktivert";
 
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Skriv inn passord";
@@ -1036,6 +1042,9 @@
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Avsenderens opprinnelse har blitt autentisert.";
+
+/* loco:6a1ff2d53506c01f4406e5d2 */
+"explanationActionCallIfNoResponse" = "Mottakere i organisasjonen din vil se at det forventes et svar.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Jeg forstår";
@@ -1225,6 +1234,9 @@
 
 /* loco:69f07dc4616835272207edd2 */
 "messageSummary" = "Meldingens oppsummering";
+
+/* loco:69fc8bc6c44fdc00860c5ac2 */
+"messageSummaryError" = "Euria kunne ikke oppsummere denne meldingen.";
 
 /* loco:69f09de42dd56d99c000c725 */
 "messageSummaryErrorRetry" = "Euria kunne ikke oppsummere denne meldingen. Vennligst prøv igjen.";
@@ -1453,28 +1465,16 @@
 
 /* loco:6a22b723f1227871e70609f2
  * Plural and singular intermediate keys available */
-"reminderNoResponseHeaderTitle" = "Påminnelse: ingen respons fra %1$s på denne e-posten siden %2$s";
-
-/* loco:6a22b7240f4c33fa6601be32 */
-"reminderPostponeButton" = "Utsett til i morgen kl. %s";
-/* loco:6a3d482c1162ca4a4e0a10c3 */
-"reminderVisibilityTitle" = "Påminnelsens synlighet";
-
-/* loco:6a22b723fa69bc57450beaa2 */
-"reminderFollowUpButton" = "Følg opp";
-
-/* loco:6a22b7243ac068db98082f57 */
-"reminderFollowUpPlaceholderText" = "Hei,\nEr det mulig å få tilbakemelding om dette emnet?\nPå forhånd takk.";
-
-/* loco:6a22b7244f98b1da2a0022d2 */
-"reminderMarkAsDoneButton" = "Merk som fullført";
-
-/* loco:6a22b723f1227871e70609f2
- * Plural and singular intermediate keys available */
 "reminderNoResponseHeaderTitle" = "Påminnelse: ingen respons fra %1$@ på denne e-posten siden %2$@";
 
 /* loco:6a22b7240f4c33fa6601be32 */
 "reminderPostponeButton" = "Utsett til %@";
+
+/* loco:6a3d47f757d8fad3f80dbb52 */
+"reminderVisibilitySubTitle" = "Mottakere og meg";
+
+/* loco:6a3d482c1162ca4a4e0a10c3 */
+"reminderVisibilityTitle" = "Påminnelsens synlighet";
 
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Gi nytt navn til mappen";
@@ -1559,6 +1559,9 @@
 
 /* loco:6936f6d2c3bd045a2001d752 */
 "sendConfirmationAction" = "Send bekreftelsen";
+
+/* loco:6a200f0e2ca94f0c4a013f62 */
+"sendOptions" = "Sendevalg";
 
 /* loco:627e401ec1c7c02de9181292 */
 "sentFolder" = "Sendte meldinger";
@@ -1900,7 +1903,7 @@
 "snackbarReminder" = "Påminnelsen opprettes";
 
 /* loco:6a2915941b110d7b1d08a1d2 */
-"snackbarReminderSaved" = "Påminnelsen er satt til %s";
+"snackbarReminderSaved" = "Påminnelsen er satt til %@";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Rapportert";
