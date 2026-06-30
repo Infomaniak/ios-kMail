@@ -64,7 +64,14 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 
     static func deleteUserContacts(userId: Int) {}
 
-    func searchAllAutocompletable(matching query: String, fetchLimit: Int) async -> [any ContactAutocompletable] { [] }
+    func searchAllAutocompletable(
+        matching query: String,
+        fetchLimit: Int,
+        shouldTrim: Bool
+    )
+        async -> [any ContactAutocompletable] {
+        []
+    }
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
