@@ -277,6 +277,8 @@ struct ComposeMessageView: View {
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                         isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
+                        selectedScheduleOption: $selectedScheduleOption,
+                        selectedReminderOption: $selectedReminderOption,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText

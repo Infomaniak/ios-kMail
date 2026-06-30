@@ -48,6 +48,9 @@ struct EditorMobileToolbarView: View {
 
     @Binding var isShowingSendOptionsPanel: Bool
 
+    @Binding var selectedScheduleOption: ScheduleOption?
+    @Binding var selectedReminderOption: ReminderOption?
+
     let draft: Draft
     let isEditorFocused: Bool
     let selectedText: String
@@ -66,6 +69,8 @@ struct EditorMobileToolbarView: View {
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
+                    selectedScheduleOption: $selectedScheduleOption,
+                    selectedReminderOption: $selectedReminderOption,
                     draft: draft,
                     isEditorFocused: isEditorFocused
                 )
@@ -102,6 +107,8 @@ struct EditorMobileToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingSendOptionsPanel: .constant(false),
+        selectedScheduleOption: .constant(nil),
+        selectedReminderOption: .constant(nil),
         draft: Draft(),
         isEditorFocused: true,
         selectedText: ""

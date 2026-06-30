@@ -36,6 +36,8 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
     @Binding var isShowingSendOptionsPanel: Bool
+    @Binding var selectedScheduleOption: ScheduleOption?
+    @Binding var selectedReminderOption: ReminderOption?
 
     let draft: Draft
     let isEditorFocused: Bool
@@ -81,13 +83,16 @@ struct MobileMainToolbarView: View {
             case .addAttachment:
                 AddAttachmentMenu(draft: draft)
             case .encryption:
-                EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
-                    .buttonStyle(
-                        .mobileToolbar(
-                            isActivated: false,
-                            customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
-                        )
-                    )
+                let isScheduleOrReminderActive = selectedScheduleOption != nil || selectedReminderOption != nil
+                EncryptionButton(
+                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                    draft: draft,
+                    isDisabled: isScheduleOrReminderActive,
+                    disabledTapHandler: {
+                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptionDisabledByScheduledOrReminder)
+                    }
+                )
+                .opacity(isScheduleOrReminderActive ? 0.25 : 1)
             case .ai:
                 AIToolbarButton {
                     performToolbarAction(action)
@@ -164,6 +169,8 @@ struct MobileMainToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingSendOptionsPanel: .constant(false),
+        selectedScheduleOption: .constant(nil),
+        selectedReminderOption: .constant(nil),
         draft: Draft(),
         isEditorFocused: true
     )
