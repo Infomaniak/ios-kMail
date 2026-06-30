@@ -142,8 +142,6 @@ struct MobileMainToolbarView: View {
         switch action {
         case .editText:
             return !isEditorFocused
-        case .sendOptions:
-            return draft.recipientsAreEmpty
         default:
             return false
         }
