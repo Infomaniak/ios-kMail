@@ -86,6 +86,7 @@ struct CustomScheduleAlertView: View {
                 selection: $selectedDate,
                 in: minimumDate ... type.maximumDate
             )
+            .datePickerStyle(.graphical)
             .labelsHidden()
             .onChange(of: selectedDate) { newDate in
                 if isShowingError, type.isDateInValidTimeframe(newDate) {
