@@ -95,8 +95,13 @@ const handleMutationRecords = (mutationRecords) => {
             return refs;
         }, []);
 
-    if (removedRefs.length > 0) {
-        onMentionsDeleted(JSON.stringify(removedRefs));
+    const uniqueRemovedRefs = [...new Set(removedRefs)];
+    const trulyRemovedRefs = uniqueRemovedRefs.filter((ref) => {
+        return !document.querySelector(`a[data-ik-mention-ref="${CSS.escape(ref)}"]`);
+    });
+
+    if (trulyRemovedRefs.length > 0) {
+        onMentionsDeleted(JSON.stringify(trulyRemovedRefs));
     }
 };
 
