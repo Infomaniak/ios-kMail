@@ -672,7 +672,7 @@
 "contentDescriptionIconNewMail" = "New";
 
 /* loco:6a267fb0061628408106eb44 */
-"contentDescriptionIconReminder" = "Is reminder";
+"contentDescriptionIconReminder" = "Is a reminder";
 
 /* loco:667aa0ab6f3cd83e50048b82 */
 "contentDescriptionIconReply" = "Reply";
@@ -1466,6 +1466,22 @@
 /* loco:6a3d482c1162ca4a4e0a10c3 */
 "reminderVisibilityTitle" = "Reminder visibility";
 
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Follow up";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Hello,\nIs it possible to get some feedback on this subject?\nThank you in advance.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Mark as done";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Reminder: no response from %1$@ to this email since %2$@";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Postpone until %@";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Rename the folder";
 
@@ -1497,7 +1513,7 @@
 "saveMailInkDrive" = "Save in kDrive";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Scheduled sending: %s";
+"scheduleSendingHeaderTitle" = "Scheduled sending: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schedule sending";

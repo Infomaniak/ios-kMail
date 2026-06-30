@@ -193,7 +193,8 @@ struct ThreadCell: View {
                     folderName: thread.searchFolderName,
                     lastAction: thread.lastAction,
                     hasAttachments: thread.hasAttachments,
-                    isFlagged: thread.flagged
+                    isFlagged: thread.flagged,
+                    hasReminder: thread.hasReminder
                 )
             }
             .animation(

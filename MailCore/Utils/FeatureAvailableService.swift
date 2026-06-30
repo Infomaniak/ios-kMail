@@ -23,6 +23,7 @@ public enum AppFeature {
     case emojiReaction
     case summarize
     case translate
+    case reminder
 }
 
 public protocol FeatureAvailableProvider {
@@ -42,6 +43,8 @@ struct FeatureAvailableService: FeatureAvailableProvider {
             return isMailSummarizeAvailable()
         case .translate:
             return isTranslateAvailable()
+        case .reminder:
+            return isReminderAvailable()
         }
     }
 
@@ -59,5 +62,9 @@ struct FeatureAvailableService: FeatureAvailableProvider {
 
     private func isTranslateAvailable() -> Bool {
         return featureFlagManageable.isEnabled(.mailTranslateEmail)
+    }
+
+    private func isReminderAvailable() -> Bool {
+        return featureFlagManageable.isEnabled(.mailReminder) && UserDefaults.shared.threadMode == .conversation
     }
 }

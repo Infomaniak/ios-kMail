@@ -1466,6 +1466,22 @@
 /* loco:6a3d482c1162ca4a4e0a10c3 */
 "reminderVisibilityTitle" = "Visibilità del promemoria";
 
+/* loco:6a22b723fa69bc57450beaa2 */
+"reminderFollowUpButton" = "Sollecita";
+
+/* loco:6a22b7243ac068db98082f57 */
+"reminderFollowUpPlaceholderText" = "Ciao,\nÈ possibile avere un feedback su questo argomento?\nGrazie in anticipo.";
+
+/* loco:6a22b7244f98b1da2a0022d2 */
+"reminderMarkAsDoneButton" = "Segna come fatto";
+
+/* loco:6a22b723f1227871e70609f2
+ * Plural and singular intermediate keys available */
+"reminderNoResponseHeaderTitle" = "Promemoria: nessuna risposta da %1$@ a questa email dal %2$@";
+
+/* loco:6a22b7240f4c33fa6601be32 */
+"reminderPostponeButton" = "Posticipa fino al %@";
+
 /* loco:67247c6c7e4e57666a017942 */
 "renameFolder" = "Rinominare la cartella";
 
@@ -1497,7 +1513,7 @@
 "saveMailInkDrive" = "Salva in kDrive";
 
 /* loco:6a203e7cc8fda76cf6026a53 */
-"scheduleSendingHeaderTitle" = "Invio programmato: %s";
+"scheduleSendingHeaderTitle" = "Invio programmato: %@";
 
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Pianifica l’invio";
