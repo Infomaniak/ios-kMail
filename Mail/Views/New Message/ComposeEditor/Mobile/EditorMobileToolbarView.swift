@@ -48,12 +48,11 @@ struct EditorMobileToolbarView: View {
 
     @Binding var isShowingSendOptionsPanel: Bool
 
-    @Binding var selectedScheduleOption: ScheduleOption?
-    @Binding var selectedReminderOption: ReminderOption?
-
     let draft: Draft
     let isEditorFocused: Bool
     let selectedText: String
+    let selectedScheduleOption: ScheduleOption?
+    let selectedReminderOption: ReminderOption?
 
     private let transition = AnyTransition.opacity.combined(with: .move(edge: .bottom))
 
@@ -69,10 +68,10 @@ struct EditorMobileToolbarView: View {
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
-                    selectedScheduleOption: $selectedScheduleOption,
-                    selectedReminderOption: $selectedReminderOption,
                     draft: draft,
-                    isEditorFocused: isEditorFocused
+                    isEditorFocused: isEditorFocused,
+                    selectedScheduleOption: selectedScheduleOption,
+                    selectedReminderOption: selectedReminderOption
                 )
                 .transition(transition)
             }
@@ -107,15 +106,11 @@ struct EditorMobileToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingSendOptionsPanel: .constant(false),
-        selectedScheduleOption: .constant(nil),
-        selectedReminderOption: .constant(nil),
         draft: Draft(),
         isEditorFocused: true,
-        selectedText: ""
+        selectedText: "",
+        selectedScheduleOption: nil,
+        selectedReminderOption: nil
     )
-    .environmentObject(AttachmentsManager(
-        draftLocalUUID: "",
-        mailboxManager: PreviewHelper.sampleMailboxManager
-    ))
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
