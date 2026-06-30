@@ -54,7 +54,6 @@ final class AIModel: ObservableObject {
     private let draft: Draft
 
     private var contextId: String?
-    private var recipientsList: String?
 
     var lastMessage: String {
         return conversation.last?.content ?? ""
@@ -87,8 +86,17 @@ final class AIModel: ObservableObject {
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
-        recipientsList = getRecipientsList()
-        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
+        let liveDraft = getLiveDraft()
+        conversation.append(
+            AIMessage(type: .user, content: prompt, vars:
+                AIMessageVars(
+                    from: makeFrom(from: liveDraft),
+                    to: liveDraft?.to.map { $0.detached() },
+                    cc: liveDraft?.cc.map { $0.detached() },
+                    bcc: liveDraft?.bcc.map { $0.detached() },
+                    subject: liveDraft?.subject
+                ))
+        )
         isLoading = true
     }
 
@@ -113,7 +121,6 @@ extension AIModel {
         conversation = []
         isLoading = false
         error = nil
-        recipientsList = nil
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
@@ -153,8 +160,15 @@ extension AIModel {
         }
 
         guard let replyingString else { return }
+        let liveDraft = getLiveDraft()
         conversation.insert(
-            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
+            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(
+                from: makeFrom(from: liveDraft),
+                to: liveDraft?.to.map { $0.detached() },
+                cc: liveDraft?.cc.map { $0.detached() },
+                bcc: liveDraft?.bcc.map { $0.detached() },
+                subject: liveDraft?.subject
+            )),
             at: 0
         )
     }
@@ -287,14 +301,16 @@ extension AIModel {
         return await DraftContentDiffHelper(draft: liveDraft, transactionable: mailboxManager).userBodyContainsUserEdition()
     }
 
-    private func getRecipientsList() -> String? {
-        guard let liveDraft = getLiveDraft() else { return nil }
+    private func makeFrom(from draft: Draft?) -> Recipient? {
+        guard let draft else { return nil }
 
-        let to: [String] = liveDraft.to.compactMap { recipient in
-            guard !recipient.name.isEmpty else { return nil }
-            return recipient.name
+        if let identityId = draft.identityId,
+           let signature = mailboxManager.getStoredSignatures().first(where: { identityId == "\($0.id)" }) {
+            let email = signature.senderEmail.isEmpty ? mailboxManager.mailbox.email : signature.senderEmail
+            return Recipient(email: email, name: signature.senderName)
         }
-        return to.isEmpty ? nil : to.joined(separator: ", ")
+
+        return Recipient(email: mailboxManager.mailbox.email, name: "")
     }
 }
 
