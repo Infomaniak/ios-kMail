@@ -138,10 +138,6 @@ struct ComposeMessageView: View {
         return !canSendEmails || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
     }
 
-    private var isScheduleSendButtonDisabled: Bool {
-        return !canSendEmails || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || isSyncingDrafts
-    }
-
     private var isMailboxOverQuota: Bool {
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
