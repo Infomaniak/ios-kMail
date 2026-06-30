@@ -36,11 +36,11 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
     @Binding var isShowingSendOptionsPanel: Bool
-    @Binding var selectedScheduleOption: ScheduleOption?
-    @Binding var selectedReminderOption: ReminderOption?
 
     let draft: Draft
     let isEditorFocused: Bool
+    let selectedScheduleOption: ScheduleOption?
+    let selectedReminderOption: ReminderOption?
 
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
@@ -174,14 +174,10 @@ struct MobileMainToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingSendOptionsPanel: .constant(false),
-        selectedScheduleOption: .constant(nil),
-        selectedReminderOption: .constant(nil),
         draft: Draft(),
-        isEditorFocused: true
+        isEditorFocused: true,
+        selectedScheduleOption: nil,
+        selectedReminderOption: nil
     )
-    .environmentObject(AttachmentsManager(
-        draftLocalUUID: "",
-        mailboxManager: PreviewHelper.sampleMailboxManager
-    ))
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
