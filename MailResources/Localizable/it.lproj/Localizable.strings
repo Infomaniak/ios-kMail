@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Organizzatore)";
 
 /* loco:6a43bb24b9f14ec0ce0ae566 */
-"callIfNoResponseHeaderTitle" = "Ricordami se non c’è risposta: %s dopo l’invio";
+"callIfNoResponseHeaderTitle" = "Ricordami se non c’è risposta: %@ dopo l’invio";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";

@@ -560,7 +560,7 @@
 "calendarOrganizerName" = "%@ (Arrangör)";
 
 /* loco:6a43bb24b9f14ec0ce0ae566 */
-"callIfNoResponseHeaderTitle" = "Påminn mig om inget svar: %s efter sändning";
+"callIfNoResponseHeaderTitle" = "Påminn mig om inget svar: %@ efter sändning";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Kopia:";
