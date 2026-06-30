@@ -131,7 +131,8 @@ struct MobileMainToolbarView: View {
             break
         case .sendOptions:
             if draft.encrypted {
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledReminderUnavailable)
             } else {
                 isShowingSendOptionsPanel = true
             }
