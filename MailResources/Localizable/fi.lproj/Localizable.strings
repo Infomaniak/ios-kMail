@@ -707,6 +707,12 @@
 /* loco:6a3d1152248f560be8062d23 */
 "daysBeforeSendingReminder-plural" = "%d päivää";
 
+/* loco:6a3d1152248f560be8062d24 */
+"daysBeforeSendingReminder-plural-2" = "";
+
+/* loco:6a3d1152248f560be8062d25 */
+"daysBeforeSendingReminder-plural-3" = "";
+
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "Tilisi poistaminen on lopullista. Et voi enää aktivoida tiliäsi uudelleen.";
 
