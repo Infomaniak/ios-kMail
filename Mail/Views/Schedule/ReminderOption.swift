@@ -59,6 +59,17 @@ enum ReminderOption: Hashable {
         }
     }
 
+    var headerText: String {
+        switch self {
+        case .oneDay, .threeDays, .sevenDays:
+            return MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(title)
+        case .customHours, .customDays:
+            return MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(subtitle ?? "")
+        default:
+            return ""
+        }
+    }
+
     var isCustom: Bool {
         switch self {
         case .custom, .customHours, .customDays:

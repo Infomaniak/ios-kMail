@@ -42,7 +42,9 @@ enum ScheduleOption: Identifiable, Equatable {
     case lastSchedule(value: Date)
     case custom(date: Date)
 
-    var id: String { title }
+    var id: String {
+        title
+    }
 
     var title: String {
         switch self {
@@ -137,6 +139,11 @@ enum ScheduleOption: Identifiable, Equatable {
     var canBeDisplayed: Bool {
         guard let date else { return false }
         return isAvailable && date >= .minimumScheduleDelay
+    }
+
+    var headerText: String {
+        return MailResourcesStrings.Localizable
+            .scheduleSendingHeaderTitle(date?.formatted(.messageHeader) ?? "")
     }
 
     private var isAvailable: Bool {
