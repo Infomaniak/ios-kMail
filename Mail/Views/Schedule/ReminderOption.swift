@@ -79,6 +79,23 @@ enum ReminderOption: Hashable {
         }
     }
 
+    var inMinutes: Int {
+        switch self {
+        case .oneDay:
+            return 1440
+        case .threeDays:
+            return 4320
+        case .sevenDays:
+            return 10080
+        case .customHours(let value):
+            return value * 60
+        case .customDays(let value):
+            return value * 24 * 60
+        default:
+            return 60
+        }
+    }
+
     func reminderDate(sentAt sendDate: Date) -> Date? {
         let calendar = Calendar.current
         switch self {
