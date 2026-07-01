@@ -73,6 +73,19 @@ struct MessageReminderHeaderView: View {
                     Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton) {}
                 }
             }
+
+        } else if isMyMessage && reminderDate >= .now {
+            MessageHeaderActionView(
+                icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader)),
+                showBottomSeparator: showBottomSeparator
+            ) {
+                HStack {
+                    Button(MailResourcesStrings.Localizable.buttonReschedule) {}
+                    MessageHeaderDivider()
+                    Button(MailResourcesStrings.Localizable.buttonCancelReminder) {}
+                }
+            }
         } else if !isMyMessage {
             MessageHeaderActionView(
                 icon: MailResourcesAsset.alarmClock.swiftUIImage,
