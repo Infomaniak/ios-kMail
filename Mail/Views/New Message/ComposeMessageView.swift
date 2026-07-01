@@ -531,13 +531,10 @@ struct ComposeMessageView: View {
                     liveDraft.action = .send
                 }
 
-                // TODO: Store reminder option and visibiliy when backend is ready
-                // if let reminderOption = selectedReminderOption,
-                //    let scheduleDate = selectedScheduleOption?.date, let reminderVisibility = selectedReminderVisibility {
-                //     liveDraft.reminderDate = reminderOption.reminderDate(sentAt: scheduleDate)
-                //     liveDraft.reminderVisibility = reminderVisibility
-                // }
-                //
+                if let reminderOption = selectedReminderOption, let visibility = selectedReminderVisibility {
+                    liveDraft.reminderDelta = reminderOption.inMinutes
+                    liveDraft.shouldRemindRecipient = visibility == .recipientsAndMe
+                }
             }
         }
     }
