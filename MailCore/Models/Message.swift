@@ -214,7 +214,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var scheduled: Bool // Message is being sent (max 30sec delay)
     @Persisted public var isScheduledDraft: Bool? // Message is scheduled
     @Persisted public var scheduleDate: Date?
-    @Persisted public var reminderDate: Date?
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
@@ -255,6 +254,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var summary: String?
 
     @Persisted public var mentions: List<String>
+    @Persisted public var reminder: Reminder?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -343,7 +343,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public var hasReminder: Bool {
-        return reminderDate != nil
+        return reminder != nil
     }
 
     public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
@@ -469,7 +469,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case scheduled
         case isScheduledDraft
         case scheduleDate
-        case reminderDate
         case forwarded
         case flagged
         case hasUnsubscribeLink
@@ -485,6 +484,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case headers
         case acknowledge
         case mentions
+        case reminder
     }
 
     override init() {
@@ -514,6 +514,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
 
+        // Preprocessing body with a ProxyBody
         let jsonBody = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
         body = jsonBody?.realmObject()
 
@@ -545,7 +546,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         scheduled = try values.decode(Bool.self, forKey: .scheduled)
         isScheduledDraft = try values.decodeIfPresent(Bool.self, forKey: .isScheduledDraft)
         scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
-        reminderDate = try values.decodeIfPresent(Date.self, forKey: .reminderDate)
         forwarded = try values.decode(Bool.self, forKey: .forwarded)
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
@@ -572,6 +572,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         } else {
             mentions = List()
         }
+        reminder = try values.decodeIfPresent(Reminder.self, forKey: .reminder)
     }
 
     public convenience init(
@@ -603,7 +604,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         scheduled: Bool,
         isScheduledDraft: Bool? = nil,
         scheduleDate: Date? = nil,
-        reminderDate: Date? = nil,
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
@@ -614,7 +614,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         emojiReaction: String? = nil,
         emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
         acknowledge: String? = nil,
-        mentions: [String]
+        mentions: [String],
+        reminder: Reminder? = nil
     ) {
         self.init()
 
@@ -646,7 +647,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.scheduled = scheduled
         self.isScheduledDraft = isScheduledDraft
         self.scheduleDate = scheduleDate
-        self.reminderDate = reminderDate
         self.forwarded = forwarded
         self.flagged = flagged
         self.hasUnsubscribeLink = hasUnsubscribeLink
@@ -659,6 +659,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
         self.acknowledge = acknowledge
         self.mentions = mentions.toRealmList()
+        self.reminder = reminder
     }
 
     public func toThread() -> Thread {
