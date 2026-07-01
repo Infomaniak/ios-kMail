@@ -415,6 +415,9 @@
 /* loco:6267aff571442d3f666a71c2 */
 "buttonDownloadAll" = "Lataa kaikki";
 
+/* loco:6a44d60341d17975390608a3 */
+"buttonEditDraft" = "Muokkaa luonnosta";
+
 /* loco:665868375c0888d3b9083612 */
 "buttonEditText" = "Muokkaa tekstiä";
 

@@ -53,7 +53,7 @@ struct MessageScheduleHeaderView: View {
 
                 MessageHeaderDivider()
 
-                Button(MailResourcesStrings.Localizable.buttonModify) {
+                Button(MailResourcesStrings.Localizable.buttonEditDraft) {
                     mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
                 }
                 .disabled(mailboxManager.mailbox.permissions?.canSendEmails == false)
