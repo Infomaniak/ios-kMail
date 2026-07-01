@@ -208,7 +208,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         } else {
             mentions = List()
         }
-        reminderDelta = try values.decodeIfPresent(Int.self, forKey: .references)
+        reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
         shouldRemindRecipient = try values.decode(Bool.self, forKey: .shouldRemindRecipient)
     }
 
@@ -372,7 +372,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         if !mentions.isEmpty {
             try container.encode(mentions, forKey: .mentions)
         }
-        try container.encode(reminderDelta, forKey: .reminderDelta)
+        try container.encodeIfPresent(reminderDelta, forKey: .reminderDelta)
         try container.encode(shouldRemindRecipient, forKey: .shouldRemindRecipient)
     }
 }
