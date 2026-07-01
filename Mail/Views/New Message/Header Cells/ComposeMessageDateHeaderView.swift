@@ -63,7 +63,7 @@ struct ComposeMessageDateHeaderView: View {
             shouldDisplayActions: true
         ) {
             HStack {
-                Button(MailResourcesStrings.Localizable.buttonModify) {
+                Button(MailResourcesStrings.Localizable.buttonReschedule) {
                     isShowingSendOptionsPanel = true
                 }
                 MessageHeaderDivider()
