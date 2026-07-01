@@ -201,7 +201,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
-        reminderDelta = try values.decodeIfPresent(Int.self, forKey: .references)
+        reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
         shouldRemindRecipient = try values.decode(Bool.self, forKey: .shouldRemindRecipient)
     }
 
@@ -352,7 +352,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
-        try container.encode(reminderDelta, forKey: .reminderDelta)
+        try container.encodeIfPresent(reminderDelta, forKey: .reminderDelta)
         try container.encode(shouldRemindRecipient, forKey: .shouldRemindRecipient)
     }
 }

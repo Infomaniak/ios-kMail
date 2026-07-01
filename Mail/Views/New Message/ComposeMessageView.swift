@@ -534,6 +534,9 @@ struct ComposeMessageView: View {
                 if let reminderOption = selectedReminderOption, let visibility = selectedReminderVisibility {
                     liveDraft.reminderDelta = reminderOption.inMinutes
                     liveDraft.shouldRemindRecipient = visibility == .recipientsAndMe
+                } else {
+                    liveDraft.reminderDelta = nil
+                    liveDraft.shouldRemindRecipient = false
                 }
             }
         }
