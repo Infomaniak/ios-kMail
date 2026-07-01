@@ -65,6 +65,14 @@ public enum MessageWebViewUtils {
                     """)
                 }
             }
+            variables.append("""
+            @media print {
+                a[data-ik-mention-ref] {
+                    --mail-content-mention-text-color: #333 !important;
+                    --mail-content-mention-background-color: #f1f1f1 !important;
+                }
+            }
+            """)
 
             let aliases: [String]
             switch target {
@@ -120,6 +128,12 @@ public enum MessageWebViewUtils {
                     --mail-content-mention-text-color: \(darkText);
                     --mail-content-mention-background-color: \(darkBg);
                     --mail-content-mention-font-weight: 500;
+                }
+            }
+            @media print {
+                a[data-ik-mention-ref='\(escapedMail)'] {
+                    --mail-content-mention-text-color: \(lightText) !important;
+                    --mail-content-mention-background-color: \(lightBg) !important;
                 }
             }
             """)
