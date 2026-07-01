@@ -42,7 +42,7 @@ struct MessageSubHeaderView: View {
             result.append(.schedule(scheduleDate: scheduleDate, draftResource: draftResource))
         }
 
-        if let reminderDate = message.reminderDate {
+        if let reminderDate = message.reminder?.date {
             result.append(.reminder(reminderDate: reminderDate, senders: message.from.toArray()))
         }
 
