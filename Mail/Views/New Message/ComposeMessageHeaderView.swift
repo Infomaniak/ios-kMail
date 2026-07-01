@@ -103,7 +103,7 @@ struct ComposeMessageHeaderView: View {
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderOption.headerText
                 ) {
-                    $selectedReminderOption.wrappedValue = nil
+                    selectedReminderOption = nil
                 }
             }
 
@@ -113,7 +113,7 @@ struct ComposeMessageHeaderView: View {
                     icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
                     message: scheduleOption.headerText
                 ) {
-                    $selectedScheduleOption.wrappedValue = nil
+                    selectedScheduleOption = nil
                 }
             }
         }
