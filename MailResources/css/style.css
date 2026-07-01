@@ -54,13 +54,6 @@ a[data-ik-mention-ref] {
   print-color-adjust: exact;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --mail-content-mention-text-color: #fff;
-        --mail-content-mention-background-color: #333;
-    }
-}
-
 @media (prefers-color-scheme: light) {
     :root {
         --mail-content-mention-text-color: #333;
