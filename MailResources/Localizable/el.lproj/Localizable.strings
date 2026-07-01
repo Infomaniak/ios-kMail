@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Οι ειδοποιήσεις είναι απενεργοποιημένες";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Προσοχή, ο αποστολέας αυτού του email φαίνεται να μην επιθυμεί απάντηση.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Προστατέψτε την πρόσβαση στην εφαρμογή σας ενεργοποιώντας το κλείδωμα του τηλεφώνου σας.";
 
@@ -1504,6 +1507,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Απενεργοποιημένο";
+
+/* loco:6a2a56a47111b4a768088ad2 */
+"settingsEnableMailDarkMode" = "Εμφάνιση μηνυμάτων ηλεκτρονικού ταχυδρομείου σε σκοτεινή λειτουργία";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Ενεργοποίηση ειδοποιήσεων";

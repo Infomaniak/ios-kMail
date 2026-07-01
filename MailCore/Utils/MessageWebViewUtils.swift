@@ -37,25 +37,22 @@ public enum MessageWebViewUtils {
         var resources = [String]()
 
         if let style = MailResourcesResources.bundle.loadCSS(filename: "style") {
-            let variables = """
+            var variables = """
             :root {
                 --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
 
             if case .message(let theme, let addresses) = target {
-				if theme == .auto {
-               		let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
-                		resources.append(darkModeCSS)
-					}
-				}
+                if theme == .auto, let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+                    resources.append(darkModeCSS)
+                }
                 variables.append("""
                 :root {
                     color-scheme: \(theme.cssProperty);
                 }
                 """)
                 for address in addresses {
-
                     variables.append("""
                     a[data-ik-mention-ref='\(address)'] {
                         --mail-content-mention-background-color: #ffc9df;
