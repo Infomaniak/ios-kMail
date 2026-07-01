@@ -21,43 +21,17 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-enum ComposeMessageDateHeaderBinding {
-    case reminder(Binding<ReminderOption?>)
-    case schedule(Binding<ScheduleOption?>)
-
-    var message: String {
-        switch self {
-        case .reminder(let reminderOption):
-            switch reminderOption.wrappedValue {
-            case .customDays, .customHours:
-                return MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderOption.wrappedValue?.subtitle ?? "")
-            default:
-                return MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderOption.wrappedValue?.title ?? "")
-            }
-        case .schedule(let scheduleOption):
-            return MailResourcesStrings.Localizable
-                .scheduleSendingHeaderTitle(scheduleOption.wrappedValue?.date?.formatted(.messageHeader) ?? "")
-        }
-    }
-
-    var icon: Image {
-        switch self {
-        case .reminder:
-            return MailResourcesAsset.alarmClock.swiftUIImage
-        case .schedule:
-            return MailResourcesAsset.clockPaperplane.swiftUIImage
-        }
-    }
-}
-
 struct ComposeMessageDateHeaderView: View {
     @Binding var isShowingSendOptionsPanel: Bool
-    let option: ComposeMessageDateHeaderBinding
+
+    let icon: Image
+    let message: String
+    let onCancel: () -> Void
 
     var body: some View {
         MessageHeaderActionView(
-            icon: option.icon,
-            message: option.message,
+            icon: icon,
+            message: message,
             showTopSeparator: false,
             showBottomSeparator: true,
             shouldDisplayActions: true
@@ -67,14 +41,7 @@ struct ComposeMessageDateHeaderView: View {
                     isShowingSendOptionsPanel = true
                 }
                 MessageHeaderDivider()
-                Button(MailResourcesStrings.Localizable.buttonCancel) {
-                    switch option {
-                    case .reminder(let binding):
-                        binding.wrappedValue = nil
-                    case .schedule(let binding):
-                        binding.wrappedValue = nil
-                    }
-                }
+                Button(MailResourcesStrings.Localizable.buttonCancel, action: onCancel)
             }
         }
     }
@@ -83,6 +50,7 @@ struct ComposeMessageDateHeaderView: View {
 #Preview {
     ComposeMessageDateHeaderView(
         isShowingSendOptionsPanel: .constant(false),
-        option: .schedule(.constant(nil))
-    )
+        icon: MailResourcesAsset.alarmClock.swiftUIImage,
+        message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle("Tomorrow at 10:00")
+    ) {}
 }

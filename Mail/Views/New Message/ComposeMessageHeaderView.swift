@@ -97,18 +97,24 @@ struct ComposeMessageHeaderView: View {
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
 
-            if selectedReminderOption != nil {
+            if let reminderOption = selectedReminderOption {
                 ComposeMessageDateHeaderView(
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
-                    option: .reminder($selectedReminderOption)
-                )
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: reminderOption.headerText
+                ) {
+                    $selectedReminderOption.wrappedValue = nil
+                }
             }
 
-            if selectedScheduleOption != nil {
+            if let scheduleOption = selectedScheduleOption {
                 ComposeMessageDateHeaderView(
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
-                    option: .schedule($selectedScheduleOption),
-                )
+                    icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
+                    message: scheduleOption.headerText
+                ) {
+                    $selectedScheduleOption.wrappedValue = nil
+                }
             }
         }
         .onAppear {
