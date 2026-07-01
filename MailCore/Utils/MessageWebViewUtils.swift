@@ -46,21 +46,13 @@ public enum MessageWebViewUtils {
             if case .message(let theme, let addresses) = target {
                 if theme == .auto, let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
                     resources.append(darkModeCSS)
+                    resources.append(generateDarkMentionCSS(for: addresses))
                 }
                 variables.append("""
                 :root {
                     color-scheme: \(theme.cssProperty);
                 }
                 """)
-                for address in addresses {
-                    variables.append("""
-                    a[data-ik-mention-ref='\(address)'] {
-                        --mail-content-mention-background-color: #ffc9df;
-                        --mail-content-mention-text-color: #5f142f;
-                        --mail-content-mention-font-weight: 500;
-                    }
-                    """)
-                }
             }
             variables.append("""
             @media print {
@@ -79,7 +71,8 @@ public enum MessageWebViewUtils {
                 aliases = mails
             }
 
-            variables.append(generateMentionCSS(for: aliases))
+            let isLightForced = if case .message(let theme, _) = target { theme == .light } else { false }
+            variables.append(generateLightMentionCSS(for: aliases, forceLight: isLightForced))
 
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
             resources.append(processedStyle)
@@ -98,16 +91,13 @@ public enum MessageWebViewUtils {
         return resources
     }
 
-    private static func generateMentionCSS(for aliases: [String]) -> String {
+    private static func generateDarkMentionCSS(for aliases: [String]) -> String {
         guard !aliases.isEmpty else { return "" }
 
         let accentColor = UserDefaults.shared.accentColor
-        let lightTrait = UITraitCollection(userInterfaceStyle: .light)
         let darkTrait = UITraitCollection(userInterfaceStyle: .dark)
 
-        let lightText = Color(accentColor.primary.color.resolvedColor(with: lightTrait)).hexRepresentation
         let darkText = Color(accentColor.primary.color.resolvedColor(with: darkTrait)).hexRepresentation
-        let lightBg = Color(accentColor.secondary.color.resolvedColor(with: lightTrait)).hexRepresentation
         let darkBg = Color(accentColor.secondary.color.resolvedColor(with: darkTrait)).hexRepresentation
 
         return aliases.reduce(into: "") { css, mail in
@@ -116,21 +106,51 @@ public enum MessageWebViewUtils {
                 .replacingOccurrences(of: "'", with: "\\'")
             css.append("""
             a[data-ik-mention-ref='\(escapedMail)'] {
-                --mail-content-mention-text-color: \(lightText);
-                --mail-content-mention-background-color: \(lightBg);
+                --mail-content-mention-text-color: \(darkText);
+                --mail-content-mention-background-color: \(darkBg);
                 --mail-content-mention-font-weight: 500;
             }
-            @media(prefers-color-scheme: dark) {
-                a[data-ik-mention-ref='\(escapedMail)'] {
-                    --mail-content-mention-text-color: \(darkText);
-                    --mail-content-mention-background-color: \(darkBg);
-                    --mail-content-mention-font-weight: 500;
-                }
+            """)
+        }
+    }
+
+    private static func generateLightMentionCSS(for aliases: [String], forceLight: Bool = false) -> String {
+        guard !aliases.isEmpty else { return "" }
+
+        let accentColor = UserDefaults.shared.accentColor
+        let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+
+        let lightText = Color(accentColor.primary.color.resolvedColor(with: lightTrait)).hexRepresentation
+        let lightBg = Color(accentColor.secondary.color.resolvedColor(with: lightTrait)).hexRepresentation
+
+        return aliases.reduce(into: "") { css, mail in
+            let escapedMail = mail
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+
+            let selector = """
+            a[data-ik-mention-ref='\(escapedMail)'] {
+                --mail-content-mention-text-color: \(lightText)!important;
+                --mail-content-mention-background-color: \(lightBg)!important;
+                --mail-content-mention-font-weight: 500;
             }
+            """
+
+            if forceLight {
+                css.append(selector)
+            } else {
+                css.append("""
+                @media (prefers-color-scheme: light) {
+                    \(selector)
+                }
+                """)
+            }
+
+            css.append("""
             @media print {
                 a[data-ik-mention-ref='\(escapedMail)'] {
-                    --mail-content-mention-text-color: \(lightText) !important;
-                    --mail-content-mention-background-color: \(lightBg) !important;
+                    --mail-content-mention-text-color: \(lightText)!important;
+                    --mail-content-mention-background-color: \(lightBg)!important;
                 }
             }
             """)
