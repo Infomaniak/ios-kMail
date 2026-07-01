@@ -34,6 +34,10 @@ struct ComposeMessageHeaderView: View {
     @Binding var autocompletionType: ComposeViewFieldType?
     @Binding var currentSignature: Signature?
 
+    @Binding var isShowingSendOptionsPanel: Bool
+    @Binding var selectedReminderOption: ReminderOption?
+    @Binding var selectedScheduleOption: ScheduleOption?
+
     private var totalRecipients: Int {
         return draft.to.count + draft.cc.count + draft.bcc.count
     }
@@ -93,21 +97,24 @@ struct ComposeMessageHeaderView: View {
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
 
-            if let scheduleDate = draft.scheduleDate {
+            if let reminderOption = selectedReminderOption {
                 ComposeMessageDateHeaderView(
-                    date: $draft.scheduleDate,
-                    icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.scheduleSendingHeaderTitle(scheduleDate
-                        .formatted(.messageHeader))
-                )
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: reminderOption.headerText
+                ) {
+                    selectedReminderOption = nil
+                }
             }
 
-            if let reminderDate = draft.reminderDate {
+            if let scheduleOption = selectedScheduleOption {
                 ComposeMessageDateHeaderView(
-                    date: $draft.reminderDate,
-                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader))
-                )
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
+                    icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
+                    message: scheduleOption.headerText
+                ) {
+                    selectedScheduleOption = nil
+                }
             }
         }
         .onAppear {
@@ -117,6 +124,13 @@ struct ComposeMessageHeaderView: View {
 }
 
 #Preview {
-    ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+    ComposeMessageHeaderView(
+        draft: Draft(),
+        autocompletionType: .constant(nil),
+        currentSignature: .constant(nil),
+        isShowingSendOptionsPanel: .constant(false),
+        selectedReminderOption: .constant(nil),
+        selectedScheduleOption: .constant(nil)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

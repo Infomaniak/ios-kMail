@@ -22,10 +22,11 @@ import MailResources
 import SwiftUI
 
 struct ComposeMessageDateHeaderView: View {
-    @Binding var date: Date?
+    @Binding var isShowingSendOptionsPanel: Bool
 
     let icon: Image
     let message: String
+    let onCancel: () -> Void
 
     var body: some View {
         MessageHeaderActionView(
@@ -36,9 +37,11 @@ struct ComposeMessageDateHeaderView: View {
             shouldDisplayActions: true
         ) {
             HStack {
-                Button(MailResourcesStrings.Localizable.buttonModify) {}
+                Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                    isShowingSendOptionsPanel = true
+                }
                 MessageHeaderDivider()
-                Button(MailResourcesStrings.Localizable.buttonCancel) {}
+                Button(MailResourcesStrings.Localizable.buttonCancel, action: onCancel)
             }
         }
     }
@@ -46,8 +49,8 @@ struct ComposeMessageDateHeaderView: View {
 
 #Preview {
     ComposeMessageDateHeaderView(
-        date: .constant(.now),
-        icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-        message: MailResourcesStrings.Localizable.scheduleSendingHeaderTitle(Date.now.formatted(.messageHeader)),
-    )
+        isShowingSendOptionsPanel: .constant(false),
+        icon: MailResourcesAsset.alarmClock.swiftUIImage,
+        message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle("Tomorrow at 10:00")
+    ) {}
 }
