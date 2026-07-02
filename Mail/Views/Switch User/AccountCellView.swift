@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
@@ -110,9 +111,18 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    MailResourcesAsset.check.swiftUIImage
-                        .iconSize(.medium)
-                        .foregroundStyle(.tint)
+                    Button {
+                        //
+                    } label: {
+                        MailResourcesAsset.qrCode.swiftUIImage
+                            .iconSize(.medium)
+                            .foregroundStyle(.tint)
+                            .padding(IKPadding.mini)
+                            .background(
+                                RoundedRectangle(cornerRadius: IKRadius.medium)
+                                    .foregroundStyle(UserDefaults.shared.accentColor.primary.swiftUIColor.opacity(0.1))
+                            )
+                    }
                 }
             case .selectComposeMailbox:
                 ChevronIcon(direction: .down)

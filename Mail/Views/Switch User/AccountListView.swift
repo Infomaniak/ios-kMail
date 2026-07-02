@@ -49,6 +49,10 @@ struct AccountListView: View {
                             user: user
                         )
                         .padding(.horizontal, value: .medium)
+                        .background(
+                            (user.id == currentUser.value.id) ?
+                                UserDefaults.shared.accentColor.navBarBackground.swiftUIColor : .clear
+                        )
                     }
                 } else {
                     ForEach(accountManager.accounts) { _ in

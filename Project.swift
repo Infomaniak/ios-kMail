@@ -50,6 +50,7 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 .target(name: "MailShareExtension"),
                 .target(name: "MailAppIntentsExtension"),
                 .external(name: "AppLock"),
+                .external(name: "ContactCard"),
                 .external(name: "DeviceAssociation"),
                 .external(name: "ElegantEmojiPicker"),
                 .external(name: "IKSnackbar"),
