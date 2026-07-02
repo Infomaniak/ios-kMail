@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -42,8 +43,17 @@ struct ComposeMessageContactList: View {
         return lowerCasedQuery.applyingTransform(.stripDiacritics, reverse: false) ?? lowerCasedQuery
     }
 
+    private var unknownRecipient: Recipient? {
+        if EmailChecker(email: mentionQuery).validate(),
+           !mentionSuggestions.contains(where: { $0.email.lowercased() == mentionQuery.lowercased() }) {
+            return Recipient(email: mentionQuery, name: mentionQuery).freezeIfNeeded()
+        }
+        return nil
+    }
+
     var body: some View {
-        let visibleCount = min(mentionSuggestions.count, maxVisibleMentions)
+        let hasUnknownRecipient = unknownRecipient != nil
+        let visibleCount = min(mentionSuggestions.count + (hasUnknownRecipient ? 1 : 0), maxVisibleMentions)
         let totalHeight = CGFloat(visibleCount) * mentionRowHeight
         List {
             Section {
@@ -64,6 +74,19 @@ struct ComposeMessageContactList: View {
                 .padding(.vertical, threadDensity.cellVerticalPadding)
                 .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
                 .padding(.trailing, value: .medium)
+
+                if let recipient = unknownRecipient {
+                    Button {
+                        withAnimation {
+                            onMentionSelected(recipient)
+                        }
+                    } label: {
+                        UnknownRecipientCell(email: recipient.email)
+                            .padding(.vertical, threadDensity.cellVerticalPadding)
+                            .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
+                            .padding(.trailing, value: .medium)
+                    }
+                }
             }
             .listRowInsets(.init())
             .listRowSeparator(.hidden)
