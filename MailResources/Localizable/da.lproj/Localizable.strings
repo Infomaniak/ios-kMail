@@ -4,7 +4,7 @@
  * Locale: da, Danish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Tue, 30 Jun 2026 13:23:30 +0200
+ * Exported at: Wed, 01 Jul 2026 17:44:31 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -408,6 +408,9 @@
 
 /* loco:6723a4468cf8e4d10e094606 */
 "buttonCustomSchedule" = "Tilpasset tidsplan";
+
+/* loco:6a4521419a7a973b1a0c0a62 */
+"buttonDisable" = "Deaktiver";
 
 /* loco:6267af44cf90a405c97af322 */
 "buttonDownload" = "Download";
@@ -1132,6 +1135,12 @@
 
 /* loco:6a3d14fef750fb5df20ebc73 */
 "hoursBeforeSendingReminder-plural" = "%d timer";
+
+/* loco:6a3d14fef750fb5df20ebc74 */
+"hoursBeforeSendingReminder-plural-2" = "";
+
+/* loco:6a3d14fef750fb5df20ebc75 */
+"hoursBeforeSendingReminder-plural-3" = "";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Indbakke";
@@ -1863,6 +1872,12 @@
 /* loco:6502fd61e3b907c3db020f92 */
 "snackbarDeletedConversation" = "Samtalen eksisterer ikke længere";
 
+/* loco:6a45299118648c27cc03dad2 */
+"snackbarDisableReminderFailure" = "Kunne ikke deaktivere påmindelsen";
+
+/* loco:6a4520a675c61422e0031c02 */
+"snackbarDisableReminderSuccess" = "Påmindelsen blev deaktiveret";
+
 /* loco:62cd644f5141ee164b494272 */
 "snackbarDisplayProblemReported" = "Visningsproblem rapporteret";
 
@@ -2103,11 +2118,20 @@
 /* loco:6a3d0acdd4f530b3c10f0853 */
 "unitDays-plural" = "Dage";
 
+/* loco:6a3d0acdd4f530b3c10f0854 */
+"unitDays-plural-2" = "";
+
+/* loco:6a3d0acdd4f530b3c10f0855 */
+"unitDays-plural-3" = "";
+
 /* loco:6a3d0ac7e0a0910b0c07eda2 */
 "unitHours" = "Time";
 
 /* loco:6a3d0ac7e0a0910b0c07eda3 */
 "unitHours-plural" = "Timer";
+
+/* loco:6a3d0ac7e0a0910b0c07eda4 */
+"unitHours-plural-2" = "";
 
 /* loco:6995af71f61e72e4d4004be2 */
 "unknownDialogTitleExpeditor" = "Ukendt afsender";
