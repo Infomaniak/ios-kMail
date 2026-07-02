@@ -43,7 +43,7 @@ struct MessageSubHeaderView: View {
         }
 
         if let reminderDate = message.reminder?.date {
-            result.append(.reminder(reminderDate: reminderDate, senders: message.from.toArray()))
+            result.append(.reminder(reminderDate: reminderDate))
         }
 
         if let spamType = spamTypeFor(message: message) {
