@@ -573,7 +573,7 @@ struct ComposeMessageView: View {
                     liveDraft.shouldRemindRecipient = visibility == .recipientsAndMe
                 } else {
                     liveDraft.reminderDelta = nil
-                    liveDraft.shouldRemindRecipient = false
+                    liveDraft.shouldRemindRecipient = nil
                 }
             }
         }
