@@ -293,7 +293,7 @@ struct ComposeMessageView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .trailing, spacing: 0) {
-                if focusedField == .editor, !mentionSuggestions.isEmpty {
+                if focusedField == .editor {
                     ComposeMessageContactList(
                         mentionQuery: mentionQuery,
                         mentionSuggestions: mentionSuggestions
@@ -367,13 +367,7 @@ struct ComposeMessageView: View {
 
             let mergedContacts = contacts.compactMap { $0 as? MergedContact }
 
-            var recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
-
-            let trimmedQuery = mentionQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-            if EmailChecker(email: trimmedQuery).validate(),
-               !recipients.contains(where: { $0.email.lowercased() == trimmedQuery.lowercased() }) {
-                recipients.append(Recipient(email: trimmedQuery, name: trimmedQuery).freezeIfNeeded())
-            }
+            let recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
 
             mentionSuggestions = recipients
         }

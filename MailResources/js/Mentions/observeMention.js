@@ -74,6 +74,11 @@ const extractMentionQuery = (textBeforeCaret) => {
     if (lastAtPos < 0) return null;
 
     let query = normalizedText.slice(lastAtPos + 1);
+    
+    if (/\s{2,}/.test(query)) {
+        return null;
+    }
+    
     if (!query.trim().includes(" ")) {
         query = query.trim();
     }
