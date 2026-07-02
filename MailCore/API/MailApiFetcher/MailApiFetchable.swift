@@ -22,7 +22,7 @@ import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
 public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchable & MailApiCommonFetchable &
-    MailApiExtendedFetchable & MailApiSnoozeFetchable & MailApiSyncProfileFetchable
+    MailApiExtendedFetchable & MailApiReminderFetchable & MailApiSnoozeFetchable & MailApiSyncProfileFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable: ApiFetcher {
@@ -211,4 +211,18 @@ public protocol MailApiSnoozeFetchable {
     func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws -> [SnoozeCancelledAPIResponse]
 
     func deleteSnooze(message: Message, mailbox: Mailbox) async throws
+}
+
+public protocol MailApiReminderFetchable {
+    func addReminder(mailboxUuid: String, folderId: String, messageId: String, reminderDelta: Int) async throws
+
+    func updateReminder(
+        mailboxUuid: String,
+        folderId: String,
+        messageId: String,
+        reminderId: String,
+        reminderDelta: Int
+    ) async throws
+
+    func deleteReminder(mailboxUuid: String, folderId: String, messageId: String, reminderId: String) async throws
 }
