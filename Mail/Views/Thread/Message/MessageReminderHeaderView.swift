@@ -77,7 +77,7 @@ struct MessageReminderHeaderView: View {
                         MessageHeaderDivider()
                         Button(MailResourcesStrings.Localizable.reminderPostponeButton("Tomorrow 18:00")) {}
                     }
-                    Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton) {}
+                    Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
                 }
             }
 
@@ -90,7 +90,7 @@ struct MessageReminderHeaderView: View {
                 HStack {
                     Button(MailResourcesStrings.Localizable.buttonReschedule) {}
                     MessageHeaderDivider()
-                    Button(MailResourcesStrings.Localizable.buttonCancelReminder) {}
+                    Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
                 }
             }
         } else if !isMyMessage {
@@ -113,6 +113,12 @@ struct MessageReminderHeaderView: View {
         default:
             let allButLast = names.dropLast()
             return "\(allButLast.joined(separator: ", ")) \(MailResourcesStrings.Localizable.linkingWord) \(names.last ?? "")"
+        }
+    }
+
+    private func removeReminder() {
+        Task {
+            try await mailboxManager.deleteReminder(message: message)
         }
     }
 }
