@@ -293,7 +293,7 @@ struct ComposeMessageView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .trailing, spacing: 0) {
-                if !mentionSuggestions.isEmpty {
+                if focusedField == .editor, !mentionSuggestions.isEmpty {
                     ComposeMessageContactList(
                         mentionQuery: mentionQuery,
                         mentionSuggestions: mentionSuggestions
