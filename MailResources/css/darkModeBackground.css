@@ -2,4 +2,9 @@
     html {
         background-color: #101010;
     }
+    
+    :root {
+        --mail-content-mention-text-color: #fff;
+        --mail-content-mention-background-color: #333;
+    }
 }

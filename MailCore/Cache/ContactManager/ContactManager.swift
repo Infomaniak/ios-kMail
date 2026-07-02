@@ -41,7 +41,16 @@ public protocol ContactManagerCoreable {
     ///   - userId: User ID
     static func deleteUserContacts(userId: Int)
 
-    func searchAllAutocompletable(matching query: String, fetchLimit: Int) async -> [any ContactAutocompletable]
+    func searchAllAutocompletable(matching query: String, fetchLimit: Int, shouldTrim: Bool) async -> [any ContactAutocompletable]
+}
+
+public extension ContactManagerCoreable {
+    func searchAllAutocompletable(
+        matching query: String,
+        fetchLimit: Int
+    ) async -> [any ContactAutocompletable] {
+        return await searchAllAutocompletable(matching: query, fetchLimit: fetchLimit, shouldTrim: true)
+    }
 }
 
 public final class ContactManager: ObservableObject, ContactManageable {
@@ -158,21 +167,23 @@ public final class ContactManager: ObservableObject, ContactManageable {
 
     public func searchAllAutocompletable(
         matching query: String,
-        fetchLimit: Int
+        fetchLimit: Int,
+        shouldTrim: Bool
     ) async -> [any ContactAutocompletable] {
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let baseString = shouldTrim ? query.trimmingCharacters(in: .whitespacesAndNewlines) : query
+        let stringToMatch = baseString.applyingTransform(.stripDiacritics, reverse: false) ?? baseString
 
         async let contacts: [any ContactAutocompletable] = Array(frozenContactsAsync(
-            matching: trimmed,
+            matching: stringToMatch,
             fetchLimit: fetchLimit,
             sorted: sortByRemoteAndName
         ))
         async let groups: [any ContactAutocompletable] = Array(frozenGroupContacts(
-            matching: trimmed,
+            matching: stringToMatch,
             fetchLimit: fetchLimit
         ))
         async let addressBooks: [any ContactAutocompletable] = Array(frozenAddressBookContacts(
-            matching: trimmed,
+            matching: stringToMatch,
             fetchLimit: fetchLimit
         ))
 

@@ -29,6 +29,8 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var showBlockQuote = false
     @Published var contentLoading = true
 
+    @Published var tappedMention: TappedMention?
+
     /// Only true the first time the content loads, then false. Eg. when loading subsequent images.
     @Published var initialContentLoading = true
     private var contentLoadingSubscriber: AnyCancellable?
@@ -37,8 +39,16 @@ final class WebViewModel: NSObject, ObservableObject {
     let contentBlocker: ContentBlocker
 
     var theme: MessageTheme = .auto
+    var aliases: [String] = []
 
-    lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme))
+    lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme, aliases: aliases))
+
+    struct TappedMention: Identifiable, Equatable {
+        let id = UUID()
+        let email: String
+        let name: String
+        let rect: CGRect
+    }
 
     enum LoadResult: Equatable {
         case remoteContentBlocked
@@ -49,9 +59,10 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorParsingBody
     }
 
-    convenience init(theme: MessageTheme) {
+    convenience init(theme: MessageTheme, aliases: [String]) {
         self.init()
         self.theme = theme
+        self.aliases = aliases
     }
 
     override init() {
@@ -111,7 +122,7 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     private func loadScripts() {
-        var scripts: [UserScript] = [.javaScriptBridge, .sizeHandler, .fixEmailStyle]
+        var scripts: [UserScript] = [.javaScriptBridge, .sizeHandler, .fixEmailStyle, .observeMentionClick]
         #if DEBUG
         scripts.insert(.captureLog, at: 0)
         #endif

@@ -80,6 +80,10 @@ struct EditorPositionPreferenceKey: PreferenceKey {
     }
 }
 
+class EditorBox {
+    weak var editor: RichHTMLEditorView?
+}
+
 struct ComposeMessageView: View {
     @InjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var matomo: MatomoUtils
@@ -110,7 +114,11 @@ struct ComposeMessageView: View {
 
     @State private var selectedText = ""
 
-    @Weak private var editor: RichHTMLEditorView?
+    @State private var mentionQuery = ""
+    @State private var mentionSuggestions = [Recipient]()
+    @State private var editorBox = EditorBox()
+
+    @Weak private var scrollView: UIScrollView?
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -153,6 +161,10 @@ struct ComposeMessageView: View {
 
     private var isShowingEditor: Bool {
         return autocompletionType == nil && !isLoadingContent
+    }
+
+    private var aliases: [String] {
+        return mailboxManager.mailbox.aliases.toArray()
     }
 
     // MARK: - Init
@@ -207,10 +219,12 @@ struct ComposeMessageView: View {
                         textAttributes: textAttributes,
                         focusedField: _focusedField,
                         draftBody: $draftContentManager.draftContent,
-                        draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
-                        editor: _editor,
+                        mentionQuery: $mentionQuery,
+                        draft: draft,
+                        aliases: aliases,
+                        editorBox: editorBox,
                         messageReply: messageReply
                     )
                     .environmentObject(attachmentsManager)
@@ -278,20 +292,32 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if !platformDetector.isMac {
-                EditorMobileToolbarView(
-                    textAttributes: textAttributes,
-                    isShowingAI: $aiModel.isShowingPrompt,
-                    isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
-                    isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
-                    isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
-                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
-                    draft: draft,
-                    isEditorFocused: focusedField == .editor,
-                    selectedText: selectedText
-                )
-                .environmentObject(attachmentsManager)
+            VStack(alignment: .trailing, spacing: 0) {
+                if focusedField == .editor {
+                    ComposeMessageContactList(
+                        mentionQuery: mentionQuery,
+                        mentionSuggestions: mentionSuggestions
+                    ) { recipient in
+                        addMention(for: recipient, query: mentionQuery)
+                    }
+                }
+
+                if !platformDetector.isMac {
+                    EditorMobileToolbarView(
+                        textAttributes: textAttributes,
+                        isShowingAI: $aiModel.isShowingPrompt,
+                        isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
+                        isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
+                        isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
+                        isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                        draft: draft,
+                        isEditorFocused: focusedField == .editor,
+                        selectedText: selectedText
+                    )
+                    .environmentObject(attachmentsManager)
+                }
             }
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
@@ -326,6 +352,24 @@ struct ComposeMessageView: View {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
             }
+        }
+        .task(id: mentionQuery) {
+            guard !mentionQuery.isEmpty else {
+                mentionSuggestions = []
+                return
+            }
+
+            let contacts = await mailboxManager.contactManager.searchAllAutocompletable(
+                matching: mentionQuery,
+                fetchLimit: 10,
+                shouldTrim: false
+            )
+
+            let mergedContacts = contacts.compactMap { $0 as? MergedContact }
+
+            let recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+
+            mentionSuggestions = recipients
         }
         .onAppear {
             attachmentsManager.importAttachments(
@@ -618,6 +662,31 @@ struct ComposeMessageView: View {
     private func handleDrop(of itemProviders: [NSItemProvider]) -> Bool {
         attachmentsManager.importAttachments(attachments: itemProviders, draft: draft, disposition: .attachment)
         return true
+    }
+
+    private func addMention(for recipient: Recipient, query: String) {
+        if let liveDraft = draft.thaw(),
+           let realm = liveDraft.realm {
+            try? realm.write {
+                if !liveDraft.mentions.contains(recipient.email) {
+                    liveDraft.mentions.append(recipient.email)
+                }
+
+                let alreadyInTo = liveDraft.to.contains { $0.email.lowercased() == recipient.email.lowercased() }
+                if !alreadyInTo {
+                    liveDraft.to.append(recipient)
+                }
+            }
+            Task {
+                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(
+                    recipient.email,
+                    recipient.name,
+                    query
+                ))
+            }
+            mentionQuery = ""
+            matomo.track(eventWithCategory: .newMessage, name: "insertMention")
+        }
     }
 }
 

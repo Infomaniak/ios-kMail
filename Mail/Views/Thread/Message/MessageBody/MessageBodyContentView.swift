@@ -21,15 +21,26 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
+import Nuke
 import RealmSwift
 import SwiftSoup
 import SwiftUI
 
 struct MessageBodyContentView: View {
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
+
+    @Environment(\.currentUser) private var currentUser
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @StateObject private var model: WebViewModel
 
     @Binding private var displayContentBlockedActionView: Bool
     @Binding private var initialContentLoading: Bool
+
+    @State private var mentionMenuContent: MentionMenuContent?
 
     private let presentableBody: PresentableBody?
     private let blockRemoteContent: Bool
@@ -43,7 +54,8 @@ struct MessageBodyContentView: View {
         presentableBody: PresentableBody?,
         blockRemoteContent: Bool,
         messageUid: String,
-        messageTheme: MessageTheme
+        messageTheme: MessageTheme,
+        mailboxAliases: [String]
     ) {
         _displayContentBlockedActionView = displayContentBlockedActionView
         _initialContentLoading = initialContentLoading
@@ -51,19 +63,31 @@ struct MessageBodyContentView: View {
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
 
-        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme))
+        _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, aliases: mailboxAliases))
     }
 
     var body: some View {
         ZStack {
             VStack {
                 if let presentableBody, presentableBody.body != nil {
-                    WebView(webView: model.webView, messageUid: messageUid) {
+                    WebView(
+                        webView: model.webView,
+                        messageUid: messageUid,
+                        mentionMenuContent: $mentionMenuContent
+                    ) {
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .frame(height: model.webViewHeight)
                     .onAppear {
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
+                    }
+                    .onChange(of: model.tappedMention) { mention in
+                        guard let mention else { return }
+                        Task {
+                            let menu = await buildMentionMenu(for: mention)
+                            mentionMenuContent = menu
+                            model.tappedMention = nil
+                        }
                     }
                     .onChange(of: presentableBody) { newValue in
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: newValue)
@@ -92,6 +116,91 @@ struct MessageBodyContentView: View {
         .onChange(of: model.initialContentLoading) { _ in
             initialContentLoading = model.initialContentLoading
         }
+    }
+
+    private func buildMentionMenu(for mention: WebViewModel.TappedMention) async -> MentionMenuContent {
+        let recipient = Recipient(email: mention.email, name: mention.name)
+        let title: String
+        let subtitle: String?
+        if mention.name.isEmpty || mention.name == mention.email {
+            title = mention.email
+            subtitle = nil
+        } else {
+            title = mention.name
+            subtitle = mention.email
+        }
+
+        let image = await mentionAvatarImage(for: recipient)
+
+        let canSendEmails = mailboxManager.mailbox.permissions?.canSendEmails ?? true
+        let isRemote = mailboxManager.contactManager.getContact(for: recipient)?.isRemote == true
+
+        var actions = [MentionMenuAction]()
+
+        actions.append(MentionMenuAction(
+            title: MailResourcesStrings.Localizable.contactActionWriteEmail,
+            image: actionImage(for: .writeEmailAction),
+            isDisabled: !canSendEmails
+        ) {
+            mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
+        })
+
+        if !isRemote {
+            actions.append(MentionMenuAction(
+                title: MailResourcesStrings.Localizable.contactActionAddToContacts,
+                image: actionImage(for: .addContactsAction)
+            ) {
+                Task {
+                    await tryOrDisplayError {
+                        try await mailboxManager.contactManager.addContact(recipient: recipient)
+                        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarContactSaved)
+                    }
+                }
+            })
+        }
+
+        actions.append(MentionMenuAction(
+            title: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
+            image: actionImage(for: .copyEmailAction)
+        ) {
+            UIPasteboard.general.string = recipient.email
+        })
+
+        return MentionMenuContent(title: title, subtitle: subtitle, image: image, rect: mention.rect, actions: actions)
+    }
+
+    private func actionImage(for action: Action) -> UIImage? {
+        UIImage(named: action.iconName, in: MailResourcesResources.bundle, with: nil)
+    }
+
+    @MainActor
+    private func mentionAvatarImage(for recipient: Recipient) async -> UIImage? {
+        let avatarConfiguration = ContactConfiguration.correspondent(
+            correspondent: recipient,
+            associatedBimi: nil,
+            contextUser: currentUser.value,
+            contextMailboxManager: mailboxManager
+        )
+
+        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: avatarConfiguration)
+        if let token = mailboxManager.apiFetcher.currentToken,
+           let authenticatedRequest = contact.avatarImageRequest.authenticatedRequestIfNeeded(
+               token: token,
+               processors: [.circle()]
+           ) {
+            let task = ImagePipeline.shared.imageTask(with: authenticatedRequest)
+            if let remoteImage = try? await task.image {
+                return remoteImage.withRenderingMode(.alwaysOriginal)
+            }
+        }
+
+        let renderer = ImageRenderer(content: AvatarView(
+            mailboxManager: mailboxManager,
+            contactConfiguration: avatarConfiguration,
+            size: RecipientHeaderCell.defaultAvatarSize
+        ))
+        renderer.scale = UIScreen.main.scale
+        return renderer.uiImage?.withRenderingMode(.alwaysOriginal)
     }
 
     private func printMessage() {
@@ -134,6 +243,7 @@ struct MessageBodyContentView: View {
         presentableBody: PreviewHelper.samplePresentableBody,
         blockRemoteContent: false,
         messageUid: "message_uid",
-        messageTheme: .auto
+        messageTheme: .auto,
+        mailboxAliases: []
     )
 }

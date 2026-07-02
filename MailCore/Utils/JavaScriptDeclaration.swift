@@ -26,12 +26,17 @@ public enum UserScript: String {
     case fixEmailStyle
     case captureLog
     case observeInlineAttachmentsDeletion
+    case observeMention
+    case observeMentionDeletion
+    case observeMentionClick
+    case insertMention
 }
 
 public enum JavaScriptDeclaration {
     case normalizeMessageWidth(CGFloat, String)
     case removeAllProperties
     case documentReadyState
+    case insertMention(String, String, String)
     case setScaleCompensation(CGFloat)
     case setContentSize(CGFloat)
 
@@ -43,6 +48,17 @@ public enum JavaScriptDeclaration {
             return "removeAllProperties()"
         case .documentReadyState:
             return "document.readyState"
+        case .insertMention(let email, let name, let query):
+            let escapedEmail = email
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            let escapedName = name
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            let escapedQuery = query
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            return "insertMention('\(escapedEmail)', '\(escapedName)', '\(escapedQuery)')"
         case .setScaleCompensation(let factor):
             return "setScaleCompensation(\(factor))"
         case .setContentSize(let size):

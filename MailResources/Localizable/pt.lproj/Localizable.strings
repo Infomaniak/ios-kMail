@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notificações desativadas";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Atenção, o remetente deste e-mail parece não querer uma resposta.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Proteja o acesso à sua aplicação ativando o bloqueio do seu telefone.";
 
@@ -1504,6 +1507,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Desativado";
+
+/* loco:6a2a56a47111b4a768088ad2 */
+"settingsEnableMailDarkMode" = "Exibir e-mails no modo escuro";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Ativar notificações";

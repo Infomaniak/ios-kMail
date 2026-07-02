@@ -19,11 +19,13 @@
 import Foundation
 import MailResources
 import SwiftSoup
+import SwiftUI
+import UIKit
 
 public enum MessageWebViewUtils {
     public enum WebViewTarget {
-        case message(theme: MessageTheme)
-        case editor
+        case message(theme: MessageTheme, aliases: [String])
+        case editor(aliases: [String])
     }
 
     public static func loadAndFormatCSS(for target: WebViewTarget) -> String {
@@ -35,16 +37,42 @@ public enum MessageWebViewUtils {
         var resources = [String]()
 
         if let style = MailResourcesResources.bundle.loadCSS(filename: "style") {
-            let variables = """
+            var variables = """
             :root {
                 --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
 
-            if case .message(.auto) = target,
-               let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
-                resources.append(darkModeCSS)
+            if case .message(let theme, let addresses) = target {
+                if theme == .auto, let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+                    resources.append(darkModeCSS)
+                    resources.append(generateDarkMentionCSS(for: addresses))
+                }
+                variables.append("""
+                :root {
+                    color-scheme: \(theme.cssProperty);
+                }
+                """)
             }
+            variables.append("""
+            @media print {
+                a[data-ik-mention-ref] {
+                    --mail-content-mention-text-color: #333 !important;
+                    --mail-content-mention-background-color: #f1f1f1 !important;
+                }
+            }
+            """)
+
+            let aliases: [String]
+            switch target {
+            case .message(_, let mails):
+                aliases = mails
+            case .editor(let mails):
+                aliases = mails
+            }
+
+            let isLightForced = if case .message(let theme, _) = target { theme == .light } else { false }
+            variables.append(generateLightMentionCSS(for: aliases, forceLight: isLightForced))
 
             let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
             resources.append(processedStyle)
@@ -61,6 +89,72 @@ public enum MessageWebViewUtils {
         }
 
         return resources
+    }
+
+    private static func generateDarkMentionCSS(for aliases: [String]) -> String {
+        guard !aliases.isEmpty else { return "" }
+
+        let accentColor = UserDefaults.shared.accentColor
+        let darkTrait = UITraitCollection(userInterfaceStyle: .dark)
+
+        let darkText = Color(accentColor.primary.color.resolvedColor(with: darkTrait)).hexRepresentation
+        let darkBg = Color(accentColor.secondary.color.resolvedColor(with: darkTrait)).hexRepresentation
+
+        return aliases.reduce(into: "") { css, mail in
+            let escapedMail = mail
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            css.append("""
+            a[data-ik-mention-ref='\(escapedMail)'] {
+                --mail-content-mention-text-color: \(darkText);
+                --mail-content-mention-background-color: \(darkBg);
+                --mail-content-mention-font-weight: 500;
+            }
+            """)
+        }
+    }
+
+    private static func generateLightMentionCSS(for aliases: [String], forceLight: Bool = false) -> String {
+        guard !aliases.isEmpty else { return "" }
+
+        let accentColor = UserDefaults.shared.accentColor
+        let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+
+        let lightText = Color(accentColor.primary.color.resolvedColor(with: lightTrait)).hexRepresentation
+        let lightBg = Color(accentColor.secondary.color.resolvedColor(with: lightTrait)).hexRepresentation
+
+        return aliases.reduce(into: "") { css, mail in
+            let escapedMail = mail
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+
+            let selector = """
+            a[data-ik-mention-ref='\(escapedMail)'] {
+                --mail-content-mention-text-color: \(lightText)!important;
+                --mail-content-mention-background-color: \(lightBg)!important;
+                --mail-content-mention-font-weight: 500;
+            }
+            """
+
+            if forceLight {
+                css.append(selector)
+            } else {
+                css.append("""
+                @media (prefers-color-scheme: light) {
+                    \(selector)
+                }
+                """)
+            }
+
+            css.append("""
+            @media print {
+                a[data-ik-mention-ref='\(escapedMail)'] {
+                    --mail-content-mention-text-color: \(lightText)!important;
+                    --mail-content-mention-background-color: \(lightBg)!important;
+                }
+            }
+            """)
+        }
     }
 
     public static func createHTMLForPlainText(text: String) async throws -> String {

@@ -235,6 +235,9 @@
 /* loco:6481a2d4fdda813a7f0d3662 */
 "alertNotificationsDisabledTitle" = "Notifikationer deaktiveret";
 
+/* loco:69fc99576244242e970744a2 */
+"alertSenderNoReply" = "Vær opmærksom på, at afsenderen af denne e-mail tilsyneladende ikke ønsker et svar.";
+
 /* loco:62baa963ab8fce473930eea4 */
 "appSecurityDescription" = "Beskytt adgangen til din app ved at aktivere din telefons lås.";
 
@@ -1504,6 +1507,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Deaktiveret";
+
+/* loco:6a2a56a47111b4a768088ad2 */
+"settingsEnableMailDarkMode" = "Visning af e-mails i mørk tilstand";
 
 /* loco:63e11e5771d13a480771a162 */
 "settingsEnableNotifications" = "Aktivér notifikationer";
