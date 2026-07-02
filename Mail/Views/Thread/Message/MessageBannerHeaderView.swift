@@ -102,11 +102,10 @@ struct MessageBannerHeaderView: View {
                         ) {}
                     }
                 }
-            case .reminder(let reminderDate, let senders):
+            case .reminder(let reminderDate):
                 MessageReminderHeaderView(
                     reminderDate: reminderDate,
-                    senders: senders,
-                    to: message.to.toArray(),
+                    message: message,
                     showBottomSeparator: showBottomSeparator,
                     followUpAction: followUp
                 )
