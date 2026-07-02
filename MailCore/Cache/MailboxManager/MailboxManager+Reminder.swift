@@ -51,7 +51,7 @@ public extension MailboxManager {
             mailboxUuid: mailbox.uuid,
             folderId: message.folderId,
             messageId: message.uid,
-            reminderId: reminderId,
+            reminderId: reminderId
         )
         Task { try await refreshFolder(from: [message], additionalFolder: nil) }
     }
