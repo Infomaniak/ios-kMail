@@ -94,7 +94,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
     @Persisted public var reminderDelta: Int?
-    @Persisted public var shouldRemindRecipient: Bool
+    @Persisted public var shouldRemindRecipient: Bool?
 
     public var allRecipients: [Recipient] {
         return to.toArray() + cc.toArray() + bcc.toArray()
@@ -202,7 +202,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
         reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
-        shouldRemindRecipient = try values.decode(Bool.self, forKey: .shouldRemindRecipient)
+        shouldRemindRecipient = try values.decodeIfPresent(Bool.self, forKey: .shouldRemindRecipient)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -227,7 +227,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                             action: SaveDraftOption? = nil,
                             emojiReaction: String? = nil,
                             encrypted: Bool = false,
-                            shouldRemindRecipient: Bool = false) {
+                            shouldRemindRecipient: Bool? = nil) {
         self.init()
 
         self.localUUID = localUUID
@@ -353,7 +353,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
         try container.encodeIfPresent(reminderDelta, forKey: .reminderDelta)
-        try container.encode(shouldRemindRecipient, forKey: .shouldRemindRecipient)
+        try container.encodeIfPresent(shouldRemindRecipient, forKey: .shouldRemindRecipient)
     }
 }
 
