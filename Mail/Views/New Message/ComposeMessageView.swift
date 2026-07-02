@@ -298,7 +298,7 @@ struct ComposeMessageView: View {
                         mentionQuery: mentionQuery,
                         mentionSuggestions: mentionSuggestions
                     ) { recipient in
-                        addMention(for: recipient)
+                        addMention(for: recipient, query: mentionQuery)
                     }
                 }
 
@@ -367,7 +367,13 @@ struct ComposeMessageView: View {
 
             let mergedContacts = contacts.compactMap { $0 as? MergedContact }
 
-            let recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+            var recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+
+            let trimmedQuery = mentionQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            if EmailChecker(email: trimmedQuery).validate(),
+               !recipients.contains(where: { $0.email.lowercased() == trimmedQuery.lowercased() }) {
+                recipients.append(Recipient(email: trimmedQuery, name: trimmedQuery).freezeIfNeeded())
+            }
 
             mentionSuggestions = recipients
         }
@@ -664,7 +670,7 @@ struct ComposeMessageView: View {
         return true
     }
 
-    private func addMention(for recipient: Recipient) {
+    private func addMention(for recipient: Recipient, query: String) {
         if let liveDraft = draft.thaw(),
            let realm = liveDraft.realm {
             try? realm.write {
@@ -681,7 +687,7 @@ struct ComposeMessageView: View {
                 try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(
                     recipient.email,
                     recipient.name,
-                    mentionQuery
+                    query
                 ))
             }
             mentionQuery = ""
