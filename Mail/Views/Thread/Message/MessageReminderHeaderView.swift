@@ -25,16 +25,23 @@ struct MessageReminderHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let reminderDate: Date
-    let senders: [Recipient]
-    let to: [Recipient]
+    let message: Message
     let showBottomSeparator: Bool
     let followUpAction: () -> Void
+
+    private var senders: [Recipient] {
+        return message.from.toArray()
+    }
+
+    private var to: [Recipient] {
+        return message.to.toArray()
+    }
 
     private var isMyMessage: Bool {
         return senders.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
     }
 
-    private var message: String {
+    private var headerMessage: String {
         let senderNames = senders.map(\.name)
         let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
         let formattedNames = formatNames(senderNames)
@@ -89,7 +96,7 @@ struct MessageReminderHeaderView: View {
         } else if !isMyMessage {
             MessageHeaderActionView(
                 icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                message: message,
+                message: headerMessage,
                 showBottomSeparator: showBottomSeparator
             ) {}
         }
@@ -111,7 +118,7 @@ struct MessageReminderHeaderView: View {
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderDate: .now, senders: [Recipient](), to: [Recipient](), showBottomSeparator: true) {}
+    MessageReminderHeaderView(reminderDate: .now, message: PreviewHelper.sampleMessage, showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
             mailboxManager: PreviewHelper.sampleMailboxManager,
