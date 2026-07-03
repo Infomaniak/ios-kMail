@@ -118,8 +118,6 @@ struct ComposeMessageView: View {
     @State private var mentionSuggestions = [Recipient]()
     @State private var editorBox = EditorBox()
 
-    @Weak private var scrollView: UIScrollView?
-
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
@@ -251,7 +249,7 @@ struct ComposeMessageView: View {
 
                     focusedField = .editor
                     #if os(macOS) || targetEnvironment(macCatalyst)
-                    _ = editor?.becomeFirstResponder()
+                    _ = editorBox.editor?.becomeFirstResponder()
                     #endif
                 }
         )
@@ -319,7 +317,6 @@ struct ComposeMessageView: View {
             }
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
             if isLoadingContent || isSyncingDrafts {
                 progressView
@@ -354,6 +351,7 @@ struct ComposeMessageView: View {
             }
         }
         .task(id: mentionQuery) {
+            try? await Task.sleep(for: .milliseconds(200))
             guard !mentionQuery.isEmpty else {
                 mentionSuggestions = []
                 return
@@ -361,7 +359,7 @@ struct ComposeMessageView: View {
 
             let contacts = await mailboxManager.contactManager.searchAllAutocompletable(
                 matching: mentionQuery,
-                fetchLimit: 10,
+                fetchLimit: 3,
                 shouldTrim: false
             )
 
@@ -665,28 +663,27 @@ struct ComposeMessageView: View {
     }
 
     private func addMention(for recipient: Recipient, query: String) {
-        if let liveDraft = draft.thaw(),
-           let realm = liveDraft.realm {
-            try? realm.write {
-                if !liveDraft.mentions.contains(recipient.email) {
-                    liveDraft.mentions.append(recipient.email)
-                }
+        guard let liveDraft = draft.thaw(),
+              let realm = liveDraft.realm else { return }
+        try? realm.write {
+            if !liveDraft.mentions.contains(recipient.email) {
+                liveDraft.mentions.append(recipient.email)
+            }
 
-                let alreadyInTo = liveDraft.to.contains { $0.email.lowercased() == recipient.email.lowercased() }
-                if !alreadyInTo {
-                    liveDraft.to.append(recipient)
-                }
+            let alreadyInTo = liveDraft.to.contains { $0.email.lowercased() == recipient.email.lowercased() }
+            if !alreadyInTo {
+                liveDraft.to.append(recipient)
             }
-            Task {
-                try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(
-                    recipient.email,
-                    recipient.name,
-                    query
-                ))
-            }
-            mentionQuery = ""
-            matomo.track(eventWithCategory: .newMessage, name: "insertMention")
         }
+        Task {
+            try? await editorBox.editor?.webView.evaluateJavaScript(.insertMention(
+                recipient.email,
+                recipient.name,
+                query
+            ))
+        }
+        mentionQuery = ""
+        matomo.track(eventWithCategory: .newMessage, name: "insertMention")
     }
 }
 

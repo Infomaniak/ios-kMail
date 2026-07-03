@@ -286,7 +286,7 @@ struct WebView: UIViewControllerRepresentable {
         }
 
         uiViewController.presentMentionMenuIfNeeded(mentionMenuContent)
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.mentionMenuContent = nil
         }
     }
