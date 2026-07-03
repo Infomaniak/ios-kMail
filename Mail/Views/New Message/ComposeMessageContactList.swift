@@ -25,6 +25,25 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct ComposeMessageContactCell<Cell: View>: View {
+    let recipient: Recipient
+    let onMentionSelected: (Recipient) -> Void
+    @ViewBuilder let cell: () -> Cell
+
+    var body: some View {
+        Button {
+            withAnimation {
+                onMentionSelected(recipient)
+            }
+        } label: {
+            cell()
+                .padding(.horizontal, value: .medium)
+                .padding(.vertical, value: .mini)
+        }
+        .listRowSeparator(.hidden)
+    }
+}
+
 struct ComposeMessageContactList: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @Environment(\.currentUser) private var currentUser
@@ -33,71 +52,53 @@ struct ComposeMessageContactList: View {
     let mentionSuggestions: [Recipient]
     let onMentionSelected: (Recipient) -> Void
 
-    private let maxVisibleMentions = 3
-    private let mentionRowHeight: CGFloat = 64
-
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
-
     private var normalizedMentionQuery: String {
         let lowerCasedQuery = mentionQuery.lowercased()
         return lowerCasedQuery.applyingTransform(.stripDiacritics, reverse: false) ?? lowerCasedQuery
     }
 
     private var unknownRecipient: Recipient? {
-        if EmailChecker(email: mentionQuery).validate(),
-           !mentionSuggestions.contains(where: { $0.email.lowercased() == mentionQuery.lowercased() }) {
-            return Recipient(email: mentionQuery, name: mentionQuery).freezeIfNeeded()
+        guard EmailChecker(email: mentionQuery).validate(),
+              !mentionSuggestions.contains(where: { $0.email.lowercased() == mentionQuery.lowercased() }) else {
+            return nil
         }
-        return nil
+
+        return Recipient(email: mentionQuery, name: mentionQuery).freezeIfNeeded()
     }
 
     var body: some View {
-        let hasUnknownRecipient = unknownRecipient != nil
-        let visibleCount = min(mentionSuggestions.count + (hasUnknownRecipient ? 1 : 0), maxVisibleMentions)
-        let totalHeight = CGFloat(visibleCount) * mentionRowHeight
-        List {
-            Section {
-                ForEach(mentionSuggestions) { recipient in
-                    Button {
-                        withAnimation {
-                            onMentionSelected(recipient)
-                        }
-                    } label: {
-                        RecipientCell(
-                            recipient: recipient,
-                            highlight: normalizedMentionQuery,
-                            contextUser: currentUser.value,
-                            contextMailboxManager: mailboxManager
-                        )
-                    }
-                }
-                .padding(.vertical, threadDensity.cellVerticalPadding)
-                .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
-                .padding(.trailing, value: .medium)
-
-                if let recipient = unknownRecipient {
-                    Button {
-                        withAnimation {
-                            onMentionSelected(recipient)
-                        }
-                    } label: {
-                        UnknownRecipientCell(email: recipient.email)
-                            .padding(.vertical, threadDensity.cellVerticalPadding)
-                            .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
-                            .padding(.trailing, value: .medium)
-                    }
+        VStack {
+            ForEach(mentionSuggestions) { recipient in
+                ComposeMessageContactCell(recipient: recipient, onMentionSelected: onMentionSelected) {
+                    RecipientCell(
+                        recipient: recipient,
+                        highlight: normalizedMentionQuery,
+                        contextUser: currentUser.value,
+                        contextMailboxManager: mailboxManager
+                    )
                 }
             }
-            .listRowInsets(.init())
-            .listRowSeparator(.hidden)
-            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
+
+            if let unknownRecipient {
+                ComposeMessageContactCell(recipient: unknownRecipient, onMentionSelected: onMentionSelected) {
+                    UnknownRecipientCell(email: unknownRecipient.email)
+                }
+            }
         }
-        .scrollIndicators(.hidden)
-        .listStyle(.plain)
-        .frame(height: totalHeight)
     }
 }
 
 #Preview {
     ComposeMessageContactList(mentionQuery: "", mentionSuggestions: []) { _ in }
+}
+
+#Preview {
+    ComposeMessageContactCell(recipient: Recipient(
+        email: PreviewHelper.sampleMailbox.email,
+        name: PreviewHelper.sampleMailbox.email
+    )) { recipient in
+        print(recipient.email)
+    } cell: {
+        Text("Preview Cell")
+    }
 }
