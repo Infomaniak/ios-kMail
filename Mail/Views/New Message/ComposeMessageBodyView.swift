@@ -27,7 +27,6 @@ import RealmSwift
 import Sentry
 import SwiftModalPresentation
 import SwiftUI
-@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
@@ -133,21 +132,7 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
-            if mentionQueryHandler == nil {
-                let handler = MentionQueryHandler()
-                handler.onQueryChange = { query in
-                    mentionQuery = query
-                }
-                editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
-                mentionQueryHandler = handler
-            }
-            editor.webView.loadUserScript(.observeMention)
-            editor.webView.loadUserScript(.observeMentionDeletion)
-            editor.webView.loadUserScript(.insertMention)
-
-            Task { @MainActor in
-                editorBox.editor = editor
-            }
+            editorBox.editor = editor
         }
     }
 
@@ -195,8 +180,7 @@ struct ComposeMessageBodyView: View {
             mentionDeletionHandler = handler
         }
         if mentionQueryHandler == nil {
-            let handler = MentionQueryHandler()
-            handler.onQueryChange = { query in
+            let handler = MentionQueryHandler { query in
                 mentionQuery = query
             }
             editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
