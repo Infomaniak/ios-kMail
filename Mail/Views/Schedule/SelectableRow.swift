@@ -26,6 +26,7 @@ struct SelectableRow<Subtitle: View>: View {
     let isSelected: Bool
     var showUpgradeChip = false
     var showChevron = false
+    let showPaddingLeft: Bool
     let action: () -> Void
     @ViewBuilder var subtitle: Subtitle
 
@@ -51,7 +52,7 @@ struct SelectableRow<Subtitle: View>: View {
                     ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
                 }
             }
-            .padding(.leading, IKIconSize.large.rawValue + IKPadding.mini)
+            .padding(.leading, showPaddingLeft ? IKIconSize.large.rawValue + IKPadding.mini : 0)
             .padding(.trailing, value: .medium)
         }
         .padding(.vertical, value: .medium)

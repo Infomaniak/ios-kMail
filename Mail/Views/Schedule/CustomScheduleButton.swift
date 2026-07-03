@@ -30,20 +30,25 @@ struct CustomScheduleButton: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @Binding var isShowingCustomScheduleAlert: Bool
+    @Binding var isShowingCustomAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
     @Binding var isShowingKSuiteProUpgrade: Bool
     @Binding var isShowingMailPremiumUpgrade: Bool
 
     let type: ScheduleType
 
+    private var title: String {
+        if case .reminder = type {
+            MailResourcesStrings.Localizable.buttonCustomReminder
+        } else {
+            MailResourcesStrings.Localizable.buttonCustomSchedule
+        }
+    }
+
     var body: some View {
         Button(action: showCustomSchedulePicker) {
             HStack(spacing: IKPadding.medium) {
-                MailResourcesAsset.pencil
-                    .iconSize(.large)
-
-                Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
+                Text(title)
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -61,7 +66,8 @@ struct CustomScheduleButton: View {
 
     private func showCustomSchedulePicker() {
         @InjectService var matomo: MatomoUtils
-        let eventNameForUpgradeBottomSheet = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
+        let eventNameForUpgradeBottomSheet = type == .scheduledDraft ? "scheduledCustomDate" : type == .snooze ?
+            "snoozeCustomDate" : "reminderCustomDate"
 
         if mailboxManager.mailbox.pack == .myKSuiteFree {
             matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventNameForUpgradeBottomSheet)
@@ -74,7 +80,7 @@ struct CustomScheduleButton: View {
             isShowingMailPremiumUpgrade = true
         } else {
             matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
-            isShowingCustomScheduleAlert = true
+            isShowingCustomAlert = true
         }
 
         dismiss()
@@ -83,7 +89,7 @@ struct CustomScheduleButton: View {
 
 #Preview {
     CustomScheduleButton(
-        isShowingCustomScheduleAlert: .constant(true),
+        isShowingCustomAlert: .constant(true),
         isShowingMyKSuiteUpgrade: .constant(false),
         isShowingKSuiteProUpgrade: .constant(false),
         isShowingMailPremiumUpgrade: .constant(false),

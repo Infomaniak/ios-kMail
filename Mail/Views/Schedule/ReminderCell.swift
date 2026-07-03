@@ -23,6 +23,7 @@ struct ReminderCell: View {
     let option: ReminderOption
     let isSelected: Bool
     var showUpgradeChip = false
+    var showPaddingLeft = true
     let action: () -> Void
 
     var body: some View {
@@ -31,6 +32,7 @@ struct ReminderCell: View {
             isSelected: isSelected,
             showUpgradeChip: showUpgradeChip,
             showChevron: option.isCustom && !isSelected,
+            showPaddingLeft: showPaddingLeft,
             action: action
         ) {
             if option.isCustom, isSelected, let subtitle = option.subtitle {
