@@ -24,6 +24,7 @@ struct ScheduleCell: View {
     let option: ScheduleOption
     let isSelected: Bool
     var showUpgradeChip = false
+    var showPaddingLeft = true
     let action: () -> Void
 
     private var shouldShowDate: Bool {
@@ -39,6 +40,7 @@ struct ScheduleCell: View {
             isSelected: isSelected,
             showUpgradeChip: showUpgradeChip,
             showChevron: option.isCustom && !isSelected,
+            showPaddingLeft: showPaddingLeft,
             action: action
         ) {
             if shouldShowDate, let date = option.date {
