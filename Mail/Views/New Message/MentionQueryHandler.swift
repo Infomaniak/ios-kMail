@@ -22,7 +22,11 @@ import WebKit
 final class MentionQueryHandler: NSObject, WKScriptMessageHandler {
     static let messageName = "mentionQueryDidChange"
 
-    var onQueryChange: ((String) -> Void)?
+    let onQueryChange: ((String) -> Void)?
+
+    init(onQueryChange: ((String) -> Void)?) {
+        self.onQueryChange = onQueryChange
+    }
 
     func userContentController(
         _: WKUserContentController,

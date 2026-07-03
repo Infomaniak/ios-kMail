@@ -48,14 +48,17 @@ final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
             let refs: [String] = try JSONDecoder().decode([String].self, from: data)
 
             Task { @MainActor in
-                if let liveDraft = draft.thaw() {
-                    try? liveDraft.realm?.write {
-                        for ref in refs {
-                            if let index = liveDraft.mentions.index(of: ref) {
-                                liveDraft.mentions.remove(at: index)
-                                matomo.track(eventWithCategory: .newMessage, name: "removeMention")
-                            }
+                guard let liveDraft = draft.thaw() else {
+                    return
+                }
+                try? liveDraft.realm?.write {
+                    for ref in refs {
+                        guard let index = liveDraft.mentions.index(of: ref) else {
+                            return
                         }
+
+                        liveDraft.mentions.remove(at: index)
+                        matomo.track(eventWithCategory: .newMessage, name: "removeMention")
                     }
                 }
             }
