@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ContactCard
 import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -85,6 +86,9 @@ struct AccountCellView: View {
 struct AccountHeaderCell: View {
     let user: InfomaniakCore.UserProfile
 
+    @State private var path = NavigationPath()
+    @State private var isShowingContactCard = false
+
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
@@ -112,7 +116,7 @@ struct AccountHeaderCell: View {
             case .switchAccount:
                 if isSelected {
                     Button {
-                        //
+                        isShowingContactCard = true
                     } label: {
                         MailResourcesAsset.qrCode.swiftUIImage
                             .iconSize(.medium)
@@ -122,6 +126,15 @@ struct AccountHeaderCell: View {
                                 RoundedRectangle(cornerRadius: IKRadius.medium)
                                     .foregroundStyle(UserDefaults.shared.accentColor.primary.swiftUIColor.opacity(0.1))
                             )
+                    }
+                    .fullScreenCover(isPresented: $isShowingContactCard) {
+                        if #available(iOS 16.4, *) {
+                            ContactCardView(
+                                path: $path,
+                                userProfile: user,
+                                rootPath: URL.temporaryDirectory
+                            )
+                        }
                     }
                 }
             case .selectComposeMailbox:
