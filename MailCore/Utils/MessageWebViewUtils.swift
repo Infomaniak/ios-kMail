@@ -43,17 +43,27 @@ public enum MessageWebViewUtils {
             }
             """
 
-            if case .message(let theme, let addresses) = target {
+            let aliases: [String]
+            switch target {
+            case .message(let theme, let mails):
+                aliases = mails
                 if theme == .auto, let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
                     resources.append(darkModeCSS)
-                    resources.append(generateDarkMentionCSS(for: addresses))
+                    resources.append(generateDarkMentionCSS(for: aliases))
                 }
                 variables.append("""
                 :root {
                     color-scheme: \(theme.cssProperty);
                 }
                 """)
+            case .editor(let mails):
+                aliases = mails
+                if let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+                    resources.append(darkModeCSS)
+                    resources.append(generateDarkMentionCSS(for: aliases))
+                }
             }
+
             variables.append("""
             @media print {
                 a[data-ik-mention-ref] {
@@ -62,14 +72,6 @@ public enum MessageWebViewUtils {
                 }
             }
             """)
-
-            let aliases: [String]
-            switch target {
-            case .message(_, let mails):
-                aliases = mails
-            case .editor(let mails):
-                aliases = mails
-            }
 
             let isLightForced = if case .message(let theme, _) = target { theme == .light } else { false }
             variables.append(generateLightMentionCSS(for: aliases, forceLight: isLightForced))
@@ -82,13 +84,17 @@ public enum MessageWebViewUtils {
             resources.append(fixDisplayCSS)
         }
 
-        if case .editor = target, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor"),
-           let darkModeCSS = MailResourcesResources.bundle.loadCSS(filename: "darkModeBackground") {
+        if case .editor = target, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor") {
             resources.append(editorCSS)
-            resources.append(darkModeCSS)
         }
 
         return resources
+    }
+
+    public static func createHTMLForPlainText(text: String) async throws -> String {
+        guard let root = try await SwiftSoupUtils(fromHTMLFragment: "<pre>").extractParentElement() else { return "" }
+        try root.text(text)
+        return try root.outerHtml()
     }
 
     private static func generateDarkMentionCSS(for aliases: [String]) -> String {
@@ -155,11 +161,5 @@ public enum MessageWebViewUtils {
             }
             """)
         }
-    }
-
-    public static func createHTMLForPlainText(text: String) async throws -> String {
-        guard let root = try await SwiftSoupUtils(fromHTMLFragment: "<pre>").extractParentElement() else { return "" }
-        try root.text(text)
-        return try root.outerHtml()
     }
 }
