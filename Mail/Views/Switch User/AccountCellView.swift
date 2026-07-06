@@ -115,6 +115,18 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
+                    let baseColor = UserDefaults.shared.accentColor
+                    let myTheme = ContactCardTheme(
+                        primary: baseColor.primary.swiftUIColor,
+                        secondary: baseColor.secondary.swiftUIColor,
+                        primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
+                        secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
+                        onAccent: baseColor.onAccent.swiftUIColor,
+                        background: MailResourcesAsset.backgroundColor.swiftUIColor,
+                        backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+                        navBarBackground: baseColor.navBarBackground.swiftUIColor,
+                        snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor
+                    )
                     Button {
                         isShowingContactCard = true
                     } label: {
@@ -124,16 +136,18 @@ struct AccountHeaderCell: View {
                             .padding(IKPadding.mini)
                             .background(
                                 RoundedRectangle(cornerRadius: IKRadius.medium)
-                                    .foregroundStyle(UserDefaults.shared.accentColor.primary.swiftUIColor.opacity(0.1))
+                                    .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
                             )
                     }
                     .fullScreenCover(isPresented: $isShowingContactCard) {
                         if #available(iOS 16.4, *) {
                             ContactCardView(
-                                path: $path,
                                 userProfile: user,
-                                rootPath: URL.temporaryDirectory
+                                rootPath: FileManager.default.containerURL(
+                                    forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
+                                ) ?? URL.temporaryDirectory
                             )
+                            .environment(\.contactCardTheme, myTheme)
                         }
                     }
                 }

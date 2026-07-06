@@ -36,7 +36,7 @@ open class MailAppTargetAssembly: TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .prod
     private static let realmRootPath = "mailboxes"
     private static let appGroupIdentifier = "group.\(bundleId)"
-    private static let sharedAppGroupName = "group.com.infomaniak"
+    public static let sharedAppGroupName = "group.com.infomaniak"
 
     public static let bundleId = "com.infomaniak.mail"
     public static let loginConfig = InfomaniakLogin.Config(
