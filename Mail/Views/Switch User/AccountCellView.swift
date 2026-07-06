@@ -86,7 +86,6 @@ struct AccountCellView: View {
 struct AccountHeaderCell: View {
     let user: InfomaniakCore.UserProfile
 
-    @State private var path = NavigationPath()
     @State private var isShowingContactCard = false
 
     /// Optional as this view can be displayed from a context without a mailboxManager available
