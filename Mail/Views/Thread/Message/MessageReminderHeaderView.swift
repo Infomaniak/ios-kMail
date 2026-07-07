@@ -63,7 +63,7 @@ struct MessageReminderHeaderView: View {
     }
 
     var body: some View {
-        ZStack {
+        Group {
             if isMyMessage && reminderDate < .now {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
@@ -107,7 +107,6 @@ struct MessageReminderHeaderView: View {
         }
         .reminderFloatingPanel(
             isPresented: $isShowingReschedulePanel,
-            isUpdating: true
         ) { reminder in
             changeReminderDelta(newReminderOption: reminder)
         }
