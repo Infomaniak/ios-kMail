@@ -60,6 +60,6 @@ struct ReminderFloatingPanelView: View {
         isShowingCustomReminderAlert: .constant(false),
         isShowingMyKSuiteUpgrade: .constant(false),
         isShowingKSuiteProUpgrade: .constant(false),
-        isShowingMailPremiumUpgrade: .constant(false),
+        isShowingMailPremiumUpgrade: .constant(false)
     ) { _ in }
 }

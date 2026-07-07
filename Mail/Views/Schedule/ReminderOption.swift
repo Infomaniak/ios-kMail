@@ -30,7 +30,8 @@ enum ReminderOption: Hashable {
     static let presetCases: [ReminderOption] = [.oneDay, .threeDays, .sevenDays]
 
     init(delta: Int) {
-        switch delta {
+        let clamped = max(0, delta)
+        switch clamped {
         case 1440:
             self = .oneDay
         case 4320:
@@ -38,10 +39,14 @@ enum ReminderOption: Hashable {
         case 10080:
             self = .sevenDays
         default:
-            if delta.isMultiple(of: 1440) {
-                self = .customDays(delta / 1440)
+            if clamped.isMultiple(of: 1440) {
+                let days = clamped / 1440
+                self = (1 ... 30).contains(days) ? .customDays(days) : .custom
+            } else if clamped.isMultiple(of: 60) {
+                let hours = clamped / 60
+                self = (1 ... 23).contains(hours) ? .customHours(hours) : .custom
             } else {
-                self = .customHours(Int(delta / 60))
+                self = .custom
             }
         }
     }
