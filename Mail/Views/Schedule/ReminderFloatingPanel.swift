@@ -31,14 +31,12 @@ import SwiftUI
 extension View {
     func reminderFloatingPanel(
         isPresented: Binding<Bool>,
-        isUpdating: Bool,
         dismissView: (() -> Void)? = nil,
         completionHandler: @escaping (ReminderOption) -> Void
     ) -> some View {
         modifier(
             ReminderFloatingPanel(
                 isShowingFloatingPanel: isPresented,
-                isUpdating: isUpdating,
                 dismissView: dismissView,
                 completionHandler: completionHandler
             )
@@ -57,7 +55,6 @@ struct ReminderFloatingPanel: ViewModifier {
 
     @Binding var isShowingFloatingPanel: Bool
 
-    let isUpdating: Bool
     let dismissView: (() -> Void)?
     let completionHandler: (ReminderOption) -> Void
 
