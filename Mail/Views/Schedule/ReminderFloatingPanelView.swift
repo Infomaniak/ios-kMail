@@ -30,7 +30,6 @@ struct ReminderFloatingPanelView: View {
     @Binding var isShowingKSuiteProUpgrade: Bool
     @Binding var isShowingMailPremiumUpgrade: Bool
 
-    let initialReminder: ReminderOption?
     let completionHandler: (ReminderOption) -> Void
 
     var body: some View {
@@ -62,6 +61,5 @@ struct ReminderFloatingPanelView: View {
         isShowingMyKSuiteUpgrade: .constant(false),
         isShowingKSuiteProUpgrade: .constant(false),
         isShowingMailPremiumUpgrade: .constant(false),
-        initialReminder: nil,
     ) { _ in }
 }
