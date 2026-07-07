@@ -114,48 +114,59 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    let baseColor = UserDefaults.shared.accentColor
-                    let myTheme = ContactCardTheme(
-                        primary: baseColor.primary.swiftUIColor,
-                        secondary: baseColor.secondary.swiftUIColor,
-                        primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
-                        secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-                        onAccent: baseColor.onAccent.swiftUIColor,
-                        background: MailResourcesAsset.backgroundColor.swiftUIColor,
-                        backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
-                        navBarBackground: baseColor.navBarBackground.swiftUIColor,
-                        snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor
-                    )
-                    Button {
-                        isShowingContactCard = true
-                    } label: {
-                        MailResourcesAsset.qrCode.swiftUIImage
-                            .iconSize(.medium)
-                            .foregroundStyle(.tint)
-                            .padding(IKPadding.mini)
-                            .background(
-                                RoundedRectangle(cornerRadius: IKRadius.medium)
-                                    .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
-                            )
-                    }
-                    .fullScreenCover(isPresented: $isShowingContactCard) {
-                        if #available(iOS 16.4, *) {
-                            ContactCardView(
-                                userProfile: user,
-                                rootPath: FileManager.default.containerURL(
-                                    forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
-                                ) ?? URL.temporaryDirectory
-                            )
-                            .environment(\.contactCardTheme, myTheme)
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    contactCardButton
+                        .fullScreenCover(isPresented: $isShowingContactCard) {
+                            contactCardContent
                         }
-                    }
                 }
+
             case .selectComposeMailbox:
                 ChevronIcon(direction: .down)
             }
         }
         .padding(.vertical, value: .mini)
+    }
+
+    private var contactCardButton: some View {
+        let baseColor = UserDefaults.shared.accentColor
+        return Button {
+            isShowingContactCard = true
+        } label: {
+            MailResourcesAsset.qrCode.swiftUIImage
+                .iconSize(.medium)
+                .foregroundStyle(.tint)
+                .padding(IKPadding.mini)
+                .background(
+                    RoundedRectangle(cornerRadius: IKRadius.medium)
+                        .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
+                )
+        }
+    }
+
+    @ViewBuilder
+    private var contactCardContent: some View {
+        if #available(iOS 16.4, *) {
+            let baseColor = UserDefaults.shared.accentColor
+            let myTheme = ContactCardTheme(
+                primary: baseColor.primary.swiftUIColor,
+                secondary: baseColor.secondary.swiftUIColor,
+                primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
+                secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
+                onAccent: baseColor.onAccent.swiftUIColor,
+                background: MailResourcesAsset.backgroundColor.swiftUIColor,
+                backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+                navBarBackground: baseColor.navBarBackground.swiftUIColor,
+                snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor
+            )
+            ContactCardView(
+                userProfile: user,
+                rootPath: FileManager.default.containerURL(
+                    forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
+                ) ?? URL.temporaryDirectory
+            )
+            .environment(\.contactCardTheme, myTheme)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        }
     }
 }
 
