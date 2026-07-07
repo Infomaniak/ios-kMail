@@ -24,7 +24,6 @@ import SwiftUI
 struct MessageReminderHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var isShowingReschedulePanel = false
-    
 
     let reminderDate: Date
     let message: Message
@@ -61,14 +60,6 @@ struct MessageReminderHeaderView: View {
                 return MailResourcesStrings.Localizable.reminderBeforeHeaderTitle(formattedNames, formattedDate)
             }
         }
-    }
-
-    private var initialReminder: ReminderOption? {
-        if let reminderDate = message.reminder?.date {
-            let dateDifference = Int(reminderDate.timeIntervalSince1970 - message.date.timeIntervalSince1970)
-            return ReminderOption(delta: dateDifference / 60)
-        }
-        return nil
     }
 
     var body: some View {
@@ -116,7 +107,6 @@ struct MessageReminderHeaderView: View {
         }
         .reminderFloatingPanel(
             isPresented: $isShowingReschedulePanel,
-            initialReminder: initialReminder,
             isUpdating: true
         ) { reminder in
             changeReminderDelta(newReminderOption: reminder)

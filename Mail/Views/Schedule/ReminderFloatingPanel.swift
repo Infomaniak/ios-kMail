@@ -28,23 +28,9 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
-// extension ScheduleType {
-//    var floatingPanelTitle: String {
-//        switch self {
-//        case .scheduledDraft:
-//            return MailResourcesStrings.Localizable.scheduleSendingTitle
-//        case .snooze:
-//            return MailResourcesStrings.Localizable.actionSnooze
-//        case .reminder:
-//            return MailResourcesStrings.Localizable.actionCallIfNoResponse
-//        }
-//    }
-// }
-
 extension View {
     func reminderFloatingPanel(
         isPresented: Binding<Bool>,
-        initialReminder: ReminderOption? = nil,
         isUpdating: Bool,
         dismissView: (() -> Void)? = nil,
         completionHandler: @escaping (ReminderOption) -> Void
@@ -52,7 +38,6 @@ extension View {
         modifier(
             ReminderFloatingPanel(
                 isShowingFloatingPanel: isPresented,
-                initialReminder: initialReminder,
                 isUpdating: isUpdating,
                 dismissView: dismissView,
                 completionHandler: completionHandler
@@ -72,7 +57,6 @@ struct ReminderFloatingPanel: ViewModifier {
 
     @Binding var isShowingFloatingPanel: Bool
 
-    let initialReminder: ReminderOption?
     let isUpdating: Bool
     let dismissView: (() -> Void)?
     let completionHandler: (ReminderOption) -> Void
@@ -92,7 +76,6 @@ struct ReminderFloatingPanel: ViewModifier {
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                     isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
                     isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
-                    initialReminder: initialReminder,
                     completionHandler: completionHandler
                 )
                 .environmentObject(mailboxManager)
