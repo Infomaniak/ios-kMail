@@ -147,6 +147,7 @@ struct AccountHeaderCell: View {
                                 ) ?? URL.temporaryDirectory
                             )
                             .environment(\.contactCardTheme, myTheme)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                         }
                     }
                 }
