@@ -61,7 +61,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var noReplyAlert: NoReplyAlertState?
     @ModalState private var messageToRemind: Message?
 
-    @State var isReminderFloatingPanelPresented = false
+    @State private var isReminderFloatingPanelPresented = false
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
