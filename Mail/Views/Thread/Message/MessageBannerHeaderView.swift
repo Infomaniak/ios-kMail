@@ -100,16 +100,21 @@ struct MessageBannerHeaderView: View {
                         showBottomSeparator: showBottomSeparator
                     ) {}
                 }
-            case .reminder(let reminderDate, let senders):
+            case .reminder(let reminderDate):
                 MessageReminderHeaderView(
                     reminderDate: reminderDate,
-                    senders: senders,
-                    to: message.to.toArray(),
+                    message: message,
                     showBottomSeparator: showBottomSeparator,
                     followUpAction: followUp
                 )
             }
         }
+        MessageReminderHeaderView(
+            reminderDate: .now + 3600,
+            message: message,
+            showBottomSeparator: true,
+            followUpAction: followUp
+        )
     }
 
     private func spamAction(spamType: SpamHeaderType) async {

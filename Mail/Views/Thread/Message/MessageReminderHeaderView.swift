@@ -23,18 +23,26 @@ import SwiftUI
 
 struct MessageReminderHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @State private var isShowingReschedulePanel = false
 
     let reminderDate: Date
-    let senders: [Recipient]
-    let to: [Recipient]
+    let message: Message
     let showBottomSeparator: Bool
     let followUpAction: () -> Void
+
+    private var senders: [Recipient] {
+        return message.from.toArray()
+    }
+
+    private var to: [Recipient] {
+        return message.to.toArray()
+    }
 
     private var isMyMessage: Bool {
         return senders.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
     }
 
-    private var message: String {
+    private var headerMessage: String {
         let senderNames = senders.map(\.name)
         let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
         let formattedNames = formatNames(senderNames)
@@ -55,43 +63,52 @@ struct MessageReminderHeaderView: View {
     }
 
     var body: some View {
-        if isMyMessage && reminderDate < .now {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
-                    formatNames(to.map(\.name)),
-                    DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
-                ),
-                showBottomSeparator: showBottomSeparator
-            ) {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
-                        MessageHeaderDivider()
-                        Button(MailResourcesStrings.Localizable.reminderPostponeButton("Tomorrow 18:00")) {}
+        Group {
+            if isMyMessage && reminderDate < .now {
+                MessageHeaderActionView(
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
+                        formatNames(to.map(\.name)),
+                        DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                    ),
+                    showBottomSeparator: showBottomSeparator
+                ) {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
+                            MessageHeaderDivider()
+                            Button(MailResourcesStrings.Localizable.reminderPostponeButton("Tomorrow 18:00")) {}
+                        }
+                        Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
                     }
-                    Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton) {}
                 }
-            }
 
-        } else if isMyMessage && reminderDate >= .now {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader)),
-                showBottomSeparator: showBottomSeparator
-            ) {
-                HStack {
-                    Button(MailResourcesStrings.Localizable.buttonReschedule) {}
-                    MessageHeaderDivider()
-                    Button(MailResourcesStrings.Localizable.buttonCancelReminder) {}
+            } else if isMyMessage && reminderDate >= .now {
+                MessageHeaderActionView(
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader)),
+                    showBottomSeparator: showBottomSeparator
+                ) {
+                    HStack {
+                        Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                            isShowingReschedulePanel = true
+                        }
+                        MessageHeaderDivider()
+                        Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
+                    }
                 }
+            } else if !isMyMessage {
+                MessageHeaderActionView(
+                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                    message: headerMessage,
+                    showBottomSeparator: showBottomSeparator
+                ) {}
             }
-        } else if !isMyMessage {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                message: message,
-                showBottomSeparator: showBottomSeparator
-            ) {}
+        }
+        .reminderFloatingPanel(
+            isPresented: $isShowingReschedulePanel,
+        ) { reminder in
+            changeReminderDelta(newReminderOption: reminder)
         }
     }
 
@@ -108,10 +125,24 @@ struct MessageReminderHeaderView: View {
             return "\(allButLast.joined(separator: ", ")) \(MailResourcesStrings.Localizable.linkingWord) \(names.last ?? "")"
         }
     }
+
+    private func removeReminder() {
+        Task {
+            try await mailboxManager.deleteReminder(message: message)
+        }
+    }
+
+    private func changeReminderDelta(newReminderOption: ReminderOption) {
+        let delta = newReminderOption.inMinutes
+        Task {
+            try await mailboxManager.updateReminder(message: message, reminderDelta: delta)
+        }
+        isShowingReschedulePanel = false
+    }
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderDate: .now, senders: [Recipient](), to: [Recipient](), showBottomSeparator: true) {}
+    MessageReminderHeaderView(reminderDate: .now, message: PreviewHelper.sampleMessage, showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
             mailboxManager: PreviewHelper.sampleMailboxManager,

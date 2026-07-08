@@ -68,7 +68,7 @@ struct ScheduleFloatingPanelView: View {
             }
 
             CustomScheduleButton(
-                isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
+                isShowingCustomAlert: $isShowingCustomScheduleAlert,
                 isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                 isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
                 isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
