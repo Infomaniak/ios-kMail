@@ -94,6 +94,10 @@ public class MailError: LocalizedError, Encodable, ErrorWithCode {
         localizedDescription: MailResourcesStrings.Localizable.errorMessageNotSnoozed,
         shouldDisplay: true
     )
+
+    public static let missingReminderID = MailError(
+        code: "missingReminderID"
+    )
 }
 
 extension MailError: Identifiable {
