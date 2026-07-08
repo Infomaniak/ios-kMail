@@ -52,7 +52,8 @@ extension Action: CaseIterable {
         .cancelSnooze,
         .forceLightMode,
         .forceDarkMode,
-        .summarize
+        .summarize,
+        .addReminder
     ]
 
     public var refreshSearchResult: Bool {
@@ -388,5 +389,12 @@ public extension Action {
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
         matomoName: ""
+    )
+    static let addReminder = Action(
+        id: "addReminder",
+        title: MailResourcesStrings.Localizable.actionSnooze,
+        iconResource: MailResourcesAsset.alarmClock,
+        tintColorResource: MailResourcesAsset.swipeSnoozeColor,
+        matomoName: "snooze"
     )
 }

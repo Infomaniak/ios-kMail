@@ -292,6 +292,10 @@ public class ActionsManager: ObservableObject {
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
+        case .addReminder:
+            Task { @MainActor in
+                origin.nearestMessageToRemind?.wrappedValue = messages.first
+            }
         default:
             break
         }
@@ -645,6 +649,17 @@ extension ActionsManager {
         } else {
             snackbarPresenter
                 .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(snoozedDeleted))
+        }
+    }
+
+    // MARK: - Reminder
+
+    public func addReminder(message: Message, delta: Int) async {
+        do {
+            try await mailboxManager.addReminder(message: message, reminderDelta: delta)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAddReminderSuccess)
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarAddReminderFailure)
         }
     }
 }
