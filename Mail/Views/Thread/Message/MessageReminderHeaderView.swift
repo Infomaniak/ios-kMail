@@ -128,14 +128,24 @@ struct MessageReminderHeaderView: View {
 
     private func removeReminder() {
         Task {
-            try await mailboxManager.deleteReminder(message: message)
+            do {
+                try await mailboxManager.deleteReminder(message: message)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisableReminderSuccess)
+            } catch {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisableReminderFailure)
+            }
         }
     }
 
     private func changeReminderDelta(newReminderOption: ReminderOption) {
         let delta = newReminderOption.inMinutes
         Task {
-            try await mailboxManager.updateReminder(message: message, reminderDelta: delta)
+            do {
+                try await mailboxManager.updateReminder(message: message, reminderDelta: delta)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarModifyReminderSuccess)
+            } catch {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarModifyReminderFailure)
+            }
         }
         isShowingReschedulePanel = false
     }
