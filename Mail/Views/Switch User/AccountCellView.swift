@@ -148,20 +148,20 @@ struct AccountHeaderCell: View {
     @ViewBuilder
     private var contactCardContent: some View {
         if #available(iOS 16.4, *) {
-            let baseColor = UserDefaults.shared.accentColor
+            let baseUserAccentColor = UserDefaults.shared.accentColor
             let onBoardingImageByTheme = onBoardingImageByTheme()
 
             let myTheme = ContactCardTheme(
-                primary: baseColor.primary.swiftUIColor,
-                secondary: baseColor.secondary.swiftUIColor,
+                primary: baseUserAccentColor.primary.swiftUIColor,
+                secondary: baseUserAccentColor.secondary.swiftUIColor,
                 primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
                 secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-                onAccent: baseColor.onAccent.swiftUIColor,
+                onAccent: baseUserAccentColor.onAccent.swiftUIColor,
                 background: MailResourcesAsset.backgroundColor.swiftUIColor,
                 backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
-                navBarBackground: baseColor.navBarBackground.swiftUIColor,
-                snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor,
-                onBoardingImage: onBoardingImageByTheme
+                navBarBackground: baseUserAccentColor.navBarBackground.swiftUIColor,
+                snackbarActionColor: baseUserAccentColor.snackbarActionColor.swiftUIColor,
+                onboardingImage: onBoardingImageByTheme
             )
             ContactCardView(
                 userProfile: user,
