@@ -93,6 +93,8 @@ struct AccountHeaderCell: View {
 
     @Binding var isSelected: Bool
 
+    @Environment(\.colorScheme) private var colorScheme
+
     enum AccountHeaderCellType {
         case switchAccount, selectComposeMailbox
     }
@@ -147,6 +149,8 @@ struct AccountHeaderCell: View {
     private var contactCardContent: some View {
         if #available(iOS 16.4, *) {
             let baseColor = UserDefaults.shared.accentColor
+            let onBoardingImageByTheme = onBoardingImageByTheme()
+
             let myTheme = ContactCardTheme(
                 primary: baseColor.primary.swiftUIColor,
                 secondary: baseColor.secondary.swiftUIColor,
@@ -156,7 +160,8 @@ struct AccountHeaderCell: View {
                 background: MailResourcesAsset.backgroundColor.swiftUIColor,
                 backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
                 navBarBackground: baseColor.navBarBackground.swiftUIColor,
-                snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor
+                snackbarActionColor: baseColor.snackbarActionColor.swiftUIColor,
+                onBoardingImage: onBoardingImageByTheme
             )
             ContactCardView(
                 userProfile: user,
@@ -164,9 +169,40 @@ struct AccountHeaderCell: View {
                     forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
                 ) ?? URL.temporaryDirectory
             )
+            .id(UserDefaults.shared.accentColor)
             .environment(\.contactCardTheme, myTheme)
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         }
+    }
+
+    private func isEffectiveDarkMode() -> Bool {
+        switch UserDefaults.shared.theme {
+        case .dark:
+            return true
+        case .light:
+            return false
+        case .system:
+            return colorScheme == .dark
+        }
+    }
+
+    private func onBoardingImageByTheme() -> Image {
+        let isDark = isEffectiveDarkMode()
+        let isBlue = UserDefaults.shared.accentColor == .blue
+
+        var asset: MailResourcesImages
+        switch (isDark, isBlue) {
+        case (true, true):
+            asset = MailResourcesAsset.contactCardBleuDark
+        case (true, false):
+            asset = MailResourcesAsset.contactCardPinkDark
+        case (false, true):
+            asset = MailResourcesAsset.contactCardBleu
+        case (false, false):
+            asset = MailResourcesAsset.contactCardPink
+        }
+
+        return asset.swiftUIImage
     }
 }
 
