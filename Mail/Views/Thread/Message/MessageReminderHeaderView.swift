@@ -16,12 +16,15 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import IKSnackbar
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct MessageReminderHeaderView: View {
+    @InjectService var snackbarPresenter: IKSnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var isShowingReschedulePanel = false
 
@@ -73,13 +76,27 @@ struct MessageReminderHeaderView: View {
                     ),
                     showBottomSeparator: showBottomSeparator
                 ) {
-                    VStack(alignment: .leading) {
+                    ViewThatFits(in: .horizontal) {
                         HStack {
                             Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
                             MessageHeaderDivider()
-                            Button(MailResourcesStrings.Localizable.reminderPostponeButton("Tomorrow 18:00")) {}
+                            Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                                isShowingReschedulePanel = true
+                            }
+                            MessageHeaderDivider()
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
                         }
-                        Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
+                                MessageHeaderDivider()
+                                Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                                    isShowingReschedulePanel = true
+                                }
+                            }
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                        }
                     }
                 }
 
@@ -107,6 +124,7 @@ struct MessageReminderHeaderView: View {
         }
         .reminderFloatingPanel(
             isPresented: $isShowingReschedulePanel,
+            isRescheduling: true
         ) { reminder in
             changeReminderDelta(newReminderOption: reminder)
         }
