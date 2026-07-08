@@ -175,6 +175,7 @@ public class ActionsProvider: ObservableObject {
         let print = origin.type == .floatingPanelListAction(source: .message)
         let showEuriaActions = !euriaActions.isEmpty && origin.type != .floatingPanelListAction(source: .threadList)
         var tempListActions: [Action?] = [
+            isScheduled ? .delete : nil,
             showEuriaActions ? .showEuriaActions : nil,
             isScheduled ? nil : .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
@@ -294,12 +295,10 @@ public class ActionsProvider: ObservableObject {
     }
 
     func floatingPanelQuickActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
-        if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
+        let isDraft = messages.allSatisfy { $0.isDraft } || origin.frozenFolder?.role == .draft
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy { $0.isScheduledDraft == true }
+        if isDraft || isScheduled {
             return []
-        }
-
-        if origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy({ $0.isScheduledDraft == true }) {
-            return [.delete]
         }
 
         let isSingleThread = messages.uniqueThreadsInFolder(origin.frozenFolder).count == 1
