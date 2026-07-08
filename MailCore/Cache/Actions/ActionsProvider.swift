@@ -158,6 +158,8 @@ public class ActionsProvider: ObservableObject {
     private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> [Action] {
         @LazyInjectService var platformDetector: PlatformDetectable
 
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts
+
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
         let euriaActions = euriaActionsForMessage()
 
@@ -174,7 +176,7 @@ public class ActionsProvider: ObservableObject {
         let showEuriaActions = !euriaActions.isEmpty && origin.type != .floatingPanelListAction(source: .threadList)
         var tempListActions: [Action?] = [
             showEuriaActions ? .showEuriaActions : nil,
-            .openMovePanel,
+            isScheduled ? nil : .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
             isFromMe ? nil : .phishing,
@@ -296,6 +298,10 @@ public class ActionsProvider: ObservableObject {
             return []
         }
 
+        if origin.frozenFolder?.role == .scheduledDrafts {
+            return [.delete]
+        }
+
         let isSingleThread = messages.uniqueThreadsInFolder(origin.frozenFolder).count == 1
 
         if origin.type == .floatingPanelQuickAction(source: .message) || isSingleThread {
@@ -377,6 +383,13 @@ public class ActionsProvider: ObservableObject {
             currentFolder: origin.frozenFolder,
             featureAvailableProvider: featureAvailableProvider
         )
+
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts
+
+        if isScheduled {
+            return [.delete]
+        }
+
         let fromArchiveFolder = origin.frozenFolder?.role == .archive
         let read = messages.contains { !$0.seen } ? Action.markAsRead : Action.markAsUnread
         let star = lastMessages.allSatisfy { $0.flagged } ? Action.unstar : Action.star
