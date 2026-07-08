@@ -158,7 +158,7 @@ public class ActionsProvider: ObservableObject {
     private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> [Action] {
         @LazyInjectService var platformDetector: PlatformDetectable
 
-        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts || message.isScheduledDraft == true
 
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
         let euriaActions = euriaActionsForMessage()
@@ -298,7 +298,7 @@ public class ActionsProvider: ObservableObject {
             return []
         }
 
-        if origin.frozenFolder?.role == .scheduledDrafts {
+        if origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy({ $0.isScheduledDraft == true }) {
             return [.delete]
         }
 
@@ -378,18 +378,15 @@ public class ActionsProvider: ObservableObject {
     }
 
     func multipleSelectionActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
+        if origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy({ $0.isScheduledDraft == true }) {
+            return [.delete]
+        }
+
         let lastMessages = messages.lastMessagesAndDuplicatesToExecuteAction(
             currentMailboxEmail: currentEmail,
             currentFolder: origin.frozenFolder,
             featureAvailableProvider: featureAvailableProvider
         )
-
-        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts
-
-        if isScheduled {
-            return [.delete]
-        }
-
         let fromArchiveFolder = origin.frozenFolder?.role == .archive
         let read = messages.contains { !$0.seen } ? Action.markAsRead : Action.markAsUnread
         let star = lastMessages.allSatisfy { $0.flagged } ? Action.unstar : Action.star
