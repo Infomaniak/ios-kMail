@@ -103,7 +103,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messagesToProcessWithEuria: $messagesToProcessWithEuria,
-            messageToRemind: $messageToRemind,
+            messageToRemind: $messageToRemind
         )
     }
 
