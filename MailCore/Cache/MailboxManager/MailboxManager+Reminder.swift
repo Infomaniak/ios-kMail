@@ -31,7 +31,7 @@ public extension MailboxManager {
 
     func updateReminder(message: Message, reminderDelta: Int) async throws {
         guard let reminderId = message.reminder?.uuid else {
-            return
+            throw MailError.missingReminderID
         }
         try await apiFetcher.updateReminder(
             mailboxUuid: mailbox.uuid,
@@ -45,7 +45,7 @@ public extension MailboxManager {
 
     func deleteReminder(message: Message) async throws {
         guard let reminderId = message.reminder?.uuid else {
-            return
+            throw MailError.missingReminderID
         }
         try await apiFetcher.deleteReminder(
             mailboxUuid: mailbox.uuid,
