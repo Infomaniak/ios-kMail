@@ -59,6 +59,9 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
     @ModalState private var noReplyAlert: NoReplyAlertState?
+    @ModalState private var messageToRemind: Message?
+
+    @State var isReminderFloatingPanelPresented = false
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -80,7 +83,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messagesToProcessWithEuria: $messagesToProcessWithEuria,
+            messageToRemind: $messageToRemind
         )
     }
 
@@ -98,7 +102,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messagesToProcessWithEuria: $messagesToProcessWithEuria,
+            messageToRemind: $messageToRemind,
         )
     }
 
@@ -131,6 +136,11 @@ struct ActionsPanelViewModifier: ViewModifier {
             .environmentObject(mailboxManager)
             .environmentObject(actionsManager)
             .environmentObject(actionsProvider)
+        }
+        .onChange(of: messageToRemind) { newValue in
+            if newValue != nil {
+                isReminderFloatingPanelPresented = true
+            }
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(
@@ -186,9 +196,23 @@ struct ActionsPanelViewModifier: ViewModifier {
             folder: originFolder?.freezeIfNeeded(),
             completionHandler: completionHandler
         )
+        .reminderFloatingPanel(
+            isPresented: $isReminderFloatingPanelPresented,
+            isRescheduling: false
+        ) { option in
+            addReminder(message: messageToRemind, option: option)
+        }
         .euriaFloatingPanel(
             messages: $messagesToProcessWithEuria,
             completionHandler: completionHandler
         )
+    }
+
+    private func addReminder(message: Message?, option: ReminderOption) {
+        guard let message else { return }
+        Task {
+            await actionsManager.addReminder(message: message, delta: option.inMinutes)
+            messageToRemind = nil
+        }
     }
 }

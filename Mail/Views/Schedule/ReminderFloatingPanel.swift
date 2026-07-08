@@ -31,12 +31,14 @@ import SwiftUI
 extension View {
     func reminderFloatingPanel(
         isPresented: Binding<Bool>,
+        isRescheduling: Bool,
         dismissView: (() -> Void)? = nil,
         completionHandler: @escaping (ReminderOption) -> Void
     ) -> some View {
         modifier(
             ReminderFloatingPanel(
                 isShowingFloatingPanel: isPresented,
+                isRescheduling: isRescheduling,
                 dismissView: dismissView,
                 completionHandler: completionHandler
             )
@@ -54,7 +56,7 @@ struct ReminderFloatingPanel: ViewModifier {
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isShowingCustomReminderAlert: Bool
 
     @Binding var isShowingFloatingPanel: Bool
-
+    let isRescheduling: Bool
     let dismissView: (() -> Void)?
     let completionHandler: (ReminderOption) -> Void
 
@@ -62,11 +64,19 @@ struct ReminderFloatingPanel: ViewModifier {
         return isShowingFloatingPanel || isShowingCustomReminderAlert
     }
 
+    private var title: String {
+        if isRescheduling {
+            return MailResourcesStrings.Localizable.reminderBottomSheetTitle
+        } else {
+            return MailResourcesStrings.Localizable.createReminderBottomSheetTitle
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .mailFloatingPanel(
                 isPresented: $isShowingFloatingPanel,
-                title: MailResourcesStrings.Localizable.reminderBottomSheetTitle
+                title: title
             ) {
                 ReminderFloatingPanelView(
                     isShowingCustomReminderAlert: $isShowingCustomReminderAlert,
