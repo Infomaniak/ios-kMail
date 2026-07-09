@@ -97,8 +97,8 @@ struct ActionsView: View {
 #Preview {
     ActionsView(
         target: PreviewHelper.sampleThread.messages.toArray(),
-        listActionOrigin: .floatingPanelListAction(source: .message),
-        quickActionOrigin: .floatingPanelQuickAction(source: .message),
+        listActionOrigin: .floatingPanelListAction(source: .message, actionState: UIActionState()),
+        quickActionOrigin: .floatingPanelQuickAction(source: .message, actionState: UIActionState()),
         isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
