@@ -110,7 +110,7 @@ struct MessageBannerHeaderView: View {
             }
         }
         MessageReminderHeaderView(
-            reminderDate: .now + 3600,
+            reminderDate: .now - 3600,
             message: message,
             showBottomSeparator: true,
             followUpAction: followUp

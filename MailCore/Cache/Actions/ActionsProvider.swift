@@ -158,10 +158,14 @@ public class ActionsProvider: ObservableObject {
     private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> [Action] {
         @LazyInjectService var platformDetector: PlatformDetectable
 
-        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
         let euriaActions = euriaActionsForMessage()
 
         let isFromMe = message.fromMe(currentMailboxEmail: currentEmail)
+
+        let snoozedActions = origin.frozenFolder?.role == .sent ? reminderActions(message) : snoozedActions(
+            [message],
+            folder: origin.frozenFolder
+        )
         let isInSpamFolder = message.folder?.role == .spam
         var spamAction: Action? {
             guard !isFromMe else { return nil }
@@ -268,6 +272,16 @@ public class ActionsProvider: ObservableObject {
         } else {
             return [.snooze]
         }
+    }
+
+    private func reminderActions(_ message: Message) -> [Action] {
+//        guard featureAvailableProvider.isAvailable(.reminder) else {
+//            return []
+//        }
+        guard !message.hasReminder else {
+            return []
+        }
+        return [.addReminder]
     }
 
     private func themeAction(message: Message) -> Action? {

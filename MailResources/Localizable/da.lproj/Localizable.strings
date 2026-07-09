@@ -4,7 +4,7 @@
  * Locale: da, Danish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Wed, 01 Jul 2026 17:44:31 +0200
+ * Exported at: Wed, 08 Jul 2026 09:52:38 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -700,6 +700,9 @@
 
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Navn på mappen";
+
+/* loco:6a4b91d30dbd3c091a0a10b2 */
+"createReminderBottomSheetTitle" = "Tilføj en påmindelse";
 
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Vælg en dato og et tidspunkt";
@@ -1854,6 +1857,12 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Kvittering for læsning sendt";
 
+/* loco:6a467175f4aeb8614c0f23f2 */
+"snackbarAddReminderFailure" = "Kunne ikke tilføje påmindelsen";
+
+/* loco:6a4671fab778507d310d71c2 */
+"snackbarAddReminderSuccess" = "Påmindelse tilføjet";
+
 /* loco:6a046811c87ca471ce0aa9c4 */
 "snackbarAdminDisabledEmailSendingFromAddress" = "En administrator har deaktiveret e-mail-afsendelse fra denne adresse";
 
@@ -1910,6 +1919,12 @@
 
 /* loco:69ef28ef082d72278000d9c2 */
 "snackbarMessageMovedToSpam" = "Besked flyttet til spam og bruger blokeret";
+
+/* loco:6a461110934eb175ee063762 */
+"snackbarModifyReminderFailure" = "Kunne ikke ændre påmindelsen";
+
+/* loco:6a4610e82f0d39c6aa02d112 */
+"snackbarModifyReminderSuccess" = "Påmindelse ændret";
 
 /* loco:62ab22a33a9b9314d8557222 */
 "snackbarMoveCancelled" = "Flytning annulleret";

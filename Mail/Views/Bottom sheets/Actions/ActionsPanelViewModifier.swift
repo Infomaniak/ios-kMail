@@ -59,6 +59,9 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messagesToProcessWithEuria: [Message]?
     @ModalState private var noReplyAlert: NoReplyAlertState?
+    @ModalState private var messageToRemind: Message?
+
+    @State private var isReminderFloatingPanelPresented = false
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -71,16 +74,19 @@ struct ActionsPanelViewModifier: ViewModifier {
         .floatingPanelListAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria,
+                nearestMessageToRemind: $messageToRemind
+            )
         )
     }
 
@@ -88,17 +94,20 @@ struct ActionsPanelViewModifier: ViewModifier {
         .floatingPanelQuickAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria,
+                nearestMessageToRemind: $messageToRemind
+            )
         )
     }
 
@@ -131,6 +140,11 @@ struct ActionsPanelViewModifier: ViewModifier {
             .environmentObject(mailboxManager)
             .environmentObject(actionsManager)
             .environmentObject(actionsProvider)
+        }
+        .onChange(of: messageToRemind) { newValue in
+            if newValue != nil {
+                isReminderFloatingPanelPresented = true
+            }
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(
@@ -186,9 +200,23 @@ struct ActionsPanelViewModifier: ViewModifier {
             folder: originFolder?.freezeIfNeeded(),
             completionHandler: completionHandler
         )
+        .reminderFloatingPanel(
+            isPresented: $isReminderFloatingPanelPresented,
+            isRescheduling: false,
+            dismissView: { messageToRemind = nil },
+            completionHandler: addReminder
+        )
         .euriaFloatingPanel(
             messages: $messagesToProcessWithEuria,
             completionHandler: completionHandler
         )
+    }
+
+    private func addReminder(option: ReminderOption) {
+        guard let message = messageToRemind else { return }
+        Task {
+            await actionsManager.addReminder(message: message, delta: option.inMinutes)
+            messageToRemind = nil
+        }
     }
 }

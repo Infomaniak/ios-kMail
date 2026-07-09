@@ -4,7 +4,7 @@
  * Locale: sv, Swedish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Wed, 01 Jul 2026 17:44:31 +0200
+ * Exported at: Wed, 08 Jul 2026 09:52:38 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -700,6 +700,9 @@
 
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Mappens namn";
+
+/* loco:6a4b91d30dbd3c091a0a10b2 */
+"createReminderBottomSheetTitle" = "Lägg till en påminnelse";
 
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Välj datum och tid";
@@ -1857,6 +1860,12 @@
 /* loco:6937d715da67a52ff201eed2 */
 "snackbarAcknowledgementSuccess" = "Läskvitto skickat";
 
+/* loco:6a467175f4aeb8614c0f23f2 */
+"snackbarAddReminderFailure" = "Det gick inte att lägga till påminnelsen";
+
+/* loco:6a4671fab778507d310d71c2 */
+"snackbarAddReminderSuccess" = "Påminnelse tillagd";
+
 /* loco:6a046811c87ca471ce0aa9c4 */
 "snackbarAdminDisabledEmailSendingFromAddress" = "En administratör har inaktiverat e-postutskick från den här adressen";
 
@@ -1913,6 +1922,12 @@
 
 /* loco:69ef28ef082d72278000d9c2 */
 "snackbarMessageMovedToSpam" = "Meddelande flyttat till skräppost och användare blockerad";
+
+/* loco:6a461110934eb175ee063762 */
+"snackbarModifyReminderFailure" = "Det gick inte att ändra påminnelsen";
+
+/* loco:6a4610e82f0d39c6aa02d112 */
+"snackbarModifyReminderSuccess" = "Påminnelsen har ändrats";
 
 /* loco:62ab22a33a9b9314d8557222 */
 "snackbarMoveCancelled" = "Flytt avbruten";

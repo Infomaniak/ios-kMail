@@ -19,6 +19,52 @@
 import Foundation
 import SwiftUI
 
+public struct UIActionState {
+    private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
+    private(set) var nearestDestructiveAlert: Binding<DestructiveActionAlertState?>?
+    private(set) var nearestNoReplyAlert: Binding<NoReplyAlertState?>?
+    private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
+    private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
+    private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
+    private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
+    private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
+    private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
+    private(set) var nearestMessagesToSnooze: Binding<[Message]?>?
+    private(set) var messagesToDownload: Binding<[Message]?>?
+    private(set) var messagesToProcessWithEuria: Binding<[Message]?>?
+    private(set) var nearestMessageToRemind: Binding<Message?>?
+
+    public init(
+        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
+        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
+        nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
+        nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
+        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
+        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
+        messagesToDownload: Binding<[Message]?>? = nil,
+        messagesToProcessWithEuria: Binding<[Message]?>? = nil,
+        nearestMessageToRemind: Binding<Message?>? = nil
+    ) {
+        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
+        self.nearestDestructiveAlert = nearestDestructiveAlert
+        self.nearestNoReplyAlert = nearestNoReplyAlert
+        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
+        self.nearestBlockSenderAlert = nearestBlockSenderAlert
+        self.nearestBlockSendersList = nearestBlockSendersList
+        self.nearestReportedForPhishingMessagesAlert = nearestReportedForPhishingMessagesAlert
+        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
+        self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
+        self.nearestMessagesToSnooze = nearestMessagesToSnooze
+        self.messagesToDownload = messagesToDownload
+        self.messagesToProcessWithEuria = messagesToProcessWithEuria
+        self.nearestMessageToRemind = nearestMessageToRemind
+    }
+}
+
 public struct ActionOrigin {
     public enum ActionOriginType: Equatable {
         case swipe(direction: SwipeDirection)
@@ -57,222 +103,108 @@ public struct ActionOrigin {
     public private(set) var type: ActionOriginType
     public private(set) var frozenFolder: Folder?
     public private(set) var thread: Thread?
-
-    private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
-    private(set) var nearestDestructiveAlert: Binding<DestructiveActionAlertState?>?
-    private(set) var nearestNoReplyAlert: Binding<NoReplyAlertState?>?
-    private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
-    private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
-    private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
-    private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
-    private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
-    private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
-    private(set) var nearestMessagesToSnooze: Binding<[Message]?>?
-    private(set) var messagesToDownload: Binding<[Message]?>?
-    private(set) var messagesToProcessWithEuria: Binding<[Message]?>?
+    public private(set) var actionState: UIActionState
 
     init(
         type: ActionOriginType,
         folder: Folder? = nil,
         thread: Thread? = nil,
-        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
-        nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-        nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
-        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
-        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-        messagesToDownload: Binding<[Message]?>? = nil,
-        messagesToProcessWithEuria: Binding<[Message]?>? = nil
+        actionState: UIActionState
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
         self.thread = thread?.freezeIfNeeded()
-        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
-        self.nearestDestructiveAlert = nearestDestructiveAlert
-        self.nearestNoReplyAlert = nearestNoReplyAlert
-        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
-        self.nearestBlockSenderAlert = nearestBlockSenderAlert
-        self.nearestBlockSendersList = nearestBlockSendersList
-        self.nearestReportedForPhishingMessagesAlert = nearestReportedForPhishingMessagesAlert
-        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
-        self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
-        self.nearestMessagesToSnooze = nearestMessagesToSnooze
-        self.messagesToDownload = messagesToDownload
-        self.messagesToProcessWithEuria = messagesToProcessWithEuria
+        self.actionState = actionState
     }
 
     public static func toolbarLarge(
         group: LargeToolbarGroup,
         thread: Thread? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
-        nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-        nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
-        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
-        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-        messagesToDownload: Binding<[Message]?>? = nil,
-        messagesToProcessWithEuria: Binding<[Message]?>? = nil
+        actionState: UIActionState
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar(mode: .large(group: group)),
             folder: thread?.folder,
             thread: thread,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
-            nearestBlockSenderAlert: nearestBlockSenderAlert,
-            nearestBlockSendersList: nearestBlockSendersList,
-            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
-            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
-            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
-            nearestMessagesToSnooze: nearestMessagesToSnooze,
-            messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            actionState: actionState
         )
     }
 
     public static func toolbarCompact(
         originFolder: Folder? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
+        actionState: UIActionState
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar(mode: .compact),
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
+            actionState: actionState
         )
     }
 
     public static func floatingPanelListAction(source: FloatingPanelSource,
                                                originFolder: Folder? = nil,
-                                               nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-                                               nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-                                               nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-                                               nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
-                                               nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-                                               nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
-                                               nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-                                               nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
-                                               nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-                                               messagesToDownload: Binding<[Message]?>? = nil,
-                                               messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                               actionState: UIActionState) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanelListAction(source: source),
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
-            nearestBlockSenderAlert: nearestBlockSenderAlert,
-            nearestBlockSendersList: nearestBlockSendersList,
-            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
-            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
-            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
-            nearestMessagesToSnooze: nearestMessagesToSnooze,
-            messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            actionState: actionState
         )
     }
 
     public static func floatingPanelQuickAction(source: FloatingPanelSource,
                                                 originFolder: Folder? = nil,
-                                                nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-                                                nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-                                                nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-                                                nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
-                                                nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-                                                nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
-                                                nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-                                                nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
-                                                nearestMessagesToSnooze: Binding<[Message]?>? = nil,
-                                                messagesToDownload: Binding<[Message]?>? = nil,
-                                                messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                                actionState: UIActionState) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanelQuickAction(source: source),
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
-            nearestBlockSenderAlert: nearestBlockSenderAlert,
-            nearestBlockSendersList: nearestBlockSendersList,
-            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
-            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
-            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
-            nearestMessagesToSnooze: nearestMessagesToSnooze,
-            messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            actionState: actionState
         )
     }
 
     public static func multipleSelection(originFolder: Folder? = nil,
-                                         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-                                         nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-                                         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                         actionState: UIActionState) -> ActionOrigin {
         return ActionOrigin(
             type: .multipleSelection,
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
+            actionState: actionState
         )
     }
 
     public static func swipe(
         direction: SwipeDirection,
         thread: Thread? = nil,
-        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToSnooze: Binding<[Message]?>? = nil
+        actionState: UIActionState
 
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .swipe(direction: direction),
             folder: thread?.folder,
             thread: thread,
-            nearestMessagesActionsPanel: nearestMessagesActionsPanel,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
-            nearestMessagesToSnooze: nearestMessagesToSnooze
+            actionState: actionState
         )
     }
 
     public static func shortcut(originFolder: Folder? = nil,
-                                nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
-                                nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil) -> ActionOrigin {
+                                actionState: UIActionState) -> ActionOrigin {
         ActionOrigin(
             type: .shortcut,
             folder: originFolder,
-            nearestDestructiveAlert: nearestDestructiveAlert,
-            nearestNoReplyAlert: nearestNoReplyAlert
+            actionState: actionState
         )
     }
 
     public static func threadHeader(
         originFolder: Folder? = nil,
-        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToSnooze: Binding<[Message]?>? = nil
+        actionState: UIActionState
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .threadHeader,
             folder: originFolder,
-            nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToSnooze: nearestMessagesToSnooze
+            actionState: actionState
         )
     }
 
-    public static func euriaActions(messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .euriaActions, messagesToProcessWithEuria: messagesToProcessWithEuria)
+    public static func euriaActions(actionState: UIActionState) -> ActionOrigin {
+        return ActionOrigin(type: .euriaActions, actionState: actionState)
     }
 }

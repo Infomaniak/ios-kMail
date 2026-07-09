@@ -164,7 +164,7 @@ struct MessageHeaderSummaryView: View {
                 try? await actionsManager.performAction(
                     target: [message],
                     action: .reply,
-                    origin: .threadHeader(nearestNoReplyAlert: $noReplyAlert)
+                    origin: .threadHeader(actionState: UIActionState(nearestNoReplyAlert: $noReplyAlert))
                 )
             }
         }
