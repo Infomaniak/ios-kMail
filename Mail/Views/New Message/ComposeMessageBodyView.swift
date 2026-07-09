@@ -123,7 +123,6 @@ struct ComposeMessageBodyView: View {
             if mailboxManager.featureFlagsManager.isEnabled(.mailComposeMention) {
                 activateMentions(for: editor)
             }
-            editor.webView.loadUserScript(.observeMentionDeletion)
             if inlineAttachmentHandler == nil {
                 let handler = InlineAttachmentHandler(attachmentsManager: attachmentsManager)
                 editor.webView.configuration.userContentController.add(handler, name: InlineAttachmentHandler.messageName)
@@ -186,6 +185,7 @@ struct ComposeMessageBodyView: View {
             editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
             mentionQueryHandler = handler
         }
+        editor.webView.loadUserScript(.mentionCommon)
         editor.webView.loadUserScript(.observeMention)
         editor.webView.loadUserScript(.observeMentionDeletion)
         editor.webView.loadUserScript(.insertMention)

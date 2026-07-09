@@ -30,6 +30,7 @@ public enum UserScript: String {
     case observeMentionDeletion
     case observeMentionClick
     case insertMention
+    case mentionCommon
 }
 
 public enum JavaScriptDeclaration {

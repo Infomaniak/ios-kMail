@@ -20,46 +20,6 @@ let lastSentValue = null;
 
 const zeroWidthCharsRegex = /[\u200B-\u200D\uFEFF]/g;
 
-// We get the parent block to get the correct range to look for the @
-const getBlockParent = (node) => {
-    const editor = getEditor();
-    let current = node;
-
-    while (current && current !== editor && current.nodeType !== Node.DOCUMENT_NODE) {
-        if (current.nodeType === Node.ELEMENT_NODE) {
-            return current;
-        }
-        current = current.parentNode;
-    }
-    return editor;
-};
-
-const getTextBeforeCaret = () => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return "";
-
-    const range = selection.getRangeAt(0);
-    if (!range.collapsed) return "";
-
-    const block = getBlockParent(range.startContainer);
-    const preRange = range.cloneRange();
-
-    try {
-        preRange.setStart(block, 0);
-    } catch (e) {
-        preRange.selectNodeContents(getEditor());
-    }
-
-    preRange.setEnd(range.endContainer, range.endOffset);
-
-    const fragment = preRange.cloneContents();
-    // Replace all the existing mentions with a space to ignore them when extracting the query
-    const mentions = fragment.querySelectorAll("a[data-ik-mention-ref]");
-    mentions.forEach((mention) => mention.replaceWith(" "));
-
-    return fragment.textContent;
-};
-
 const extractMentionQuery = (textBeforeCaret) => {
     const normalizedText = textBeforeCaret.replace(zeroWidthCharsRegex, "");
 
@@ -74,15 +34,11 @@ const extractMentionQuery = (textBeforeCaret) => {
     if (lastAtPos < 0) return null;
 
     let query = normalizedText.slice(lastAtPos + 1);
-    
+
     if (/\s{2,}/.test(query)) {
         return null;
     }
-    
-    if (!query.trim().includes(" ")) {
-        query = query.trim();
-    }
-    
+
     return query.length > 0 ? query : null;
 };
 
@@ -116,19 +72,19 @@ const handleMentionBoundaryKeydown = (event) => {
     if (event.key === "Enter" && isCaretBeforeMention()) {
         handleEnter(event);
     }
-}
+};
 
 // Handle Enter key to split the block if the caret is before a mention.
 // This is used to avoid creating an extra empty line in between the mentions.
 const handleEnter = (event) => {
     event.preventDefault();
-    
+
     const selection = window.getSelection();
     const range = selection.getRangeAt(0);
     const block = getBlockParent(range.startContainer);
-    
-    const newBlock = document.createElement('div');
-    
+
+    const newBlock = document.createElement("div");
+
     const mentionNode = range.startContainer.nextSibling;
     let current = mentionNode;
     while (current) {
@@ -136,16 +92,16 @@ const handleEnter = (event) => {
         newBlock.appendChild(current);
         current = next;
     }
-    
+
     block.parentNode.insertBefore(newBlock, block.nextSibling);
-    
+
     const newRange = document.createRange();
     newRange.setStart(newBlock, 1);
     newRange.collapse(true);
-    
+
     selection.removeAllRanges();
     selection.addRange(newRange);
-}
+};
 
 const observeMention = () => {
     if (globalThis.__swiftRichHTMLEditorMentionDetectionInitialized) return;
