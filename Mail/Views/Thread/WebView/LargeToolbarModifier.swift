@@ -78,16 +78,18 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .move,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria
+            )
         )
     }
 
@@ -95,15 +97,17 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .reply,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria
+            )
         )
     }
 
@@ -111,15 +115,17 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .report,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria
+            )
         )
     }
 
@@ -127,15 +133,17 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .other,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria
+            )
         )
     }
 

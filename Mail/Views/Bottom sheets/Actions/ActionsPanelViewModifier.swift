@@ -73,16 +73,18 @@ struct ActionsPanelViewModifier: ViewModifier {
         .floatingPanelListAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria,
-            messageToRemind: $messageToRemind
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria,
+                nearestMessageToRemind: $messageToRemind
+            )
         )
     }
 
@@ -90,17 +92,19 @@ struct ActionsPanelViewModifier: ViewModifier {
         .floatingPanelQuickAction(
             source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messageToProcessWithEuria: $messageToProcessWithEuria,
-            messageToRemind: $messageToRemind
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messageToProcessWithEuria: $messageToProcessWithEuria,
+                nearestMessageToRemind: $messageToRemind
+            )
         )
     }
 

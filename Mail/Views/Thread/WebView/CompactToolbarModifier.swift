@@ -64,9 +64,11 @@ struct CompactToolbarModifier: ViewModifier {
     private var origin: ActionOrigin {
         .toolbarCompact(
             originFolder: frozenFolder,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestMessagesToMoveSheet: $messagesToMove
+            )
         )
     }
 
@@ -149,7 +151,7 @@ struct CompactToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: isFlagged ? .unstar : .star,
-                    origin: .toolbarCompact(originFolder: frozenFolder)
+                    origin: .toolbarCompact(originFolder: frozenFolder, actionState: UIActionState())
                 )
             }
         }

@@ -79,7 +79,7 @@ struct BlockSenderView: View {
 #Preview {
     BlockSenderView(
         recipientsToMessage: PreviewHelper.sampleRecipientWithMessage,
-        origin: .floatingPanelListAction(source: .threadList)
+        origin: .floatingPanelListAction(source: .threadList, actionState: UIActionState())
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
