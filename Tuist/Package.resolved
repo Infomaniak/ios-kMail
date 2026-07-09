@@ -96,7 +96,7 @@
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
         "branch" : "feat/ContactCard",
-        "revision" : "f5e06dfeb017d68b9fe8a599c0428a80a613cd31"
+        "revision" : "95b5ca987515d458c88c85b287804e17db20f8b1"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "08bea0774bf7b0dd17c2a2745cf476f785998e3c",
-        "version" : "9.20.0"
+        "revision" : "53eb9bd5da18e208cfd80e86863d3f4c7ba21b1d",
+        "version" : "9.21.0"
       }
     },
     {

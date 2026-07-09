@@ -26,6 +26,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct AccountCellPlaceholderView: View {
@@ -86,7 +87,7 @@ struct AccountCellView: View {
 struct AccountHeaderCell: View {
     let user: InfomaniakCore.UserProfile
 
-    @State private var isShowingContactCard = false
+    @ModalState private var isShowingContactCard = false
 
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
@@ -117,7 +118,7 @@ struct AccountHeaderCell: View {
             case .switchAccount:
                 if isSelected {
                     contactCardButton
-                        .fullScreenCover(isPresented: $isShowingContactCard) {
+                        .sheet(isPresented: $isShowingContactCard) {
                             contactCardContent
                         }
                 }
