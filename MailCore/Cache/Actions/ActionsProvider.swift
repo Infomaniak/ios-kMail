@@ -148,6 +148,7 @@ public class ActionsProvider: ObservableObject {
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
+            .replyWithEuria,
             translate ? .translateMessage : nil
         ]
         let euriaActions = tempEuriaActions.compactMap { $0 }
