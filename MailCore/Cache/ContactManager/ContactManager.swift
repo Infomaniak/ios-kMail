@@ -171,7 +171,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
         shouldTrim: Bool
     ) async -> [any ContactAutocompletable] {
         let baseString = shouldTrim ? query.trimmingCharacters(in: .whitespacesAndNewlines) : query
-        let stringToMatch = baseString.applyingTransform(.stripDiacritics, reverse: false) ?? baseString
+        let replacedSpaceString = baseString.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        let stringToMatch = replacedSpaceString.applyingTransform(.stripDiacritics, reverse: false) ?? baseString
 
         async let contacts: [any ContactAutocompletable] = Array(frozenContactsAsync(
             matching: stringToMatch,

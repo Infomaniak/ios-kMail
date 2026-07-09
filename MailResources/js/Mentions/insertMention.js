@@ -27,17 +27,6 @@ function insertMention(userMail, userName, query) {
 
     const editor = getEditor();
 
-    const getBlockParent = (node) => {
-        let current = node;
-        while (current && current !== editor && current.nodeType !== Node.DOCUMENT_NODE) {
-            if (current.nodeType === Node.ELEMENT_NODE) {
-                return current;
-            }
-            current = current.parentNode;
-        }
-        return editor;
-    };
-
     const block = getBlockParent(caretRange.startContainer);
 
     const preRange = caretRange.cloneRange();
@@ -57,40 +46,7 @@ function insertMention(userMail, userName, query) {
     const deleteCount = searchText.length;
     const mentionStartOffset = searchIndex;
 
-    const getDomPositionForTextOffset = (targetOffset) => {
-        const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
-        let traversed = 0;
-        let currentNode = walker.nextNode();
-        let lastNode = null;
-
-        while (currentNode) {
-            lastNode = currentNode;
-            const currentLength = currentNode.textContent.length;
-
-            if (traversed + currentLength >= targetOffset) {
-                return {
-                    node: currentNode,
-                    offset: targetOffset - traversed,
-                };
-            }
-            traversed += currentLength;
-            currentNode = walker.nextNode();
-        }
-
-        if (lastNode) {
-            return {
-                node: lastNode,
-                offset: lastNode.textContent.length,
-            };
-        }
-
-        return {
-            node: block,
-            offset: 0,
-        };
-    };
-
-    const startPos = getDomPositionForTextOffset(mentionStartOffset);
+    const startPos = getDomPositionForTextOffset(mentionStartOffset, block);
 
     const replaceRange = document.createRange();
     replaceRange.setStart(startPos.node, startPos.offset);
@@ -121,3 +77,18 @@ function insertMention(userMail, userName, query) {
     selection.removeAllRanges();
     selection.addRange(newCaretRange);
 }
+
+// Converts a plain-text character offset into a DOM position.
+// Walks all text nodes inside block, subtracting their lengths until it finds the node containing that character position
+const getDomPositionForTextOffset = (targetOffset, block) => {
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    let node;
+
+    while ((node = walker.nextNode())) {
+        const length = node.textContent.length;
+        if (targetOffset <= length) return { node, offset: targetOffset };
+        targetOffset -= length;
+    }
+
+    return { node: block, offset: 0 };
+};
