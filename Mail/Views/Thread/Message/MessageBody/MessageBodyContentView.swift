@@ -199,7 +199,6 @@ struct MessageBodyContentView: View {
             contactConfiguration: avatarConfiguration,
             size: RecipientHeaderCell.defaultAvatarSize
         ))
-        renderer.scale = UIScreen.main.scale
         return renderer.uiImage?.withRenderingMode(.alwaysOriginal)
     }
 
