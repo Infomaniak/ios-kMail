@@ -86,6 +86,12 @@ struct CompactToolbarModifier: ViewModifier {
             .toolbarSpacer(placement: .bottomBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: didTapEuria) {
+                        Label(MailResourcesStrings.Localizable.askEuriaTitle,
+                              asset: MailResourcesAsset.euria.swiftUIImage)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: didTapFlag) {
                         Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
                             .actionStar,
@@ -154,6 +160,8 @@ struct CompactToolbarModifier: ViewModifier {
             }
         }
     }
+
+    private func didTapEuria() {}
 
     private func didTap(action: Action) {
         @InjectService var matomo: MatomoUtils
