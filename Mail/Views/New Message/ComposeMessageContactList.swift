@@ -40,7 +40,6 @@ struct ComposeMessageContactCell<Cell: View>: View {
                 .padding(.horizontal, value: .medium)
                 .padding(.vertical, value: .mini)
         }
-        .listRowSeparator(.hidden)
     }
 }
 

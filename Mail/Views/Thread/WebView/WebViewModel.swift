@@ -43,11 +43,14 @@ final class WebViewModel: NSObject, ObservableObject {
 
     lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme, aliases: aliases))
 
-    struct TappedMention: Identifiable, Equatable {
-        let id = UUID()
+    struct TappedMention: Identifiable, Equatable, Hashable {
         let email: String
         let name: String
         let rect: CGRect
+
+        var id: Int {
+            hashValue
+        }
     }
 
     enum LoadResult: Equatable {
