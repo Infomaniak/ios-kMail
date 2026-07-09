@@ -40,6 +40,7 @@ struct CompactToolbarModifier: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
     @ModalState private var noReplyAlert: NoReplyAlertState?
+    @ModalState private var messagesToProcessWithEuria: [Message]?
 
     private let isFlagged: Bool
     private let frozenFolder: Folder?
@@ -66,7 +67,8 @@ struct CompactToolbarModifier: ViewModifier {
             originFolder: frozenFolder,
             nearestDestructiveAlert: $destructiveAlert,
             nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestMessagesToProcessWithEuria: $messagesToProcessWithEuria
         )
     }
 
@@ -133,6 +135,7 @@ struct CompactToolbarModifier: ViewModifier {
                 )
                 .sheetViewStyle()
             }
+            .euriaFloatingPanel(messages: $messagesToProcessWithEuria)
             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                 ReplyActionsView(message: message)
             }
@@ -161,7 +164,9 @@ struct CompactToolbarModifier: ViewModifier {
         }
     }
 
-    private func didTapEuria() {}
+    private func didTapEuria() {
+        didTap(action: .showEuriaActions)
+    }
 
     private func didTap(action: Action) {
         @InjectService var matomo: MatomoUtils
