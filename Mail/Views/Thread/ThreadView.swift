@@ -96,7 +96,7 @@ struct ThreadView: View {
         try? await actionsManager.performAction(
             target: thread.messages.toArray(),
             action: .markAsRead,
-            origin: .toolbarLarge(group: .other, thread: thread)
+            origin: .toolbarLarge(group: .other, thread: thread, actionState: UIActionState())
         )
     }
 }

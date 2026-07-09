@@ -45,7 +45,7 @@ struct EuriaFloatingPanel: ViewModifier {
     let completionHandler: ((Action) -> Void)?
 
     private var origin: ActionOrigin {
-        return .euriaActions(messagesToProcessWithEuria: $messages)
+        return .euriaActions(actionState: UIActionState(messagesToProcessWithEuria: $messages))
     }
 
     func body(content: Content) -> some View {

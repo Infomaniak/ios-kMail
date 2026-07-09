@@ -79,17 +79,19 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .move,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria
+            )
         )
     }
 
@@ -97,16 +99,18 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .reply,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria
+            )
         )
     }
 
@@ -114,16 +118,18 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .report,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria
+            )
         )
     }
 
@@ -131,16 +137,18 @@ struct LargeToolbarModifier: ViewModifier {
         .toolbarLarge(
             group: .other,
             thread: frozenThread,
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                messagesToProcessWithEuria: $messagesToProcessWithEuria
+            )
         )
     }
 

@@ -185,7 +185,7 @@ public class ActionsManager: ObservableObject {
                 return
             }
             Task { @MainActor in
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesFromFolder
+                origin.actionState.nearestMessagesToMoveSheet?.wrappedValue = messagesFromFolder
             }
         case .star:
             let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
@@ -208,7 +208,7 @@ public class ActionsManager: ObservableObject {
             try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
-                origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
+                origin.actionState.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
             let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
@@ -220,11 +220,11 @@ public class ActionsManager: ObservableObject {
         case .phishing:
             let messagesFromFolder = messages.fromFolderOrSearch(originFolder: origin.frozenFolder)
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesFromFolder
+                origin.actionState.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesFromFolder
             }
         case .reportDisplayProblem:
             Task { @MainActor in
-                origin.nearestReportedForDisplayProblemMessageAlert?.wrappedValue = messagesWithDuplicates.first
+                origin.actionState.nearestReportedForDisplayProblemMessageAlert?.wrappedValue = messagesWithDuplicates.first
             }
         case .block:
             for message in messages {
@@ -239,9 +239,10 @@ public class ActionsManager: ObservableObject {
                     originFolder: origin.frozenFolder,
                     uniqueRecipientCount: uniqueRecipient.count
                 ) {
-                    origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
+                    origin.actionState.nearestBlockSendersList?
+                        .wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
                 } else {
-                    origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
+                    origin.actionState.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
                         recipients: Array(uniqueRecipient.keys),
                         messages: messages
                     )
@@ -249,7 +250,7 @@ public class ActionsManager: ObservableObject {
             }
         case .saveThreadInkDrive:
             guard !platformDetector.isMac else { return }
-            origin.messagesToDownload?.wrappedValue = messages
+            origin.actionState.messagesToDownload?.wrappedValue = messages
         case .shareMailLink:
             let userLocalPack = mailboxManager.mailbox.pack
             switch userLocalPack {
@@ -265,12 +266,12 @@ public class ActionsManager: ObservableObject {
                 guard let message = messagesWithDuplicates.first else { return }
                 let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
                 Task { @MainActor in
-                    origin.nearestShareMailLinkPanel?.wrappedValue = result
+                    origin.actionState.nearestShareMailLinkPanel?.wrappedValue = result
                 }
             }
         case .snooze, .modifySnooze:
             Task { @MainActor in
-                origin.nearestMessagesToSnooze?.wrappedValue = messages
+                origin.actionState.nearestMessagesToSnooze?.wrappedValue = messages
             }
         case .cancelSnooze:
             let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
@@ -287,14 +288,14 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.translate(message: message, threadViewState: threadViewState, locale: locale)
         case .showEuriaActions:
             Task { @MainActor in
-                origin.messagesToProcessWithEuria?.wrappedValue = messages
+                origin.actionState.messagesToProcessWithEuria?.wrappedValue = messages
             }
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
         case .addReminder:
             Task { @MainActor in
-                origin.nearestMessageToRemind?.wrappedValue = messages.first
+                origin.actionState.nearestMessageToRemind?.wrappedValue = messages.first
             }
         default:
             break
@@ -387,7 +388,7 @@ public class ActionsManager: ObservableObject {
 
     @MainActor
     private func showWarningDeletionAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
-        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+        origin.actionState.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
             type: .permanentlyDelete(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             await tryOrDisplayError { [weak self] in
@@ -401,7 +402,7 @@ public class ActionsManager: ObservableObject {
 
     @MainActor
     private func showWarningDeleteSnoozeAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
-        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+        origin.actionState.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
             type: .deleteSnooze(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             await tryOrDisplayError { [weak self] in
@@ -415,7 +416,7 @@ public class ActionsManager: ObservableObject {
 
     @MainActor
     private func showWarningArchiveSnoozeAlert(origin: ActionOrigin, messagesFromFolder: [Message]) {
-        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+        origin.actionState.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
             type: .archiveSnooze(messagesFromFolder.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             await tryOrDisplayError { [weak self] in
@@ -426,18 +427,18 @@ public class ActionsManager: ObservableObject {
 
     @MainActor
     private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messages: [Message]) {
-        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+        origin.actionState.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
             type: .moveSnooze(messages.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             tryOrDisplayError {
-                origin.nearestMessagesToMoveSheet?.wrappedValue = messages
+                origin.actionState.nearestMessagesToMoveSheet?.wrappedValue = messages
             }
         }
     }
 
     @MainActor
     private func showWarningDeleteScheduleAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
-        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+        origin.actionState.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
             type: .deleteSchedule(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
         ) {
             await tryOrDisplayError { [weak self] in
@@ -475,7 +476,7 @@ public class ActionsManager: ObservableObject {
             let mailboxEmail = mailboxManager.mailbox.email
 
             if NoReplyAlert.verifySenders(message: replyingMessage, action: action, currentMailboxEmail: mailboxEmail) {
-                origin.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
+                origin.actionState.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
                     self.composeMessage(message: replyingMessage, mode: mode)
                 }
                 return
