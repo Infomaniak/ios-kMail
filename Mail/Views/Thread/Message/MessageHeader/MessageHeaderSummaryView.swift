@@ -137,7 +137,9 @@ struct MessageHeaderSummaryView: View {
                             try? await actionsManager.performAction(
                                 target: [message],
                                 action: .showEuriaActions,
-                                origin: .threadHeader(messageToProcessWithEuria: $euriaMessage)
+                                origin: .threadHeader(
+                                    actionState: UIActionState(messageToProcessWithEuria: $euriaMessage)
+                                )
                             )
                         }
                     } label: {
@@ -188,7 +190,7 @@ struct MessageHeaderSummaryView: View {
                 try? await actionsManager.performAction(
                     target: [message],
                     action: .reply,
-                    origin: .threadHeader(nearestNoReplyAlert: $noReplyAlert)
+                    origin: .threadHeader(actionState: UIActionState(nearestNoReplyAlert: $noReplyAlert))
                 )
             }
         }

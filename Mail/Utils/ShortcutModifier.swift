@@ -36,8 +36,10 @@ struct ShortcutModifier: ViewModifier {
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var origin: ActionOrigin {
-        return .shortcut(originFolder: viewModel.frozenFolder,
-                         nearestDestructiveAlert: $destructiveAlert)
+        return .shortcut(
+            originFolder: viewModel.frozenFolder,
+            actionState: UIActionState(nearestDestructiveAlert: $destructiveAlert)
+        )
     }
 
     private var actions: [Action] {

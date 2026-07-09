@@ -58,7 +58,10 @@ struct ThreadListBottomBarModifier: ViewModifier {
     }
 
     private var origin: ActionOrigin {
-        return .multipleSelection(originFolder: viewModel.frozenFolder, nearestMessagesToMoveSheet: $multipleSelectedMessages)
+        return .multipleSelection(
+            originFolder: viewModel.frozenFolder,
+            actionState: UIActionState(nearestMessagesToMoveSheet: $multipleSelectedMessages)
+        )
     }
 
     func body(content: Content) -> some View {
@@ -141,8 +144,10 @@ struct ThreadListBottomBarModifier: ViewModifier {
                 action: action,
                 origin: .multipleSelection(
                     originFolder: originFolder,
-                    nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToMoveSheet: $messagesToMove
+                    actionState: UIActionState(
+                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                        nearestMessagesToMoveSheet: $messagesToMove
+                    )
                 )
             )
         }

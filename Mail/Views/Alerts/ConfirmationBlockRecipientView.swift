@@ -91,7 +91,7 @@ struct ConfirmationBlockRecipientView: View {
     ConfirmationBlockRecipientView(
         recipients: [PreviewHelper.sampleRecipient1],
         reportedMessages: [PreviewHelper.sampleMessage],
-        origin: .floatingPanelListAction(source: .threadList)
+        origin: .floatingPanelListAction(source: .threadList, actionState: UIActionState())
     )
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

@@ -87,20 +87,24 @@ struct ThreadListSwipeActions: ViewModifier {
                 edgeActions(origin: .swipe(
                     direction: .leading,
                     thread: thread,
-                    nearestMessagesActionsPanel: $actionPanelMessages,
-                    nearestMessagesToMoveSheet: $messagesToMove,
-                    nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToSnooze: $messagesToSnooze,
+                    actionState: UIActionState(
+                        nearestMessagesActionsPanel: $actionPanelMessages,
+                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                        nearestMessagesToMoveSheet: $messagesToMove,
+                        nearestMessagesToSnooze: $messagesToSnooze
+                    )
                 ))
             }
             .swipeActions(edge: .trailing) {
                 edgeActions(origin: .swipe(
                     direction: .trailing,
                     thread: thread,
-                    nearestMessagesActionsPanel: $actionPanelMessages,
-                    nearestMessagesToMoveSheet: $messagesToMove,
-                    nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                    nearestMessagesToSnooze: $messagesToSnooze,
+                    actionState: UIActionState(
+                        nearestMessagesActionsPanel: $actionPanelMessages,
+                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                        nearestMessagesToMoveSheet: $messagesToMove,
+                        nearestMessagesToSnooze: $messagesToSnooze
+                    )
 
                 ))
             }
@@ -150,7 +154,7 @@ extension View {
 
 #Preview {
     SwipeActionView(
-        actionOrigin: .swipe(direction: .leading),
+        actionOrigin: .swipe(direction: .leading, actionState: UIActionState()),
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),

@@ -33,7 +33,7 @@ struct SnoozedThreadHeaderView: View {
     let folder: Folder?
 
     private var origin: ActionOrigin {
-        return .threadHeader(originFolder: folder, nearestMessagesToSnooze: $messagesToSnooze)
+        return .threadHeader(originFolder: folder, actionState: UIActionState(nearestMessagesToSnooze: $messagesToSnooze))
     }
 
     var body: some View {

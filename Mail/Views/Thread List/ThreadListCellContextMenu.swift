@@ -59,15 +59,17 @@ struct ThreadListCellContextMenu: ViewModifier {
         .floatingPanelQuickAction(
             source: .threadList,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload
+            )
         )
     }
 
@@ -75,15 +77,17 @@ struct ThreadListCellContextMenu: ViewModifier {
         .floatingPanelListAction(
             source: .threadList,
             originFolder: originFolder?.freezeIfNeeded(),
-            nearestDestructiveAlert: $destructiveAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSenderAlert: $blockSenderAlert,
-            nearestBlockSendersList: $blockSendersList,
-            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
-            nearestMessagesToSnooze: $messagesToSnooze,
-            messagesToDownload: $messagesToDownload
+            actionState: UIActionState(
+                nearestDestructiveAlert: $destructiveAlert,
+                nearestMessagesToMoveSheet: $messagesToMove,
+                nearestBlockSenderAlert: $blockSenderAlert,
+                nearestBlockSendersList: $blockSendersList,
+                nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+                nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+                nearestShareMailLinkPanel: $shareMailLink,
+                nearestMessagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload
+            )
         )
     }
 

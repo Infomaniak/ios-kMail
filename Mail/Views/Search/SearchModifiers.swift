@@ -72,7 +72,9 @@ struct SearchToolbar: ViewModifier {
     private var origin: ActionOrigin {
         return .multipleSelection(
             originFolder: viewModel.frozenSearchFolder,
-            nearestMessagesToMoveSheet: $messagesToMove
+            actionState: UIActionState(
+                nearestMessagesToMoveSheet: $messagesToMove
+            )
         )
     }
 
@@ -149,7 +151,9 @@ struct SearchToolbar: ViewModifier {
                                         action: action,
                                         origin: .multipleSelection(
                                             originFolder: viewModel.frozenSearchFolder,
-                                            nearestMessagesToMoveSheet: $messagesToMove
+                                            actionState: UIActionState(
+                                                nearestMessagesToMoveSheet: $messagesToMove
+                                            )
                                         )
                                     )
 

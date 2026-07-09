@@ -57,9 +57,11 @@ struct EuriaFloatingPanel: ViewModifier {
 
     private var origin: ActionOrigin {
         return .euriaActions(
-            nearestNoReplyAlert: $noReplyAlert,
-            nearestAIWriterReplyPanel: $writerPanelState,
-            messageToProcessWithEuria: $message
+            actionState: UIActionState(
+                nearestNoReplyAlert: $noReplyAlert,
+                nearestAIWriterReplyPanel: $writerPanelState,
+                messageToProcessWithEuria: $message
+            )
         )
     }
 
