@@ -142,14 +142,16 @@ public struct ActionOrigin {
         originFolder: Folder? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestMessagesToProcessWithEuria: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar(mode: .compact),
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
             nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            messagesToProcessWithEuria: nearestMessagesToProcessWithEuria
         )
     }
 
