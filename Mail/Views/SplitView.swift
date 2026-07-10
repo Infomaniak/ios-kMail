@@ -32,21 +32,20 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 import VersionChecker
-@_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
     @InjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var orientationManager: OrientationManageable
 
-    var splitViewController: UISplitViewController?
+    @Published var columnVisibility = NavigationSplitViewVisibility.all
 
     func adaptToProminentThreadView() {
-        guard !platformDetector.isMac else {
-            return
-        }
+        guard !platformDetector.isMac else { return }
 
-        splitViewController?.hide(.primary)
-        if splitViewController?.splitBehavior == .overlay {
-            splitViewController?.hide(.supplementary)
+        if orientationManager.interfaceOrientation?.isLandscape == true {
+            columnVisibility = .doubleColumn
+        } else {
+            columnVisibility = .detailOnly
         }
     }
 }
@@ -66,8 +65,6 @@ struct SplitView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mainViewState: MainViewState
-
-    @Weak private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerState = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
@@ -90,7 +87,7 @@ struct SplitView: View {
                     NavigationDrawer()
                 }
             } else {
-                NavigationSplitView {
+                NavigationSplitView(columnVisibility: $splitViewManager.columnVisibility) {
                     MenuDrawerView()
                         .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
                 } content: {
@@ -197,17 +194,6 @@ struct SplitView: View {
         .task(id: mailboxManager.mailbox.objectId) {
             try? await mailboxManager.featureFlagsManager.fetchFlags()
         }
-        .onRotate { orientation in
-            guard let interfaceOrientation = orientation else { return }
-            setupBehaviour(orientation: interfaceOrientation)
-        }
-        .introspect(.navigationView(style: .columns), on: .iOS(.v16, .v17, .v18, .v26, .v27)) { splitViewController in
-            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation else { return }
-            guard self.splitViewController != splitViewController else { return }
-            self.splitViewController = splitViewController
-            splitViewManager.splitViewController = splitViewController
-            setupBehaviour(orientation: interfaceOrientation)
-        }
         .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
             AskForReviewView(
                 appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
@@ -275,29 +261,11 @@ struct SplitView: View {
 
             let apiFetcher = accountManager.getApiFetcher(for: account.userId, token: account)
 
-            let session = InAppTwoFactorAuthenticationSession(user: user, apiFetcher: apiFetcher)
-            return session
+            return InAppTwoFactorAuthenticationSession(user: user, apiFetcher: apiFetcher)
         }
 
         @InjectService var inAppTwoFactorAuthenticationManager: InAppTwoFactorAuthenticationManagerable
         inAppTwoFactorAuthenticationManager.checkConnectionAttempts(using: sessions)
-    }
-
-    private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if platformDetector.isMac {
-            splitViewController?.preferredSplitBehavior = .tile
-            splitViewController?.preferredDisplayMode = .twoBesideSecondary
-            splitViewController?.presentsWithGesture = false
-        } else if orientation.isLandscape {
-            splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = .oneBesideSecondary
-        } else if orientation.isPortrait {
-            splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = .oneOverSecondary
-        } else {
-            splitViewController?.preferredSplitBehavior = .automatic
-            splitViewController?.preferredDisplayMode = .automatic
-        }
     }
 
     private func fetchSignatures() async {
