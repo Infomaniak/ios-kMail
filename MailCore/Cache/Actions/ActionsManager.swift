@@ -289,6 +289,8 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 origin.messagesToProcessWithEuria?.wrappedValue = messages
             }
+        case .replyWithEuria:
+            UserDefaults.shared.hasUsedReplyWithEuria = true
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)

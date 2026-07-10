@@ -58,6 +58,7 @@ public extension UserDefaults.Keys {
     static let lastCustomScheduledDraftDate = UserDefaults.Keys(rawValue: "lastCustomScheduledDraftDate")
     static let lastCustomSnoozeDate = UserDefaults.Keys(rawValue: "lastCustomSnoozeDate")
     static let shouldAdaptMailToDarkMode = UserDefaults.Keys(rawValue: "shouldAdaptMailToDarkMode")
+    static let hasUsedReplyWithEuria = UserDefaults.Keys(rawValue: "hasUsedReplyWithEuria")
     static func notificationsEnabled(userId: Int) -> UserDefaults.Keys {
         return UserDefaults.Keys(rawValue: "notificationsEnabled-\(userId)")
     }
@@ -378,6 +379,11 @@ public extension UserDefaults {
         set {
             set(newValue, forKey: key(.shouldAdaptMailToDarkMode))
         }
+    }
+
+    var hasUsedReplyWithEuria: Bool {
+        get { bool(forKey: key(.hasUsedReplyWithEuria)) }
+        set { set(newValue, forKey: key(.hasUsedReplyWithEuria)) }
     }
 }
 
