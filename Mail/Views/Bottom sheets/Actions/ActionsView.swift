@@ -186,6 +186,9 @@ struct MessageActionView: View {
     var completionHandler: ((Action) -> Void)?
 
     private var badgeType: ActionButtonLabel.BadgeType {
+        if action == .replyWithEuria && !UserDefaults.shared.hasUsedReplyWithEuria {
+            return .new
+        }
         if action == .shareMailLink {
             let userLocalPack = mailboxManager.mailbox.pack
             if userLocalPack == .kSuiteFree || userLocalPack == .starterPack {
@@ -231,7 +234,7 @@ struct MessageActionView: View {
 
 struct ActionButtonLabel: View {
     enum BadgeType {
-        case none, myKSuite, kSuitePro
+        case none, myKSuite, kSuitePro, new
     }
 
     let action: Action
@@ -284,6 +287,8 @@ struct ActionButtonLabel: View {
                 MyKSuitePlusChip()
             } else if badgeType == .kSuitePro {
                 KSuiteProUpgradeChip()
+            } else if badgeType == .new {
+                NewActionChip()
             }
         }
         .padding(value: .medium)
