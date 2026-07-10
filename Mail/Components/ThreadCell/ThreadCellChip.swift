@@ -42,18 +42,15 @@ public enum ThreadCellChipItem: String {
 struct ThreadCellChip: View {
     let chipItem: ThreadCellChipItem
     var body: some View {
-        ZStack {
-            UserDefaults.shared.accentColor.secondary.swiftUIColor
-            chipItem.icon
-                .resizable()
-                .renderingMode(.template)
-                .aspectRatio(contentMode: .fit)
-                .foregroundStyle(UserDefaults.shared.accentColor.primary)
-                .accessibilityLabel(chipItem.contentDescription)
-                .padding(1)
-        }
-        .cornerRadius(IKRadius.small)
-        .frame(width: IKIconSize.medium.rawValue, height: IKIconSize.medium.rawValue)
+        chipItem.icon
+            .iconSize(.medium)
+            .background {
+                UserDefaults.shared.accentColor.secondary.swiftUIColor
+                    .cornerRadius(IKRadius.small)
+                    .scaleEffect(1.5)
+            }
+            .foregroundStyle(UserDefaults.shared.accentColor.primary)
+            .accessibilityLabel(chipItem.contentDescription)
     }
 }
 
