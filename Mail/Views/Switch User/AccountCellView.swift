@@ -94,8 +94,6 @@ struct AccountHeaderCell: View {
 
     @Binding var isSelected: Bool
 
-    @Environment(\.colorScheme) private var colorScheme
-
     enum AccountHeaderCellType {
         case switchAccount, selectComposeMailbox
     }
@@ -117,9 +115,9 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    contactCardButton
+                    ContactCardButton(isShowingContactCard: $isShowingContactCard)
                         .sheet(isPresented: $isShowingContactCard) {
-                            contactCardContent
+                            ContactCardContentView(user: user)
                         }
                 }
 
@@ -128,90 +126,6 @@ struct AccountHeaderCell: View {
             }
         }
         .padding(.vertical, value: .mini)
-    }
-
-    @State private var hasFlipped = false
-
-    private var contactCardButton: some View {
-        let baseColor = UserDefaults.shared.accentColor
-        return Button {
-            isShowingContactCard = true
-        } label: {
-            MailResourcesAsset.qrCode.swiftUIImage
-                .iconSize(.medium)
-                .scaleEffect(x: hasFlipped ? -1 : 1, y: 1)
-                .foregroundStyle(.tint)
-                .padding(IKPadding.mini)
-                .background(
-                    RoundedRectangle(cornerRadius: IKRadius.medium)
-                        .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
-                )
-                .onAppear {
-                    withAnimation(.default.delay(0.25)) {
-                        hasFlipped.toggle()
-                    }
-                }
-        }
-    }
-
-    @ViewBuilder
-    private var contactCardContent: some View {
-        if #available(iOS 16.4, *) {
-            let baseUserAccentColor = UserDefaults.shared.accentColor
-            let onBoardingImageByTheme = onBoardingImageByTheme()
-
-            let myTheme = ContactCardTheme(
-                primary: baseUserAccentColor.primary.swiftUIColor,
-                secondary: baseUserAccentColor.secondary.swiftUIColor,
-                primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
-                secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-                onAccent: baseUserAccentColor.onAccent.swiftUIColor,
-                background: MailResourcesAsset.backgroundColor.swiftUIColor,
-                backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
-                navBarBackground: baseUserAccentColor.navBarBackground.swiftUIColor,
-                snackbarActionColor: baseUserAccentColor.snackbarActionColor.swiftUIColor,
-                onboardingImage: onBoardingImageByTheme
-            )
-            ContactCardView(
-                userProfile: user,
-                rootPath: FileManager.default.containerURL(
-                    forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
-                ) ?? URL.temporaryDirectory
-            )
-            .id(UserDefaults.shared.accentColor)
-            .environment(\.contactCardTheme, myTheme)
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        }
-    }
-
-    private func isEffectiveDarkMode() -> Bool {
-        switch UserDefaults.shared.theme {
-        case .dark:
-            return true
-        case .light:
-            return false
-        case .system:
-            return colorScheme == .dark
-        }
-    }
-
-    private func onBoardingImageByTheme() -> Image {
-        let isDark = isEffectiveDarkMode()
-        let isBlue = UserDefaults.shared.accentColor == .blue
-
-        var asset: MailResourcesImages
-        switch (isDark, isBlue) {
-        case (true, true):
-            asset = MailResourcesAsset.contactCardBleuDark
-        case (true, false):
-            asset = MailResourcesAsset.contactCardPinkDark
-        case (false, true):
-            asset = MailResourcesAsset.contactCardBleu
-        case (false, false):
-            asset = MailResourcesAsset.contactCardPink
-        }
-
-        return asset.swiftUIImage
     }
 }
 
