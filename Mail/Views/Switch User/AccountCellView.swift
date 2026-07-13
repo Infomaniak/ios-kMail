@@ -130,6 +130,8 @@ struct AccountHeaderCell: View {
         .padding(.vertical, value: .mini)
     }
 
+    @State private var hasFlipped = false
+
     private var contactCardButton: some View {
         let baseColor = UserDefaults.shared.accentColor
         return Button {
@@ -137,12 +139,18 @@ struct AccountHeaderCell: View {
         } label: {
             MailResourcesAsset.qrCode.swiftUIImage
                 .iconSize(.medium)
+                .scaleEffect(x: hasFlipped ? -1 : 1, y: 1)
                 .foregroundStyle(.tint)
                 .padding(IKPadding.mini)
                 .background(
                     RoundedRectangle(cornerRadius: IKRadius.medium)
                         .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
                 )
+                .onAppear {
+                    withAnimation(.default.delay(0.25)) {
+                        hasFlipped.toggle()
+                    }
+                }
         }
     }
 
