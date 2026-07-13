@@ -52,7 +52,6 @@ struct ContactCardContentView: View {
             )
             .id(UserDefaults.shared.accentColor)
             .environment(\.contactCardTheme, myTheme)
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         }
     }
 
