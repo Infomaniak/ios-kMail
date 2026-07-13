@@ -73,18 +73,20 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
 }
 
 public extension [MessageBanner] {
+    /// Only the last banner displays the bottom separator (closing separator).
+    /// Exception: `.encrypted` has no separators around it
     func shouldShowBottomSeparator(for messageBanner: MessageBanner) -> Bool {
-        switch messageBanner {
-        case .schedule, .reminder:
-            return count == 1
-        case .spam:
-            return !(contains(.displayContent) || contains(.encrypted))
-        case .displayContent:
-            return !contains(.encrypted)
-        case .unsubscribeLink, .acknowledge:
-            return true
-        default:
+        guard let index = firstIndex(of: messageBanner) else { return false }
+        guard messageBanner != .encrypted else { return false }
+
+        // If next banner is encrypted, no bottom separator
+        if index + 1 < count, self[index + 1] == .encrypted {
             return false
         }
+
+        // Find the last banner that is not encrypted
+        let lastNonEncryptedIndex = lastIndex { $0 != .encrypted } ?? count - 1
+
+        return index == lastNonEncryptedIndex
     }
 }
