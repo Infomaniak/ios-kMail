@@ -24,23 +24,22 @@ import SwiftUI
 
 @available(iOS 16.4, *)
 struct ContactCardContentView: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @Environment(\.colorScheme) private var colorScheme
 
     let user: InfomaniakCore.UserProfile
 
     private var theme: ContactCardTheme {
-        let baseUserAccentColor = UserDefaults.shared.accentColor
-
         return ContactCardTheme(
-            primary: baseUserAccentColor.primary.swiftUIColor,
-            secondary: baseUserAccentColor.secondary.swiftUIColor,
+            primary: accentColor.primary.swiftUIColor,
+            secondary: accentColor.secondary.swiftUIColor,
             primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
             secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-            onAccent: baseUserAccentColor.onAccent.swiftUIColor,
+            onAccent: accentColor.onAccent.swiftUIColor,
             background: MailResourcesAsset.backgroundColor.swiftUIColor,
             backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
-            navBarBackground: baseUserAccentColor.navBarBackground.swiftUIColor,
-            snackbarActionColor: baseUserAccentColor.snackbarActionColor.swiftUIColor,
+            navBarBackground: accentColor.navBarBackground.swiftUIColor,
+            snackbarActionColor: accentColor.snackbarActionColor.swiftUIColor,
             onboardingImage: onboardingImageForTheme()
         )
     }
@@ -52,7 +51,6 @@ struct ContactCardContentView: View {
                 forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
             ) ?? URL.temporaryDirectory
         )
-        .id(UserDefaults.shared.accentColor)
         .environment(\.contactCardTheme, theme)
     }
 

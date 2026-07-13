@@ -18,15 +18,16 @@
 
 import DesignSystem
 import Foundation
+import MailCore
 import MailResources
 import SwiftUI
 
 struct ContactCardButton: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @Binding var isShowingContactCard: Bool
 
     @State private var hasFlipped = false
-
-    private let baseColor = UserDefaults.shared.accentColor
 
     var body: some View {
         Button {
@@ -39,7 +40,7 @@ struct ContactCardButton: View {
                 .padding(IKPadding.mini)
                 .background(
                     RoundedRectangle(cornerRadius: IKRadius.medium)
-                        .foregroundStyle(baseColor.primary.swiftUIColor.opacity(0.1))
+                        .foregroundStyle(accentColor.primary.swiftUIColor.opacity(0.1))
                 )
                 .onAppear {
                     withAnimation(.default.delay(0.25)) {
