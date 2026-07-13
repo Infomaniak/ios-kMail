@@ -22,40 +22,41 @@ import MailCore
 import MailResources
 import SwiftUI
 
+@available(iOS 16.4, *)
 struct ContactCardContentView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     let user: InfomaniakCore.UserProfile
 
-    var body: some View {
-        if #available(iOS 16.4, *) {
-            let baseUserAccentColor = UserDefaults.shared.accentColor
-            let onBoardingImageByTheme = onBoardingImageByTheme()
+    private var theme: ContactCardTheme {
+        let baseUserAccentColor = UserDefaults.shared.accentColor
 
-            let myTheme = ContactCardTheme(
-                primary: baseUserAccentColor.primary.swiftUIColor,
-                secondary: baseUserAccentColor.secondary.swiftUIColor,
-                primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
-                secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-                onAccent: baseUserAccentColor.onAccent.swiftUIColor,
-                background: MailResourcesAsset.backgroundColor.swiftUIColor,
-                backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
-                navBarBackground: baseUserAccentColor.navBarBackground.swiftUIColor,
-                snackbarActionColor: baseUserAccentColor.snackbarActionColor.swiftUIColor,
-                onboardingImage: onBoardingImageByTheme
-            )
-            ContactCardView(
-                userProfile: user,
-                rootPath: FileManager.default.containerURL(
-                    forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
-                ) ?? URL.temporaryDirectory
-            )
-            .id(UserDefaults.shared.accentColor)
-            .environment(\.contactCardTheme, myTheme)
-        }
+        return ContactCardTheme(
+            primary: baseUserAccentColor.primary.swiftUIColor,
+            secondary: baseUserAccentColor.secondary.swiftUIColor,
+            primaryText: MailResourcesAsset.textPrimaryColor.swiftUIColor,
+            secondaryText: MailResourcesAsset.textSecondaryColor.swiftUIColor,
+            onAccent: baseUserAccentColor.onAccent.swiftUIColor,
+            background: MailResourcesAsset.backgroundColor.swiftUIColor,
+            backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+            navBarBackground: baseUserAccentColor.navBarBackground.swiftUIColor,
+            snackbarActionColor: baseUserAccentColor.snackbarActionColor.swiftUIColor,
+            onboardingImage: onboardingImageForTheme()
+        )
     }
 
-    private func isEffectiveDarkMode() -> Bool {
+    var body: some View {
+        ContactCardView(
+            userProfile: user,
+            rootPath: FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: MailAppTargetAssembly.sharedAppGroupName
+            ) ?? URL.temporaryDirectory
+        )
+        .id(UserDefaults.shared.accentColor)
+        .environment(\.contactCardTheme, theme)
+    }
+
+    private func isDarkMode() -> Bool {
         switch UserDefaults.shared.theme {
         case .dark:
             return true
@@ -66,12 +67,12 @@ struct ContactCardContentView: View {
         }
     }
 
-    private func onBoardingImageByTheme() -> Image {
-        let isDark = isEffectiveDarkMode()
-        let isBlue = UserDefaults.shared.accentColor == .blue
+    private func onboardingImageForTheme() -> Image {
+        let isDarkMode = isDarkMode()
+        let isBlueTheme = UserDefaults.shared.accentColor == .blue
 
         var asset: MailResourcesImages
-        switch (isDark, isBlue) {
+        switch (isDarkMode, isBlueTheme) {
         case (true, true):
             asset = MailResourcesAsset.contactCardBleuDark
         case (true, false):
