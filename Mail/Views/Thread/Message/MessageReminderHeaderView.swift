@@ -96,7 +96,6 @@ struct MessageReminderHeaderView: View {
                         }
                     }
                 }
-
             } else if canEdit && reminderDate >= .now {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,

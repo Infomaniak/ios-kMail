@@ -58,12 +58,12 @@ struct MessageSubHeaderView: View {
             result.append(.displayContent)
         }
 
-        if message.encrypted {
-            result.append(.encrypted)
-        }
-
         if message.hasAcknowledgement {
             result.append(.acknowledge)
+        }
+
+        if message.encrypted {
+            result.append(.encrypted)
         }
 
         return result
