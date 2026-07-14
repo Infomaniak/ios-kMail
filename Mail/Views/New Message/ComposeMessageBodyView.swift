@@ -185,6 +185,7 @@ struct ComposeMessageBodyView: View {
             editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
             mentionQueryHandler = handler
         }
+        editor.webView.loadUserScript(.editorMentionPointerEventHandler)
         editor.webView.loadUserScript(.mentionCommon)
         editor.webView.loadUserScript(.observeMention)
         editor.webView.loadUserScript(.observeMentionDeletion)
