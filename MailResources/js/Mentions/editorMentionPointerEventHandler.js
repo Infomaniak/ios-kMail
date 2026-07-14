@@ -16,14 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function movePointerToEndOfMention(event){
-    event.preventDefault();
-    console.log(event.target.outerHTML);
-    const mention = event.target.querySelector(mentionHTML) ?? (event.target.closest(mentionHTML));
-    console.log(mention.outerHTML);
+function movePointerToEndOfMention(event) {
+    const mention = event.target.querySelector(mentionHTML) ?? event.target.closest(mentionHTML);
     if (mention) {
-        
-
+        event.preventDefault();
         // move the caret to the right of the mention
         const selection = window.getSelection();
         const range = document.createRange();
@@ -32,10 +28,9 @@ function movePointerToEndOfMention(event){
         selection.removeAllRanges();
         selection.addRange(range);
     }
-};
+}
 
 document.addEventListener("click", movePointerToEndOfMention, {
-  capture: true,
-  passive: false,
+    capture: true,
+    passive: false,
 });
-
