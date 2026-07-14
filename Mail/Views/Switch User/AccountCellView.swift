@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ContactCard
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
@@ -24,6 +26,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct AccountCellPlaceholderView: View {
@@ -84,6 +87,8 @@ struct AccountCellView: View {
 struct AccountHeaderCell: View {
     let user: InfomaniakCore.UserProfile
 
+    @ModalState private var isShowingContactCard = false
+
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
@@ -110,10 +115,12 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    MailResourcesAsset.check.swiftUIImage
-                        .iconSize(.medium)
-                        .foregroundStyle(.tint)
+                    ContactCardButton(isShowingContactCard: $isShowingContactCard)
+                        .sheet(isPresented: $isShowingContactCard) {
+                            ContactCardContentView(user: user)
+                        }
                 }
+
             case .selectComposeMailbox:
                 ChevronIcon(direction: .down)
             }

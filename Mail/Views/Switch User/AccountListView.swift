@@ -30,6 +30,8 @@ struct AccountListView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @InjectService private var accountManager: AccountManager
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @Environment(\.currentUser) private var currentUser
 
     @State private var isShowingNewAccountView = false
@@ -49,6 +51,9 @@ struct AccountListView: View {
                             user: user
                         )
                         .padding(.horizontal, value: .medium)
+                        .background(
+                            user.id == currentUser.value.id ? accentColor.secondary.swiftUIColor : .clear
+                        )
                     }
                 } else {
                     ForEach(accountManager.accounts) { _ in
