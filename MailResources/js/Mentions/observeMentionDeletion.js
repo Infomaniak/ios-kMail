@@ -26,9 +26,7 @@ function getMentionBeforeCaret() {
     const node = range.startContainer;
     const offset = range.startOffset;
 
-    const isAtTextStart =
-        node.nodeType === Node.TEXT_NODE &&
-        node.textContent.slice(0, offset).replace(/\u200B/g, "").length === 0;
+    const isAtTextStart = node.nodeType === Node.TEXT_NODE && node.textContent.slice(0, offset).replace(/\u200B/g, "").length === 0;
 
     let probe = null;
     if (isAtTextStart) {
@@ -37,16 +35,12 @@ function getMentionBeforeCaret() {
         probe = node.childNodes[offset - 1];
     }
 
-    while (probe && probe.nodeType === Node.TEXT_NODE &&
-           probe.textContent.replace(/\u200B/g, "").length === 0) {
+    while (probe && probe.nodeType === Node.TEXT_NODE && probe.textContent.replace(/\u200B/g, "").length === 0) {
         probe = probe.previousSibling;
     }
 
-    return probe && probe.nodeType === Node.ELEMENT_NODE &&
-           probe.matches?.(mentionHTML) ? probe : null;
+    return probe && probe.nodeType === Node.ELEMENT_NODE && probe.matches?.(mentionHTML) ? probe : null;
 }
-
-
 
 function handleMentionBackspace(event) {
     if (event.key !== "Backspace") return;
@@ -59,12 +53,12 @@ function handleMentionBackspace(event) {
     const range = document.createRange();
     range.setStartBefore(mention);
     range.collapse(true);
-    
+
     let allMentions = document.querySelectorAll(mentionHTML);
     if (allMentions.length <= 1) {
         let br = document.createElement("br");
         mention.replaceWith(br);
-    }else {
+    } else {
         mention.remove();
     }
 
@@ -109,10 +103,10 @@ function observeMentionDeletion() {
     const setupObserver = () => {
         const rootElement = document.body;
         if (!rootElement) return;
-        
+
         const mutationObserver = new MutationObserver(handleMutationRecords);
         mutationObserver.observe(rootElement, { childList: true, subtree: true });
-    }
+    };
 
     if (document.body) {
         setupObserver();
@@ -121,7 +115,6 @@ function observeMentionDeletion() {
     }
     document.addEventListener("keydown", handleMentionBackspace);
 }
-
 
 function onMentionsDeleted(refsJson) {
     const handler = window.webkit?.messageHandlers?.mentionsDelete;

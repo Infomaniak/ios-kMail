@@ -38,7 +38,7 @@ function getTextBeforeCaret(stripMentions = true) {
             : range.endContainer.parentElement;
     const activeMention = endElement?.closest?.(mentionHTML);
 
-    if (stripMentions && activeMention && block.contains(activeMention)) {
+    if (stripMentions && activeMention && (block?.contains(activeMention) ?? false)){
         preRange.setEndAfter(activeMention); // include full mention, then replace it with space
     } else {
         preRange.setEnd(range.endContainer, range.endOffset);
