@@ -32,10 +32,11 @@ public extension MailboxManager {
             }
         }
 
-        func update(thread: Thread) {
+        func update(thread: Thread, currentMailbox: Mailbox) {
             switch self {
             case .seen:
                 thread.updateUnseenMessages()
+                thread.updateMentions(currentMailbox: currentMailbox)
             case .star:
                 thread.updateFlagged()
             }
@@ -63,7 +64,7 @@ public extension MailboxManager {
                     continue
                 }
 
-                type.update(thread: liveThread)
+                type.update(thread: liveThread, currentMailbox: mailbox)
             }
         }
     }
