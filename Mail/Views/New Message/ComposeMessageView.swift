@@ -211,7 +211,8 @@ struct ComposeMessageView: View {
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
                         editor: _editor,
-                        messageReply: messageReply
+                        messageReply: messageReply,
+                        mailboxManager: mailboxManager
                     )
                     .environmentObject(attachmentsManager)
                     .overlay {
