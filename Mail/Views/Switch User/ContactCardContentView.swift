@@ -22,7 +22,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-@available(iOS 16.4, *)
 struct ContactCardContentView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
