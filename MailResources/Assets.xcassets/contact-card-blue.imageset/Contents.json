@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "contact-card-pink.svg",
+      "filename" : "contact-card-blue.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "contact-card-pink-dark.svg",
+      "filename" : "contact-card-blue-dark.svg",
       "idiom" : "universal"
     }
   ],

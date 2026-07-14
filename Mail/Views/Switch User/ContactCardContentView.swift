@@ -25,11 +25,11 @@ import SwiftUI
 @available(iOS 16.4, *)
 struct ContactCardContentView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @Environment(\.colorScheme) private var colorScheme
 
     let user: InfomaniakCore.UserProfile
 
     private var theme: ContactCardTheme {
+        let onboardingImage = accentColor == .blue ? MailResourcesAsset.contactCardBlue : MailResourcesAsset.contactCardPink
         return ContactCardTheme(
             primary: accentColor.primary.swiftUIColor,
             secondary: accentColor.secondary.swiftUIColor,
@@ -40,7 +40,7 @@ struct ContactCardContentView: View {
             backgroundTint: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
             navBarBackground: accentColor.navBarBackground.swiftUIColor,
             snackbarActionColor: accentColor.snackbarActionColor.swiftUIColor,
-            onboardingImage: onboardingImageForTheme()
+            onboardingImage: onboardingImage.swiftUIImage
         )
     }
 
@@ -52,35 +52,5 @@ struct ContactCardContentView: View {
             ) ?? URL.temporaryDirectory
         )
         .environment(\.contactCardTheme, theme)
-    }
-
-    private func isDarkMode() -> Bool {
-        switch UserDefaults.shared.theme {
-        case .dark:
-            return true
-        case .light:
-            return false
-        case .system:
-            return colorScheme == .dark
-        }
-    }
-
-    private func onboardingImageForTheme() -> Image {
-        let isDarkMode = isDarkMode()
-        let isBlueTheme = UserDefaults.shared.accentColor == .blue
-
-        var asset: MailResourcesImages
-        switch (isDarkMode, isBlueTheme) {
-        case (true, true):
-            asset = MailResourcesAsset.contactCardBleuDark
-        case (true, false):
-            asset = MailResourcesAsset.contactCardPinkDark
-        case (false, true):
-            asset = MailResourcesAsset.contactCardBleu
-        case (false, false):
-            asset = MailResourcesAsset.contactCardPink
-        }
-
-        return asset.swiftUIImage
     }
 }
