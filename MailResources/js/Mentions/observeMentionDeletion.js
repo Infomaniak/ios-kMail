@@ -43,7 +43,7 @@ function getMentionBeforeCaret() {
     }
 
     return probe && probe.nodeType === Node.ELEMENT_NODE &&
-           probe.matches?.("a[data-ik-mention-ref]") ? probe : null;
+           probe.matches?.(mentionHTML) ? probe : null;
 }
 
 
@@ -60,7 +60,7 @@ function handleMentionBackspace(event) {
     range.setStartBefore(mention);
     range.collapse(true);
     
-    let allMentions = document.querySelectorAll("a[data-ik-mention-ref]");
+    let allMentions = document.querySelectorAll(mentionHTML);
     if (allMentions.length <= 1) {
         let br = document.createElement("br");
         mention.replaceWith(br);
@@ -79,7 +79,7 @@ const extractRemovedRefs = (node, refsCollection) => {
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        const mentions = node.querySelectorAll("[data-ik-mention-ref]");
+        const mentions = node.querySelectorAll(mentionHTML);
         mentions.forEach((mention) => {
             refsCollection.push(mention.dataset.ikMentionRef);
         });

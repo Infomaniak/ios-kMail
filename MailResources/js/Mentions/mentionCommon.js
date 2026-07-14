@@ -1,3 +1,5 @@
+const mentionHTML = "a[data-ik-mention-ref]"
+
 // We get the parent block to get the correct range to look for the @
 function getBlockParent(node) {
     const editor = getEditor();
@@ -19,23 +21,33 @@ function getTextBeforeCaret(stripMentions = true) {
     const range = selection.getRangeAt(0);
     if (!range.collapsed) return "";
 
+    const editor = getEditor();
+    if (!editor.contains(range.startContainer)) return "";
+
     const block = getBlockParent(range.startContainer);
     const preRange = range.cloneRange();
 
-   if (block?.nodeType === Node.ELEMENT_NODE) {
-       preRange.setStart(block, 0);
-   } else {
-       preRange.selectNodeContents(getEditor());
-   }
+    if (block?.nodeType === Node.ELEMENT_NODE) {
+        preRange.setStart(block, 0);
+    } else {
+        preRange.selectNodeContents(editor);
+    }
 
-    preRange.setEnd(range.endContainer, range.endOffset);
+    const endElement = range.endContainer.nodeType === Node.ELEMENT_NODE
+            ? range.endContainer
+            : range.endContainer.parentElement;
+    const activeMention = endElement?.closest?.(mentionHTML);
+
+    if (stripMentions && activeMention && block.contains(activeMention)) {
+        preRange.setEndAfter(activeMention); // include full mention, then replace it with space
+    } else {
+        preRange.setEnd(range.endContainer, range.endOffset);
+    }
 
     const fragment = preRange.cloneContents();
     if (stripMentions) {
-        // Replace all the existing mentions with a space to ignore them when extracting the query
-        const mentions = fragment.querySelectorAll("a[data-ik-mention-ref]");
-        mentions.forEach(mention => mention.replaceWith(" "));
+        fragment.querySelectorAll(mentionHTML).forEach((mention) => mention.replaceWith(" "));
     }
 
     return fragment.textContent;
-};
+}

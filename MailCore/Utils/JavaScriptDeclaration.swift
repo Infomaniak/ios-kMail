@@ -31,6 +31,7 @@ public enum UserScript: String {
     case observeMentionClick
     case insertMention
     case mentionCommon
+    case editorMentionPointerEventHandler
 }
 
 public enum JavaScriptDeclaration {
