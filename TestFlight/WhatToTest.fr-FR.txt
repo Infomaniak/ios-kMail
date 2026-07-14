@@ -1,1 +1,2 @@
+- Carte de contact
 - Correction de bugs
