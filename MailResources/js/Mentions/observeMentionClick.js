@@ -27,13 +27,13 @@ function observeMentionClick() {
             const clickedNode = event.target;
             if (!(clickedNode instanceof Element)) return;
 
-            const mention = event.target.closest(mentionHTML);
+            const mention = event.target.closest("a[data-ik-mention-ref]");
             if (!mention) return;
 
             event.preventDefault();
             event.stopPropagation();
 
-            const email = mention.getAttribute(mentionHTML) || "";
+            const email = mention.getAttribute("data-ik-mention-ref") || "";
 
             let name = (mention.textContent || "").trim();
             if (name.startsWith("@")) {
