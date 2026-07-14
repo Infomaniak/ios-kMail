@@ -233,6 +233,16 @@ public class Thread: Object, Decodable, Identifiable {
                                                    featureAvailableProvider: featureAvailableProvider)
     }
 
+    public func updateMentions(currentMailbox: Mailbox) {
+        isMentioned = messages.contains { message in
+            guard !message.seen else { return false }
+
+            return message.mentions.contains { mention in
+                currentMailbox.aliases.contains(mention)
+            }
+        }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case messages
@@ -401,13 +411,7 @@ public extension Thread {
             updateSnooze(from: message)
         }
 
-        isMentioned = messages.contains { message in
-            guard !message.seen else { return false }
-
-            return message.mentions.contains { mention in
-                currentMailbox.aliases.contains(mention)
-            }
-        }
+        updateMentions(currentMailbox: currentMailbox)
 
         for duplicate in duplicates {
             if !duplicate.seen {

@@ -88,6 +88,7 @@ public extension MailboxManager {
     private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
         for thread in threadResult.threads ?? [] {
             thread.makeFromSearch(using: self)
+            thread.updateMentions(currentMailbox: mailbox)
 
             for message in thread.messages {
                 guard fetchObject(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
@@ -175,6 +176,7 @@ public extension MailboxManager {
                     forwarded: newMessage.forwarded
                 )
                 newThread.makeFromSearch(using: self)
+                newThread.updateMentions(currentMailbox: mailbox)
                 newThread.subject = message.subject
                 searchFolder.threads.insert(newThread)
             }
