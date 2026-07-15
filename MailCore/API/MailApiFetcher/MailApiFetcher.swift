@@ -91,7 +91,12 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
             )
         } catch InfomaniakError.apiError(let apiError) {
             logError(apiError)
-            throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
+            let error = MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
+            if error == MailApiError.unexpectedServerError {
+                throw MailServerError(httpStatus: 500)
+            } else {
+                throw error
+            }
         } catch InfomaniakError.serverError(statusCode: let statusCode) {
             logError(InfomaniakError.serverError(statusCode: statusCode))
             throw MailServerError(httpStatus: statusCode)

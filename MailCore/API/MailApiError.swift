@@ -35,6 +35,8 @@ enum MailApiErrorCode {
 }
 
 public class MailApiError: MailError {
+    public static let unexpectedServerError = MailApiError(code: "unexpected_error")
+
     /// The email is not found
     public static let apiMessageNotFound = MailApiError(code: MailApiErrorCode.mailMessageNotFound,
                                                         localizedDescription: MailResourcesStrings.Localizable
@@ -145,6 +147,7 @@ public class MailApiError: MailError {
 
     static let allErrors: [MailApiError] = [
         // General
+        unexpectedServerError,
         MailApiError(code: "not_authorized"),
         apiInvalidCredential,
         apiInvalidPassword,
