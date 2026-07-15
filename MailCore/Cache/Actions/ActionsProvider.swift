@@ -145,10 +145,11 @@ public class ActionsProvider: ObservableObject {
     private func euriaActionsForMessage() -> [Action] {
         let translate = featureAvailableProvider.isAvailable(.translate)
         let summarize = featureAvailableProvider.isAvailable(.summarize)
+        let replyWithEuria = featureAvailableProvider.isAvailable(.replyWithEuria)
 
         let tempEuriaActions: [Action?] = [
             summarize ? .summarize : nil,
-            .replyWithEuria,
+            replyWithEuria ? .replyWithEuria : nil,
             translate ? .translateMessage : nil
         ]
         let euriaActions = tempEuriaActions.compactMap { $0 }
@@ -338,9 +339,8 @@ public class ActionsProvider: ObservableObject {
                 return [.blockList, folder.role == .spam ? .nonSpam : .spam, .phishing]
             case .other:
                 let isRead = messages.allSatisfy { $0.seen }
-                let canUseEuriaActions = (messages.count == 1 &&
-                    (featureAvailableProvider.isAvailable(.summarize) ||
-                        featureAvailableProvider.isAvailable(.translate)))
+                let canUseEuriaActions = featureAvailableProvider.isAvailable(.summarize) || featureAvailableProvider
+                    .isAvailable(.translate) || featureAvailableProvider.isAvailable(.replyWithEuria)
 
                 var actions: [Action] = [isRead ? .markAsUnread : .markAsRead,
                                          thread.flagged ? .unstar : .star]
