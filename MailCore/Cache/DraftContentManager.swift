@@ -116,7 +116,13 @@ extension DraftContentManager {
             )
 
             attachments = try await replyingAttachments
-            completeDraftBody = try await completeDraftReplyingBody
+            var replyingBody = try await completeDraftReplyingBody
+
+            if !incompleteDraft.body.isEmpty {
+                replyingBody = "<p>\(incompleteDraft.body.withNewLineIntoHTML)</p>\(replyingBody)"
+            }
+
+            completeDraftBody = replyingBody
 
             if incompleteDraft.isReaction {
                 completeDraftBody = "\(Draft.reactionPlaceholder)\(completeDraftBody)"

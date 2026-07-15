@@ -135,7 +135,7 @@ struct CompactToolbarModifier: ViewModifier {
                 )
                 .sheetViewStyle()
             }
-            .euriaFloatingPanel(messages: $messagesToProcessWithEuria)
+            .euriaFloatingPanel(messages: $messagesToProcessWithEuria, mailboxManager: mailboxManager)
             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                 ReplyActionsView(message: message)
             }

@@ -30,6 +30,8 @@ import SwiftUI
 struct ActionsView: View {
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
+    @StateObject private var aiModel: AIModel
+
     private var quickActions: [Action] {
         actionsProvider.actionsFor(origin: quickActionOrigin, messages: targetMessages)
     }
@@ -49,6 +51,7 @@ struct ActionsView: View {
         listActionOrigin: ActionOrigin,
         quickActionOrigin: ActionOrigin,
         isMultipleSelection: Bool,
+        mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         targetMessages = messages
@@ -56,6 +59,9 @@ struct ActionsView: View {
         self.quickActionOrigin = quickActionOrigin
         self.isMultipleSelection = isMultipleSelection
         self.completionHandler = completionHandler
+
+        let model = AIModel(mailboxManager: mailboxManager, draft: Draft(), isReplying: true)
+        _aiModel = StateObject(wrappedValue: model)
     }
 
     var body: some View {
@@ -81,6 +87,7 @@ struct ActionsView: View {
                     }
 
                     MessageActionView(
+                        aiModel: aiModel,
                         targetMessages: targetMessages,
                         action: action,
                         origin: listActionOrigin,
@@ -99,7 +106,8 @@ struct ActionsView: View {
         target: PreviewHelper.sampleThread.messages.toArray(),
         listActionOrigin: .floatingPanelListAction(source: .message),
         quickActionOrigin: .floatingPanelQuickAction(source: .message),
-        isMultipleSelection: false
+        isMultipleSelection: false,
+        mailboxManager: PreviewHelper.sampleMailboxManager
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
@@ -179,6 +187,8 @@ struct MessageActionView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @ObservedObject var aiModel: AIModel
+
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
@@ -209,7 +219,7 @@ struct MessageActionView: View {
 
     private func didTapButton() {
         dismiss()
-
+        showEuriaBottomSheet(action: action)
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
@@ -228,6 +238,12 @@ struct MessageActionView: View {
                     isMultipleSelection: isMultipleSelection
                 )
             }
+        }
+    }
+
+    private func showEuriaBottomSheet(action: Action) {
+        if action == .replyWithEuria {
+            aiModel.isShowingPrompt = true
         }
     }
 }

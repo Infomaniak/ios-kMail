@@ -25,11 +25,13 @@ import SwiftUI
 extension View {
     func euriaFloatingPanel(
         messages: Binding<[Message]?>,
+        mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
                 messages: messages,
+                mailboxManager: mailboxManager,
                 completionHandler: completionHandler
             )
         )
@@ -38,20 +40,64 @@ extension View {
 
 struct EuriaFloatingPanel: ViewModifier {
     @EnvironmentObject private var actionsProvider: ActionsProvider
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var isShowingPanel = false
 
+    @StateObject private var aiModel: AIModel
+
     @Binding var messages: [Message]?
+
     let completionHandler: ((Action) -> Void)?
+    let mailboxManager: MailboxManager
 
     private var origin: ActionOrigin {
         return .euriaActions(messagesToProcessWithEuria: $messages)
+    }
+
+    init(
+        messages: Binding<[Message]?>,
+        mailboxManager: MailboxManager,
+        completionHandler: ((Action) -> Void)? = nil
+    ) {
+        self.completionHandler = completionHandler
+        _messages = messages
+        self.mailboxManager = mailboxManager
+
+        let lastMessage = messages.wrappedValue?.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        )
+        var draft = Draft()
+
+        if let lastMessage {
+            let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
+            draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+        }
+
+        let model = AIModel(mailboxManager: mailboxManager, draft: draft, isReplying: true)
+        _aiModel = StateObject(wrappedValue: model)
     }
 
     func body(content: Content) -> some View {
         content
             .onChange(of: messages) { newValue in
                 isShowingPanel = newValue != nil && !availableActions(for: newValue).isEmpty
+
+                if let newValue, let lastMessage = newValue.lastMessageToExecuteAction(
+                    currentMailboxEmail: mailboxManager.mailbox.email,
+                    featureAvailableProvider: mailboxManager.featureAvailableProvider
+                ) {
+                    let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
+                    aiModel.draftContentManager = DraftContentManager(
+                        draftLocalUUID: UUID().uuidString,
+                        messageReply: messageReply,
+                        mailboxManager: mailboxManager
+                    )
+                } else if newValue == nil {
+                    aiModel.draftContentManager = nil
+                    aiModel.resetConversation()
+                }
             }
             .mailFloatingPanel(isPresented: $isShowingPanel, title: MailResourcesStrings.Localizable.askEuriaTitle) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -63,6 +109,7 @@ struct EuriaFloatingPanel: ViewModifier {
                         }
 
                         MessageActionView(
+                            aiModel: aiModel,
                             targetMessages: messages ?? [],
                             action: action,
                             origin: origin,
@@ -70,6 +117,23 @@ struct EuriaFloatingPanel: ViewModifier {
                             completionHandler: completionHandler
                         )
                     }
+                }
+            }
+            .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+                AIPromptView(aiModel: aiModel)
+            }
+            .sheet(isPresented: $aiModel.isShowingProposition) {
+                AIPropositionView(aiModel: aiModel) { aiProposition in
+                    let lastMessageToExecuteAction = messages?.lastMessageToExecuteAction(
+                        currentMailboxEmail: mailboxManager.mailbox.email,
+                        featureAvailableProvider: mailboxManager.featureAvailableProvider
+                    )
+                    guard let lastMessageToExecuteAction else { return }
+                    actionsManager.composeMessageWithContent(
+                        message: lastMessageToExecuteAction,
+                        mode: .replyAll,
+                        content: aiProposition
+                    )
                 }
             }
     }
