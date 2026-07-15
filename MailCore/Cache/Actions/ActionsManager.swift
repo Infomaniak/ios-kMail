@@ -493,6 +493,17 @@ public class ActionsManager: ObservableObject {
         }
     }
 
+    public func composeMessageWithContent(message: Message, mode: ReplyMode, content: String) {
+        Task { @MainActor in
+            mainViewState?.composeMessageIntent = .replyingWithEuriaTo(
+                message: message,
+                replyMode: mode,
+                replyBody: content,
+                originMailboxManager: mailboxManager
+            )
+        }
+    }
+
     private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolder: Folder) -> String {
         let destinationFolderName = destinationFolder.localizedName
         let isDestinationSpam = destinationFolder.role == .spam

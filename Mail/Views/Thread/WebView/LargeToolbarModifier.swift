@@ -247,7 +247,8 @@ struct LargeToolbarModifier: ViewModifier {
                 folder: frozenFolder?.freezeIfNeeded()
             )
             .euriaFloatingPanel(
-                messages: $messagesToProcessWithEuria
+                messages: $messagesToProcessWithEuria,
+                mailboxManager: mailboxManager
             )
     }
 

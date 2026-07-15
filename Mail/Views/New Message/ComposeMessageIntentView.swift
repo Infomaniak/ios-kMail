@@ -124,6 +124,16 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     aliases: mailboxManager.mailbox.aliases.toArray()
                 )
             }
+        case .replyWithEuria(let messageUid, let replyMode, let replyBody):
+            if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
+                let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
+                maybeMessageReply = messageReply
+                draftToWrite = Draft.replying(
+                    reply: messageReply,
+                    currentMailboxEmail: mailboxManager.mailbox.email,
+                    euriaReply: replyBody
+                )
+            }
         }
 
         if composeMessageIntent.isFromOutsideOfApp {
