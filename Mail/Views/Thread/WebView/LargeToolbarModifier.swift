@@ -248,6 +248,7 @@ struct LargeToolbarModifier: ViewModifier {
             )
             .euriaFloatingPanel(
                 messages: $messagesToProcessWithEuria,
+                noReplyAlert: $noReplyAlert,
                 mailboxManager: mailboxManager
             )
     }

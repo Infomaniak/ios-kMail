@@ -60,7 +60,18 @@ struct ActionsView: View {
         self.isMultipleSelection = isMultipleSelection
         self.completionHandler = completionHandler
 
-        let model = AIModel(mailboxManager: mailboxManager, draft: Draft(), isReplying: true)
+        let lastMessage = targetMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        )
+        var draft = Draft()
+
+        if let lastMessage {
+            let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
+            draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+        }
+
+        let model = AIModel(mailboxManager: mailboxManager, draft: draft, isReplying: true)
         _aiModel = StateObject(wrappedValue: model)
     }
 
@@ -88,6 +99,7 @@ struct ActionsView: View {
 
                     MessageActionView(
                         aiModel: aiModel,
+                        noReplyAlert: .constant(nil),
                         targetMessages: targetMessages,
                         action: action,
                         origin: listActionOrigin,
@@ -189,6 +201,8 @@ struct MessageActionView: View {
 
     @ObservedObject var aiModel: AIModel
 
+    @Binding var noReplyAlert: NoReplyAlertState?
+
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
@@ -215,6 +229,9 @@ struct MessageActionView: View {
             ActionButtonLabel(action: action, badgeType: badgeType)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
+        .mailCustomAlert(item: $noReplyAlert) { state in
+            NoReplyAlertView(action: state.action)
+        }
     }
 
     private func didTapButton() {
@@ -242,9 +259,29 @@ struct MessageActionView: View {
     }
 
     private func showEuriaBottomSheet(action: Action) {
-        if action == .replyWithEuria {
-            aiModel.isShowingPrompt = true
+        guard action == .replyWithEuria else { return }
+
+        let lastMessage = targetMessages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        )
+        guard let lastMessage else { return }
+
+        let replyMode: ReplyMode = lastMessage.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) ? .replyAll : .reply
+        let replyAction: Action = replyMode == .reply ? .reply : .replyAll
+
+        if NoReplyAlert.verifySenders(
+            message: lastMessage,
+            action: replyAction,
+            currentMailboxEmail: mailboxManager.mailbox.email
+        ) {
+            noReplyAlert = NoReplyAlertState {
+                aiModel.isShowingPrompt = true
+            }
+            return
         }
+
+        aiModel.isShowingPrompt = true
     }
 }
 

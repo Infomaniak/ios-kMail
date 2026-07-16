@@ -274,7 +274,14 @@ public struct ActionOrigin {
         )
     }
 
-    public static func euriaActions(messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .euriaActions, messagesToProcessWithEuria: messagesToProcessWithEuria)
+    public static func euriaActions(
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
+        messagesToProcessWithEuria: Binding<[Message]?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(
+            type: .euriaActions,
+            nearestNoReplyAlert: nearestNoReplyAlert,
+            messagesToProcessWithEuria: messagesToProcessWithEuria
+        )
     }
 }

@@ -20,17 +20,20 @@ import InfomaniakCore
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
     func euriaFloatingPanel(
         messages: Binding<[Message]?>,
+        noReplyAlert: Binding<NoReplyAlertState?>,
         mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
                 messages: messages,
+                noReplyAlert: noReplyAlert,
                 mailboxManager: mailboxManager,
                 completionHandler: completionHandler
             )
@@ -47,21 +50,24 @@ struct EuriaFloatingPanel: ViewModifier {
     @StateObject private var aiModel: AIModel
 
     @Binding var messages: [Message]?
+    @Binding private var noReplyAlert: NoReplyAlertState?
 
     let completionHandler: ((Action) -> Void)?
     let mailboxManager: MailboxManager
 
     private var origin: ActionOrigin {
-        return .euriaActions(messagesToProcessWithEuria: $messages)
+        return .euriaActions(nearestNoReplyAlert: $noReplyAlert, messagesToProcessWithEuria: $messages)
     }
 
     init(
         messages: Binding<[Message]?>,
+        noReplyAlert: Binding<NoReplyAlertState?>,
         mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         self.completionHandler = completionHandler
         _messages = messages
+        _noReplyAlert = noReplyAlert
         self.mailboxManager = mailboxManager
 
         let lastMessage = messages.wrappedValue?.lastMessageToExecuteAction(
@@ -110,6 +116,7 @@ struct EuriaFloatingPanel: ViewModifier {
 
                         MessageActionView(
                             aiModel: aiModel,
+                            noReplyAlert: $noReplyAlert,
                             targetMessages: messages ?? [],
                             action: action,
                             origin: origin,
@@ -130,7 +137,9 @@ struct EuriaFloatingPanel: ViewModifier {
                     )
                     guard let lastMessageToExecuteAction else { return }
 
-                    let replyMode: ReplyMode = lastMessageToExecuteAction.to.count == 1 ? .reply : .replyAll
+                    let replyMode: ReplyMode = lastMessageToExecuteAction.canReplyAll(
+                        currentMailboxEmail: mailboxManager.mailbox.email
+                    ) ? .replyAll : .reply
 
                     actionsManager.composeMessageWithContent(
                         message: lastMessageToExecuteAction,
