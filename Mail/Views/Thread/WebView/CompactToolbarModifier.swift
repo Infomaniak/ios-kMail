@@ -40,7 +40,6 @@ struct CompactToolbarModifier: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
     @ModalState private var noReplyAlert: NoReplyAlertState?
-    @ModalState private var messagesToProcessWithEuria: [Message]?
 
     private let isFlagged: Bool
     private let frozenFolder: Folder?
@@ -67,8 +66,7 @@ struct CompactToolbarModifier: ViewModifier {
             originFolder: frozenFolder,
             nearestDestructiveAlert: $destructiveAlert,
             nearestNoReplyAlert: $noReplyAlert,
-            nearestMessagesToMoveSheet: $messagesToMove,
-            nearestMessagesToProcessWithEuria: $messagesToProcessWithEuria
+            nearestMessagesToMoveSheet: $messagesToMove
         )
     }
 
@@ -87,12 +85,6 @@ struct CompactToolbarModifier: ViewModifier {
             }
             .toolbarSpacer(placement: .bottomBar)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: didTapEuria) {
-                        Label(MailResourcesStrings.Localizable.askEuriaTitle,
-                              asset: MailResourcesAsset.euria.swiftUIImage)
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: didTapFlag) {
                         Label(isFlagged ? MailResourcesStrings.Localizable.actionUnstar : MailResourcesStrings.Localizable
@@ -135,7 +127,6 @@ struct CompactToolbarModifier: ViewModifier {
                 )
                 .sheetViewStyle()
             }
-            .euriaFloatingPanel(messages: $messagesToProcessWithEuria, mailboxManager: mailboxManager)
             .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                 ReplyActionsView(message: message)
             }
@@ -162,10 +153,6 @@ struct CompactToolbarModifier: ViewModifier {
                 )
             }
         }
-    }
-
-    private func didTapEuria() {
-        didTap(action: .showEuriaActions)
     }
 
     private func didTap(action: Action) {
