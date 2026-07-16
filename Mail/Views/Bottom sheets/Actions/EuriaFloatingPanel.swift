@@ -129,9 +129,12 @@ struct EuriaFloatingPanel: ViewModifier {
                         featureAvailableProvider: mailboxManager.featureAvailableProvider
                     )
                     guard let lastMessageToExecuteAction else { return }
+
+                    let replyMode: ReplyMode = lastMessageToExecuteAction.to.count == 1 ? .reply : .replyAll
+
                     actionsManager.composeMessageWithContent(
                         message: lastMessageToExecuteAction,
-                        mode: .replyAll,
+                        mode: replyMode,
                         content: aiProposition
                     )
                 }
