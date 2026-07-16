@@ -17,9 +17,10 @@
  */
 
 function movePointerToEndOfMention(event) {
-    const mention = event.target.querySelector(mentionHTML) ?? event.target.closest(mentionHTML);
+    const mention = event.target.closest(mentionHTML);
     if (mention) {
         event.preventDefault();
+        event.stopPropagation();
         // move the caret to the right of the mention
         const selection = window.getSelection();
         const range = document.createRange();

@@ -245,4 +245,5 @@ struct MessageBodyContentView: View {
         messageTheme: .auto,
         mailboxAliases: []
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

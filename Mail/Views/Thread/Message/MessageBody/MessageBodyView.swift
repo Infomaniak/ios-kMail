@@ -99,4 +99,5 @@ struct MessageBodyView: View {
     )
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
     .environmentObject(ThreadViewState())
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
