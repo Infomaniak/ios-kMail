@@ -48,7 +48,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case encrypted
     case unsubscribeLink
     case acknowledge
-    case reminder(reminderDate: Date)
+    case reminder(reminderDate: Date, canEdit: Bool)
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -64,8 +64,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return true
         case (.acknowledge, .acknowledge):
             return true
-        case (.reminder(let date1), .reminder(let date2)):
-            return date1 == date2
+        case (.reminder(let date1, let canEdit1), .reminder(let date2, let canEdit2)):
+            return date1 == date2 && canEdit1 == canEdit2
         default:
             return false
         }
@@ -73,18 +73,20 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
 }
 
 public extension [MessageBanner] {
+    /// Only the last banner displays the bottom separator (closing separator).
+    /// Exception: `.encrypted` has no separators around it
     func shouldShowBottomSeparator(for messageBanner: MessageBanner) -> Bool {
-        switch messageBanner {
-        case .schedule, .reminder:
-            return count == 1
-        case .spam:
-            return !(contains(.displayContent) || contains(.encrypted))
-        case .displayContent:
-            return !contains(.encrypted)
-        case .unsubscribeLink, .acknowledge:
-            return true
-        default:
+        guard let index = firstIndex(of: messageBanner) else { return false }
+        guard messageBanner != .encrypted else { return false }
+
+        // If next banner is encrypted, no bottom separator
+        if index + 1 < count, self[index + 1] == .encrypted {
             return false
         }
+
+        // Find the last banner that is not encrypted
+        let lastNonEncryptedIndex = lastIndex { $0 != .encrypted } ?? count - 1
+
+        return index == lastNonEncryptedIndex
     }
 }

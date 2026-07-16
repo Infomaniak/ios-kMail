@@ -30,6 +30,7 @@ struct MessageReminderHeaderView: View {
 
     let reminderDate: Date
     let message: Message
+    let canEdit: Bool
     let showBottomSeparator: Bool
     let followUpAction: () -> Void
 
@@ -39,10 +40,6 @@ struct MessageReminderHeaderView: View {
 
     private var to: [Recipient] {
         return message.to.toArray()
-    }
-
-    private var isMyMessage: Bool {
-        return senders.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
     }
 
     private var headerMessage: String {
@@ -67,7 +64,7 @@ struct MessageReminderHeaderView: View {
 
     var body: some View {
         Group {
-            if isMyMessage && reminderDate < .now {
+            if canEdit && reminderDate < .now {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
@@ -99,8 +96,7 @@ struct MessageReminderHeaderView: View {
                         }
                     }
                 }
-
-            } else if isMyMessage && reminderDate >= .now {
+            } else if canEdit && reminderDate >= .now {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader)),
@@ -114,7 +110,7 @@ struct MessageReminderHeaderView: View {
                         Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
                     }
                 }
-            } else if !isMyMessage {
+            } else {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: headerMessage,
@@ -170,7 +166,8 @@ struct MessageReminderHeaderView: View {
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderDate: .now, message: PreviewHelper.sampleMessage, showBottomSeparator: true) {}
+    MessageReminderHeaderView(reminderDate: .now, message: PreviewHelper.sampleMessage, canEdit: true,
+                              showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
             mailboxManager: PreviewHelper.sampleMailboxManager,

@@ -20,6 +20,11 @@ import Foundation
 import RealmSwift
 
 public class Reminder: EmbeddedObject, Codable {
-    @Persisted public var uuid: String
+    /// UUID of the reminder. Only present when the current user is the creator of the reminder.
+    @Persisted public var uuid: String?
     @Persisted public var date: Date
+
+    public var canEdit: Bool {
+        return uuid != nil
+    }
 }
