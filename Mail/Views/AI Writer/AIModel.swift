@@ -263,7 +263,7 @@ extension AIModel {
     }
 
     func getPropositionBody() -> String {
-        let (subject, body) = splitSubjectAndBody()
+        let (_, body) = splitSubjectAndBody()
         return body
     }
 

@@ -188,6 +188,7 @@ struct ActionsPanelViewModifier: ViewModifier {
         )
         .euriaFloatingPanel(
             messages: $messagesToProcessWithEuria,
+            noReplyAlert: $noReplyAlert,
             mailboxManager: mailboxManager,
             completionHandler: completionHandler
         )

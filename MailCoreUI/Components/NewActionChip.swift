@@ -16,11 +16,17 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
+import InfomaniakCoreSwiftUI
+import MailCore
 import MailResources
 import SwiftUI
 
 public struct NewActionChip: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     public init() {}
+
     public var body: some View {
         VStack {
             Text(MailResourcesStrings.Localizable.contentDescriptionIconNewMail)
@@ -29,8 +35,8 @@ public struct NewActionChip: View {
                 .padding(.horizontal, value: .mini)
                 .padding(.vertical, value: .micro)
         }
-        .background(UserDefaults.shared.accentColor.primary.swiftUIColor)
-        .cornerRadius(100)
+        .background(accentColor.primary.swiftUIColor)
+        .clipShape(Capsule())
     }
 }
 

@@ -16,10 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enum NoReplyAlert {
+public enum NoReplyAlert {
     static let noReplyPrefixes: Set = ["no-reply", "noreply", "postmaster", "catchall"]
 
-    static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
+    public static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
         let isReplyingAll = action == .replyAll
         let recipientHolder = message.recipientsForReplyTo(replyAll: isReplyingAll, currentMailboxEmail: currentMailboxEmail)
 
