@@ -17,5 +17,6 @@ body {
 }
 
 a[data-ik-mention-ref] {
-    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
 }

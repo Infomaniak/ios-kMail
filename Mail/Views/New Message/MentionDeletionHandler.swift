@@ -54,7 +54,7 @@ final class MentionDeletionHandler: NSObject, WKScriptMessageHandler {
                 try? liveDraft.realm?.write {
                     for ref in refs {
                         guard let index = liveDraft.mentions.index(of: ref) else {
-                            return
+                            continue
                         }
 
                         liveDraft.mentions.remove(at: index)

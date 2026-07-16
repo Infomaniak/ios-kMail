@@ -357,17 +357,19 @@ struct ComposeMessageView: View {
                 return
             }
 
+            let query = mentionQuery
+
             let contacts = await mailboxManager.contactManager.searchAllAutocompletable(
-                matching: mentionQuery,
+                matching: query,
                 fetchLimit: 3,
                 shouldTrim: false
             )
 
+            guard !Task.isCancelled, mentionQuery == query else { return }
+
             let mergedContacts = contacts.compactMap { $0 as? MergedContact }
 
-            let recipients = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
-
-            mentionSuggestions = recipients
+            mentionSuggestions = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
         }
         .onAppear {
             attachmentsManager.importAttachments(

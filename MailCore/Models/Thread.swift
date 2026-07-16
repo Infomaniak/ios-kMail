@@ -234,7 +234,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     func updateMentions(currentMailbox: Mailbox) {
-        isMentioned = messages.contains { message in
+        isMentioned = messagesAndDuplicates.contains { message in
             guard !message.seen else { return false }
 
             return message.mentions.contains { mention in
