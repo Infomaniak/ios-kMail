@@ -148,6 +148,12 @@ struct MessageHeaderSummaryView: View {
                 }
                 .padding(.leading, value: .mini)
             }
+            if !isMessageExpanded && message.hasReminder {
+                VStack(alignment: .center) {
+                    ThreadCellChip(chipItem: .reminder)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .mailCustomAlert(item: $noReplyAlert) { state in
