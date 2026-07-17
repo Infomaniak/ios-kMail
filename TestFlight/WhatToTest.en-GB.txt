@@ -1,2 +1,3 @@
+- Mention people in email
 - Contact card
 - Bug fixes
