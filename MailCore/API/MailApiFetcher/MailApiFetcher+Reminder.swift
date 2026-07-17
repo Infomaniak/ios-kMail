@@ -20,9 +20,9 @@ import Alamofire
 import Foundation
 
 public extension MailApiFetcher {
-    func addReminder(mailboxUuid: String, folderId: String, messageId: String, reminderDelta: Int) async throws {
+    func addReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderDelta: Int) async throws {
         let _: Empty = try await perform(request: authenticatedRequest(
-            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId),
+            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId.toString()),
             method: .post,
             parameters: ["reminder_delta": reminderDelta]
         ))
@@ -31,20 +31,20 @@ public extension MailApiFetcher {
     func updateReminder(
         mailboxUuid: String,
         folderId: String,
-        messageId: String,
+        messageId: Int,
         reminderId: String,
         reminderDelta: Int
     ) async throws {
         let _: Empty = try await perform(request: authenticatedRequest(
-            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId, reminderId: reminderId),
+            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId.toString(), reminderId: reminderId),
             method: .put,
             parameters: ["reminder_delta": reminderDelta]
         ))
     }
 
-    func deleteReminder(mailboxUuid: String, folderId: String, messageId: String, reminderId: String) async throws {
+    func deleteReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderId: String) async throws {
         let _: Empty = try await perform(request: authenticatedRequest(
-            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId, reminderId: reminderId),
+            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId.toString(), reminderId: reminderId),
             method: .delete
         ))
     }

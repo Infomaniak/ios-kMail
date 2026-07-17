@@ -20,10 +20,13 @@ import Foundation
 
 public extension MailboxManager {
     func addReminder(message: Message, reminderDelta: Int) async throws {
+        guard let shortUid = message.shortUid else {
+            return
+        }
         try await apiFetcher.addReminder(
             mailboxUuid: mailbox.uuid,
             folderId: message.folderId,
-            messageId: message.uid,
+            messageId: shortUid,
             reminderDelta: reminderDelta
         )
         Task { try await refreshFolder(from: [message], additionalFolder: nil) }
@@ -33,13 +36,23 @@ public extension MailboxManager {
         guard let reminderId = message.reminder?.uuid else {
             throw MailError.missingReminderID
         }
+        guard let shortUid = message.shortUid else {
+            return
+        }
         try await apiFetcher.updateReminder(
             mailboxUuid: mailbox.uuid,
             folderId: message.folderId,
-            messageId: message.uid,
+            messageId: shortUid,
             reminderId: reminderId,
             reminderDelta: reminderDelta
         )
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+            let reminder = liveMessage.reminder ?? Reminder()
+            reminder.uuid = reminderId
+            reminder.date = Date().addingTimeInterval(TimeInterval(reminderDelta * 60))
+            liveMessage.reminder = reminder
+        }
         Task { try await refreshFolder(from: [message], additionalFolder: nil) }
     }
 
@@ -47,12 +60,19 @@ public extension MailboxManager {
         guard let reminderId = message.reminder?.uuid else {
             throw MailError.missingReminderID
         }
+        guard let shortUid = message.shortUid else {
+            return
+        }
         try await apiFetcher.deleteReminder(
             mailboxUuid: mailbox.uuid,
             folderId: message.folderId,
-            messageId: message.uid,
+            messageId: shortUid,
             reminderId: reminderId
         )
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+            liveMessage.reminder = nil
+        }
         Task { try await refreshFolder(from: [message], additionalFolder: nil) }
     }
 }
