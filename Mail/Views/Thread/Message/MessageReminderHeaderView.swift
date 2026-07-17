@@ -43,7 +43,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private var headerMessage: String {
-        let senderNames = senders.map(\.name)
+        let senderNames = senders.map { $0.name.isEmpty ? $0.email : $0.name }
         let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
         let formattedNames = formatNames(senderNames)
 
@@ -68,7 +68,7 @@ struct MessageReminderHeaderView: View {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
-                        formatNames(to.map(\.name)),
+                        formatNames(to.map { $0.name.isEmpty ? $0.email : $0.name }),
                         DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
                     ),
                     showBottomSeparator: showBottomSeparator
