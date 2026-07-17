@@ -214,15 +214,15 @@ public protocol MailApiSnoozeFetchable {
 }
 
 public protocol MailApiReminderFetchable {
-    func addReminder(mailboxUuid: String, folderId: String, messageId: String, reminderDelta: Int) async throws
+    func addReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderDelta: Int) async throws
 
     func updateReminder(
         mailboxUuid: String,
         folderId: String,
-        messageId: String,
+        messageId: Int,
         reminderId: String,
         reminderDelta: Int
     ) async throws
 
-    func deleteReminder(mailboxUuid: String, folderId: String, messageId: String, reminderId: String) async throws
+    func deleteReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderId: String) async throws
 }
