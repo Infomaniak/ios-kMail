@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "branch" : "feat/Get-phones-and-emails-in-UserProfile",
-        "revision" : "6455482d81d048d9b24ed6de7cd3edb20df9efc2"
+        "revision" : "c0bb8aec024f40da9d5f8698ce9d2b463d8c7b4f",
+        "version" : "19.1.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "chore/Bump-add-phones-and-emails-in-UserProfile",
-        "revision" : "97cf30469abc560cb15b8a0cefe5cdffb9c7166f"
+        "revision" : "08b0a7d9a6b8debff6ab8f2f6f525cfb1f0d1caa",
+        "version" : "10.1.2"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "53eb9bd5da18e208cfd80e86863d3f4c7ba21b1d",
-        "version" : "9.21.0"
+        "revision" : "67310f115f3fc1e5e1f2e262f9009c64bb387e3f",
+        "version" : "9.22.0"
       }
     },
     {
