@@ -588,10 +588,10 @@ public extension MailboxManager {
                 message.snoozeEndDate = nil
             }
 
-            try? freshThread.recomputeOrFail(currentAccountEmail: mailbox.email)
+            try? freshThread.recomputeOrFail(currentMailbox: mailbox)
             let duplicatesThreads = Set(freshThread.duplicates.flatMap { $0.threads })
             for duplicateThread in duplicatesThreads {
-                try? duplicateThread.recomputeOrFail(currentAccountEmail: mailbox.email)
+                try? duplicateThread.recomputeOrFail(currentMailbox: mailbox)
             }
         }
     }
@@ -658,7 +658,7 @@ public extension MailboxManager {
 
         let recomputedThreads = threadsToRecompute.filter { thread in
             do {
-                try thread.recomputeOrFail(currentAccountEmail: mailbox.email)
+                try thread.recomputeOrFail(currentMailbox: mailbox)
                 return true
             } catch {
                 realm.delete(thread)

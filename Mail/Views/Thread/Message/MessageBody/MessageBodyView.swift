@@ -24,6 +24,7 @@ import SwiftUI
 struct MessageBodyView: View {
     @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var threadViewState: ThreadViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingLoadingError = false
 
@@ -70,7 +71,8 @@ struct MessageBodyView: View {
                     presentableBody: messagesWorker.presentableBody(for: messageUid, isShowingTranslated: isShowingTranslated),
                     blockRemoteContent: isRemoteContentBlocked,
                     messageUid: messageUid,
-                    messageTheme: messageTheme
+                    messageTheme: messageTheme,
+                    mailboxAliases: mailboxManager.mailbox.aliases.toArray()
                 )
                 .id(messageTheme.cssProperty)
             }
@@ -97,4 +99,5 @@ struct MessageBodyView: View {
     )
     .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
     .environmentObject(ThreadViewState())
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

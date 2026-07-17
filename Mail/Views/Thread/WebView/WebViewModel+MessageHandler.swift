@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import Sentry
@@ -23,7 +25,7 @@ import WebKit
 
 extension WebViewModel: WKScriptMessageHandler {
     enum JavaScriptMessageTopic: String, CaseIterable {
-        case log, sizeChanged, overScroll, error
+        case log, sizeChanged, overScroll, error, mentionClicked
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -37,7 +39,35 @@ extension WebViewModel: WKScriptMessageHandler {
             sendOverScrollMessage(message)
         case .error:
             sendJavaScriptError(message)
+        case .mentionClicked:
+            handleMentionClicked(message)
         }
+    }
+
+    private func handleMentionClicked(_ message: WKScriptMessage) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .message, name: "showMentionDetails")
+        guard let payload = message.body as? String,
+              let data = payload.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode(DecodedMention.self, from: data),
+              !decoded.email.isEmpty else { return }
+
+        Task { @MainActor in
+            tappedMention = TappedMention(
+                email: decoded.email,
+                name: decoded.name,
+                rect: CGRect(x: decoded.x, y: decoded.y, width: decoded.width, height: decoded.height)
+            )
+        }
+    }
+
+    private struct DecodedMention: Decodable {
+        let email: String
+        let name: String
+        let x: Double
+        let y: Double
+        let width: Double
+        let height: Double
     }
 
     private func updateWebViewHeight(_ message: WKScriptMessage) {

@@ -253,6 +253,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var summary: String?
 
+    @Persisted public var mentions: List<String>
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -458,6 +460,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case emojiReactionNotAllowedReason
         case headers
         case acknowledge
+        case mentions
     }
 
     override init() {
@@ -487,7 +490,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
 
-        /// Preprocessing body with a ProxyBody
         let jsonBody = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
         body = jsonBody?.realmObject()
 
@@ -539,6 +541,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
+
+        if let mentions = try? values.decode(List<String>.self, forKey: .mentions) {
+            self.mentions = mentions
+        } else {
+            mentions = List()
+        }
     }
 
     public convenience init(
@@ -579,7 +587,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeEndDate: Date? = nil,
         emojiReaction: String? = nil,
         emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
-        acknowledge: String? = nil
+        acknowledge: String? = nil,
+        mentions: [String]
     ) {
         self.init()
 
@@ -622,6 +631,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.emojiReaction = emojiReaction
         self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
         self.acknowledge = acknowledge
+        self.mentions = mentions.toRealmList()
     }
 
     public func toThread() -> Thread {

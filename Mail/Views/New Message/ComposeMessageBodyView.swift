@@ -27,12 +27,10 @@ import RealmSwift
 import Sentry
 import SwiftModalPresentation
 import SwiftUI
-@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
-    static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
-
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingLink: SelectionLink?
@@ -41,14 +39,19 @@ struct ComposeMessageBodyView: View {
     @ObservedObject var textAttributes: TextAttributes
 
     @FocusState var focusedField: ComposeViewFieldType?
+
+    @State private var mentionDeletionHandler: MentionDeletionHandler?
+    @State private var mentionQueryHandler: MentionQueryHandler?
+
     @Binding var draftBody: String
-    let draft: Draft
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
+    @Binding var mentionQuery: String
+    let draft: Draft
+    let aliases: [String]
+    let editorBox: EditorBox
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
-
-    @Weak var editor: RichHTMLEditorView?
 
     let messageReply: MessageReply?
 
@@ -62,6 +65,10 @@ struct ComposeMessageBodyView: View {
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
+    private var customCSS: String {
+        return MessageWebViewUtils.loadCSS(for: .editor(aliases: aliases)).joined()
     }
 
     var body: some View {
@@ -84,7 +91,7 @@ struct ComposeMessageBodyView: View {
                            autoCorrectEnabled: !isEnvironmentCatalyst)
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
-                .editorCSS(Self.customCSS)
+                .editorCSS(customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
                 .mailCustomAlert(item: $isShowingLink) { link in
@@ -113,6 +120,9 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.fixEmailStyle)
 
+            if mailboxManager.featureFlagsManager.isEnabled(.mailComposeMention) {
+                activateMentions(for: editor)
+            }
             if inlineAttachmentHandler == nil {
                 let handler = InlineAttachmentHandler(attachmentsManager: attachmentsManager)
                 editor.webView.configuration.userContentController.add(handler, name: InlineAttachmentHandler.messageName)
@@ -121,11 +131,7 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
-            #if os(macOS) || targetEnvironment(macCatalyst)
-            Task { @MainActor in
-                self.editor = editor
-            }
-            #endif
+            editorBox.editor = editor
         }
     }
 
@@ -165,6 +171,26 @@ struct ComposeMessageBodyView: View {
             ])
         }
     }
+
+    private func activateMentions(for editor: RichHTMLEditorView) {
+        if mentionDeletionHandler == nil {
+            let handler = MentionDeletionHandler(draft: draft)
+            editor.webView.configuration.userContentController.add(handler, name: MentionDeletionHandler.messageName)
+            mentionDeletionHandler = handler
+        }
+        if mentionQueryHandler == nil {
+            let handler = MentionQueryHandler { query in
+                mentionQuery = query
+            }
+            editor.webView.configuration.userContentController.add(handler, name: MentionQueryHandler.messageName)
+            mentionQueryHandler = handler
+        }
+        editor.webView.loadUserScript(.editorMentionPointerEventHandler)
+        editor.webView.loadUserScript(.mentionCommon)
+        editor.webView.loadUserScript(.observeMention)
+        editor.webView.loadUserScript(.observeMentionDeletion)
+        editor.webView.loadUserScript(.insertMention)
+    }
 }
 
 #Preview {
@@ -173,10 +199,12 @@ struct ComposeMessageBodyView: View {
         textAttributes: TextAttributes(),
         focusedField: .init(),
         draftBody: .constant(""),
-        draft: draft,
         isShowingAI: .constant(false),
         selectedText: .constant(""),
-        editor: .init(wrappedValue: nil),
+        mentionQuery: .constant(""),
+        draft: draft,
+        aliases: [],
+        editorBox: EditorBox(),
         messageReply: nil
     )
     .environmentObject(AttachmentsManager(

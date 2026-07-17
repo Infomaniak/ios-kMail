@@ -72,6 +72,8 @@ public class Thread: Object, Decodable, Identifiable {
 
     @Persisted public var numberOfScheduledDraft = 0
 
+    @Persisted public var isMentioned = false
+
     public var id: String {
         return uid
     }
@@ -231,6 +233,16 @@ public class Thread: Object, Decodable, Identifiable {
                                                    featureAvailableProvider: featureAvailableProvider)
     }
 
+    func updateMentions(currentMailbox: Mailbox) {
+        isMentioned = messagesAndDuplicates.contains { message in
+            guard !message.seen else { return false }
+
+            return message.mentions.contains { mention in
+                currentMailbox.aliases.contains(mention)
+            }
+        }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case messages
@@ -332,7 +344,7 @@ public extension Thread {
     typealias MessageId = String
 
     /// Re-generate `Thread` properties given the messages it contains.
-    func recomputeOrFail(currentAccountEmail: String) throws {
+    func recomputeOrFail(currentMailbox: Mailbox) throws {
         messages = messages.sortedByDate().toRealmList()
         messagesToDisplay = List()
 
@@ -388,7 +400,7 @@ public extension Thread {
                 let hasAppliedReaction = applyReactionIfPossible(
                     from: message,
                     messagesById: messagesById,
-                    currentAccountEmail: currentAccountEmail
+                    currentAccountEmail: currentMailbox.email
                 )
 
                 message.isDisplayable = !(hasAppliedReaction || message.isDraft)
@@ -398,6 +410,8 @@ public extension Thread {
 
             updateSnooze(from: message)
         }
+
+        updateMentions(currentMailbox: currentMailbox)
 
         for duplicate in duplicates {
             if !duplicate.seen {

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Thu, 11 Jun 2026 08:46:12 +0200
+ * Exported by: Killian Mathias
+ * Exported at: Mon, 15 Jun 2026 13:05:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -630,6 +630,10 @@
 
 /* loco:667a9f52a0023c99b00c9ea2 */
 "contentDescriptionIconForward" = "Reenviado";
+
+/* loco:6a26ca31cd1868366600c4c2
+ * Used in accessibility labels for mention indicators */
+"contentDescriptionIconMention" = "Has sido mencionado.";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nuevo";
@@ -1481,7 +1485,7 @@
 "settingsCancellationPeriodDescription" = "Tiene la posibilidad de cancelar el envío de su correo electrónico hasta 30 segundos";
 
 /* loco:627a53b37b420855254af032 */
-"settingsCancellationPeriodTitle" = "Plazo de anulación del envío";
+"settingsCancellationPeriodTitle" = "Enviar plazo de anulación";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestión de datos";

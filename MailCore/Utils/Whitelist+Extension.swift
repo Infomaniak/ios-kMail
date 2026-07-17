@@ -57,7 +57,7 @@ extension Whitelist {
                     "var"
                 )
                 .addAttributes(":all", "class", "dir", "id", "style")
-                .addAttributes("a", "name")
+                .addAttributes("a", "name", "data-ik-mention-ref", "contenteditable")
                 // Allow all URI schemes in links. Removing all protocols makes the list of protocols empty which means allow all
                 // protocols
                 .removeProtocols("a", "href", "ftp", "http", "https", "mailto")
@@ -81,7 +81,6 @@ extension Whitelist {
                     "align", "background", "bgcolor", "colspan", "headers", "height", "nowrap", "rowspan", "scope",
                     "valign", "width"
                 )
-
             return customWhitelist
         } catch {
             fatalError("Couldn't init body whitelist")
