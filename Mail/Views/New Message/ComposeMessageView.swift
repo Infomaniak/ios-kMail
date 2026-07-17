@@ -206,9 +206,7 @@ struct ComposeMessageView: View {
                     focusedField: _focusedField,
                     autocompletionType: $autocompletionType,
                     currentSignature: $currentSignature,
-                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
-                    selectedReminderOption: $selectedReminderOption,
-                    selectedScheduleOption: $selectedScheduleOption
+                    isShowingSendOptionsPanel: $isShowingSendOptionsPanel
                 )
                 .environment(\.draftEncryption, draft.encrypted ?
                     .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :
@@ -452,10 +450,8 @@ struct ComposeMessageView: View {
         .sendOptionFloatingPanel(
             isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
-            initialDate: draft.scheduleDate,
-            selectedScheduleOption: $selectedScheduleOption,
-            selectedReminderOption: $selectedReminderOption,
-            selectedReminderVisibility: $selectedReminderVisibility
+            initialDate: Date.now,
+            draft: Binding(get: { draft }, set: { _ in })
         )
     }
 
@@ -577,19 +573,10 @@ struct ComposeMessageView: View {
 
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                if let scheduleDate = selectedScheduleOption?.date {
-                    liveDraft.scheduleDate = scheduleDate
+                if draft.scheduleDate != nil {
                     liveDraft.action = .schedule
                 } else {
                     liveDraft.action = .send
-                }
-
-                if let reminderOption = selectedReminderOption, let visibility = selectedReminderVisibility {
-                    liveDraft.reminderDelta = reminderOption.inMinutes
-                    liveDraft.shouldRemindRecipient = visibility == .recipientsAndMe
-                } else {
-                    liveDraft.reminderDelta = nil
-                    liveDraft.shouldRemindRecipient = nil
                 }
             }
         }
