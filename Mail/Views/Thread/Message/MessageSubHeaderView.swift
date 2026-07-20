@@ -43,7 +43,15 @@ struct MessageSubHeaderView: View {
         }
 
         if let reminder = message.reminder {
-            result.append(.reminder(reminderDate: reminder.date, canEdit: reminder.canEdit))
+            if let reminderDate = reminder.date {
+                result.append(.reminder(reminderDate: reminderDate, canEdit: reminder.canEdit))
+            } else if let delta = reminder.delta, let reminderDate = Calendar.current.date(
+                byAdding: .minute,
+                value: delta,
+                to: message.date
+            ) {
+                result.append(.reminder(reminderDate: reminderDate, canEdit: true))
+            }
         }
 
         if let spamType = spamTypeFor(message: message) {

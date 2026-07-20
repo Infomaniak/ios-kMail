@@ -255,6 +255,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var mentions: List<String>
     @Persisted public var reminder: Reminder?
+    @Persisted public var reminderAction: String?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -489,6 +490,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case acknowledge
         case mentions
         case reminder
+        case reminderAction
     }
 
     override init() {
@@ -577,6 +579,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             mentions = List()
         }
         reminder = try values.decodeIfPresent(Reminder.self, forKey: .reminder)
+        reminderAction = try values.decodeIfPresent(String.self, forKey: .reminderAction)
     }
 
     public convenience init(
