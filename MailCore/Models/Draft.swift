@@ -168,8 +168,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case encrypted
         case encryptionPassword
         case mentions
-        case reminderDelta
-        case shouldRemindRecipient = "reminderDisplay"
+        case reminder
+        case delta
+        case visibility
+        case reminderDelta = "reminder_delta"
+        case shouldRemindRecipient = "reminder_visibility"
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -208,8 +211,13 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         } else {
             mentions = List()
         }
-        reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
-        shouldRemindRecipient = try values.decodeIfPresent(Bool.self, forKey: .shouldRemindRecipient)
+        if let reminderPayload = try? values.nestedContainer(keyedBy: CodingKeys.self, forKey: .reminder) {
+            reminderDelta = try reminderPayload.decodeIfPresent(Int.self, forKey: .delta)
+            shouldRemindRecipient = try reminderPayload.decodeIfPresent(Bool.self, forKey: .visibility)
+        } else {
+            reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
+            shouldRemindRecipient = try values.decodeIfPresent(Bool.self, forKey: .shouldRemindRecipient)
+        }
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
