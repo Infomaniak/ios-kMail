@@ -522,7 +522,7 @@ struct ComposeMessageView: View {
 
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                if draft.scheduleDate != nil {
+                if liveDraft.scheduleDate != nil {
                     liveDraft.action = .schedule
                 } else {
                     liveDraft.action = .send
