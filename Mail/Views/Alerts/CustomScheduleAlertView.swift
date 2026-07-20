@@ -117,6 +117,9 @@ struct CustomScheduleAlertView: View {
         }
 
         confirmAction(selectedDate)
+        if let keyPath = type.lastCustomScheduleDateKeyPath {
+            UserDefaults.shared[keyPath: keyPath] = selectedDate
+        }
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: type.matomoCategory, name: "customScheduleConfirm")
     }

@@ -94,8 +94,6 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSendOptionsPanel = false
-    @State private var selectedScheduleOption: ScheduleOption?
-    @State private var selectedReminderOption: ReminderOption?
     @State private var selectedReminderVisibility: ReminderVisibility?
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
@@ -110,6 +108,7 @@ struct ComposeMessageView: View {
     @State private var mentionQuery = ""
     @State private var mentionSuggestions = [Recipient]()
     @State private var editorBox = EditorBox()
+    @State private var initialReminderDate: Date
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -184,6 +183,8 @@ struct ComposeMessageView: View {
             draft: draft,
             isReplying: messageReply?.isReplying == true
         ))
+
+        _initialReminderDate = State(wrappedValue: draft.scheduleDate ?? Date.now)
     }
 
     // MARK: - View
@@ -277,8 +278,8 @@ struct ComposeMessageView: View {
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText,
-                        selectedScheduleOption: selectedScheduleOption,
-                        selectedReminderOption: selectedReminderOption
+                        selectedScheduleOption: draft.scheduleOption,
+                        selectedReminderOption: draft.reminderOption
                     )
                     .environmentObject(attachmentsManager)
                 }
@@ -434,7 +435,7 @@ struct ComposeMessageView: View {
         .sendOptionFloatingPanel(
             isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
-            initialDate: Date.now,
+            initialDate: initialReminderDate,
             draft: Binding(get: { draft }, set: { _ in })
         )
     }

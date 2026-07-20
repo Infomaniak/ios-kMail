@@ -21,7 +21,7 @@ import Foundation
 public extension MailboxManager {
     func addReminder(message: Message, reminderDelta: Int) async throws {
         guard let shortUid = message.shortUid else {
-            return
+            throw MailError.localMessageNotFound
         }
         try await apiFetcher.addReminder(
             mailboxUuid: mailbox.uuid,
@@ -37,7 +37,7 @@ public extension MailboxManager {
             throw MailError.missingReminderID
         }
         guard let shortUid = message.shortUid else {
-            return
+            throw MailError.localMessageNotFound
         }
         try await apiFetcher.updateReminder(
             mailboxUuid: mailbox.uuid,
@@ -61,7 +61,7 @@ public extension MailboxManager {
             throw MailError.missingReminderID
         }
         guard let shortUid = message.shortUid else {
-            return
+            throw MailError.localMessageNotFound
         }
         try await apiFetcher.deleteReminder(
             mailboxUuid: mailbox.uuid,
