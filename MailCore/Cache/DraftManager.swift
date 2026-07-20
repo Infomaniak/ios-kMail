@@ -246,7 +246,6 @@ public final class DraftManager {
                 let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
 
                 if let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
-                    UserDefaults.shared.lastCustomScheduledDraftDate = date
                     showScheduledSnackBar(
                         date: date,
                         scheduleAction: scheduleResponse.scheduleAction,

@@ -62,9 +62,6 @@ struct SendOptionFloatingPanelView: View {
 
     private var scheduleOptions: [ScheduleOption] {
         var seenDateOptions = Set<Date>()
-        if let initialDate {
-            seenDateOptions.insert(initialDate)
-        }
 
         var filteredOptions = ScheduleOption.allPresetOptions.filter { option in
             guard option.canBeDisplayed, let date = option.date else { return false }
@@ -200,8 +197,8 @@ struct SendOptionFloatingPanelView: View {
         .onChange(of: isReminderEnabled) { newValue in
             if newValue {
                 // Auto-select first option when toggled ON
-                draft.setReminderOption(.oneDay, mailboxManager: mailboxManager)
-                draft.setReminderVisibility(.recipientsAndMe, mailboxManager: mailboxManager)
+                draft.setReminderOption(draft.reminderOption ?? .oneDay, mailboxManager: mailboxManager)
+                draft.setReminderVisibility(draft.reminderVisibility ?? .recipientsAndMe, mailboxManager: mailboxManager)
             } else {
                 // Reset when toggled OFF
                 draft.setReminderOption(nil, mailboxManager: mailboxManager)
@@ -211,7 +208,7 @@ struct SendOptionFloatingPanelView: View {
         .onChange(of: isScheduleEnabled) { newValue in
             if newValue {
                 // Auto-select first available option when toggled ON
-                draft.setScheduleOption(scheduleOptions.first, mailboxManager: mailboxManager)
+                draft.setScheduleOption(draft.scheduleOption ?? scheduleOptions.first, mailboxManager: mailboxManager)
             } else {
                 // Reset when toggled OFF
                 draft.setScheduleOption(nil, mailboxManager: mailboxManager)
