@@ -22,7 +22,42 @@ import RealmSwift
 public class Reminder: EmbeddedObject, Codable {
     /// UUID of the reminder. Only present when the current user is the creator of the reminder.
     @Persisted public var uuid: String?
-    @Persisted public var date: Date
+    @Persisted public var date: Date?
+
+    // If a message is scheduled we will have access to this data to show reminder header
+    @Persisted public var delta: Int?
+    @Persisted public var visibility: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case uuid
+        case date
+        case delta
+        case display
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let delta = try? container.decodeIfPresent(Int.self, forKey: .delta) {
+            self.delta = delta
+            visibility = try? container.decodeIfPresent(Bool.self, forKey: .display)
+        } else {
+            uuid = try? container.decodeIfPresent(String.self, forKey: .uuid)
+            date = try? container.decodeIfPresent(Date.self, forKey: .date)
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try? container.encodeIfPresent(uuid, forKey: .uuid)
+        try? container.encodeIfPresent(date, forKey: .date)
+        try? container.encodeIfPresent(delta, forKey: .delta)
+        try? container.encodeIfPresent(visibility, forKey: .display)
+    }
 
     public var canEdit: Bool {
         return uuid != nil

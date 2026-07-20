@@ -48,4 +48,19 @@ public extension MailApiFetcher {
             method: .delete
         ))
     }
+
+    func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
+            .resource(reminderResource),
+            method: .put,
+            parameters: ["reminder_delta": reminderDelta]
+        ))
+    }
+
+    func deleteDraftReminder(reminderResource: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
+            .resource(reminderResource),
+            method: .delete
+        ))
+    }
 }
