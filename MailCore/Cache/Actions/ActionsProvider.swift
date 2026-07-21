@@ -275,9 +275,9 @@ public class ActionsProvider: ObservableObject {
     }
 
     private func reminderActions(_ message: Message) -> [Action] {
-//        guard featureAvailableProvider.isAvailable(.reminder) else {
-//            return []
-//        }
+        guard featureAvailableProvider.isAvailable(.reminder) else {
+            return []
+        }
         guard !message.hasReminder else {
             return []
         }

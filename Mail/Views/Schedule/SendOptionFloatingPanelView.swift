@@ -96,58 +96,60 @@ struct SendOptionFloatingPanelView: View {
 
             IKDivider(type: .item)
 
-            Toggle(isOn: $isReminderEnabled) {
-                Label {
-                    Text(ScheduleType.reminder(type: .option).floatingPanelTitle)
-                } icon: {
-                    MailResourcesAsset.alarmClock.iconSize(.large)
-                        .foregroundStyle(Color.accentColor)
-                }
-            }
-            .tint(.accentColor)
-            .padding(value: .medium)
-
-            if isReminderEnabled {
-                ReminderVisibilityCell(
-                    visibility: draft.reminderVisibility ?? .recipientsAndMe,
-                    isSelected: false,
-                    isInModal: false
-                ) {
-                    if isCustomOptionLimited {
-                        showUpgradeBottomSheet()
-                    } else {
-                        customAlertType = .reminder(type: .visibility)
-                        isShowingCustomScheduleAlert = true
+            if mailboxManager.featureAvailableProvider.isAvailable(.reminder) {
+                Toggle(isOn: $isReminderEnabled) {
+                    Label {
+                        Text(ScheduleType.reminder(type: .option).floatingPanelTitle)
+                    } icon: {
+                        MailResourcesAsset.alarmClock.iconSize(.large)
+                            .foregroundStyle(Color.accentColor)
                     }
                 }
+                .tint(.accentColor)
+                .padding(value: .medium)
 
-                IKDivider(type: .item)
-                VStack(spacing: 0) {
-                    ForEach(ReminderOption.presetCases, id: \.self) { option in
-                        ReminderCell(
-                            option: option,
-                            isSelected: draft.reminderOption == option
-                        ) {
-                            draft.setReminderOption(option, mailboxManager: mailboxManager)
-                        }
-                    }
-
-                    ReminderCell(
-                        option: displayedReminderOption,
-                        isSelected: draft.reminderOption?.isCustom == true,
-                        showUpgradeChip: isCustomOptionLimited
+                if isReminderEnabled {
+                    ReminderVisibilityCell(
+                        visibility: draft.reminderVisibility ?? .recipientsAndMe,
+                        isSelected: false,
+                        isInModal: false
                     ) {
                         if isCustomOptionLimited {
                             showUpgradeBottomSheet()
                         } else {
-                            customAlertType = .reminder(type: .option)
+                            customAlertType = .reminder(type: .visibility)
                             isShowingCustomScheduleAlert = true
                         }
                     }
-                }
-            }
 
-            IKDivider(type: .item)
+                    IKDivider(type: .item)
+                    VStack(spacing: 0) {
+                        ForEach(ReminderOption.presetCases, id: \.self) { option in
+                            ReminderCell(
+                                option: option,
+                                isSelected: draft.reminderOption == option
+                            ) {
+                                draft.setReminderOption(option, mailboxManager: mailboxManager)
+                            }
+                        }
+
+                        ReminderCell(
+                            option: displayedReminderOption,
+                            isSelected: draft.reminderOption?.isCustom == true,
+                            showUpgradeChip: isCustomOptionLimited
+                        ) {
+                            if isCustomOptionLimited {
+                                showUpgradeBottomSheet()
+                            } else {
+                                customAlertType = .reminder(type: .option)
+                                isShowingCustomScheduleAlert = true
+                            }
+                        }
+                    }
+                }
+
+                IKDivider(type: .item)
+            }
 
             Toggle(isOn: $isScheduleEnabled) {
                 Label {
