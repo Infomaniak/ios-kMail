@@ -346,10 +346,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return reminder != nil
     }
 
-    public var showReminderChip: Bool {
-        return hasReminder && !seen
-    }
-
     public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
         if featureAvailableProvider.isAvailable(.emojiReaction) {
             return !isDraft && isDisplayable
