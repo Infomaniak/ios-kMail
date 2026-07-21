@@ -104,7 +104,6 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSendOptionsPanel = false
-    @State private var selectedReminderVisibility: ReminderVisibility?
     @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
     @State private var isShowingMailPremiumPanel = false
@@ -452,7 +451,7 @@ struct ComposeMessageView: View {
             isPresented: $isShowingSendOptionsPanel,
             isUpdating: false,
             initialDate: initialReminderDate,
-            draft: Binding(get: { draft }, set: { _ in })
+            draft: draft
         )
     }
 

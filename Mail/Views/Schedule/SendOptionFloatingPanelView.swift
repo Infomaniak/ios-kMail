@@ -24,6 +24,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import MyKSuite
+import RealmSwift
 import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
@@ -35,9 +36,10 @@ struct SendOptionFloatingPanelView: View {
     @Binding var isShowingMailPremiumUpgrade: Bool
     @Binding var isReminderEnabled: Bool
     @Binding var isScheduleEnabled: Bool
-    @Binding var draft: Draft
     @Binding var customAlertType: ScheduleType
     @Binding var contentHeight: CGFloat
+
+    @ObservedRealmObject var draft: Draft
 
     let initialDate: Date?
 
@@ -251,9 +253,9 @@ struct SendOptionFloatingPanelView: View {
         isShowingMailPremiumUpgrade: .constant(false),
         isReminderEnabled: .constant(true),
         isScheduleEnabled: .constant(true),
-        draft: .constant(Draft()),
         customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
+        draft: Draft(),
         initialDate: nil
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)

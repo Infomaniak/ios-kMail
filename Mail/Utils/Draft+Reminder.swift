@@ -25,8 +25,8 @@ extension Draft {
     private static let daysInMinutes = 24 * hoursInMinutes
 
     var reminderOption: ReminderOption? {
-        guard let reminderDelta else { return nil }
-        switch reminderDelta {
+        guard let reminder else { return nil }
+        switch reminder.delta {
         case ReminderOption.oneDay.inMinutes:
             return .oneDay
         case ReminderOption.threeDays.inMinutes:
@@ -34,10 +34,10 @@ extension Draft {
         case ReminderOption.sevenDays.inMinutes:
             return .sevenDays
         default:
-            if let hours = getValue(for: reminderDelta, divisor: Self.hoursInMinutes, range: 1 ... 23) {
+            if let hours = getValue(for: reminder.delta, divisor: Self.hoursInMinutes, range: 1 ... 23) {
                 return .customHours(hours)
             }
-            if let days = getValue(for: reminderDelta, divisor: Self.daysInMinutes, range: 1 ... 30) {
+            if let days = getValue(for: reminder.delta, divisor: Self.daysInMinutes, range: 1 ... 30) {
                 return .customDays(days)
             }
             return nil
@@ -47,19 +47,29 @@ extension Draft {
     func setReminderOption(_ option: ReminderOption?, mailboxManager: MailboxManager) {
         try? mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: localUUID) else { return }
-            liveDraft.reminderDelta = option?.inMinutes
+
+            guard let minutes = option?.inMinutes else {
+                liveDraft.reminder = nil
+                return
+            }
+
+            liveDraft.reminder = DraftReminder(delta: minutes, display: liveDraft.reminder?.display ?? true)
         }
     }
 
     var reminderVisibility: ReminderVisibility? {
-        guard let shouldRemindRecipient else { return nil }
-        return shouldRemindRecipient ? .recipientsAndMe : .onlyMe
+        guard let reminder else { return nil }
+        return reminder.display ? .recipientsAndMe : .onlyMe
     }
 
     func setReminderVisibility(_ visibility: ReminderVisibility?, mailboxManager: MailboxManager) {
         try? mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: localUUID) else { return }
-            liveDraft.shouldRemindRecipient = visibility.map { $0 == .recipientsAndMe }
+
+            liveDraft.reminder = DraftReminder(
+                delta: liveDraft.reminder?.delta ?? 1440,
+                display: visibility.map { $0 == .recipientsAndMe } == true
+            )
         }
     }
 
