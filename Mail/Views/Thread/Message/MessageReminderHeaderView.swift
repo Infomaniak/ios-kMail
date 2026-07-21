@@ -99,7 +99,11 @@ struct MessageReminderHeaderView: View {
             } else if canEdit && reminderDate >= .now {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(reminderDate.formatted(.messageHeader)),
+                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitleWithDate(DateFormatter.localizedString(
+                        from: reminderDate,
+                        dateStyle: .full,
+                        timeStyle: .short
+                    )),
                     showBottomSeparator: showBottomSeparator
                 ) {
                     HStack {
