@@ -93,8 +93,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var emojiReaction: String?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
-    @Persisted public var reminderDelta: Int?
-    @Persisted public var shouldRemindRecipient: Bool?
+    @Persisted public var reminder: DraftReminder?
 
     public var allRecipients: [Recipient] {
         return to.toArray() + cc.toArray() + bcc.toArray()
@@ -167,10 +166,6 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case encrypted
         case encryptionPassword
         case reminder
-        case delta
-        case visibility
-        case reminderDelta = "reminder_delta"
-        case shouldRemindRecipient = "reminder_display"
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -204,13 +199,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
-        if let reminderPayload = try? values.nestedContainer(keyedBy: CodingKeys.self, forKey: .reminder) {
-            reminderDelta = try reminderPayload.decodeIfPresent(Int.self, forKey: .delta)
-            shouldRemindRecipient = try reminderPayload.decodeIfPresent(Bool.self, forKey: .visibility)
-        } else {
-            reminderDelta = try values.decodeIfPresent(Int.self, forKey: .reminderDelta)
-            shouldRemindRecipient = try values.decodeIfPresent(Bool.self, forKey: .shouldRemindRecipient)
-        }
+        reminder = try values.decodeIfPresent(DraftReminder.self, forKey: .reminder)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -235,7 +224,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                             action: SaveDraftOption? = nil,
                             emojiReaction: String? = nil,
                             encrypted: Bool = false,
-                            shouldRemindRecipient: Bool? = nil) {
+                            reminder: DraftReminder? = nil) {
         self.init()
 
         self.localUUID = localUUID
@@ -261,7 +250,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         self.emojiReaction = emojiReaction
         self.encrypted = encrypted
         encryptionPassword = ""
-        self.shouldRemindRecipient = shouldRemindRecipient
+        self.reminder = reminder
     }
 
     public static func mailTo(urlComponents: URLComponents) -> Draft {
@@ -360,8 +349,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
-        try container.encodeIfPresent(reminderDelta, forKey: .reminderDelta)
-        try container.encodeIfPresent(shouldRemindRecipient, forKey: .shouldRemindRecipient)
+        try container.encodeIfPresent(reminder, forKey: .reminder)
     }
 }
 

@@ -161,7 +161,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 BookableResource.self,
                 MessageReaction.self,
                 ReactionAuthor.self,
-                Reminder.self
+                Reminder.self,
+                DraftReminder.self
             ]
         )
 
