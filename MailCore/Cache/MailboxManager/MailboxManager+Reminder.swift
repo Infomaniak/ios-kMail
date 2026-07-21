@@ -33,7 +33,7 @@ public extension MailboxManager {
     }
 
     func updateReminder(message: Message, reminderDelta: Int) async throws {
-        if let reminderAction = message.reminderAction {
+        if let reminderAction = message.reminderAction, message.scheduleDate != nil {
             try await apiFetcher.updateDraftReminder(reminderResource: reminderAction, reminderDelta: reminderDelta)
 
             try? writeTransaction { writableRealm in
@@ -69,7 +69,7 @@ public extension MailboxManager {
     }
 
     func deleteReminder(message: Message) async throws {
-        if let reminderAction = message.reminderAction {
+        if let reminderAction = message.reminderAction, message.scheduleDate != nil {
             try await apiFetcher.deleteDraftReminder(reminderResource: reminderAction)
         } else {
             guard let reminderId = message.reminder?.uuid else {
