@@ -568,6 +568,9 @@
 /* loco:6a43bb24b9f14ec0ce0ae566 */
 "callIfNoResponseHeaderTitle" = "Recordarme si no hay respuesta: %@ después del envío";
 
+/* loco:6a5f33ce29cbe8192b0c3032 */
+"callIfNoResponseHeaderTitleWithDate" = "Recuérdame si no hay respuesta: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 

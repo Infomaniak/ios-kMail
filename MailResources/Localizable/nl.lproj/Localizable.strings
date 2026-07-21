@@ -568,6 +568,9 @@
 /* loco:6a43bb24b9f14ec0ce0ae566 */
 "callIfNoResponseHeaderTitle" = "Herinner me als er geen reactie is: %@ na verzending";
 
+/* loco:6a5f33ce29cbe8192b0c3032 */
+"callIfNoResponseHeaderTitleWithDate" = "Herinner me als er geen reactie is: %s";
+
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
 
