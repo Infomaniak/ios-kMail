@@ -20,6 +20,7 @@ import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
 extension View {
@@ -28,7 +29,7 @@ extension View {
         isUpdating: Bool,
         initialDate: Date? = nil,
         dismissView: (() -> Void)? = nil,
-        draft: Binding<Draft>
+        draft: Draft
     ) -> some View {
         modifier(
             SendOptionFloatingPanel(
@@ -57,7 +58,7 @@ struct SendOptionFloatingPanel: ViewModifier {
     @State private var customAlertType: ScheduleType = .scheduledDraft
 
     @Binding var isShowingFloatingPanel: Bool
-    @Binding var draft: Draft
+    @ObservedRealmObject var draft: Draft
 
     let isUpdating: Bool
     let initialDate: Date?
@@ -82,9 +83,9 @@ struct SendOptionFloatingPanel: ViewModifier {
                         isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                         isReminderEnabled: $isReminderEnabled,
                         isScheduleEnabled: $isScheduleEnabled,
-                        draft: $draft,
                         customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
+                        draft: draft,
                         initialDate: initialDate
                     )
                 }
