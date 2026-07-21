@@ -170,7 +170,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case delta
         case visibility
         case reminderDelta = "reminder_delta"
-        case shouldRemindRecipient = "reminder_visibility"
+        case shouldRemindRecipient = "reminder_display"
     }
 
     override public init() { /* Realm needs an empty constructor */ }
