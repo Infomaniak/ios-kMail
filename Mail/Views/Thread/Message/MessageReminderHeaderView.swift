@@ -28,7 +28,8 @@ struct MessageReminderHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var isShowingReschedulePanel = false
 
-    let reminderDate: Date
+    let reminderDate: Date?
+    let reminderDelta: Int?
     let message: Message
     let canEdit: Bool
     let showBottomSeparator: Bool
@@ -44,6 +45,7 @@ struct MessageReminderHeaderView: View {
 
     private var headerMessage: String {
         let senderNames = senders.map { $0.name.isEmpty ? $0.email : $0.name }
+        guard let reminderDate else { return "" }
         let formattedDate = DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
         let formattedNames = formatNames(senderNames)
 
@@ -62,48 +64,88 @@ struct MessageReminderHeaderView: View {
         }
     }
 
+    private var headerMessageForDelta: String {
+        guard let reminderDelta else { return "" }
+        if reminderDelta % 24 == 0 {
+            let days = reminderDelta / (24 * 60)
+            if days == 1 {
+                return MailResourcesStrings.Localizable.daysBeforeSendingReminder(days)
+            }
+            return MailResourcesStrings.Localizable.daysBeforeSendingReminderPlural(days)
+        } else {
+            let hours = reminderDelta / 60
+            if hours == 1 {
+                return MailResourcesStrings.Localizable.hoursBeforeSendingReminderPlural(hours)
+            }
+            return MailResourcesStrings.Localizable.hoursBeforeSendingReminder(hours)
+        }
+    }
+
     var body: some View {
         Group {
-            if canEdit && reminderDate < .now {
-                MessageHeaderActionView(
-                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
-                        formatNames(to.map { $0.name.isEmpty ? $0.email : $0.name }),
-                        DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
-                    ),
-                    showBottomSeparator: showBottomSeparator
-                ) {
-                    ViewThatFits(in: .horizontal) {
-                        HStack {
-                            Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
-                            MessageHeaderDivider()
-                            Button(MailResourcesStrings.Localizable.buttonReschedule) {
-                                isShowingReschedulePanel = true
-                            }
-                            MessageHeaderDivider()
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
-                        }
-
-                        VStack(alignment: .leading) {
+            if let reminderDate {
+                if canEdit && reminderDate < .now {
+                    MessageHeaderActionView(
+                        icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                        message: MailResourcesStrings.Localizable.reminderNoResponseHeaderTitle(
+                            formatNames(to.map { $0.name.isEmpty ? $0.email : $0.name }),
+                            DateFormatter.localizedString(from: reminderDate, dateStyle: .full, timeStyle: .short)
+                        ),
+                        showBottomSeparator: showBottomSeparator
+                    ) {
+                        ViewThatFits(in: .horizontal) {
                             HStack {
                                 Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
                                 MessageHeaderDivider()
                                 Button(MailResourcesStrings.Localizable.buttonReschedule) {
                                     isShowingReschedulePanel = true
                                 }
+                                MessageHeaderDivider()
+                                Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
                             }
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Button(MailResourcesStrings.Localizable.reminderFollowUpButton, action: followUpAction)
+                                    MessageHeaderDivider()
+                                    Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                                        isShowingReschedulePanel = true
+                                    }
+                                }
+                                Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                            }
                         }
                     }
+                } else if canEdit && reminderDate >= .now {
+                    MessageHeaderActionView(
+                        icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                        message: MailResourcesStrings.Localizable
+                            .callIfNoResponseHeaderTitleWithDate(DateFormatter.localizedString(
+                                from: reminderDate,
+                                dateStyle: .full,
+                                timeStyle: .short
+                            )),
+                        showBottomSeparator: showBottomSeparator
+                    ) {
+                        HStack {
+                            Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                                isShowingReschedulePanel = true
+                            }
+                            MessageHeaderDivider()
+                            Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
+                        }
+                    }
+                } else {
+                    MessageHeaderActionView(
+                        icon: MailResourcesAsset.alarmClock.swiftUIImage,
+                        message: headerMessage,
+                        showBottomSeparator: showBottomSeparator
+                    ) {}
                 }
-            } else if canEdit && reminderDate >= .now {
+            } else {
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitleWithDate(DateFormatter.localizedString(
-                        from: reminderDate,
-                        dateStyle: .full,
-                        timeStyle: .short
-                    )),
+                    message: MailResourcesStrings.Localizable.callIfNoResponseHeaderTitle(headerMessageForDelta),
                     showBottomSeparator: showBottomSeparator
                 ) {
                     HStack {
@@ -114,12 +156,6 @@ struct MessageReminderHeaderView: View {
                         Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
                     }
                 }
-            } else {
-                MessageHeaderActionView(
-                    icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: headerMessage,
-                    showBottomSeparator: showBottomSeparator
-                ) {}
             }
         }
         .reminderFloatingPanel(
@@ -170,7 +206,7 @@ struct MessageReminderHeaderView: View {
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderDate: .now, message: PreviewHelper.sampleMessage, canEdit: true,
+    MessageReminderHeaderView(reminderDate: .now, reminderDelta: nil, message: PreviewHelper.sampleMessage, canEdit: true,
                               showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
