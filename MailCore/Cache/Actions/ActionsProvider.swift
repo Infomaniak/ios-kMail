@@ -166,7 +166,7 @@ public class ActionsProvider: ObservableObject {
 
         let isFromMe = message.fromMe(currentMailboxEmail: currentEmail)
 
-        let snoozedActions = origin.frozenFolder?.role == .sent ? reminderActions(message) : snoozedActions(
+        let snoozedActions = origin.frozenFolder?.role == .sent ? reminderActions(for: message, origin: origin) : snoozedActions(
             [message],
             folder: origin.frozenFolder
         )
@@ -279,11 +279,11 @@ public class ActionsProvider: ObservableObject {
         }
     }
 
-    private func reminderActions(_ message: Message) -> [Action] {
+    private func reminderActions(for message: Message, origin: ActionOrigin) -> [Action] {
         guard featureAvailableProvider.isAvailable(.reminder) else {
             return []
         }
-        guard !message.hasReminder else {
+        guard !message.hasReminder, origin.thread?.messages.last?.id == message.id else {
             return []
         }
         return [.addReminder]
