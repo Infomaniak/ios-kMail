@@ -85,8 +85,7 @@ struct SendOptionFloatingPanel: ViewModifier {
                         isScheduleEnabled: $isScheduleEnabled,
                         customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
-                        draft: draft,
-                        initialDate: initialDate
+                        draft: draft
                     )
                 }
                 .scrollBounceBehavior(.basedOnSize)

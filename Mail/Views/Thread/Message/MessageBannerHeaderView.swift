@@ -106,7 +106,6 @@ struct MessageBannerHeaderView: View {
                 MessageReminderHeaderView(
                     reminderState: computeReminderState(from: reminderDate, canEdit: canEdit, message: message),
                     message: message,
-                    canEdit: canEdit,
                     showBottomSeparator: showBottomSeparator,
                     followUpAction: followUp
                 )
@@ -114,7 +113,6 @@ struct MessageBannerHeaderView: View {
                 MessageReminderHeaderView(
                     reminderState: .scheduled(deltaMinutes: reminderDelta),
                     message: message,
-                    canEdit: true,
                     showBottomSeparator: showBottomSeparator,
                     followUpAction: followUp
                 )

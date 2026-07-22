@@ -283,7 +283,7 @@ public class ActionsProvider: ObservableObject {
         guard featureAvailableProvider.isAvailable(.reminder) else {
             return []
         }
-        guard !message.hasReminder, origin.thread?.messages.last?.id == message.id else {
+        guard !message.hasReminder, origin.thread?.messages.last?.id == message.id || origin.thread == nil else {
             return []
         }
         return [.addReminder]
