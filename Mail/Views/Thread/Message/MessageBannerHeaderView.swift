@@ -102,8 +102,7 @@ struct MessageBannerHeaderView: View {
                 }
             case .reminder(let reminderDate, let canEdit):
                 MessageReminderHeaderView(
-                    reminderDate: reminderDate,
-                    reminderDelta: nil,
+                    reminderState: computeReminderState(from: reminderDate, canEdit: canEdit, message: message),
                     message: message,
                     canEdit: canEdit,
                     showBottomSeparator: showBottomSeparator,
@@ -111,8 +110,7 @@ struct MessageBannerHeaderView: View {
                 )
             case .reminderWithSchedule(let reminderDelta):
                 MessageReminderHeaderView(
-                    reminderDate: nil,
-                    reminderDelta: reminderDelta,
+                    reminderState: .scheduled(deltaMinutes: reminderDelta),
                     message: message,
                     canEdit: true,
                     showBottomSeparator: showBottomSeparator,
@@ -175,6 +173,22 @@ struct MessageBannerHeaderView: View {
         Task { @MainActor in
             mainViewState.composeMessageIntent = .followUp(message: message, originMailboxManager: mailboxManager)
         }
+    }
+
+    private func computeReminderState(from reminderDate: Date, canEdit: Bool, message: Message) -> ReminderBannerState {
+        var reminderState: ReminderBannerState
+        if canEdit {
+            if reminderDate > .now {
+                reminderState = .futureEditable(date: reminderDate)
+            } else {
+                let recipients = message.to.toArray().map { $0.name.isEmpty ? $0.email : $0.name }
+                reminderState = .pastEditable(date: reminderDate, recipients: recipients)
+            }
+        } else {
+            let senders = message.from.toArray().map { $0.name.isEmpty ? $0.email : $0.name }
+            reminderState = .displayOnly(date: reminderDate, senders: senders)
+        }
+        return reminderState
     }
 }
 
