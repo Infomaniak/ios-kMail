@@ -30,14 +30,13 @@ struct MessageReminderHeaderView: View {
 
     let reminderState: ReminderBannerState
     let message: Message
-    let canEdit: Bool
     let showBottomSeparator: Bool
     let followUpAction: () -> Void
 
     var body: some View {
         Group {
             switch reminderState {
-            case .pastEditable(let date, let recipients):
+            case .pastEditable:
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderState.title,
@@ -66,7 +65,7 @@ struct MessageReminderHeaderView: View {
                         }
                     }
                 }
-            case .futureEditable(let date):
+            case .futureEditable:
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderState.title,
@@ -80,7 +79,7 @@ struct MessageReminderHeaderView: View {
                         Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
                     }
                 }
-            case .scheduled(let deltaMinutes):
+            case .scheduled:
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderState.title,
@@ -94,7 +93,7 @@ struct MessageReminderHeaderView: View {
                         Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: removeReminder)
                     }
                 }
-            case .displayOnly(let date, let senders):
+            case .displayOnly:
                 MessageHeaderActionView(
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderState.title,
@@ -136,7 +135,7 @@ struct MessageReminderHeaderView: View {
 }
 
 #Preview {
-    MessageReminderHeaderView(reminderState: .scheduled(deltaMinutes: 60), message: PreviewHelper.sampleMessage, canEdit: true,
+    MessageReminderHeaderView(reminderState: .scheduled(deltaMinutes: 60), message: PreviewHelper.sampleMessage,
                               showBottomSeparator: true) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(MainViewState(
