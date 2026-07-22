@@ -39,7 +39,6 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var draftManager: DraftManager
 
     @StateObject private var rootViewState = RootViewState()
 
@@ -78,13 +77,6 @@ struct UserAccountScene: Scene {
             reviewManager.decreaseActionUntilReview()
         }
         checkAppVersion()
-
-        if case .mainView(_, let mainViewState) = rootViewState.state {
-            draftManager.startSyncDraft(
-                mailboxManager: mainViewState.mailboxManager,
-                showSnackbar: true
-            )
-        }
     }
 
     private func didEnterBackground() {

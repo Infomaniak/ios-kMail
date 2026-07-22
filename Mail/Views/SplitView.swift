@@ -58,6 +58,7 @@ struct SplitView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var quickActionsManager: QuickActionsManager
+    @LazyInjectService private var draftManager: DraftManager
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -245,6 +246,11 @@ struct SplitView: View {
             Task {
                 try? await mailboxManager.featureFlagsManager.fetchFlags()
             }
+
+            draftManager.startSyncDraft(
+                mailboxManager: mainViewState.mailboxManager,
+                showSnackbar: false
+            )
 
             guard !platformDetector.isDebug else { return }
             mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : await shouldShowSync()
