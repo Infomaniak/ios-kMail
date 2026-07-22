@@ -45,13 +45,8 @@ struct MessageSubHeaderView: View {
         if let reminder = message.reminder {
             if let reminderDate = reminder.date {
                 result.append(.reminder(reminderDate: reminderDate, canEdit: reminder.canEdit))
-            } else if let delta = reminder.delta, let scheduleDate = message.scheduleDate,
-                      let reminderDate = Calendar.current.date(
-                          byAdding: .minute,
-                          value: delta,
-                          to: scheduleDate
-                      ) {
-                result.append(.reminder(reminderDate: reminderDate, canEdit: true))
+            } else if let delta = reminder.delta {
+                result.append(.reminderWithSchedule(reminderDelta: delta))
             }
         }
 

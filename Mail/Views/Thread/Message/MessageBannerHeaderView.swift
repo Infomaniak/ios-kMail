@@ -103,8 +103,18 @@ struct MessageBannerHeaderView: View {
             case .reminder(let reminderDate, let canEdit):
                 MessageReminderHeaderView(
                     reminderDate: reminderDate,
+                    reminderDelta: nil,
                     message: message,
                     canEdit: canEdit,
+                    showBottomSeparator: showBottomSeparator,
+                    followUpAction: followUp
+                )
+            case .reminderWithSchedule(let reminderDelta):
+                MessageReminderHeaderView(
+                    reminderDate: nil,
+                    reminderDelta: reminderDelta,
+                    message: message,
+                    canEdit: true,
                     showBottomSeparator: showBottomSeparator,
                     followUpAction: followUp
                 )
