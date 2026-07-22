@@ -4,7 +4,7 @@
  * Locale: pt, Portuguese
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Wed, 08 Jul 2026 09:52:38 +0200
+ * Exported at: Wed, 22 Jul 2026 16:26:29 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -69,6 +69,9 @@
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Imprimir";
+
+/* loco:6a60b00b94360d81b4066d12 */
+"actionReminder" = "Lembrar-me";
 
 /* loco:67247bd43e094b31a70e2272 */
 "actionRename" = "Renomear";
@@ -569,7 +572,7 @@
 "callIfNoResponseHeaderTitle" = "Lembrar-me se não houver resposta: %@ após o envio";
 
 /* loco:6a5f33ce29cbe8192b0c3032 */
-"callIfNoResponseHeaderTitleWithDate" = "Lembrar-me se não houver resposta: %s";
+"callIfNoResponseHeaderTitleWithDate" = "Lembrar-me se não houver resposta: %@";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
