@@ -42,8 +42,8 @@ public class Reminder: EmbeddedObject, Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        if let delta = try? container.decodeIfPresent(Int.self, forKey: .delta) {
-            self.delta = delta
+        if let deltaValue = try? container.decodeIfPresent(Int.self, forKey: .delta) {
+            delta = deltaValue
             visibility = try? container.decodeIfPresent(Bool.self, forKey: .display)
         } else {
             uuid = try? container.decodeIfPresent(String.self, forKey: .uuid)
