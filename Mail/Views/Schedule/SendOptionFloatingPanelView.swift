@@ -41,8 +41,6 @@ struct SendOptionFloatingPanelView: View {
 
     @ObservedRealmObject var draft: Draft
 
-    let initialDate: Date?
-
     private var isCustomOptionLimited: Bool {
         let pack = mailboxManager.mailbox.pack
         return pack == .myKSuiteFree || pack == .kSuiteFree || pack == .starterPack
@@ -257,8 +255,7 @@ struct SendOptionFloatingPanelView: View {
         isScheduleEnabled: .constant(true),
         customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
-        draft: Draft(),
-        initialDate: nil
+        draft: Draft()
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
