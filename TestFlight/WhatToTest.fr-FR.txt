@@ -1,3 +1,1 @@
-- Mentionner quelqu'un dans un e-mail
-- Carte de contact
 - Correction de bugs
