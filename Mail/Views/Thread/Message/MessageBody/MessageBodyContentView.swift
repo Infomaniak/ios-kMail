@@ -17,6 +17,7 @@
  */
 
 import IKSnackbar
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -175,6 +176,7 @@ struct MessageBodyContentView: View {
 
     @MainActor
     private func mentionAvatarImage(for recipient: Recipient) async -> UIImage? {
+        @InjectService var platformDetector: PlatformDetectable
         let avatarConfiguration = ContactConfiguration.correspondent(
             correspondent: recipient,
             associatedBimi: nil,
@@ -190,6 +192,9 @@ struct MessageBodyContentView: View {
            ) {
             let task = ImagePipeline.shared.imageTask(with: authenticatedRequest)
             if let remoteImage = try? await task.image {
+                if platformDetector.isMac {
+                    return remoteImage.resize(size: CGSize(width: 28, height: 28))
+                }
                 return remoteImage.withRenderingMode(.alwaysOriginal)
             }
         }
@@ -197,7 +202,7 @@ struct MessageBodyContentView: View {
         let renderer = ImageRenderer(content: AvatarView(
             mailboxManager: mailboxManager,
             contactConfiguration: avatarConfiguration,
-            size: RecipientHeaderCell.defaultAvatarSize
+            size: platformDetector.isMac ? 28 : RecipientHeaderCell.defaultAvatarSize
         ))
         return renderer.uiImage?.withRenderingMode(.alwaysOriginal)
     }
