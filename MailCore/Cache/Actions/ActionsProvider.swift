@@ -158,6 +158,8 @@ public class ActionsProvider: ObservableObject {
     private func actionsForMessage(_ message: Message, origin: ActionOrigin) -> [Action] {
         @LazyInjectService var platformDetector: PlatformDetectable
 
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts || message.isScheduledDraft == true
+
         let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
         let euriaActions = euriaActionsForMessage()
 
@@ -173,8 +175,9 @@ public class ActionsProvider: ObservableObject {
         let print = origin.type == .floatingPanelListAction(source: .message)
         let showEuriaActions = !euriaActions.isEmpty && origin.type != .floatingPanelListAction(source: .threadList)
         var tempListActions: [Action?] = [
+            isScheduled ? .delete : nil,
             showEuriaActions ? .showEuriaActions : nil,
-            .openMovePanel,
+            isScheduled ? nil : .openMovePanel,
             unread ? .markAsRead : .markAsUnread,
             spamAction,
             isFromMe ? nil : .phishing,
@@ -292,7 +295,9 @@ public class ActionsProvider: ObservableObject {
     }
 
     func floatingPanelQuickActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
-        if messages.allSatisfy({ $0.isDraft }) || origin.frozenFolder?.role == .draft {
+        let isDraft = messages.allSatisfy { $0.isDraft } || origin.frozenFolder?.role == .draft
+        let isScheduled = origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy { $0.isScheduledDraft == true }
+        if isDraft || isScheduled {
             return []
         }
 
@@ -372,6 +377,10 @@ public class ActionsProvider: ObservableObject {
     }
 
     func multipleSelectionActions(origin: ActionOrigin, messages: [Message]) -> [Action] {
+        if origin.frozenFolder?.role == .scheduledDrafts || messages.allSatisfy({ $0.isScheduledDraft == true }) {
+            return [.delete]
+        }
+
         let lastMessages = messages.lastMessagesAndDuplicatesToExecuteAction(
             currentMailboxEmail: currentEmail,
             currentFolder: origin.frozenFolder,
