@@ -193,7 +193,7 @@ struct MessageBodyContentView: View {
             let task = ImagePipeline.shared.imageTask(with: authenticatedRequest)
             if let remoteImage = try? await task.image {
                 if platformDetector.isMac {
-                    return remoteImage.resize(size: CGSize(width: 28, height: 28))
+                    return remoteImage.resize(size: CGSize(width: 28, height: 28)).withRenderingMode(.alwaysOriginal)
                 }
                 return remoteImage.withRenderingMode(.alwaysOriginal)
             }

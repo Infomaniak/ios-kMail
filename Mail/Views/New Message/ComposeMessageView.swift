@@ -291,7 +291,7 @@ struct ComposeMessageView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .trailing, spacing: 0) {
-                if focusedField == .editor || (!platformDetector.isMac && focusedField == nil) {
+                if focusedField == .editor || (platformDetector.isMac && focusedField == nil) {
                     ComposeMessageContactList(
                         mentionQuery: mentionQuery,
                         mentionSuggestions: mentionSuggestions
