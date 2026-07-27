@@ -64,7 +64,8 @@ struct MessageEuriaBannersView: View {
                         return true
                     }
                     return false
-                }()
+                }(),
+                isTranslation: true
             ) {
                 if message.translatedBody?.value != nil {
                     Button {
