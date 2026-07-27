@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "08b0a7d9a6b8debff6ab8f2f6f525cfb1f0d1caa",
-        "version" : "10.1.2"
+        "branch" : "feat/Add-parameter-to-not-use-withAccounts",
+        "revision" : "5a18a4d6ec1c8e41ed48d0697d70e74f7868c60d"
       }
     },
     {
