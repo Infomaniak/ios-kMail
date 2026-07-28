@@ -157,7 +157,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var hasReminder: Bool {
-        return messages.last?.hasReminder == true
+        return messages.last?.reminder != nil
     }
 
     public func updateUnseenMessages() {

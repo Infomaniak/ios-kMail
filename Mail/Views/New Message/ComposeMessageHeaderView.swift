@@ -35,8 +35,6 @@ struct ComposeMessageHeaderView: View {
     @Binding var currentSignature: Signature?
 
     @Binding var isShowingSendOptionsPanel: Bool
-    @Binding var selectedReminderOption: ReminderOption?
-    @Binding var selectedScheduleOption: ScheduleOption?
 
     private var totalRecipients: Int {
         return draft.to.count + draft.cc.count + draft.bcc.count
@@ -97,23 +95,24 @@ struct ComposeMessageHeaderView: View {
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
 
-            if let reminderOption = selectedReminderOption {
+            if let reminderOption = draft.reminderOption {
                 ComposeMessageDateHeaderView(
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
                     message: reminderOption.headerText
                 ) {
-                    selectedReminderOption = nil
+                    draft.setReminderOption(nil, mailboxManager: mailboxManager)
+                    draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
                 }
             }
 
-            if let scheduleOption = selectedScheduleOption {
+            if let scheduleOption = draft.scheduleOption {
                 ComposeMessageDateHeaderView(
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
                     icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
                     message: scheduleOption.headerText
                 ) {
-                    selectedScheduleOption = nil
+                    draft.setScheduleOption(nil, mailboxManager: mailboxManager)
                 }
             }
         }
@@ -128,9 +127,7 @@ struct ComposeMessageHeaderView: View {
         draft: Draft(),
         autocompletionType: .constant(nil),
         currentSignature: .constant(nil),
-        isShowingSendOptionsPanel: .constant(false),
-        selectedReminderOption: .constant(nil),
-        selectedScheduleOption: .constant(nil)
+        isShowingSendOptionsPanel: .constant(false)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

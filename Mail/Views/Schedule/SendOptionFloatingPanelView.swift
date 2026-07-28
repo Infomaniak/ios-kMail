@@ -24,6 +24,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import MyKSuite
+import RealmSwift
 import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
@@ -35,13 +36,10 @@ struct SendOptionFloatingPanelView: View {
     @Binding var isShowingMailPremiumUpgrade: Bool
     @Binding var isReminderEnabled: Bool
     @Binding var isScheduleEnabled: Bool
-    @Binding var selectedReminderOption: ReminderOption?
-    @Binding var selectedScheduleOption: ScheduleOption?
-    @Binding var selectedReminderVisibility: ReminderVisibility?
     @Binding var customAlertType: ScheduleType
     @Binding var contentHeight: CGFloat
 
-    let initialDate: Date?
+    @ObservedRealmObject var draft: Draft
 
     private var isCustomOptionLimited: Bool {
         let pack = mailboxManager.mailbox.pack
@@ -49,14 +47,14 @@ struct SendOptionFloatingPanelView: View {
     }
 
     private var displayedReminderOption: ReminderOption {
-        if let option = selectedReminderOption, option.isCustom {
+        if let option = draft.reminderOption, option.isCustom {
             return option
         }
         return .custom
     }
 
     private var displayedScheduleOption: ScheduleOption {
-        if let option = selectedScheduleOption, option.isCustom {
+        if let option = draft.scheduleOption, option.isCustom {
             return option
         }
         return .custom(date: .now)
@@ -64,9 +62,6 @@ struct SendOptionFloatingPanelView: View {
 
     private var scheduleOptions: [ScheduleOption] {
         var seenDateOptions = Set<Date>()
-        if let initialDate {
-            seenDateOptions.insert(initialDate)
-        }
 
         var filteredOptions = ScheduleOption.allPresetOptions.filter { option in
             guard option.canBeDisplayed, let date = option.date else { return false }
@@ -99,58 +94,60 @@ struct SendOptionFloatingPanelView: View {
 
             IKDivider(type: .item)
 
-            Toggle(isOn: $isReminderEnabled) {
-                Label {
-                    Text(ScheduleType.reminder(type: .option).floatingPanelTitle)
-                } icon: {
-                    MailResourcesAsset.alarmClock.iconSize(.large)
-                        .foregroundStyle(Color.accentColor)
-                }
-            }
-            .tint(.accentColor)
-            .padding(value: .medium)
-
-            if isReminderEnabled {
-                ReminderVisibilityCell(
-                    visibility: selectedReminderVisibility ?? .recipientsAndMe,
-                    isSelected: false,
-                    isInModal: false
-                ) {
-                    if isCustomOptionLimited {
-                        showUpgradeBottomSheet()
-                    } else {
-                        customAlertType = .reminder(type: .visibility)
-                        isShowingCustomScheduleAlert = true
+            if mailboxManager.featureAvailableProvider.isAvailable(.reminder) {
+                Toggle(isOn: $isReminderEnabled) {
+                    Label {
+                        Text(ScheduleType.reminder(type: .option).floatingPanelTitle)
+                    } icon: {
+                        MailResourcesAsset.alarmClock.iconSize(.large)
+                            .foregroundStyle(Color.accentColor)
                     }
                 }
+                .tint(.accentColor)
+                .padding(value: .medium)
 
-                IKDivider(type: .item)
-                VStack(spacing: 0) {
-                    ForEach(ReminderOption.presetCases, id: \.self) { option in
-                        ReminderCell(
-                            option: option,
-                            isSelected: selectedReminderOption == option
-                        ) {
-                            selectedReminderOption = option
-                        }
-                    }
-
-                    ReminderCell(
-                        option: displayedReminderOption,
-                        isSelected: selectedReminderOption?.isCustom == true,
-                        showUpgradeChip: isCustomOptionLimited
+                if isReminderEnabled {
+                    ReminderVisibilityCell(
+                        visibility: draft.reminderVisibility ?? .recipientsAndMe,
+                        isSelected: false,
+                        isInModal: false
                     ) {
                         if isCustomOptionLimited {
                             showUpgradeBottomSheet()
                         } else {
-                            customAlertType = .reminder(type: .option)
+                            customAlertType = .reminder(type: .visibility)
                             isShowingCustomScheduleAlert = true
                         }
                     }
-                }
-            }
 
-            IKDivider(type: .item)
+                    IKDivider(type: .item)
+                    VStack(spacing: 0) {
+                        ForEach(ReminderOption.presetCases, id: \.self) { option in
+                            ReminderCell(
+                                option: option,
+                                isSelected: draft.reminderOption == option
+                            ) {
+                                draft.setReminderOption(option, mailboxManager: mailboxManager)
+                            }
+                        }
+
+                        ReminderCell(
+                            option: displayedReminderOption,
+                            isSelected: draft.reminderOption?.isCustom == true,
+                            showUpgradeChip: isCustomOptionLimited
+                        ) {
+                            if isCustomOptionLimited {
+                                showUpgradeBottomSheet()
+                            } else {
+                                customAlertType = .reminder(type: .option)
+                                isShowingCustomScheduleAlert = true
+                            }
+                        }
+                    }
+                }
+
+                IKDivider(type: .item)
+            }
 
             Toggle(isOn: $isScheduleEnabled) {
                 Label {
@@ -169,13 +166,13 @@ struct SendOptionFloatingPanelView: View {
                     ForEach(scheduleOptions) { option in
                         ScheduleCell(
                             option: option,
-                            isSelected: selectedScheduleOption == option
+                            isSelected: draft.scheduleOption == option
                         ) {
-                            selectedScheduleOption = option
+                            draft.setScheduleOption(option, mailboxManager: mailboxManager)
                         }
                     }
 
-                    let isCustomSelected = selectedScheduleOption?.isCustom == true
+                    let isCustomSelected = draft.scheduleOption?.isCustom == true
 
                     ScheduleCell(
                         option: displayedScheduleOption,
@@ -202,21 +199,21 @@ struct SendOptionFloatingPanelView: View {
         .onChange(of: isReminderEnabled) { newValue in
             if newValue {
                 // Auto-select first option when toggled ON
-                selectedReminderOption = .oneDay
-                selectedReminderVisibility = .recipientsAndMe
+                draft.setReminderOption(draft.reminderOption ?? .oneDay, mailboxManager: mailboxManager)
+                draft.setReminderVisibility(draft.reminderVisibility ?? .recipientsAndMe, mailboxManager: mailboxManager)
             } else {
                 // Reset when toggled OFF
-                selectedReminderOption = nil
-                selectedReminderVisibility = nil
+                draft.setReminderOption(nil, mailboxManager: mailboxManager)
+                draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
             }
         }
         .onChange(of: isScheduleEnabled) { newValue in
             if newValue {
                 // Auto-select first available option when toggled ON
-                selectedScheduleOption = scheduleOptions.first
+                draft.setScheduleOption(draft.scheduleOption ?? scheduleOptions.first, mailboxManager: mailboxManager)
             } else {
                 // Reset when toggled OFF
-                selectedScheduleOption = nil
+                draft.setScheduleOption(nil, mailboxManager: mailboxManager)
             }
         }
         .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
@@ -256,12 +253,9 @@ struct SendOptionFloatingPanelView: View {
         isShowingMailPremiumUpgrade: .constant(false),
         isReminderEnabled: .constant(true),
         isScheduleEnabled: .constant(true),
-        selectedReminderOption: .constant(.oneDay),
-        selectedScheduleOption: .constant(nil),
-        selectedReminderVisibility: .constant(.recipientsAndMe),
         customAlertType: .constant(.scheduledDraft),
         contentHeight: .constant(0),
-        initialDate: nil
+        draft: Draft()
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

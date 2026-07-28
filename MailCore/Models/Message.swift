@@ -254,6 +254,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var summary: String?
 
     @Persisted public var reminder: Reminder?
+    @Persisted public var reminderAction: String?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -476,6 +477,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case headers
         case acknowledge
         case reminder
+        case reminderAction
     }
 
     override init() {
@@ -558,6 +560,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
         reminder = try values.decodeIfPresent(Reminder.self, forKey: .reminder)
+        reminderAction = try values.decodeIfPresent(String.self, forKey: .reminderAction)
     }
 
     public convenience init(

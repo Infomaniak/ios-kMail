@@ -20,6 +20,7 @@ import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
 extension View {
@@ -28,16 +29,12 @@ extension View {
         isUpdating: Bool,
         initialDate: Date? = nil,
         dismissView: (() -> Void)? = nil,
-        selectedScheduleOption: Binding<ScheduleOption?>,
-        selectedReminderOption: Binding<ReminderOption?>,
-        selectedReminderVisibility: Binding<ReminderVisibility?>
+        draft: Draft
     ) -> some View {
         modifier(
             SendOptionFloatingPanel(
                 isShowingFloatingPanel: isPresented,
-                selectedScheduleOption: selectedScheduleOption,
-                selectedReminderOption: selectedReminderOption,
-                selectedReminderVisibility: selectedReminderVisibility,
+                draft: draft,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
                 dismissView: dismissView
@@ -61,9 +58,7 @@ struct SendOptionFloatingPanel: ViewModifier {
     @State private var customAlertType: ScheduleType = .scheduledDraft
 
     @Binding var isShowingFloatingPanel: Bool
-    @Binding var selectedScheduleOption: ScheduleOption?
-    @Binding var selectedReminderOption: ReminderOption?
-    @Binding var selectedReminderVisibility: ReminderVisibility?
+    @ObservedRealmObject var draft: Draft
 
     let isUpdating: Bool
     let initialDate: Date?
@@ -88,12 +83,9 @@ struct SendOptionFloatingPanel: ViewModifier {
                         isShowingMailPremiumUpgrade: $isShowingMailPremiumUpgrade,
                         isReminderEnabled: $isReminderEnabled,
                         isScheduleEnabled: $isScheduleEnabled,
-                        selectedReminderOption: $selectedReminderOption,
-                        selectedScheduleOption: $selectedScheduleOption,
-                        selectedReminderVisibility: $selectedReminderVisibility,
                         customAlertType: $customAlertType,
                         contentHeight: $contentHeight,
-                        initialDate: initialDate
+                        draft: draft
                     )
                 }
                 .scrollBounceBehavior(.basedOnSize)
@@ -115,15 +107,15 @@ struct SendOptionFloatingPanel: ViewModifier {
                     if customAlertType == .reminder(type: .option) {
                         CustomReminderAlertView(
                             confirmAction: { option in
-                                selectedReminderOption = option
+                                draft.setReminderOption(option, mailboxManager: mailboxManager)
                             },
                             cancelAction: {
                                 panelShouldBeShown = true
                             }
                         )
                     } else if customAlertType == .reminder(type: .visibility) {
-                        CustomReminderVisibilityAlertView(currentVisibility: selectedReminderVisibility) { visibility in
-                            selectedReminderVisibility = visibility
+                        CustomReminderVisibilityAlertView(currentVisibility: draft.reminderVisibility) { visibility in
+                            draft.setReminderVisibility(visibility, mailboxManager: mailboxManager)
                         } cancelAction: {
                             panelShouldBeShown = true
                         }
@@ -135,7 +127,7 @@ struct SendOptionFloatingPanel: ViewModifier {
                             isUpdating: isUpdating,
                             confirmAction: { date in
                                 if customAlertType == .scheduledDraft {
-                                    selectedScheduleOption = .custom(date: date)
+                                    draft.setScheduleOption(.custom(date: date), mailboxManager: mailboxManager)
                                 }
                             },
                             cancelAction: {
@@ -145,12 +137,8 @@ struct SendOptionFloatingPanel: ViewModifier {
                     }
                 }
                 .onAppear {
-                    if selectedReminderOption == nil {
-                        isReminderEnabled = false
-                    }
-                    if selectedScheduleOption == nil {
-                        isScheduleEnabled = false
-                    }
+                    isReminderEnabled = draft.reminderOption != nil
+                    isScheduleEnabled = draft.scheduleOption != nil
                 }
             }
     }

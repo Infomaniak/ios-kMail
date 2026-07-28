@@ -217,6 +217,7 @@ struct ActionsPanelViewModifier: ViewModifier {
         Task {
             await actionsManager.addReminder(message: message, delta: option.inMinutes)
             messageToRemind = nil
+            isReminderFloatingPanelPresented = false
         }
     }
 }

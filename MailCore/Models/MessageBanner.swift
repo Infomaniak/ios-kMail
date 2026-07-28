@@ -37,7 +37,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return "unsubscribeLink"
         case .acknowledge:
             return "acknowledge"
-        case .reminder:
+        case .reminder, .reminderWithSchedule:
             return "reminder"
         }
     }
@@ -49,6 +49,7 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
     case unsubscribeLink
     case acknowledge
     case reminder(reminderDate: Date, canEdit: Bool)
+    case reminderWithSchedule(reminderDelta: Int)
 
     public static func == (lhs: MessageBanner, rhs: MessageBanner) -> Bool {
         switch (lhs, rhs) {
@@ -66,6 +67,8 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
             return true
         case (.reminder(let date1, let canEdit1), .reminder(let date2, let canEdit2)):
             return date1 == date2 && canEdit1 == canEdit2
+        case (.reminderWithSchedule(let delta1), .reminderWithSchedule(let delta2)):
+            return delta1 == delta2
         default:
             return false
         }

@@ -101,7 +101,7 @@ public extension Action {
 
     static let snooze = Action(
         id: "snooze",
-        title: MailResourcesStrings.Localizable.actionSnooze,
+        title: MailResourcesStrings.Localizable.actionReminder,
         iconResource: MailResourcesAsset.alarmClock,
         tintColorResource: MailResourcesAsset.swipeSnoozeColor,
         matomoName: "snooze"
@@ -392,7 +392,7 @@ public extension Action {
     )
     static let addReminder = Action(
         id: "addReminder",
-        title: MailResourcesStrings.Localizable.actionSnooze,
+        title: MailResourcesStrings.Localizable.actionReminder,
         iconResource: MailResourcesAsset.alarmClock,
         tintColorResource: MailResourcesAsset.swipeSnoozeColor,
         matomoName: "snooze"
