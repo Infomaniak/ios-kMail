@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InterAppLogin
@@ -43,9 +44,22 @@ struct OnboardingBottomButtonsView: View {
         return selection == slideCount - 1
     }
 
+    private var shouldDisplayInterAppLogin: Bool {
+        #if DEBUG
+        if ApiEnvironment.current == .prod {
+            return false
+        }
+        #endif
+        return true
+    }
+
     var body: some View {
         VStack(spacing: IKPadding.mini) {
-            ContinueWithAccountView(isLoading: loginHandler.isLoading, excludingUserIds: accountManager.accountIds) {
+            ContinueWithAccountView(
+                isLoading: loginHandler.isLoading,
+                excludingUserIds: accountManager.accountIds,
+                shouldDisplayInterAppLogin: shouldDisplayInterAppLogin
+            ) {
                 loginHandler.login()
             } onLoginWithAccountsPressed: { accounts in
                 loginHandler.loginWith(accounts: accounts)
