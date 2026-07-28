@@ -26,12 +26,20 @@ import SwiftUI
 struct MessageEuriaContentView<Content: View>: View {
     private let title: String
     private let isError: Bool
+    private let isTranslation: Bool
     private let content: Content?
     private let dismissAction: () -> Void
 
-    init(title: String, isError: Bool, @ViewBuilder content: () -> Content?, dismiss: @escaping () -> Void) {
+    init(
+        title: String,
+        isError: Bool,
+        isTranslation: Bool = false,
+        @ViewBuilder content: () -> Content?,
+        dismiss: @escaping () -> Void
+    ) {
         self.title = title
         self.isError = isError
+        self.isTranslation = isTranslation
         self.content = content()
         dismissAction = dismiss
     }
@@ -51,9 +59,10 @@ struct MessageEuriaContentView<Content: View>: View {
                 Text(title)
                     .textStyle(.bodySmallMedium)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                CloseButton(size: .medium) { dismissAction() }
-                    .tint(MailResourcesAsset.textTertiaryColor)
+                if !isTranslation || isError {
+                    CloseButton(size: .medium) { dismissAction() }
+                        .tint(MailResourcesAsset.textTertiaryColor)
+                }
             }
 
             if let content {
