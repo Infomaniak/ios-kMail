@@ -4,7 +4,7 @@
  * Locale: el, Greek
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Wed, 22 Jul 2026 16:26:28 +0200
+ * Exported at: Tue, 28 Jul 2026 17:03:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1139,16 +1139,16 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Για να σας βοηθήσουμε";
 
-/* loco:6a3d14fef750fb5df20ebc72 */
+/* loco:6a68c2b7da46f41efe0f6402 */
 "hoursBeforeSendingReminder" = "%d ώρα";
 
-/* loco:6a3d14fef750fb5df20ebc73 */
+/* loco:6a68c2b7da46f41efe0f6403 */
 "hoursBeforeSendingReminder-plural" = "%d ώρες";
 
-/* loco:6a3d14fef750fb5df20ebc74 */
+/* loco:6a68c2b7da46f41efe0f6404 */
 "hoursBeforeSendingReminder-plural-2" = "";
 
-/* loco:6a3d14fef750fb5df20ebc75 */
+/* loco:6a68c2b7da46f41efe0f6405 */
 "hoursBeforeSendingReminder-plural-3" = "";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
