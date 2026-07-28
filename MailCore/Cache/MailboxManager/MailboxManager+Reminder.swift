@@ -34,13 +34,11 @@ public extension MailboxManager {
 
     func updateReminder(message: Message, reminderDelta: Int) async throws {
         if let reminderAction = message.reminderAction, message.scheduleDate != nil {
-            try await apiFetcher.updateDraftReminder(reminderResource: reminderAction, reminderDelta: reminderDelta)
+            let result = try await apiFetcher.updateDraftReminder(reminderResource: reminderAction, reminderDelta: reminderDelta)
 
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                let reminder = liveMessage.reminder ?? Reminder()
-                reminder.delta = reminderDelta
-                liveMessage.reminder = reminder
+                liveMessage.reminder = result
             }
         } else {
             guard let reminderId = message.reminder?.uuid else {
@@ -49,7 +47,7 @@ public extension MailboxManager {
             guard let shortUid = message.shortUid else {
                 throw MailError.localMessageNotFound
             }
-            try await apiFetcher.updateReminder(
+            let result: Reminder = try await apiFetcher.updateReminder(
                 mailboxUuid: mailbox.uuid,
                 folderId: message.folderId,
                 messageId: shortUid,
@@ -58,10 +56,7 @@ public extension MailboxManager {
             )
             try? writeTransaction { writableRealm in
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                let reminder = liveMessage.reminder ?? Reminder()
-                reminder.uuid = reminderId
-                reminder.date = Date().addingTimeInterval(TimeInterval(reminderDelta * 60))
-                liveMessage.reminder = reminder
+                liveMessage.reminder = result
             }
         }
 
