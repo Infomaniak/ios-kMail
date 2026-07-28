@@ -222,11 +222,11 @@ public protocol MailApiReminderFetchable {
         messageId: Int,
         reminderId: String,
         reminderDelta: Int
-    ) async throws
+    ) async throws -> Reminder
 
     func deleteReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderId: String) async throws
 
-    func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws
+    func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws -> Reminder
 
     func deleteDraftReminder(reminderResource: String) async throws
 }
