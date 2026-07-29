@@ -73,7 +73,8 @@ public struct NotificationActionsRegistrer: NotificationActionsRegistrable {
 
         let category = UNNotificationCategory(identifier: NotificationActionGroupIdentifier.newMail,
                                               actions: [archiveAction, replyAction, deleteAction],
-                                              intentIdentifiers: [], options: [])
+                                              intentIdentifiers: [],
+                                              options: [.allowInCarPlay])
 
         let center = UNUserNotificationCenter.current()
         center.setNotificationCategories([category])
