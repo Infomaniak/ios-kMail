@@ -273,7 +273,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
+    public static func replying(
+        reply: MessageReply,
+        currentMailboxEmail: String,
+        aliases: [String] = []
+    ) -> Draft {
         let message = reply.frozenMessage
         let mode = reply.replyMode
         let encrypted = message.encrypted
@@ -293,6 +297,12 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
 
         if mode.isReply {
             recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll, currentMailboxEmail: currentMailboxEmail)
+
+            let ownEmails = aliases.map { $0.lowercased() }
+
+            recipientHolder.cc.removeAll { recipient in
+                ownEmails.contains(recipient.email.lowercased())
+            }
         }
 
         return Draft(localUUID: UUID().uuidString,
