@@ -67,27 +67,21 @@ public extension Date {
         }
 
         private func formatToMessageHeaderRelative(_ date: Date) -> String {
-            if date > .now {
-                let dateFormatter = DateFormatter()
-
-                dateFormatter.dateStyle = .long
-                dateFormatter.timeStyle = .short
-                dateFormatter.doesRelativeDateFormatting = true
-
-                return dateFormatter.string(from: date)
-            } else if Calendar.current.isDateInToday(date) {
+            if Calendar.current.isDateInToday(date) {
                 return date.formatted(date: .omitted, time: .shortened)
             } else if Calendar.current.isDateInYesterday(date) {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .long
-                dateFormatter.timeStyle = .short
+                dateFormatter.timeStyle = .none
                 dateFormatter.formattingContext = .middleOfSentence
                 dateFormatter.doesRelativeDateFormatting = true
                 return dateFormatter.string(from: date)
             } else if Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
-                return date.formatted(.dateTime.day().month().hour().minute())
+                return date.formatted(.dateTime.day().month())
             } else {
-                return date.formatted(.dateTime.year().day().month().hour().minute())
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "dd/MM/yy"
+                return dateFormatter.string(from: date)
             }
         }
     }
