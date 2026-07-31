@@ -105,6 +105,11 @@ struct EuriaFloatingPanel: ViewModifier {
                     aiModel.resetConversation()
                 }
             }
+            .onChange(of: isShowingPanel) { newValue in
+                if !newValue {
+                    clearMessagesIfPossible()
+                }
+            }
             .mailFloatingPanel(isPresented: $isShowingPanel, title: MailResourcesStrings.Localizable.askEuriaTitle) {
                 VStack(alignment: .leading, spacing: 0) {
                     let availableActions = availableActions(for: messages)
@@ -154,5 +159,13 @@ struct EuriaFloatingPanel: ViewModifier {
         guard let messages else { return [] }
 
         return actionsProvider.actionsFor(origin: origin, messages: messages)
+    }
+
+    private func clearMessagesIfPossible() {
+        guard !isShowingPanel, !aiModel.isShowingPrompt, !aiModel.isShowingProposition else {
+            return
+        }
+
+        messages = nil
     }
 }
