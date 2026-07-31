@@ -296,13 +296,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         var recipientHolder = RecipientHolder()
 
         if mode.isReply {
-            recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll, currentMailboxEmail: currentMailboxEmail)
-
-            let ownEmails = aliases.map { $0.lowercased() }
-
-            recipientHolder.cc.removeAll { recipient in
-                ownEmails.contains(recipient.email.lowercased())
-            }
+            recipientHolder = message.recipientsForReplyTo(
+                replyAll: mode == .replyAll,
+                currentMailboxEmail: currentMailboxEmail,
+                aliases: aliases
+            )
         }
 
         return Draft(localUUID: UUID().uuidString,

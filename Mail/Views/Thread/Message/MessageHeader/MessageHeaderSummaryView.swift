@@ -157,7 +157,10 @@ struct MessageHeaderSummaryView: View {
 
     private func replyTo() {
         matomo.track(eventWithCategory: .messageActions, name: "reply")
-        if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+        if message.canReplyAll(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        ) {
             replyOrReplyAllMessage = message
         } else {
             Task {

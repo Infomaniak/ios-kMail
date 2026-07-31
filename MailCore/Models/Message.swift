@@ -373,16 +373,23 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
 
-    public func canReplyAll(currentMailboxEmail: String) -> Bool {
-        let holder = recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail)
+    public func canReplyAll(currentMailboxEmail: String, aliases: [String] = []) -> Bool {
+        let holder = recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail, aliases: aliases)
         return !holder.cc.isEmpty
     }
 
-    public func recipientsForReplyTo(replyAll: Bool = false, currentMailboxEmail: String) -> RecipientHolder {
-        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+    public func recipientsForReplyTo(replyAll: Bool = false, currentMailboxEmail: String,
+                                     aliases: [String] = []) -> RecipientHolder {
+        let ownEmails = aliases.map { $0.lowercased() }
+        let isNotMe: (Recipient) -> Bool = { recipient in
+            !recipient.isMe(currentMailboxEmail: currentMailboxEmail) &&
+                !ownEmails.contains(recipient.email.lowercased())
+        }
+
+        let cleanedFrom = Array(from.detached()).filter(isNotMe)
+        let cleanedTo = Array(to.detached()).filter(isNotMe)
+        let cleanedReplyTo = Array(replyTo.detached()).filter(isNotMe)
+        let cleanedCc = Array(cc.detached()).filter(isNotMe)
 
         var holder = RecipientHolder()
 
