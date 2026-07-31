@@ -34,9 +34,9 @@ public extension MailApiFetcher {
         messageId: Int,
         reminderId: String,
         reminderDelta: Int
-    ) async throws {
-        let _: Empty = try await perform(request: authenticatedRequest(
-            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId.toString(), reminderId: reminderId),
+    ) async throws -> Reminder {
+        return try await perform(request: authenticatedRequest(
+            .reminder(mailboxUuid: mailboxUuid, folderId: folderId, messageId: String(messageId), reminderId: reminderId),
             method: .put,
             parameters: ["reminder_delta": reminderDelta]
         ))
@@ -49,8 +49,8 @@ public extension MailApiFetcher {
         ))
     }
 
-    func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws {
-        let _: Empty = try await perform(request: authenticatedRequest(
+    func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws -> Reminder {
+        return try await perform(request: authenticatedRequest(
             .resource(reminderResource),
             method: .put,
             parameters: ["reminder_delta": reminderDelta]
