@@ -23,6 +23,16 @@ import WebKit
 
 public class ContentBlocker {
     private let allowedHosts = ["infomaniak.com", "infomaniak.ch", "infomaniak.statslive.info"]
+    private static let cssURLRegexes = [
+        try? NSRegularExpression(
+            pattern: #"url\(\s*(['\"]?)(.*?)\1\s*\)"#,
+            options: .caseInsensitive
+        ),
+        try? NSRegularExpression(
+            pattern: #"@import\s*(['\"])(.*?)\1"#,
+            options: .caseInsensitive
+        )
+    ].compactMap { $0 }
     private let webView: WKWebView
     private let contentBlockRules: String?
 
@@ -33,11 +43,12 @@ public class ContentBlocker {
             ContentRule(action: ContentRuleAction(type: .block), trigger: ContentRuleTrigger(urlFilter: ".*"))
         ] + allowedHosts.map {
             ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
-                        trigger: ContentRuleTrigger(urlFilter: $0))
+                        trigger: ContentRuleTrigger(urlFilter: Self.allowedHostURLFilter($0)))
         } + [
-            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules), trigger: ContentRuleTrigger(
-                urlFilter: "\(Bundle(for: RichHTMLEditorView.self).bundleURL.absoluteURL).*"
-            ))
+            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
+                        trigger: ContentRuleTrigger(
+                            urlFilter: "^\(Bundle(for: RichHTMLEditorView.self).bundleURL.absoluteString).*"
+                        ))
         ]
 
         contentBlockRules = ContentRuleGenerator.generateContentRulesJSON(rules: rules)
@@ -51,6 +62,13 @@ public class ContentBlocker {
 
         let svgSrcUrlStrings = try document.select("svg").map { try $0.attr("src") }
         if srcListContainsRemoteHosts(svgSrcUrlStrings) {
+            return true
+        }
+
+        let inlineStyles = try document.select("[style]").map { try $0.attr("style") }
+        let embeddedStyles = try document.select("style").map { try $0.html() }
+        let cssURLStrings = (inlineStyles + embeddedStyles).flatMap(Self.extractURLsFromCSS)
+        if srcListContainsRemoteHosts(cssURLStrings) {
             return true
         }
 
@@ -84,7 +102,23 @@ public class ContentBlocker {
     }
 
     private func isHostAllowed(_ host: String) -> Bool {
-        return allowedHosts.contains { host.hasSuffix($0) }
+        let normalizedHost = host.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: "."))
+        return allowedHosts.contains { normalizedHost == $0 || normalizedHost.hasSuffix(".\($0)") }
+    }
+
+    static func allowedHostURLFilter(_ host: String) -> String {
+        let escapedHost = NSRegularExpression.escapedPattern(for: host)
+        return "^https?://([a-z0-9-]+\\.)*\(escapedHost)(:[0-9]+)?([/?#].*)?$"
+    }
+
+    private static func extractURLsFromCSS(_ css: String) -> [String] {
+        let range = NSRange(css.startIndex..., in: css)
+        return cssURLRegexes.flatMap { regex in
+            regex.matches(in: css, range: range).compactMap { match in
+                guard let urlRange = Range(match.range(at: 2), in: css) else { return nil }
+                return String(css[urlRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
     }
 
     @MainActor
