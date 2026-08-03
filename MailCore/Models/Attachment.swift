@@ -118,7 +118,9 @@ public class Attachment: EmbeddedObject, Codable, ObjectKeyIdentifiable {
             localURL = localURL.appendingPathComponent("\(shortUid)")
         }
 
-        return localURL.appendingPathComponent("\(partId)/\(name)")
+        let safePartId = partId.safeLastPathComponent ?? uuid
+        let safeName = name.safeLastPathComponent ?? uuid
+        return localURL.appendingPathComponent("\(safePartId)/\(safeName)")
     }
 
     public func getLocalURL(mailboxManager: MailboxManager) -> URL {
