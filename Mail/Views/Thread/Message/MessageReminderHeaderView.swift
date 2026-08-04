@@ -50,7 +50,7 @@ struct MessageReminderHeaderView: View {
                                 isShowingReschedulePanel = true
                             }
                             MessageHeaderDivider()
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: markAsDone)
                         }
 
                         VStack(alignment: .leading) {
@@ -61,7 +61,7 @@ struct MessageReminderHeaderView: View {
                                     isShowingReschedulePanel = true
                                 }
                             }
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: markAsDone)
                         }
                     }
                 }
@@ -131,6 +131,17 @@ struct MessageReminderHeaderView: View {
             }
         }
         isShowingReschedulePanel = false
+    }
+
+    private func markAsDone() {
+        Task {
+            do {
+                try await mailboxManager.markAsDone(message: message)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMarkAsDoneReminderSuccess)
+            } catch {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMarkAsDoneReminderFailure)
+            }
+        }
     }
 }
 

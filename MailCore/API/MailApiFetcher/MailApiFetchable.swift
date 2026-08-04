@@ -229,4 +229,6 @@ public protocol MailApiReminderFetchable {
     func updateDraftReminder(reminderResource: String, reminderDelta: Int) async throws -> Reminder
 
     func deleteDraftReminder(reminderResource: String) async throws
+
+    func markAsDoneReminder(mailboxUuid: String, folderId: String, messageId: Int, reminderId: String) async throws -> ReminderMarkAsDoneResponse
 }
