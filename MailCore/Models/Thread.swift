@@ -396,7 +396,7 @@ public extension Thread {
                 )
 
                 message.isDisplayable = !(hasAppliedReaction || message.isDraft)
-            } else {
+            } else if !message.shouldHideReminder {
                 messagesToDisplay.append(message)
             }
 
