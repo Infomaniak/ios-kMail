@@ -4,7 +4,7 @@
  * Locale: pl, Polish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Tue, 28 Jul 2026 17:03:13 +0200
+ * Exported at: Tue, 04 Aug 2026 14:28:25 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1139,17 +1139,17 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Aby Ci pomóc";
 
-/* loco:6a68c2b7da46f41efe0f6402 */
+/* loco:6a6b68b0039c3265dd0a21a3 */
 "hoursBeforeSendingReminder" = "%d godzina";
 
-/* loco:6a68c2b7da46f41efe0f6403 */
+/* loco:6a6b68b0039c3265dd0a21a4 */
 "hoursBeforeSendingReminder-plural" = "%d godziny";
 
-/* loco:6a68c2b7da46f41efe0f6404 */
+/* loco:6a6b68b0039c3265dd0a21a5 */
 "hoursBeforeSendingReminder-plural-2" = "%d godzin";
 
-/* loco:6a68c2b7da46f41efe0f6405 */
-"hoursBeforeSendingReminder-plural-3" = "%d godzin";
+/* loco:6a6b68b0039c3265dd0a21a6 */
+"hoursBeforeSendingReminder-plural-3" = "%d godziny";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Skrzynka odbiorcza";
@@ -1919,6 +1919,12 @@
 
 /* loco:62b42e39dbeac92077145712 */
 "snackbarInvalidUrl" = "Nieprawidłowy URL";
+
+/* loco:6a6b3d181907a93a8304f183 */
+"snackbarMarkAsDoneReminderFailure" = "Nie udało się oznaczyć przypomnienia jako wykonane";
+
+/* loco:6a6b3d40f4f72c6877078833 */
+"snackbarMarkAsDoneReminderSuccess" = "Przypomnienie oznaczone jako wykonane";
 
 /* loco:638f5f9440687b206c230e64 */
 "snackbarMessageDeletedPermanently" = "Wiadomość usunięta";
