@@ -123,7 +123,7 @@ public extension Thread {
 
         public func hash(into hasher: inout Hasher) {
             hasher.combine(style)
-            hasher.combine(contextMailboxManager.mailbox.objectId)
+            hasher.combine(contextMailboxManager.mailboxObjectId)
         }
     }
 }

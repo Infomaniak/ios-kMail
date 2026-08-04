@@ -34,9 +34,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let realmConfiguration: Realm.Configuration
     public let transactionExecutor: Transactionable
 
+    public let mailboxObjectId: String
     private let _mailbox: Mailbox
     public var mailbox: Mailbox {
-        guard let freshMailbox = mailboxInfosManager.getMailbox(objectId: _mailbox.objectId) else {
+        guard let freshMailbox = mailboxInfosManager.getMailbox(objectId: mailboxObjectId) else {
             return _mailbox
         }
         return freshMailbox.freezeIfNeeded()
@@ -79,6 +80,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     }
 
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManageable) {
+        mailboxObjectId = mailbox.objectId
         _mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager
@@ -282,7 +284,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     private func refreshSendersRestrictions() async throws -> SendersRestrictions {
         let sendersRestrictions = try await apiFetcher.sendersRestrictions(mailbox: mailbox)
-        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailbox.objectId, sendersRestrictions: sendersRestrictions)
+        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailboxObjectId, sendersRestrictions: sendersRestrictions)
         return sendersRestrictions
     }
 
@@ -294,12 +296,12 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
         _ = try await apiFetcher.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions)
 
-        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailbox.objectId, sendersRestrictions: sendersRestrictions)
+        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailboxObjectId, sendersRestrictions: sendersRestrictions)
     }
 
     public func activateSpamFilter() async throws {
         _ = try? await apiFetcher.updateSpamFilter(mailbox: mailbox, value: true)
-        mailboxInfosManager.updateSpamFilter(mailboxObjectId: mailbox.objectId, value: true)
+        mailboxInfosManager.updateSpamFilter(mailboxObjectId: mailboxObjectId, value: true)
     }
 }
 
@@ -307,6 +309,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
 extension MailboxManager: Equatable {
     public static func == (lhs: MailboxManager, rhs: MailboxManager) -> Bool {
-        return lhs.mailbox.id == rhs.mailbox.id
+        return lhs.mailboxObjectId == rhs.mailboxObjectId
     }
 }
