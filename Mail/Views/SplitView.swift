@@ -186,13 +186,13 @@ struct SplitView: View {
         .onChange(of: quickActionsManager.homeScreenShortcut) { newHomeScreenShortcut in
             handleShortcutItem(shortcut: newHomeScreenShortcut)
         }
-        .task(id: mailboxManager.mailbox.objectId) {
+        .task(id: mailboxManager.mailboxObjectId) {
             await fetchSignatures()
         }
-        .task(id: mailboxManager.mailbox.objectId) {
+        .task(id: mailboxManager.mailboxObjectId) {
             await fetchFolders()
         }
-        .task(id: mailboxManager.mailbox.objectId) {
+        .task(id: mailboxManager.mailboxObjectId) {
             try? await mailboxManager.featureFlagsManager.fetchFlags()
         }
         .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
