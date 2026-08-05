@@ -68,7 +68,11 @@ struct ActionsView: View {
 
         if let lastMessage {
             let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
-            draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+            draft = Draft.replying(
+                reply: messageReply,
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                aliases: mailboxManager.mailbox.aliases.toArray()
+            )
         }
 
         let model = AIModel(mailboxManager: mailboxManager, draft: draft, isReplying: true)
@@ -267,7 +271,10 @@ struct MessageActionView: View {
         )
         guard let lastMessage else { return }
 
-        let replyMode: ReplyMode = lastMessage.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) ? .replyAll : .reply
+        let replyMode: ReplyMode = lastMessage.canReplyAll(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        ) ? .replyAll : .reply
         let replyAction: Action = replyMode == .reply ? .reply : .replyAll
 
         if NoReplyAlert.verifySenders(

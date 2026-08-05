@@ -131,6 +131,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 draftToWrite = Draft.replying(
                     reply: messageReply,
                     currentMailboxEmail: mailboxManager.mailbox.email,
+                    aliases: mailboxManager.mailbox.aliases.toArray(),
                     euriaReply: replyBody
                 )
             }
