@@ -273,7 +273,10 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replying(reply: MessageReply, currentMailboxEmail: String, aliases: [String], euriaReply: String = "") -> Draft {
+    public static func replying(reply: MessageReply,
+                                currentMailboxEmail: String,
+                                aliases: [String],
+                                euriaReply: String = "") -> Draft {
         let message = reply.frozenMessage
         let mode = reply.replyMode
         let encrypted = message.encrypted

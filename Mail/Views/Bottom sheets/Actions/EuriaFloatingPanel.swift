@@ -78,7 +78,11 @@ struct EuriaFloatingPanel: ViewModifier {
 
         if let lastMessage {
             let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
-            draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+            draft = Draft.replying(
+                reply: messageReply,
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                aliases: mailboxManager.mailbox.aliases.toArray()
+            )
         }
 
         let model = AIModel(mailboxManager: mailboxManager, draft: draft, isReplying: true)
@@ -143,7 +147,8 @@ struct EuriaFloatingPanel: ViewModifier {
                     guard let lastMessageToExecuteAction else { return }
 
                     let replyMode: ReplyMode = lastMessageToExecuteAction.canReplyAll(
-                        currentMailboxEmail: mailboxManager.mailbox.email
+                        currentMailboxEmail: mailboxManager.mailbox.email,
+                        aliases: mailboxManager.mailbox.aliases.toArray()
                     ) ? .replyAll : .reply
 
                     actionsManager.composeMessageWithContent(
