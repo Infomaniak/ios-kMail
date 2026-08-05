@@ -273,7 +273,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
+    public static func replying(reply: MessageReply, currentMailboxEmail: String, aliases: [String]) -> Draft {
         let message = reply.frozenMessage
         let mode = reply.replyMode
         let encrypted = message.encrypted
@@ -292,7 +292,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         var recipientHolder = RecipientHolder()
 
         if mode.isReply {
-            recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll, currentMailboxEmail: currentMailboxEmail)
+            recipientHolder = message.recipientsForReplyTo(
+                replyAll: mode == .replyAll,
+                currentMailboxEmail: currentMailboxEmail,
+                aliases: aliases
+            )
         }
 
         return Draft(localUUID: UUID().uuidString,
@@ -307,8 +311,11 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                      encrypted: encrypted)
     }
 
-    public static func reacting(with reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
-        let replyingDraft = Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail)
+    public static func reacting(with reaction: String,
+                                reply: MessageReply,
+                                currentMailboxEmail: String,
+                                aliases: [String]) -> Draft {
+        let replyingDraft = Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail, aliases: aliases)
 
         replyingDraft.action = .sendReaction
         replyingDraft.emojiReaction = reaction

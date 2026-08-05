@@ -177,7 +177,12 @@ struct MessageReactionsView: View {
 
         let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .replyAll)
 
-        let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+        let draft = Draft.reacting(
+            with: reaction,
+            reply: messageReply,
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        )
         try? mailboxManager.writeTransaction { realm in
             realm.add(draft)
         }

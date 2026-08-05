@@ -451,7 +451,10 @@ struct LargeToolbarModifier: ViewModifier {
             currentMailboxEmail: mailboxManager.mailbox.email,
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         ) else { return false }
-        return message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email)
+        return message.canReplyAll(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        )
     }
 
     private func didTapFlag() {

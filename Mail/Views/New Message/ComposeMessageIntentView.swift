@@ -120,7 +120,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 maybeMessageReply = messageReply
                 draftToWrite = Draft.replying(
                     reply: messageReply,
-                    currentMailboxEmail: mailboxManager.mailbox.email
+                    currentMailboxEmail: mailboxManager.mailbox.email,
+                    aliases: mailboxManager.mailbox.aliases.toArray()
                 )
             }
         }

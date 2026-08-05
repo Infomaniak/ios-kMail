@@ -164,7 +164,10 @@ struct CompactToolbarModifier: ViewModifier {
                currentMailboxEmail: mailboxManager.mailbox.email,
                featureAvailableProvider: mailboxManager.featureAvailableProvider
            ),
-           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+           message.canReplyAll(
+               currentMailboxEmail: mailboxManager.mailbox.email,
+               aliases: mailboxManager.mailbox.aliases.toArray()
+           ) {
             replyOrReplyAllMessage = message
             return
         }
