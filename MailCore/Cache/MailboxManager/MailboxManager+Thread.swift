@@ -748,7 +748,8 @@ public extension MailboxManager {
                 return
             }
 
-            let resultThreads = result.threads?.map { Thread(value: $0) } ?? []
+            let resultThreads = (result.threads ?? []).map { Thread(value: $0) }
+                .filter { !$0.messages.allSatisfy { $0.shouldHideReminder } }
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: resultThreads)
 

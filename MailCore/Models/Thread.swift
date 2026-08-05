@@ -307,7 +307,7 @@ public class Thread: Object, Decodable, Identifiable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         uid = try container.decode(String.self, forKey: .uid)
         messages = try container.decode(List<Message>.self, forKey: .messages)
-        messagesToDisplay = messages.filter { !$0.isReaction }.toRealmList()
+        messagesToDisplay = messages.filter { !$0.isReaction && !$0.shouldHideReminder }.toRealmList()
         unseenMessages = try container.decode(Int.self, forKey: .unseenMessages)
         from = try container.decode(List<Recipient>.self, forKey: .from)
         to = try container.decode(List<Recipient>.self, forKey: .to)
