@@ -262,6 +262,11 @@ extension AIModel {
         }
     }
 
+    func getPropositionBody() -> String {
+        let (_, body) = splitSubjectAndBody()
+        return body
+    }
+
     private func splitSubjectAndBody() -> (subject: String?, body: String) {
         guard let contentRegex = try? NSRegularExpression(
             pattern: Constants.aiDetectPartsRegex,

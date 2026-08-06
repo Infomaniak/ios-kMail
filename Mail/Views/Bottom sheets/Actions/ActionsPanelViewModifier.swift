@@ -126,9 +126,9 @@ struct ActionsPanelViewModifier: ViewModifier {
                 listActionOrigin: listActionOrigin,
                 quickActionOrigin: quickActionOrigin,
                 isMultipleSelection: isMultipleSelection,
+                mailboxManager: mailboxManager,
                 completionHandler: completionHandler
             )
-            .environmentObject(mailboxManager)
             .environmentObject(actionsManager)
             .environmentObject(actionsProvider)
         }
@@ -188,6 +188,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         )
         .euriaFloatingPanel(
             messages: $messagesToProcessWithEuria,
+            noReplyAlert: $noReplyAlert,
+            mailboxManager: mailboxManager,
             completionHandler: completionHandler
         )
     }

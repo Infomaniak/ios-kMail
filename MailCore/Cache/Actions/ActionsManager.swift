@@ -289,6 +289,8 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 origin.messagesToProcessWithEuria?.wrappedValue = messages
             }
+        case .replyWithEuria:
+            UserDefaults.shared.hasUsedReplyWithEuria = true
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
@@ -486,6 +488,17 @@ public class ActionsManager: ObservableObject {
             mainViewState?.composeMessageIntent = .replyingTo(
                 message: message,
                 replyMode: mode,
+                originMailboxManager: mailboxManager
+            )
+        }
+    }
+
+    public func composeMessageWithContent(message: Message, mode: ReplyMode, content: String) {
+        Task { @MainActor in
+            mainViewState?.composeMessageIntent = .replyingWithEuriaTo(
+                message: message,
+                replyMode: mode,
+                replyBody: content,
                 originMailboxManager: mailboxManager
             )
         }
