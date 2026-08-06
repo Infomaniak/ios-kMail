@@ -26,4 +26,9 @@ public extension Endpoint {
     static func reminder(mailboxUuid: String, folderId: String, messageId: String, reminderId: String) -> Endpoint {
         return .mailbox(uuid: mailboxUuid).appending(path: "/folder/\(folderId)/message/\(messageId)/reminder/\(reminderId)")
     }
+
+    static func markAsDone(mailboxUuid: String, folderId: String, messageId: String, reminderId: String) -> Endpoint {
+        return .mailbox(uuid: mailboxUuid)
+            .appending(path: "/folder/\(folderId)/message/\(messageId)/reminder/\(reminderId)/acknowledge")
+    }
 }

@@ -79,7 +79,10 @@ struct CustomScheduleButton: View {
             matomo.track(eventWithCategory: .mailPremiumUpgradeBottomSheet, name: eventNameForUpgradeBottomSheet)
             isShowingMailPremiumUpgrade = true
         } else {
-            matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
+            matomo.track(
+                eventWithCategory: type.matomoCategory,
+                name: type == .scheduledDraft ? "customSchedule" : "customReminder"
+            )
             isShowingCustomAlert = true
         }
 

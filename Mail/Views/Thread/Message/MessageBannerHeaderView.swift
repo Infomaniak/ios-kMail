@@ -28,6 +28,8 @@ import RealmSwift
 import SwiftUI
 
 struct MessageBannerHeaderView: View {
+    @LazyInjectService var matomo: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -163,11 +165,11 @@ struct MessageBannerHeaderView: View {
     }
 
     private func trackBannerEvent(for banner: MessageBanner) {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .messageBanner, name: banner.matomoName)
     }
 
     private func followUp() {
+        matomo.track(eventWithCategory: .messageBanner, name: "followUpReminder")
         Task { @MainActor in
             mainViewState.composeMessageIntent = .followUp(message: message, originMailboxManager: mailboxManager)
         }

@@ -63,4 +63,13 @@ public extension MailApiFetcher {
             method: .delete
         ))
     }
+
+    func markAsDoneReminder(mailboxUuid: String, folderId: String, messageId: Int,
+                            reminderId: String) async throws -> ReminderMarkAsDoneResponse {
+        let response: ReminderMarkAsDoneResponse = try await perform(request: authenticatedRequest(
+            .markAsDone(mailboxUuid: mailboxUuid, folderId: folderId, messageId: messageId.toString(), reminderId: reminderId),
+            method: .put
+        ))
+        return response
+    }
 }

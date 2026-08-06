@@ -86,4 +86,27 @@ public extension MailboxManager {
         }
         Task { try await refreshFolder(from: [message], additionalFolder: nil) }
     }
+
+    func markAsDone(message: Message) async throws {
+        guard let reminderId = message.reminder?.uuid else {
+            throw MailError.missingReminderID
+        }
+        guard let shortUid = message.shortUid else {
+            throw MailError.localMessageNotFound
+        }
+        let response = try await apiFetcher.markAsDoneReminder(
+            mailboxUuid: mailbox.uuid,
+            folderId: message.folderId,
+            messageId: shortUid,
+            reminderId: reminderId
+        )
+
+        if response.data {
+            try? writeTransaction { writableRealm in
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+                liveMessage.reminder = nil
+            }
+            Task { try await refreshFolder(from: [message], additionalFolder: nil) }
+        }
+    }
 }
