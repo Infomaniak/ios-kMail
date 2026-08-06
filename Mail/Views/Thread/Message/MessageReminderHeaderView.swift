@@ -17,6 +17,7 @@
  */
 
 import IKSnackbar
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -24,7 +25,8 @@ import MailResources
 import SwiftUI
 
 struct MessageReminderHeaderView: View {
-    @InjectService var snackbarPresenter: IKSnackBarPresentable
+    @LazyInjectService var matomo: MatomoUtils
+    @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var isShowingReschedulePanel = false
 
@@ -110,6 +112,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func removeReminder() {
+        matomo.track(eventWithCategory: .messageBanner, name: "reminderRemove")
         Task {
             do {
                 try await mailboxManager.deleteReminder(message: message)
@@ -121,6 +124,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func changeReminderDelta(newReminderOption: ReminderOption) {
+        matomoForReschedule()
         let delta = newReminderOption.inMinutes
         Task {
             do {
@@ -134,6 +138,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func markAsDone() {
+        matomo.track(eventWithCategory: .messageBanner, name: "markAsDone")
         Task {
             do {
                 try await mailboxManager.markAsDone(message: message)
@@ -141,6 +146,15 @@ struct MessageReminderHeaderView: View {
             } catch {
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMarkAsDoneReminderFailure)
             }
+        }
+    }
+
+    private func matomoForReschedule() {
+        switch reminderState {
+        case .futureEditable:
+            matomo.track(eventWithCategory: .messageBanner, name: "rescheduleExpiredReminder")
+        default:
+            matomo.track(eventWithCategory: .messageBanner, name: "rescheduleActiveReminder")
         }
     }
 }
