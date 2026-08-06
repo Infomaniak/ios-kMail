@@ -97,16 +97,13 @@ struct MessageView: View {
             }
         }
         .task {
-            guard message.translatedBody?.value != nil && message.translatedBody?.language == locale.identifier else {
+            if message.translatedBody?.value != nil && message.translatedBody?.language != locale.identifier {
                 guard let liveMessage = message.thaw() else { return }
                 try? liveMessage.realm?.write {
                     liveMessage.translatedBody = nil
                     liveMessage.isShowingTranslated = false
                 }
-                return
-            }
-
-            if message.isShowingTranslated {
+            } else if message.isShowingTranslated {
                 threadViewState.translatedMessages[message.uid] = .showContent
             }
         }
