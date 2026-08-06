@@ -388,7 +388,19 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if UserDefaults.shared.threadMode == .conversation && message.isReaction {
+            let targetMessageIds = message.inReplyTo ?? ""
+            let threadMessageIds: Set<String> = Set(messageIds)
+            let hideEmojiReaction = UserDefaults.shared.threadMode == .conversation && message
+                .isReaction && isTargetMessageInThread(
+                    targetMessageIds: targetMessageIds,
+                    threadMessageIds: threadMessageIds
+                )
+            let hideReminder = message.shouldHideReminder && (isTargetMessageInThread(
+                targetMessageIds: targetMessageIds,
+                threadMessageIds: threadMessageIds
+            ) || message.isScheduledDraft == true)
+
+            if hideEmojiReaction {
                 let hasAppliedReaction = applyReactionIfPossible(
                     from: message,
                     messagesById: messagesById,
@@ -396,7 +408,7 @@ public extension Thread {
                 )
 
                 message.isDisplayable = !(hasAppliedReaction || message.isDraft)
-            } else if !message.shouldHideReminder {
+            } else if !hideReminder {
                 messagesToDisplay.append(message)
             }
 
@@ -486,6 +498,10 @@ public extension Thread {
         }
 
         return messageById
+    }
+
+    private func isTargetMessageInThread(targetMessageIds: String, threadMessageIds: Set<String>) -> Bool {
+        return targetMessageIds.parseMessageIds().contains { threadMessageIds.contains($0) }
     }
 }
 
