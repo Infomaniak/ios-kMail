@@ -112,7 +112,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func removeReminder() {
-        matomo.track(eventWithCategory: .messageBanner, name: "reminderRemove")
+        matomo.track(eventWithCategory: .messageBanner, name: "removeReminder")
         Task {
             do {
                 try await mailboxManager.deleteReminder(message: message)
@@ -138,7 +138,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func markAsDone() {
-        matomo.track(eventWithCategory: .messageBanner, name: "markAsDone")
+        matomo.track(eventWithCategory: .messageBanner, name: "markAsDoneReminder")
         Task {
             do {
                 try await mailboxManager.markAsDone(message: message)

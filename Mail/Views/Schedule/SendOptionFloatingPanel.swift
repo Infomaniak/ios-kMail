@@ -17,6 +17,8 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -115,6 +117,12 @@ struct SendOptionFloatingPanel: ViewModifier {
                         )
                     } else if customAlertType == .reminder(type: .visibility) {
                         CustomReminderVisibilityAlertView(currentVisibility: draft.reminderVisibility) { visibility in
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(
+                                eventWithCategory: .newMessage,
+                                name: "selectedReminderVisibility",
+                                value: visibility == .recipientsAndMe
+                            )
                             draft.setReminderVisibility(visibility, mailboxManager: mailboxManager)
                         } cancelAction: {
                             panelShouldBeShown = true
@@ -139,6 +147,12 @@ struct SendOptionFloatingPanel: ViewModifier {
                 .onAppear {
                     isReminderEnabled = draft.reminderOption != nil
                     isScheduleEnabled = draft.scheduleOption != nil
+                }
+            }
+            .onChange(of: isShowingFloatingPanel) { newValue in
+                if newValue {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .newMessage, name: "openSendOptionsPanel")
                 }
             }
     }
