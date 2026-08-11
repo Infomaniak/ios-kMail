@@ -99,7 +99,7 @@ struct ComposeMessageView: View {
     @State private var isShowingMailPremiumPanel = false
 
     @State private var isShowingEncryptStatePanel = false
-    
+
     @State private var isShowingMailTemplatePanel = false
 
     @State private var editorFrame: CGRect?
@@ -408,9 +408,7 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
-        .sheet(isPresented: $isShowingMailTemplatePanel) {
-            Text("show panel models")
-        }
+        .mailTemplateFloatingPanel(isPresented: $isShowingMailTemplatePanel)
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
