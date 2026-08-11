@@ -20,6 +20,37 @@ import AppIntents
 import InfomaniakDI
 import MailCore
 import OSLog
+
+// MARK: - IntentFile Attachable conformance
+
+@available(iOS 18.0, *)
+extension IntentFile: @retroactive Attachable {
+    public var suggestedName: String? {
+        filename
+    }
+
+    public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
+        let filenameWithExtension: String
+        if let ext = type?.preferredFilenameExtension,
+           !filename.capitalized.hasSuffix(".\(ext.capitalized)") {
+            filenameWithExtension = "\(filename).\(ext)"
+        } else {
+            filenameWithExtension = filename
+        }
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filenameWithExtension)
+        try data.write(to: tempURL)
+        return (tempURL, nil)
+    }
+}
+
+// MARK: - No-op delegate
+
+@available(iOS 18.0, *)
+final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
+    @MainActor func contentWillChange() {}
+    @MainActor func handleGlobalError(_ error: MailError) {}
+}
+
 // MARK: - Helper
 
 @available(iOS 18.0, *)
@@ -120,5 +151,121 @@ enum MailAppIntentsHelper {
             attachments: [],
             account: accountEntity
         )
+    }
+
+    // MARK: Body conversion
+
+    static func attributedStringToHTML(_ attributedString: AttributedString) -> String {
+        let plainText = String(attributedString.characters)
+        let escaped = plainText
+            .replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;")
+        return escaped.replacingOccurrences(of: "\n", with: "<br>")
+    }
+
+    // MARK: MailboxManager resolution
+
+    static func resolveMailboxManager(
+        mailboxId: String,
+        mailboxInfosManager: MailboxInfosManager,
+        accountManager: AccountManager
+    ) throws -> (Mailbox, MailboxManager) {
+        guard let mailbox = mailboxInfosManager.getMailboxes().first(where: { $0.objectId == mailboxId }),
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox)
+        else {
+            throw MailError.unknownError
+        }
+        return (mailbox, mailboxManager)
+    }
+
+    // MARK: Attachments upload
+
+    static func uploadAttachments(
+        _ intentFiles: [IntentFile],
+        mailboxManager: MailboxManager,
+        draftUUID: String
+    ) async {
+        let worker = AttachmentsManagerWorker(
+            draftLocalUUID: draftUUID,
+            mailboxManager: mailboxManager
+        )
+        worker.setUpdateDelegate(NoOpAttachmentsDelegate())
+
+        guard let frozenDraft = mailboxManager
+            .fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID)?
+            .freeze()
+        else {
+            Logger.general.error("Cannot upload attachments: draft \(draftUUID) not found")
+            return
+        }
+
+        await worker.importAttachments(
+            attachments: intentFiles,
+            draft: frozenDraft,
+            disposition: .attachment
+        )
+    }
+
+    // MARK: Reply / Forward
+
+    struct ReplyForwardParams {
+        var mailboxManager: MailboxManager
+        var target: MailMessageEntity
+        var replyMode: ReplyMode
+        var body: AttributedString?
+        var subject: String?
+        var to: [IntentPerson]
+        var cc: [IntentPerson]
+        var bcc: [IntentPerson]
+        var attachments: [IntentFile]
+    }
+
+    static func performReplyOrForward(
+        params: ReplyForwardParams,
+        draftManager: DraftManager
+    ) async throws {
+        let mailboxManager = params.mailboxManager
+
+        guard let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: params.target.id) else {
+            return
+        }
+
+        let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: params.replyMode)
+        let draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+
+        let paramsTo = mapIntentPersonsToRecipients(params.to).toRealmList()
+        if !paramsTo.isEmpty {
+            draft.to = paramsTo
+        }
+
+        let paramsCc = mapIntentPersonsToRecipients(params.cc).toRealmList()
+        if !paramsCc.isEmpty {
+            draft.cc = paramsCc
+        }
+
+        let paramsBcc = mapIntentPersonsToRecipients(params.bcc).toRealmList()
+        if !paramsBcc.isEmpty {
+            draft.bcc = paramsBcc
+        }
+
+        let draftUUID = draft.localUUID
+        let draftSubject = params.subject ?? draft.subject
+
+        try mailboxManager.writeTransaction { realm in
+            realm.add(draft, update: .modified)
+        }
+
+        try await setupDraftContent(
+            draftUUID: draftUUID,
+            body: params.body,
+            subject: draftSubject,
+            attachments: params.attachments,
+            mailboxManager: mailboxManager,
+            messageReply: messageReply
+        )
+
+        try setDraftAction(.send, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        try await draftManager.sendDraft(localUUID: draftUUID, mailboxManager: mailboxManager)
     }
 }
