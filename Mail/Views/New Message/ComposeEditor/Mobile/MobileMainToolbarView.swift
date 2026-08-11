@@ -33,6 +33,7 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
+    @Binding var isShowingMailModelPanel: Bool
 
     let draft: Draft
     let isEditorFocused: Bool
@@ -43,6 +44,8 @@ struct MobileMainToolbarView: View {
         if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer) {
             availableOptions.append(.ai)
         }
+
+        availableOptions.append(.models)
 
         return availableOptions
     }
@@ -83,6 +86,12 @@ struct MobileMainToolbarView: View {
                 AIToolbarButton {
                     performToolbarAction(action)
                 }
+            case .models:
+                Button {
+                    isShowingMailModelPanel = true
+                } label: {
+                    action.icon.swiftUIImage
+                }
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
@@ -118,7 +127,7 @@ struct MobileMainToolbarView: View {
             }
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
-        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
+        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption, .models:
             break
         }
     }
@@ -141,6 +150,7 @@ struct MobileMainToolbarView: View {
         isShowingMyKSuitePanel: .constant(false),
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
+        isShowingMailModelPanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
     )
