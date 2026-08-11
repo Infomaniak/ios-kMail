@@ -110,7 +110,7 @@ struct ComposeMessageView: View {
 
     @State private var isShowingEncryptStatePanel = false
     
-    @State private var isShowingMailModelPanel = false
+    @State private var isShowingMailTemplatePanel = false
 
     @State private var editorFrame: CGRect?
 
@@ -310,7 +310,7 @@ struct ComposeMessageView: View {
                         isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
-                        isShowingMailModelPanel: $isShowingMailModelPanel,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText
@@ -424,7 +424,7 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
-        .sheet(isPresented: $isShowingMailModelPanel) {
+        .sheet(isPresented: $isShowingMailTemplatePanel) {
             Text("show panel models")
         }
         .mailCustomAlert(item: $isShowingAlert) { alert in

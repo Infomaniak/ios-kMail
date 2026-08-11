@@ -19,7 +19,7 @@
 import Foundation
 import RealmSwift
 
-public final class MailModel: Object, Codable, ObjectKeyIdentifiable {
+public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var title = ""
     @Persisted public var bodyData: Data?
@@ -67,15 +67,15 @@ public final class MailModel: Object, Codable, ObjectKeyIdentifiable {
     }
 }
 
-public extension MailModel {
-    static let mocks: [MailModel] = [
-        MailModel(id: 1, title: "Bienvenue",
-                  body: "<p>Bienvenue chez nous !</p>"),
-        MailModel(id: 2, title: "",
-                  body: "<p>Corps sans titre</p>"),
-        MailModel(id: 3, title: "Relance facture",
-                  body: "<p>Bonjour, n'oubliez pas de régler la facture.</p>"),
-        MailModel(id: 4, title: "Réunion",
-                  body: "<p><strong>Ordre du jour :</strong></p><ul><li>Point 1</li><li>Point 2</li></ul>"),
+public extension MailTemplate {
+    static let mocks: [MailTemplate] = [
+        MailTemplate(id: 1, title: "Bienvenue",
+                     body: "<p>Bienvenue chez nous !</p>"),
+        MailTemplate(id: 2, title: "",
+                     body: "<p>Corps sans titre</p>"),
+        MailTemplate(id: 3, title: "Relance facture",
+                     body: "<p>Bonjour, n'oubliez pas de régler la facture.</p>"),
+        MailTemplate(id: 4, title: "Réunion",
+                     body: "<p><strong>Ordre du jour :</strong></p><ul><li>Point 1</li><li>Point 2</li></ul>"),
     ]
 }
