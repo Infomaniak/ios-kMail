@@ -24,6 +24,35 @@ import OSLog
 
 @available(iOS 18.0, *)
 enum MailAppIntentsHelper {
+    // MARK: Recipient mapping
+
+    static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
+        guard case .emailAddress(let email) = person.handle?.value else { return nil }
+        let name: String
+        if case .displayName(let displayName) = person.name {
+            name = displayName
+        } else {
+            name = ""
+        }
+        return Recipient(email: email, name: name)
+    }
+
+    static func mapIntentPersonsToRecipients(_ persons: [IntentPerson]) -> [Recipient] {
+        persons.compactMap { mapIntentPersonToRecipient($0) }
+    }
+
+    static func mapRecipientToIntentPerson(_ recipient: Recipient) -> IntentPerson {
+        IntentPerson(
+            identifier: .applicationDefined(recipient.id),
+            name: .displayName(recipient.name),
+            handle: .init(emailAddress: recipient.email)
+        )
+    }
+
+    static func mapRecipientsToIntentPersons(_ recipients: [Recipient]) -> [IntentPerson] {
+        recipients.map { mapRecipientToIntentPerson($0) }
+    }
+
     // MARK: Message mapping
 
     static func mapMessage(_ message: Message, mailbox: Mailbox) -> MailMessageEntity {
@@ -67,6 +96,29 @@ enum MailAppIntentsHelper {
             isFlagged: message.flagged,
             account: accountEntity,
             mailbox: mailboxEntity
+        )
+    }
+
+    // MARK: Draft mapping
+
+    static func mapDraft(_ draft: Draft, mailbox: Mailbox) -> MailDraftEntity {
+        let accountEntity = MailAccountEntity(
+            id: mailbox.objectId,
+            name: mailbox.mailbox,
+            emailAddress: mailbox.email
+        )
+
+        let bodyAttributedString: AttributedString? = try? AttributedString(markdown: draft.body)
+
+        return MailDraftEntity(
+            id: draft.localUUID,
+            to: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.to.toArray()),
+            cc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.cc.toArray()),
+            bcc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.bcc.toArray()),
+            subject: draft.subject,
+            body: bodyAttributedString,
+            attachments: [],
+            account: accountEntity
         )
     }
 }
