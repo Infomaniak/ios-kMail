@@ -36,6 +36,7 @@ extension View {
 
 struct MailTemplateFloatingPanel: ViewModifier {
     @Environment(\.dismiss) var dismiss
+
     @Binding var isShowingFloatingPanel: Bool
 
     @State private var title = "Model"
@@ -44,49 +45,74 @@ struct MailTemplateFloatingPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .mailFloatingPanel(isPresented: $isShowingFloatingPanel, title: title) {
-                VStack(spacing: IKPadding.mini) {
-                    ForEach(templates) { template in
-                        Button {
-                            print("click on button to open \(template.title)")
-                        } label: {
-                            HStack(spacing: IKPadding.mini) {
-                                VStack(alignment: .leading) {
-                                    Text(template.displayName)
-                                        .font(MailTextStyle.header2.font)
-                                        .foregroundStyle(MailTextStyle.header2.color)
+            .sheet(isPresented: $isShowingFloatingPanel) {
+                NavigationView {
+                    VStack(spacing: IKPadding.mini) {
+                        ForEach(templates) { template in
+                            NavigationLink {
+                                TemplatePreviewView(template: template)
+                            } label: {
+                                HStack(spacing: IKPadding.mini) {
+                                    VStack(alignment: .leading) {
+                                        Text(template.displayName)
+                                            .font(MailTextStyle.header2.font)
+                                            .foregroundStyle(MailTextStyle.header2.color)
 
-                                    if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
-                                        Text(previewBody)
-                                            .font(MailTextStyle.bodyMediumTertiary.font)
-                                            .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
-                                            .lineLimit(1)
+                                        if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
+                                            Text(previewBody)
+                                                .font(MailTextStyle.bodyMediumTertiary.font)
+                                                .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                                                .lineLimit(1)
+                                        }
                                     }
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(IKPadding.mini)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                                MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
-                                    .iconSize(IKIconSize.medium)
-                                    .foregroundStyle(.gray)
+                                    MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
+                                        .iconSize(IKIconSize.medium)
+                                        .foregroundStyle(.gray)
+                                }
+                            }
+
+                            Divider()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.horizontal, IKPadding.medium)
+                    .navigationTitle("Models")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            if #available(iOS 26.0, *) {
+                                Button(role: .close, action: dismiss.callAsFunction)
+                            } else {
+                                Button(action: dismiss.callAsFunction) {
+                                    Label("close", systemImage: "xmark")
+                                }
                             }
                         }
-
-                        Divider()
                     }
                 }
-                .padding(IKPadding.medium)
                 .task {
                     do {
                         templates = try await MailApiFetcher().mailTemplate()
                         for template in templates {
-                            previewTexts[template.id] = (try? await SwiftSoupUtils(fromHTML: template.body).extractText(
-                            )) ?? "No body"
+                            previewTexts[template.id] = (
+                                try? await SwiftSoupUtils(fromHTML: template.body).extractText()
+                            ) ?? "No body"
                         }
                     } catch {
                         // handle error
                     }
                 }
             }
+    }
+}
+
+struct TemplatePreviewView: View {
+    let template: MailTemplate
+
+    var body: some View {
+        Text("hello")
+            .navigationTitle(template.displayName)
     }
 }
