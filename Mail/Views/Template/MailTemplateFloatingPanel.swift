@@ -35,11 +35,12 @@ extension View {
 }
 
 struct MailTemplateFloatingPanel: ViewModifier {
+    @Environment(\.dismiss) var dismiss
     @Binding var isShowingFloatingPanel: Bool
 
     @State private var title = "Model"
     @State private var templates: [MailTemplate] = []
-    @State private var previewAttributedStrings: [Int: AttributedString] = [:]
+    @State private var previewTexts: [Int: String] = [:]
 
     func body(content: Content) -> some View {
         content
@@ -51,14 +52,16 @@ struct MailTemplateFloatingPanel: ViewModifier {
                         } label: {
                             HStack(spacing: IKPadding.mini) {
                                 VStack(alignment: .leading) {
-                                    Text(template.title)
+                                    Text(template.displayName)
                                         .font(MailTextStyle.header2.font)
                                         .foregroundStyle(MailTextStyle.header2.color)
 
-                                    Text(previewAttributedStrings[template.id] ?? "")
-                                        .font(MailTextStyle.bodyMedium.font)
-                                        .foregroundStyle(MailTextStyle.bodyMedium.color)
-                                        .lineLimit(1)
+                                    if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
+                                        Text(previewBody)
+                                            .font(MailTextStyle.bodyMediumTertiary.font)
+                                            .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                                            .lineLimit(1)
+                                    }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(IKPadding.mini)
@@ -77,29 +80,13 @@ struct MailTemplateFloatingPanel: ViewModifier {
                     do {
                         templates = try await MailApiFetcher().mailTemplate()
                         for template in templates {
-                            previewAttributedStrings[template.id] = template.body.htmlToAttributedString()
+                            previewTexts[template.id] = (try? await SwiftSoupUtils(fromHTML: template.body).extractText(
+                            )) ?? "No body"
                         }
                     } catch {
                         // handle error
                     }
                 }
             }
-    }
-}
-
-extension String {
-    func htmlToAttributedString() -> AttributedString {
-        guard let data = data(using: .utf8),
-              let nsAttr = try? NSAttributedString(
-                  data: data,
-                  options: [
-                      .documentType: NSAttributedString.DocumentType.html,
-                      .characterEncoding: String.Encoding.utf8.rawValue
-                  ],
-                  documentAttributes: nil
-              ) else {
-            return AttributedString(self)
-        }
-        return AttributedString(nsAttr)
     }
 }
