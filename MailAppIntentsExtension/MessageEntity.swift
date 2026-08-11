@@ -142,3 +142,189 @@ enum MailCategory: String {
         `default`: "default"
     ]
 }
+
+// MARK: - Archive
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.archiveMail)
+struct ArchiveMailIntent: AppIntent {
+    var entities: [MailMessageEntity]
+
+    func perform() async throws -> some IntentResult {
+        try await MailMessageEntity.moveEntities(entities, to: .archive)
+        return .result()
+    }
+}
+
+// MARK: - Delete
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.deleteMail)
+struct DeleteMailIntent: DeleteIntent {
+    var entities: [MailMessageEntity]
+
+    func perform() async throws -> some IntentResult {
+        try await MailMessageEntity.moveEntities(entities, to: .trash)
+        return .result()
+    }
+}
+
+// MARK: - Forward
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.forwardMail)
+struct ForwardMailIntent: AppIntent {
+    var target: MailMessageEntity
+    var to: [IntentPerson]
+    var body: AttributedString?
+    var cc: [IntentPerson]
+    var bcc: [IntentPerson]
+    var subject: String?
+    var account: MailAccountEntity?
+    var attachments: [IntentFile]
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
+            mailboxId: target.mailbox.id,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        try await MailAppIntentsHelper.performReplyOrForward(
+            params: .init(
+                mailboxManager: mailboxManager,
+                target: target,
+                replyMode: .forward,
+                body: body,
+                subject: subject,
+                to: to,
+                cc: cc,
+                bcc: bcc,
+                attachments: attachments
+            ),
+            draftManager: draftManager
+        )
+
+        return .result()
+    }
+}
+
+// MARK: - Reply
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.replyMail)
+struct ReplyMailIntent: AppIntent {
+    var isReplyAll: Bool
+    var target: MailMessageEntity
+    var body: AttributedString?
+    var subject: String?
+    var account: MailAccountEntity?
+    var attachments: [IntentFile]
+    var to: [IntentPerson]
+    var cc: [IntentPerson]
+    var bcc: [IntentPerson]
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
+            mailboxId: target.mailbox.id,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        try await MailAppIntentsHelper.performReplyOrForward(
+            params: .init(
+                mailboxManager: mailboxManager,
+                target: target,
+                replyMode: isReplyAll ? .replyAll : .reply,
+                body: body,
+                subject: subject,
+                to: to,
+                cc: cc,
+                bcc: bcc,
+                attachments: attachments
+            ),
+            draftManager: draftManager
+        )
+
+        return .result()
+    }
+}
+
+// MARK: - Update
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.updateMail)
+struct UpdateMailIntent {
+    var target: [MailMessageEntity]
+    var isRead: Bool?
+    var isFlagged: Bool?
+    var isJunk: Bool?
+    var mailbox: MailboxEntity?
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+
+        for entity in target {
+            let mailboxId = mailbox?.id ?? entity.mailbox.id
+            guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
+                mailboxId: mailboxId,
+                mailboxInfosManager: mailboxInfosManager,
+                accountManager: accountManager
+            ),
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
+            else {
+                continue
+            }
+
+            let frozenMessage = message.freezeIfNeeded()
+
+            if let isRead {
+                try await mailboxManager.markAsSeen(message: frozenMessage, seen: isRead)
+            }
+
+            if let isFlagged {
+                try await mailboxManager.star(messages: [frozenMessage], starred: isFlagged)
+            }
+
+            if let isJunk {
+                let destination: FolderRole = isJunk ? .spam : .inbox
+                _ = try await mailboxManager.move(messages: [frozenMessage], to: destination)
+            }
+        }
+
+        return .result()
+    }
+}
+
+// MARK: - Shared helpers
+
+@available(iOS 18.0, *)
+private extension MailMessageEntity {
+    static func moveEntities(_ entities: [MailMessageEntity], to folderRole: FolderRole) async throws {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+
+        for entity in entities {
+            guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
+                mailboxId: entity.mailbox.id,
+                mailboxInfosManager: mailboxInfosManager,
+                accountManager: accountManager
+            ),
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
+            else {
+                continue
+            }
+
+            _ = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folderRole)
+        }
+    }
+}
