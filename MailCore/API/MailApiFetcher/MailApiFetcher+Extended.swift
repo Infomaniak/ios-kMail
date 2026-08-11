@@ -71,6 +71,12 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
     }
 
+    func models() async throws -> [MailModel] {
+        try await Task {
+            MailModel.mocks
+        }.value
+    }
+
     @discardableResult
     func updateSignature(mailbox: Mailbox, signature: Signature?) async throws -> Bool {
         try await perform(request:
