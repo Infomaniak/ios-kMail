@@ -91,6 +91,9 @@ public protocol MailApiCommonFetchable: ApiFetcher {
                                          progressObserver: ((Double) -> Void)?) async throws -> URL
 
     func downloadAllSwissTransferAttachment(stUuid: String, progressObserver: ((Double) -> Void)?) async throws -> URL
+
+    // TODO: Create true function after
+    func models() async throws -> [MailModel]
 }
 
 /// Extended capabilities of the `MailApiFetcher`
