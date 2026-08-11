@@ -109,6 +109,8 @@ struct ComposeMessageView: View {
     @State private var isShowingMailPremiumPanel = false
 
     @State private var isShowingEncryptStatePanel = false
+    
+    @State private var isShowingMailModelPanel = false
 
     @State private var editorFrame: CGRect?
 
@@ -308,6 +310,7 @@ struct ComposeMessageView: View {
                         isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                        isShowingMailModelPanel: $isShowingMailModelPanel,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText
@@ -420,6 +423,9 @@ struct ComposeMessageView: View {
                 changeFolderAction: handleSelectedFolderCallback,
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
+        }
+        .sheet(isPresented: $isShowingMailModelPanel) {
+            Text("show panel models")
         }
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
