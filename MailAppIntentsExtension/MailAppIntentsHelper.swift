@@ -179,6 +179,87 @@ enum MailAppIntentsHelper {
         return (mailbox, mailboxManager)
     }
 
+    static func resolveDefaultMailboxManager(
+        account: MailAccountEntity?,
+        mailboxInfosManager: MailboxInfosManager,
+        accountManager: AccountManager
+    ) throws -> (Mailbox, MailboxManager) {
+        let mailboxId = account?.id
+        if let mailboxId {
+            return try resolveMailboxManager(
+                mailboxId: mailboxId,
+                mailboxInfosManager: mailboxInfosManager,
+                accountManager: accountManager
+            )
+        }
+        guard let mailbox = mailboxInfosManager.getMailboxes().first(where: { $0.isPrimary })
+            ?? mailboxInfosManager.getMailboxes().first,
+            let mailboxManager = accountManager.getMailboxManager(for: mailbox)
+        else {
+            throw MailError.unknownError
+        }
+        return (mailbox, mailboxManager)
+    }
+
+    // MARK: Draft content setup
+
+    static func setupDraftContent(
+        draftUUID: String,
+        body: AttributedString?,
+        subject: String?,
+        attachments: [IntentFile],
+        mailboxManager: MailboxManager,
+        messageReply: MessageReply? = nil
+    ) async throws {
+        let draftContentManager = DraftContentManager(
+            draftLocalUUID: draftUUID,
+            messageReply: messageReply,
+            mailboxManager: mailboxManager
+        )
+
+        if let frozenDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID)?.freeze() {
+            _ = try await draftContentManager.prepareCompleteDraft(incompleteDraft: frozenDraft)
+        }
+
+        let bodyText = body.map { attributedStringToHTML($0) } ?? ""
+        await draftContentManager.replaceContent(
+            subject: subject,
+            body: bodyText,
+            draftPrimaryKey: draftUUID
+        )
+
+        if !attachments.isEmpty {
+            await uploadAttachments(
+                attachments,
+                mailboxManager: mailboxManager,
+                draftUUID: draftUUID
+            )
+        }
+    }
+
+    // MARK: Draft action + sync
+
+    static func setDraftAction(
+        _ action: SaveDraftOption,
+        draftUUID: String,
+        mailboxManager: MailboxManager,
+        scheduleDate: Date? = nil
+    ) throws {
+        try mailboxManager.writeTransaction { realm in
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftUUID) else { return }
+            liveDraft.action = action
+            switch action {
+            case .send, .sendReaction:
+                liveDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+            case .schedule:
+                liveDraft.scheduleDate = scheduleDate
+                liveDraft.delay = nil
+            default:
+                break
+            }
+        }
+    }
+
     // MARK: Attachments upload
 
     static func uploadAttachments(
