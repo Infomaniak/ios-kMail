@@ -83,7 +83,7 @@ struct MailDraftEntity: IndexedEntity {
                 }
 
                 let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }.filter { identifiers.contains($0.localUUID) }
-                return drafts.map { Self.mapDraft($0, mailbox: mailbox) }
+                return drafts.map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
             }
         }
 
@@ -103,5 +103,253 @@ struct MailDraftEntity: IndexedEntity {
                 return Array(drafts.prefix(10)).map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
             }
         }
+    }
+}
+
+// MARK: - Create Draft
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.createDraft)
+struct CreateDraftIntent {
+    var body: AttributedString?
+    var to: [IntentPerson]
+    var subject: String?
+    var cc: [IntentPerson]
+    var bcc: [IntentPerson]
+    var account: MailAccountEntity?
+    var attachments: [IntentFile]
+
+    func perform() async throws -> some ReturnsValue<MailDraftEntity> {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (mailbox, mailboxManager) = try MailAppIntentsHelper.resolveDefaultMailboxManager(
+            account: account,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        let draft = Draft(
+            subject: subject ?? "",
+            body: "",
+            to: MailAppIntentsHelper.mapIntentPersonsToRecipients(to),
+            cc: MailAppIntentsHelper.mapIntentPersonsToRecipients(cc),
+            bcc: MailAppIntentsHelper.mapIntentPersonsToRecipients(bcc)
+        )
+        let draftUUID = draft.localUUID
+
+        try mailboxManager.writeTransaction { realm in
+            realm.add(draft, update: .modified)
+        }
+
+        try await MailAppIntentsHelper.setupDraftContent(
+            draftUUID: draftUUID,
+            body: body,
+            subject: subject,
+            attachments: attachments,
+            mailboxManager: mailboxManager
+        )
+
+        try MailAppIntentsHelper.setDraftAction(.initialSave, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
+
+        let accountEntity = MailAccountEntity(
+            id: mailbox.objectId,
+            name: mailbox.mailbox,
+            emailAddress: mailbox.email
+        )
+        return .result(value: MailDraftEntity(
+            id: draftUUID,
+            to: to,
+            cc: cc,
+            bcc: bcc,
+            subject: subject,
+            body: body,
+            attachments: attachments,
+            account: accountEntity
+        ))
+    }
+}
+
+// MARK: - Update Draft
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.updateDraft)
+struct UpdateDraftIntent {
+    var target: MailDraftEntity
+    var to: [IntentPerson]?
+    var cc: [IntentPerson]?
+    var bcc: [IntentPerson]?
+    var subject: String?
+    var body: AttributedString?
+    var account: MailAccountEntity?
+    var attachments: [IntentFile]?
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
+            mailboxId: target.account.id,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        let draftUUID = target.id
+
+        guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
+            throw MailError.unknownError
+        }
+
+        // Update recipients and subject
+        try mailboxManager.writeTransaction { realm in
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftUUID) else { return }
+            if let to {
+                liveDraft.to = MailAppIntentsHelper.mapIntentPersonsToRecipients(to).toRealmList()
+            }
+            if let cc {
+                liveDraft.cc = MailAppIntentsHelper.mapIntentPersonsToRecipients(cc).toRealmList()
+            }
+            if let bcc {
+                liveDraft.bcc = MailAppIntentsHelper.mapIntentPersonsToRecipients(bcc).toRealmList()
+            }
+            if let subject {
+                liveDraft.subject = subject
+            }
+        }
+
+        // Update body and upload attachments
+        if let body, let attachments {
+            try await MailAppIntentsHelper.setupDraftContent(
+                draftUUID: draftUUID,
+                body: body,
+                subject: subject,
+                attachments: attachments,
+                mailboxManager: mailboxManager
+            )
+        } else if let body {
+            try await MailAppIntentsHelper.setupDraftContent(
+                draftUUID: draftUUID,
+                body: body,
+                subject: subject,
+                attachments: [],
+                mailboxManager: mailboxManager
+            )
+        } else if let attachments, !attachments.isEmpty {
+            await MailAppIntentsHelper.uploadAttachments(
+                attachments,
+                mailboxManager: mailboxManager,
+                draftUUID: draftUUID
+            )
+        }
+
+        try MailAppIntentsHelper.setDraftAction(.save, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
+
+        return .result()
+    }
+}
+
+// MARK: - Save Draft
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.saveDraft)
+struct SaveDraftIntent {
+    var target: MailDraftEntity
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
+            mailboxId: target.account.id,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        let draftUUID = target.id
+
+        guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
+            throw MailError.unknownError
+        }
+
+        try MailAppIntentsHelper.setDraftAction(.save, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
+
+        return .result()
+    }
+}
+
+// MARK: - Delete Draft
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.deleteDraft)
+struct DeleteDraftIntent: DeleteIntent {
+    var entities: [MailDraftEntity]
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+
+        for entity in entities {
+            guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
+                mailboxId: entity.account.id,
+                mailboxInfosManager: mailboxInfosManager,
+                accountManager: accountManager
+            ),
+                let draft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: entity.id)
+            else {
+                continue
+            }
+
+            try await mailboxManager.delete(draft: draft.freezeIfNeeded())
+        }
+
+        return .result()
+    }
+}
+
+// MARK: - Send Draft
+
+@available(iOS 18.0, *)
+@AppIntent(schema: .mail.sendDraft)
+struct SendDraftIntent {
+    var target: MailDraftEntity
+    var sendLaterDate: Date?
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var accountManager: AccountManager
+        @InjectService var draftManager: DraftManager
+
+        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
+            mailboxId: target.account.id,
+            mailboxInfosManager: mailboxInfosManager,
+            accountManager: accountManager
+        )
+
+        let draftUUID = target.id
+
+        guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
+            throw MailError.unknownError
+        }
+
+        if let sendLaterDate {
+            try MailAppIntentsHelper.setDraftAction(
+                .schedule,
+                draftUUID: draftUUID,
+                mailboxManager: mailboxManager,
+                scheduleDate: sendLaterDate
+            )
+            await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
+        } else {
+            try MailAppIntentsHelper.setDraftAction(.send, draftUUID: draftUUID, mailboxManager: mailboxManager)
+            try await draftManager.sendDraft(localUUID: draftUUID, mailboxManager: mailboxManager)
+        }
+
+        return .result()
     }
 }
