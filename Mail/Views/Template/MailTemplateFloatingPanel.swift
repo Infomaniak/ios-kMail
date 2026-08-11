@@ -16,8 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import Foundation
 import MailCore
+import MailResources
 import SwiftUI
 
 extension View {
@@ -37,22 +39,67 @@ struct MailTemplateFloatingPanel: ViewModifier {
 
     @State private var title = "Model"
     @State private var templates: [MailTemplate] = []
+    @State private var previewAttributedStrings: [Int: AttributedString] = [:]
 
     func body(content: Content) -> some View {
         content
             .mailFloatingPanel(isPresented: $isShowingFloatingPanel, title: title) {
-                VStack(spacing: 8) {
+                VStack(spacing: IKPadding.mini) {
                     ForEach(templates) { template in
-                        Text(template.displayName)
+                        Button {
+                            print("click on button to open \(template.title)")
+                        } label: {
+                            HStack(spacing: IKPadding.mini) {
+                                VStack(alignment: .leading) {
+                                    Text(template.title)
+                                        .font(MailTextStyle.header2.font)
+                                        .foregroundStyle(MailTextStyle.header2.color)
+
+                                    Text(previewAttributedStrings[template.id] ?? "")
+                                        .font(MailTextStyle.bodyMedium.font)
+                                        .foregroundStyle(MailTextStyle.bodyMedium.color)
+                                        .lineLimit(1)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(IKPadding.mini)
+
+                                MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
+                                    .iconSize(IKIconSize.medium)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+
+                        Divider()
                     }
                 }
+                .padding(IKPadding.medium)
                 .task {
                     do {
                         templates = try await MailApiFetcher().mailTemplate()
+                        for template in templates {
+                            previewAttributedStrings[template.id] = template.body.htmlToAttributedString()
+                        }
                     } catch {
                         // handle error
                     }
                 }
             }
+    }
+}
+
+extension String {
+    func htmlToAttributedString() -> AttributedString {
+        guard let data = data(using: .utf8),
+              let nsAttr = try? NSAttributedString(
+                  data: data,
+                  options: [
+                      .documentType: NSAttributedString.DocumentType.html,
+                      .characterEncoding: String.Encoding.utf8.rawValue
+                  ],
+                  documentAttributes: nil
+              ) else {
+            return AttributedString(self)
+        }
+        return AttributedString(nsAttr)
     }
 }
