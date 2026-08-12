@@ -47,33 +47,35 @@ struct MailTemplateFloatingPanel: ViewModifier {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
                 NavigationView {
-                    VStack(spacing: IKPadding.mini) {
-                        ForEach(templates) { template in
-                            NavigationLink {
-                                TemplatePreviewView(template: template)
-                            } label: {
-                                HStack(spacing: IKPadding.mini) {
-                                    VStack(alignment: .leading) {
-                                        Text(template.displayName)
-                                            .font(MailTextStyle.header2.font)
-                                            .foregroundStyle(MailTextStyle.header2.color)
+                    ScrollView {
+                        VStack(spacing: IKPadding.mini) {
+                            ForEach(templates) { template in
+                                NavigationLink {
+                                    TemplatePreviewView(template: template)
+                                } label: {
+                                    HStack(spacing: IKPadding.mini) {
+                                        VStack(alignment: .leading) {
+                                            Text(template.displayName)
+                                                .font(MailTextStyle.header2.font)
+                                                .foregroundStyle(MailTextStyle.header2.color)
 
-                                        if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
-                                            Text(previewBody)
-                                                .font(MailTextStyle.bodyMediumTertiary.font)
-                                                .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
-                                                .lineLimit(1)
+                                            if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
+                                                Text(previewBody)
+                                                    .font(MailTextStyle.bodyMediumTertiary.font)
+                                                    .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                                                    .lineLimit(1)
+                                            }
                                         }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                        MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
+                                            .iconSize(IKIconSize.medium)
+                                            .foregroundStyle(.gray)
                                     }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                    MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
-                                        .iconSize(IKIconSize.medium)
-                                        .foregroundStyle(.gray)
                                 }
-                            }
 
-                            Divider()
+                                Divider()
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -112,10 +114,16 @@ struct TemplatePreviewView: View {
     let template: MailTemplate
 
     var body: some View {
-        Text(template.body.htmlToAttributedString())
-            .font(MailTextStyle.bodyMedium.font)
-            .foregroundStyle(MailTextStyle.bodyMedium.color)
-            .navigationTitle(template.displayName)
+        ScrollView {
+            VStack {
+                Text(template.body.htmlToAttributedString())
+                    .font(MailTextStyle.bodyMedium.font)
+                    .foregroundStyle(MailTextStyle.bodyMedium.color)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(.horizontal, 24)
+        .navigationTitle(template.displayName)
     }
 }
 
@@ -126,6 +134,7 @@ extension String {
             body {
                 font-family: -apple-system, sans-serif;
                 font-size: 15px;
+                line-height: 1.5;
             }
         </style>
         \(self)
