@@ -18,6 +18,7 @@
 
 import DesignSystem
 import Foundation
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -25,10 +26,14 @@ import SwiftUI
 extension View {
     func mailTemplateFloatingPanel(
         isPresented: Binding<Bool>,
+        draftBody: Binding<String>,
+        draft: Draft,
     ) -> some View {
         modifier(
             MailTemplateFloatingPanel(
-                isShowingFloatingPanel: isPresented
+                isShowingFloatingPanel: isPresented,
+                draftBody: draftBody,
+                draft: draft
             )
         )
     }
@@ -38,6 +43,8 @@ struct MailTemplateFloatingPanel: ViewModifier {
     @Environment(\.dismiss) var dismiss
 
     @Binding var isShowingFloatingPanel: Bool
+    @Binding var draftBody: String
+    var draft: Draft
 
     @State private var title = "Model"
     @State private var templates: [MailTemplate] = []
@@ -51,7 +58,7 @@ struct MailTemplateFloatingPanel: ViewModifier {
                         VStack(spacing: IKPadding.mini) {
                             ForEach(templates) { template in
                                 NavigationLink {
-                                    TemplatePreviewView(template: template)
+                                    TemplatePreviewView(template: template, draftBody: $draftBody, draft: draft)
                                 } label: {
                                     HStack(spacing: IKPadding.mini) {
                                         VStack(alignment: .leading) {
@@ -112,6 +119,8 @@ struct MailTemplateFloatingPanel: ViewModifier {
 
 struct TemplatePreviewView: View {
     let template: MailTemplate
+    @Binding var draftBody: String
+    var draft: Draft
 
     var body: some View {
         ScrollView {
@@ -120,6 +129,35 @@ struct TemplatePreviewView: View {
                     .font(MailTextStyle.bodyMedium.font)
                     .foregroundStyle(MailTextStyle.bodyMedium.color)
             }
+        }.safeAreaInset(edge: .bottom) {
+            Button("Inserer") {
+                draftBody.append(template.body)
+
+                if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
+                    try? realm.write {
+                        if liveDraft.subject.isEmpty {
+                            liveDraft.subject = template.displayName
+                        }
+                    }
+                }
+            }
+            .buttonStyle(.ikBorderedProminent)
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
+            .ikButtonTheme(
+                IKButtonTheme(
+                    primary: DefaultPreferences.accentColor.primary.swiftUIColor,
+                    secondary: DefaultPreferences.accentColor.secondary.swiftUIColor,
+                    tertiary: Color.gray,
+                    disabledPrimary: Color.gray,
+                    disabledSecondary: Color.white,
+                    error: Color.red,
+                    smallFont: .body,
+                    mediumFont: .headline
+                )
+            )
+            .padding(.horizontal, IKPadding.large)
+            .padding(.bottom, IKPadding.mini)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.horizontal, 24)

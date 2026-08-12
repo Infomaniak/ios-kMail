@@ -408,7 +408,7 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
-        .mailTemplateFloatingPanel(isPresented: $isShowingMailTemplatePanel)
+        .mailTemplateFloatingPanel(isPresented: $isShowingMailTemplatePanel, draftBody: $draftContentManager.draftContent, draft: draft)
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
