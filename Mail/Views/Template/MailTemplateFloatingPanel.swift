@@ -112,7 +112,36 @@ struct TemplatePreviewView: View {
     let template: MailTemplate
 
     var body: some View {
-        Text("hello")
+        Text(template.body.htmlToAttributedString())
+            .font(MailTextStyle.bodyMedium.font)
+            .foregroundStyle(MailTextStyle.bodyMedium.color)
             .navigationTitle(template.displayName)
+    }
+}
+
+extension String {
+    func htmlToAttributedString() -> AttributedString {
+        let styledHTML = """
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                font-size: 15px;
+            }
+        </style>
+        \(self)
+        """
+
+        guard let data = styledHTML.data(using: .utf8),
+              let nsAttr = try? NSAttributedString(
+                  data: data,
+                  options: [
+                      .documentType: NSAttributedString.DocumentType.html,
+                      .characterEncoding: String.Encoding.utf8.rawValue
+                  ],
+                  documentAttributes: nil
+              ) else {
+            return AttributedString(self)
+        }
+        return AttributedString(nsAttr)
     }
 }
