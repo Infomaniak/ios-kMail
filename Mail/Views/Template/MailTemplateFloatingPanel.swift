@@ -107,9 +107,8 @@ struct MailTemplateListView: View {
             do {
                 templates = try await MailApiFetcher().mailTemplate()
                 for template in templates {
-                    previewTexts[template.id] = (
-                        try? await SwiftSoupUtils(fromHTML: template.body).extractText()
-                    ) ?? "No body"
+                    let extractedText = try? await SwiftSoupUtils(fromHTML: template.body).extractText()
+                    previewTexts[template.id] = extractedText ?? "No body"
                 }
             } catch {
                 // handle error
