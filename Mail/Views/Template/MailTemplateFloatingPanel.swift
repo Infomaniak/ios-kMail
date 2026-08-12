@@ -40,8 +40,6 @@ extension View {
 }
 
 struct MailTemplateFloatingPanel: ViewModifier {
-    @Environment(\.dismiss) var dismiss
-
     @Binding var isShowingFloatingPanel: Bool
     @Binding var draftBody: String
     var draft: Draft
@@ -53,72 +51,99 @@ struct MailTemplateFloatingPanel: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                NavigationStack {
-                    List {
-                        ForEach(templates) { template in
-                            NavigationLink {
-                                TemplatePreviewView(template: template, draftBody: $draftBody, draft: draft)
-                            } label: {
-                                VStack(alignment: .leading) {
-                                    Text(template.displayName)
-                                        .font(MailTextStyle.header2.font)
-                                        .foregroundStyle(MailTextStyle.header2.color)
-
-                                    if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
-                                        Text(previewBody)
-                                            .font(MailTextStyle.bodyMediumTertiary.font)
-                                            .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
-                                            .lineLimit(1)
-                                    }
-                                }
-                                .padding(.vertical, IKPadding.micro)
-                            }
-                        }
-                    }
-                    .listStyle(.plain)
-                    .navigationTitle("Models")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            if #available(iOS 26.0, *) {
-                                Button(role: .close, action: dismiss.callAsFunction)
-                            } else {
-                                Button(action: dismiss.callAsFunction) {
-                                    Label("close", systemImage: "xmark")
-                                }
-                            }
-                        }
-                    }
-                }
-                .task {
-                    do {
-                        templates = try await MailApiFetcher().mailTemplate()
-                        for template in templates {
-                            previewTexts[template.id] = (
-                                try? await SwiftSoupUtils(fromHTML: template.body).extractText()
-                            ) ?? "No body"
-                        }
-                    } catch {
-                        // handle error
-                    }
-                }
+                MailTemplateListView(draftBody: $draftBody, draft: draft)
             }
     }
 }
 
-struct TemplatePreviewView: View {
-    let template: MailTemplate
+struct MailTemplateListView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @Binding var draftBody: String
-    var draft: Draft
+    let draft: Draft
+
+    @State private var templates: [MailTemplate] = []
+    @State private var previewTexts: [Int: String] = [:]
 
     var body: some View {
-        ScrollView {
-            VStack {
-                Text(template.body.htmlToAttributedString())
-                    .font(MailTextStyle.bodyMedium.font)
-                    .foregroundStyle(MailTextStyle.bodyMedium.color)
+        NavigationStack {
+            List {
+                ForEach(templates) { template in
+                    NavigationLink {
+                        TemplatePreviewView(draftBody: $draftBody, template: template, draft: draft) { dismiss() }
+                    } label: {
+                        VStack(alignment: .leading) {
+                            Text(template.displayName)
+                                .font(MailTextStyle.header2.font)
+                                .foregroundStyle(MailTextStyle.header2.color)
+
+                            if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
+                                Text(previewBody)
+                                    .font(MailTextStyle.bodyMediumTertiary.font)
+                                    .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .padding(.vertical, IKPadding.micro)
+                    }
+                }
             }
-        }.safeAreaInset(edge: .bottom) {
+            .listStyle(.plain)
+            .navigationTitle("Models")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if #available(iOS 26.0, *) {
+                        Button(role: .close, action: dismiss.callAsFunction)
+                    } else {
+                        Button(action: dismiss.callAsFunction) {
+                            Label("close", systemImage: "xmark")
+                        }
+                    }
+                }
+            }
+        }
+        .task {
+            do {
+                templates = try await MailApiFetcher().mailTemplate()
+                for template in templates {
+                    previewTexts[template.id] = (
+                        try? await SwiftSoupUtils(fromHTML: template.body).extractText()
+                    ) ?? "No body"
+                }
+            } catch {
+                // handle error
+            }
+        }
+    }
+}
+
+struct TemplatePreviewView: View {
+    @Binding var draftBody: String
+
+    let template: MailTemplate
+    let draft: Draft
+    let dimissParent: () -> Void
+
+    var body: some View {
+        List {
+            MessageBodyContentView(
+                displayContentBlockedActionView: .constant(false),
+                initialContentLoading: .constant(false),
+                presentableBody: PresentableBody(
+                    body: MailCore.Body(value: ["content": template.body, "type": "html"]),
+                    compactBody: template.body,
+                    quotes: []
+                ),
+                blockRemoteContent: false,
+                messageUid: "template_\(template.id)",
+                messageTheme: .auto,
+                mailboxAliases: []
+            )
+        }
+        .listStyle(.plain)
+        .listRowSeparator(.hidden)
+        .safeAreaInset(edge: .bottom) {
             Button("Inserer") {
                 draftBody.append(template.body)
 
@@ -129,6 +154,8 @@ struct TemplatePreviewView: View {
                         }
                     }
                 }
+
+                dimissParent()
             }
             .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
@@ -148,36 +175,7 @@ struct TemplatePreviewView: View {
             .padding(.horizontal, IKPadding.large)
             .padding(.bottom, IKPadding.mini)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(.horizontal, 24)
         .navigationTitle(template.displayName)
-    }
-}
-
-extension String {
-    func htmlToAttributedString() -> AttributedString {
-        let styledHTML = """
-        <style>
-            body {
-                font-family: -apple-system, sans-serif;
-                font-size: 15px;
-                line-height: 1.5;
-            }
-        </style>
-        \(self)
-        """
-
-        guard let data = styledHTML.data(using: .utf8),
-              let nsAttr = try? NSAttributedString(
-                  data: data,
-                  options: [
-                      .documentType: NSAttributedString.DocumentType.html,
-                      .characterEncoding: String.Encoding.utf8.rawValue
-                  ],
-                  documentAttributes: nil
-              ) else {
-            return AttributedString(self)
-        }
-        return AttributedString(nsAttr)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
