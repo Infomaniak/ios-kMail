@@ -53,40 +53,29 @@ struct MailTemplateFloatingPanel: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                NavigationView {
-                    ScrollView {
-                        VStack(spacing: IKPadding.mini) {
-                            ForEach(templates) { template in
-                                NavigationLink {
-                                    TemplatePreviewView(template: template, draftBody: $draftBody, draft: draft)
-                                } label: {
-                                    HStack(spacing: IKPadding.mini) {
-                                        VStack(alignment: .leading) {
-                                            Text(template.displayName)
-                                                .font(MailTextStyle.header2.font)
-                                                .foregroundStyle(MailTextStyle.header2.color)
+                NavigationStack {
+                    List {
+                        ForEach(templates) { template in
+                            NavigationLink {
+                                TemplatePreviewView(template: template, draftBody: $draftBody, draft: draft)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(template.displayName)
+                                        .font(MailTextStyle.header2.font)
+                                        .foregroundStyle(MailTextStyle.header2.color)
 
-                                            if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
-                                                Text(previewBody)
-                                                    .font(MailTextStyle.bodyMediumTertiary.font)
-                                                    .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
-                                                    .lineLimit(1)
-                                            }
-                                        }
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                                        MailResourcesAsset.chevronUp.swiftUIImage // TODO: Add left chevron
-                                            .iconSize(IKIconSize.medium)
-                                            .foregroundStyle(.gray)
+                                    if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
+                                        Text(previewBody)
+                                            .font(MailTextStyle.bodyMediumTertiary.font)
+                                            .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                                            .lineLimit(1)
                                     }
                                 }
-
-                                Divider()
+                                .padding(.vertical, IKPadding.micro)
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(.horizontal, IKPadding.medium)
+                    .listStyle(.plain)
                     .navigationTitle("Models")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
