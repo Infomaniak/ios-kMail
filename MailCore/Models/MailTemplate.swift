@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
@@ -44,7 +45,7 @@ public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
     }
 
     public var displayName: String {
-        title.isEmpty ? "Modèle sans nom" : title
+        title.isEmpty ? MailResourcesStrings.Localizable.unnamedModel : title
     }
 
     public var inlineImages: [Attachment] {
