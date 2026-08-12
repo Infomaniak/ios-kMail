@@ -38,7 +38,7 @@ function insertHTMLAtCaret(html) {
     if (!range || !editor.contains(range.commonAncestorContainer)) {
         range = document.createRange();
         range.selectNodeContents(editor);
-        range.collapse(false);
+        range.collapse(true);
     }
 
     range.deleteContents();
