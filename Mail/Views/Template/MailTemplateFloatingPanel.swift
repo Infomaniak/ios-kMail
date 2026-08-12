@@ -26,13 +26,13 @@ import SwiftUI
 extension View {
     func mailTemplateFloatingPanel(
         isPresented: Binding<Bool>,
-        draftBody: Binding<String>,
+        editorBox: EditorBox,
         draft: Draft,
     ) -> some View {
         modifier(
             MailTemplateFloatingPanel(
                 isShowingFloatingPanel: isPresented,
-                draftBody: draftBody,
+                editorBox: editorBox,
                 draft: draft
             )
         )
@@ -41,8 +41,8 @@ extension View {
 
 struct MailTemplateFloatingPanel: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
-    @Binding var draftBody: String
-    var draft: Draft
+    let editorBox: EditorBox
+    let draft: Draft
 
     @State private var title = "Model"
     @State private var templates: [MailTemplate] = []
@@ -51,7 +51,7 @@ struct MailTemplateFloatingPanel: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                MailTemplateListView(draftBody: $draftBody, draft: draft)
+                MailTemplateListView(editorBox: editorBox, draft: draft)
             }
     }
 }
@@ -59,7 +59,7 @@ struct MailTemplateFloatingPanel: ViewModifier {
 struct MailTemplateListView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @Binding var draftBody: String
+    let editorBox: EditorBox
     let draft: Draft
 
     @State private var templates: [MailTemplate] = []
@@ -70,7 +70,7 @@ struct MailTemplateListView: View {
             List {
                 ForEach(templates) { template in
                     NavigationLink {
-                        TemplatePreviewView(draftBody: $draftBody, template: template, draft: draft) { dismiss() }
+                        TemplatePreviewView(template: template, editorBox: editorBox, draft: draft) { dismiss() }
                     } label: {
                         VStack(alignment: .leading) {
                             Text(template.displayName)
@@ -119,9 +119,8 @@ struct MailTemplateListView: View {
 }
 
 struct TemplatePreviewView: View {
-    @Binding var draftBody: String
-
     let template: MailTemplate
+    let editorBox: EditorBox
     let draft: Draft
     let dimissParent: () -> Void
 
@@ -145,7 +144,10 @@ struct TemplatePreviewView: View {
         .listRowSeparator(.hidden)
         .safeAreaInset(edge: .bottom) {
             Button("Inserer") {
-                draftBody.append(template.body)
+                Task {
+                    try? await editorBox.editor?.webView
+                        .evaluateJavaScript(.insertHTMLAtCaret(template.body))
+                }
 
                 if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
                     try? realm.write {

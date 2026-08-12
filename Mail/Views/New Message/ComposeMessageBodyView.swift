@@ -120,6 +120,8 @@ struct ComposeMessageBodyView: View {
 
             editor.webView.loadUserScript(.fixEmailStyle)
 
+            editor.webView.loadUserScript(.insertHTMLAtCaret)
+
             if mailboxManager.featureFlagsManager.isEnabled(.mailComposeMention) {
                 activateMentions(for: editor)
             }
