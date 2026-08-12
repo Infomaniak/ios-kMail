@@ -19,6 +19,7 @@
 import DesignSystem
 import Foundation
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -44,10 +45,6 @@ struct MailTemplateFloatingPanel: ViewModifier {
     let editorBox: EditorBox
     let draft: Draft
 
-    @State private var title = "Model"
-    @State private var templates: [MailTemplate] = []
-    @State private var previewTexts: [Int: String] = [:]
-
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
@@ -57,6 +54,8 @@ struct MailTemplateFloatingPanel: ViewModifier {
 }
 
 struct MailTemplateListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @Environment(\.dismiss) private var dismiss
 
     let editorBox: EditorBox
@@ -72,7 +71,7 @@ struct MailTemplateListView: View {
                     NavigationLink {
                         TemplatePreviewView(template: template, editorBox: editorBox, draft: draft) { dismiss() }
                     } label: {
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: IKPadding.micro) {
                             Text(template.displayName)
                                 .font(MailTextStyle.header2.font)
                                 .foregroundStyle(MailTextStyle.header2.color)
@@ -89,7 +88,7 @@ struct MailTemplateListView: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Models")
+            .navigationTitle(MailResourcesStrings.Localizable.modelsTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -97,7 +96,7 @@ struct MailTemplateListView: View {
                         Button(role: .close, action: dismiss.callAsFunction)
                     } else {
                         Button(action: dismiss.callAsFunction) {
-                            Label("close", systemImage: "xmark")
+                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                         }
                     }
                 }
@@ -105,10 +104,10 @@ struct MailTemplateListView: View {
         }
         .task {
             do {
-                templates = try await MailApiFetcher().mailTemplate()
+                templates = try await mailboxManager.apiFetcher.mailTemplate()
                 for template in templates {
                     let extractedText = try? await SwiftSoupUtils(fromHTML: template.body).extractText()
-                    previewTexts[template.id] = extractedText ?? "No body"
+                    previewTexts[template.id] = extractedText ?? MailResourcesStrings.Localizable.noBodyDescription
                 }
             } catch {
                 // handle error
@@ -121,7 +120,7 @@ struct TemplatePreviewView: View {
     let template: MailTemplate
     let editorBox: EditorBox
     let draft: Draft
-    let dimissParent: () -> Void
+    let dismissParent: () -> Void
 
     var body: some View {
         List {
@@ -146,10 +145,14 @@ struct TemplatePreviewView: View {
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
-            Button("Inserer") {
+            Button(MailResourcesStrings.Localizable.aiButtonInsert) {
                 Task {
-                    try? await editorBox.editor?.webView
-                        .evaluateJavaScript(.insertHTMLAtCaret(template.body))
+                    do {
+                        try await editorBox.editor?.webView
+                            .evaluateJavaScript(.insertHTMLAtCaret(template.body))
+                    } catch {
+                        // handle error
+                    }
                 }
 
                 if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
@@ -160,7 +163,7 @@ struct TemplatePreviewView: View {
                     }
                 }
 
-                dimissParent()
+                dismissParent()
             }
             .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
