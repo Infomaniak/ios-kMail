@@ -148,7 +148,7 @@ enum EditorToolbarAction: Identifiable {
         case .encryption:
             return MailResourcesStrings.Localizable.encryptedStatePanelTitle
         case .mailTemplate:
-            return MailResourcesStrings.Localizable.encryptedStatePanelTitle // TODO: Replace by true accessibility label
+            return MailResourcesStrings.Localizable.contentDescriptionButtonModel
         }
     }
 
