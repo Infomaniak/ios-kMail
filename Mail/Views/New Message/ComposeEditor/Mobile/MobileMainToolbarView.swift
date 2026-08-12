@@ -94,6 +94,7 @@ struct MobileMainToolbarView: View {
                         .iconSize(MobileToolbarButtonStyle.iconSize)
                         .padding(IKPadding.mini)
                         .foregroundStyle(MailTextStyle.body.color)
+                        .accessibilityLabel(action.accessibilityLabel)
                 }
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
