@@ -152,7 +152,7 @@ struct TemplatePreviewView: View {
                 if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
                     try? realm.write {
                         if liveDraft.subject.isEmpty {
-                            liveDraft.subject = template.displayName
+                            liveDraft.subject = template.title
                         }
                     }
                 }
