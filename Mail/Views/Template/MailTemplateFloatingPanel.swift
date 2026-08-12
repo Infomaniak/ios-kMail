@@ -126,22 +126,26 @@ struct TemplatePreviewView: View {
 
     var body: some View {
         List {
-            MessageBodyContentView(
-                displayContentBlockedActionView: .constant(false),
-                initialContentLoading: .constant(false),
-                presentableBody: PresentableBody(
-                    body: MailCore.Body(value: ["content": template.body, "type": "html"]),
-                    compactBody: template.body,
-                    quotes: []
-                ),
-                blockRemoteContent: false,
-                messageUid: "template_\(template.id)",
-                messageTheme: .auto,
-                mailboxAliases: []
-            )
+            if !template.body.isEmpty {
+                MessageBodyContentView(
+                    displayContentBlockedActionView: .constant(false),
+                    initialContentLoading: .constant(false),
+                    presentableBody: PresentableBody(
+                        body: MailCore.Body(value: ["content": template.body, "type": "html"]),
+                        compactBody: template.body,
+                        quotes: []
+                    ),
+                    blockRemoteContent: false,
+                    messageUid: "template_\(template.id)",
+                    messageTheme: .auto,
+                    mailboxAliases: []
+                )
+                .listRowSeparator(.hidden)
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
+            }
         }
         .listStyle(.plain)
-        .listRowSeparator(.hidden)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button("Inserer") {
                 Task {
