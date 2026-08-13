@@ -17,36 +17,31 @@
  */
 
 import AppIntents
-import CoreSpotlight
-import InfomaniakConcurrency
+import Foundation
 import InfomaniakDI
-import MailCore
 import Nuke
-import UIKit
 
 @available(iOS 18.0, *)
 @AppEntity(schema: .mail.account)
-struct MailAccountEntity: IndexedEntity {
-    // MARK: Static
-
-    static let defaultQuery = MailAccountEntityQuery()
+public struct MailAccountEntity: IndexedEntity {
+    public static let defaultQuery = MailAccountEntityQuery()
 
     // MARK: Properties
 
-    let id: String
+    public let id: String
 
-    var name: String
-    var emailAddress: String
-    var avatarData: Data?
+    public var name: String
+    public var emailAddress: String
+    public var avatarData: Data?
 
-    var displayRepresentation: DisplayRepresentation {
+    public var displayRepresentation: DisplayRepresentation {
         if let avatarData {
             return DisplayRepresentation(title: "\(emailAddress)", image: .init(data: avatarData))
         }
         return DisplayRepresentation(title: "\(emailAddress)", image: .init(systemName: "person"))
     }
 
-    init(id: String, name: String, emailAddress: String, avatarData: Data? = nil) {
+    public init(id: String, name: String, emailAddress: String, avatarData: Data? = nil) {
         self.id = id
         self.name = name
         self.emailAddress = emailAddress
@@ -55,7 +50,9 @@ struct MailAccountEntity: IndexedEntity {
 
     // MARK: Query
 
-    struct MailAccountEntityQuery: EntityQuery {
+    public struct MailAccountEntityQuery: EntityQuery {
+        public init() {}
+
         private func fetchAvatarData(for mailbox: Mailbox) async -> Data? {
             @InjectService var accountManager: AccountManager
             guard let userProfile = await accountManager.userProfileStore.getUserProfile(id: mailbox.userId),
@@ -66,7 +63,7 @@ struct MailAccountEntity: IndexedEntity {
             return try? await ImagePipeline.shared.image(for: ImageRequest(url: avatarURL)).pngData()
         }
 
-        func entities(for identifiers: [AccountEntity.ID]) async throws -> [MailAccountEntity] {
+        public func entities(for identifiers: [MailAccountEntity.ID]) async throws -> [MailAccountEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
 
             let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { identifiers.contains($0.objectId) }
@@ -80,7 +77,7 @@ struct MailAccountEntity: IndexedEntity {
             }
         }
 
-        func suggestedEntities() async throws -> [MailAccountEntity] {
+        public func suggestedEntities() async throws -> [MailAccountEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
 
             return await mailboxInfosManager.getMailboxes().asyncMap { mailbox in

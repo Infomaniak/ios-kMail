@@ -17,62 +17,50 @@
  */
 
 import AppIntents
+import Foundation
 import InfomaniakDI
-import MailCore
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppEntity(schema: .mail.mailbox)
-struct MailboxEntity: IndexedEntity {
+public struct MailboxEntity: IndexedEntity {
     // MARK: Static
 
-    static let defaultQuery = MailboxEntityQuery()
+    public static let defaultQuery = MailboxEntityQuery()
 
-    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+    public static var typeDisplayRepresentation: TypeDisplayRepresentation {
         TypeDisplayRepresentation(name: "Mailbox")
     }
 
     // MARK: Properties
 
-    let id: String
+    public let id: String
 
-    var name: String
-    var account: MailAccountEntity
+    public var name: String
+    public var account: MailAccountEntity
 
-    var displayRepresentation: DisplayRepresentation {
+    public var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(name)")
     }
 
-    init(id: String, name: String, account: MailAccountEntity) {
+    public init(id: String, name: String, account: MailAccountEntity) {
         self.id = id
         self.name = name
         self.account = account
     }
 
-    // MARK: Query
+    public struct MailboxEntityQuery: EntityQuery {
+        public init() {}
 
-    struct MailboxEntityQuery: EntityQuery {
-        func entities(for identifiers: [MailboxEntity.ID]) async throws -> [MailboxEntity] {
+        public func entities(for identifiers: [MailboxEntity.ID]) async throws -> [MailboxEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             return mailboxInfosManager.getMailboxes()
                 .filter { identifiers.contains($0.objectId) }
-                .map { Self.mapMailbox($0) }
+                .map { MailAppIntentsHelper.mapMailbox($0) }
         }
 
-        func suggestedEntities() async throws -> [MailboxEntity] {
+        public func suggestedEntities() async throws -> [MailboxEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
-            return mailboxInfosManager.getMailboxes().map { Self.mapMailbox($0) }
-        }
-
-        private static func mapMailbox(_ mailbox: Mailbox) -> MailboxEntity {
-            MailboxEntity(
-                id: mailbox.objectId,
-                name: mailbox.email,
-                account: MailAccountEntity(
-                    id: mailbox.objectId,
-                    name: mailbox.mailbox,
-                    emailAddress: mailbox.email
-                )
-            )
+            return mailboxInfosManager.getMailboxes().map { MailAppIntentsHelper.mapMailbox($0) }
         }
     }
 }
