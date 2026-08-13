@@ -70,13 +70,6 @@ public extension MailboxManager {
             let data = try await attachmentData(attachment, progressObserver: progressObserver)
             let url = attachment.getLocalURL(userId: mailbox.userId, mailboxId: mailbox.mailboxId)
 
-            let baseDirectory = FileManager.default.temporaryDirectory
-                .appendingPathComponent("\(mailbox.userId)/\(mailbox.mailboxId)")
-            let basePath = baseDirectory.standardizedFileURL.path + "/"
-            guard url.standardizedFileURL.path.hasPrefix(basePath) else {
-                return
-            }
-
             let parentFolder = url.deletingLastPathComponent()
             if !FileManager.default.fileExists(atPath: parentFolder.path) {
                 try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
