@@ -19,6 +19,7 @@
 import AppIntents
 import Foundation
 import InfomaniakDI
+import MailCore
 import MailResources
 
 @available(iOS 18.4, *)
