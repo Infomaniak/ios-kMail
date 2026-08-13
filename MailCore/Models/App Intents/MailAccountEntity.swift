@@ -66,7 +66,8 @@ public struct MailAccountEntity: IndexedEntity {
         public func entities(for identifiers: [MailAccountEntity.ID]) async throws -> [MailAccountEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
 
-            let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { identifiers.contains($0.objectId) }
+            let idSet = Set(identifiers)
+            let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { idSet.contains($0.objectId) }
             return await matchingMailboxes.asyncMap { mailbox in
                 await MailAccountEntity(
                     id: mailbox.objectId,

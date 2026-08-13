@@ -169,7 +169,7 @@ public enum MailAppIntentsHelper {
         mailboxInfosManager: MailboxInfosManager,
         accountManager: AccountManager
     ) throws -> (Mailbox, MailboxManager) {
-        guard let mailbox = mailboxInfosManager.getMailboxes().first(where: { $0.objectId == mailboxId }),
+        guard let mailbox = mailboxInfosManager.getMailbox(objectId: mailboxId),
               let mailboxManager = accountManager.getMailboxManager(for: mailbox)
         else {
             throw MailError.unknownError
@@ -190,8 +190,8 @@ public enum MailAppIntentsHelper {
                 accountManager: accountManager
             )
         }
-        guard let mailbox = mailboxInfosManager.getMailboxes().first(where: { $0.isPrimary })
-            ?? mailboxInfosManager.getMailboxes().first,
+        let mailboxes = mailboxInfosManager.getMailboxes()
+        guard let mailbox = mailboxes.first(where: { $0.isPrimary }) ?? mailboxes.first,
             let mailboxManager = accountManager.getMailboxManager(for: mailbox)
         else {
             throw MailError.unknownError

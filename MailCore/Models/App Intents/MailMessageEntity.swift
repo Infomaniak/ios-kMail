@@ -157,7 +157,9 @@ public struct MailMessageEntity: IndexedEntity {
                     return []
                 }
 
-                let messages = mailboxManager.fetchResults(ofType: Message.self) { $0 }.filter { identifiers.contains($0.uid) }
+                let messages = mailboxManager.fetchResults(ofType: Message.self) {
+                    $0.filter(NSPredicate(format: "uid IN %@", identifiers))
+                }
                 return messages.map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
             }
         }
@@ -174,8 +176,8 @@ public struct MailMessageEntity: IndexedEntity {
                     return []
                 }
 
-                let messages = Array(folder.messages.sorted(by: \.date, ascending: false))
-                return Array(messages.prefix(10)).map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
+                let sortedMessages = folder.messages.sorted(by: \.date, ascending: false)
+                return Array(sortedMessages.prefix(10)).map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
             }
         }
 

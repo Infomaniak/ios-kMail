@@ -206,13 +206,3 @@ private extension MailMessageEntity {
         }
     }
 }
-
-@available(iOS 27.0, *)
-@AppIntent(schema: .mail.openMessage)
-struct MailOpenMessage: OpenIntent {
-    var target: MailMessageEntity
-
-    func perform() async throws -> some IntentResult {
-        return .result()
-    }
-}
