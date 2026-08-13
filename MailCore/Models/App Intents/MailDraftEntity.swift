@@ -82,7 +82,9 @@ public struct MailDraftEntity: IndexedEntity {
                     return []
                 }
 
-                let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }.filter { identifiers.contains($0.localUUID) }
+                let drafts = mailboxManager.fetchResults(ofType: Draft.self) {
+                    $0.filter(NSPredicate(format: "localUUID IN %@", identifiers))
+                }
                 return drafts.map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
             }
         }
@@ -114,10 +116,9 @@ public struct MailDraftEntity: IndexedEntity {
             return mailboxes.flatMap { mailbox -> [MailDraftEntity] in
                 guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return [] }
 
-                let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }
-                    .filter {
-                        $0.subject.localizedCaseInsensitiveContains(query)
-                    }
+                let drafts = mailboxManager.fetchResults(ofType: Draft.self) {
+                    $0.filter(NSPredicate(format: "subject CONTAINS[cd] %@", query))
+                }
 
                 return Array(drafts.prefix(10)).map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
             }
