@@ -17,98 +17,13 @@
  */
 
 import AppIntents
-import InfomaniakDI
+import Foundation
 import MailCore
-import MailResources
-
-// MARK: - Entity
-
-@available(iOS 18.0, *)
-@AppEntity(schema: .mail.draft)
-struct MailDraftEntity: IndexedEntity {
-    // MARK: Static
-
-    static let defaultQuery = MailDraftEntityQuery()
-
-    // MARK: Properties
-
-    let id: String
-
-    var to: [IntentPerson]
-    var cc: [IntentPerson]
-    var bcc: [IntentPerson]
-    var subject: String?
-    var body: AttributedString?
-    var attachments: [IntentFile]
-    var account: MailAccountEntity
-
-    var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(
-            title: "\(MailResourcesStrings.Localizable.subjectTitle) \(subject ?? "")",
-            subtitle: "\(MailResourcesStrings.Localizable.fromTitle) \(account.emailAddress)"
-        )
-    }
-
-    init(
-        id: String,
-        to: [IntentPerson],
-        cc: [IntentPerson],
-        bcc: [IntentPerson],
-        subject: String? = nil,
-        body: AttributedString? = nil,
-        attachments: [IntentFile],
-        account: MailAccountEntity
-    ) {
-        self.id = id
-        self.to = to
-        self.cc = cc
-        self.bcc = bcc
-        self.subject = subject
-        self.body = body
-        self.attachments = attachments
-        self.account = account
-    }
-
-    // MARK: Query
-
-    struct MailDraftEntityQuery: EntityQuery {
-        func entities(for identifiers: [MailDraftEntity.ID]) async throws -> [MailDraftEntity] {
-            @InjectService var mailboxInfosManager: MailboxInfosManager
-            @InjectService var accountManager: AccountManager
-
-            let mailboxes = mailboxInfosManager.getMailboxes()
-            return mailboxes.flatMap { mailbox -> [MailDraftEntity] in
-                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
-                    return []
-                }
-
-                let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }.filter { identifiers.contains($0.localUUID) }
-                return drafts.map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
-            }
-        }
-
-        func suggestedEntities() async throws -> [MailDraftEntity] {
-            @InjectService var mailboxInfosManager: MailboxInfosManager
-            @InjectService var accountManager: AccountManager
-
-            let mailboxes = mailboxInfosManager.getMailboxes()
-            return mailboxes.flatMap { mailbox -> [MailDraftEntity] in
-                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox),
-                      mailboxManager.getFolder(with: .draft) != nil
-                else {
-                    return []
-                }
-
-                let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }
-                return Array(drafts.prefix(10)).map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
-            }
-        }
-    }
-}
+import InfomaniakDI
 
 // MARK: - Create Draft
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.createDraft)
 struct CreateDraftIntent {
     var body: AttributedString?
@@ -174,7 +89,7 @@ struct CreateDraftIntent {
 
 // MARK: - Update Draft
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.updateDraft)
 struct UpdateDraftIntent {
     var target: MailDraftEntity
@@ -254,7 +169,7 @@ struct UpdateDraftIntent {
 
 // MARK: - Save Draft
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.saveDraft)
 struct SaveDraftIntent {
     var target: MailDraftEntity
@@ -285,7 +200,7 @@ struct SaveDraftIntent {
 
 // MARK: - Delete Draft
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.deleteDraft)
 struct DeleteDraftIntent: DeleteIntent {
     var entities: [MailDraftEntity]
@@ -314,7 +229,7 @@ struct DeleteDraftIntent: DeleteIntent {
 
 // MARK: - Send Draft
 
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.sendDraft)
 struct SendDraftIntent {
     var target: MailDraftEntity
