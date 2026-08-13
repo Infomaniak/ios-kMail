@@ -98,7 +98,7 @@ public enum MailAppIntentsHelper {
             )
         }
 
-        let bodyAttributedString: AttributedString? = message.body?.value.flatMap { try? AttributedString(markdown: $0) }
+        let bodyAttributedString = bodyToAttributedString(value: message.body?.value, type: message.body?.type)
 
         return MailMessageEntity(
             id: message.uid,
@@ -127,7 +127,7 @@ public enum MailAppIntentsHelper {
             emailAddress: mailbox.email
         )
 
-        let bodyAttributedString: AttributedString? = try? AttributedString(markdown: draft.body)
+        let bodyAttributedString = htmlToAttributedString(draft.body)
 
         return MailDraftEntity(
             id: draft.localUUID,
@@ -154,6 +154,25 @@ public enum MailAppIntentsHelper {
     }
 
     // MARK: Body conversion
+
+    public static func bodyToAttributedString(value: String?, type: BodyType?) -> AttributedString? {
+        guard let value else { return nil }
+        switch type {
+        case .textPlain:
+            return try? AttributedString(markdown: value)
+        case .textHtml, nil:
+            return htmlToAttributedString(value)
+        }
+    }
+
+    public static func htmlToAttributedString(_ html: String) -> AttributedString? {
+        guard let document = try? SwiftSoup.parse(html),
+              let body = document.body() else {
+            return AttributedString(html)
+        }
+        let plainText = (try? body.text()) ?? html
+        return try? AttributedString(markdown: plainText)
+    }
 
     public static func attributedStringToHTML(_ attributedString: AttributedString) -> String {
         let plainText = String(attributedString.characters)
