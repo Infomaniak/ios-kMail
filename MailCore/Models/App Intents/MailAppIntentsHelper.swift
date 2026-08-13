@@ -18,13 +18,10 @@
 
 import AppIntents
 import InfomaniakDI
-import MailCore
 import OSLog
 
-// MARK: - IntentFile Attachable conformance
-
-@available(iOS 18.0, *)
-extension IntentFile: @retroactive Attachable {
+@available(iOS 18.4, *)
+extension IntentFile: Attachable {
     public var suggestedName: String? {
         filename
     }
@@ -43,21 +40,15 @@ extension IntentFile: @retroactive Attachable {
     }
 }
 
-// MARK: - No-op delegate
-
-@available(iOS 18.0, *)
+@available(iOS 18.4, *)
 final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
     @MainActor func contentWillChange() {}
     @MainActor func handleGlobalError(_ error: MailError) {}
 }
 
-// MARK: - Helper
-
-@available(iOS 18.0, *)
-enum MailAppIntentsHelper {
-    // MARK: Recipient mapping
-
-    static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
+@available(iOS 18.4, *)
+public enum MailAppIntentsHelper {
+    public static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
         guard case .emailAddress(let email) = person.handle?.value else { return nil }
         let name: String
         if case .displayName(let displayName) = person.name {
@@ -68,11 +59,11 @@ enum MailAppIntentsHelper {
         return Recipient(email: email, name: name)
     }
 
-    static func mapIntentPersonsToRecipients(_ persons: [IntentPerson]) -> [Recipient] {
+    public static func mapIntentPersonsToRecipients(_ persons: [IntentPerson]) -> [Recipient] {
         persons.compactMap { mapIntentPersonToRecipient($0) }
     }
 
-    static func mapRecipientToIntentPerson(_ recipient: Recipient) -> IntentPerson {
+    public static func mapRecipientToIntentPerson(_ recipient: Recipient) -> IntentPerson {
         IntentPerson(
             identifier: .applicationDefined(recipient.id),
             name: .displayName(recipient.name),
@@ -80,13 +71,11 @@ enum MailAppIntentsHelper {
         )
     }
 
-    static func mapRecipientsToIntentPersons(_ recipients: [Recipient]) -> [IntentPerson] {
+    public static func mapRecipientsToIntentPersons(_ recipients: [Recipient]) -> [IntentPerson] {
         recipients.map { mapRecipientToIntentPerson($0) }
     }
 
-    // MARK: Message mapping
-
-    static func mapMessage(_ message: Message, mailbox: Mailbox) -> MailMessageEntity {
+    public static func mapMessage(_ message: Message, mailbox: Mailbox) -> MailMessageEntity {
         let accountEntity = MailAccountEntity(
             id: mailbox.objectId,
             name: mailbox.mailbox,
@@ -118,6 +107,7 @@ enum MailAppIntentsHelper {
             bcc: Array(message.bcc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
             subject: message.subject,
             body: bodyAttributedString,
+            preview: message.preview,
             attachments: [],
             sender: sender,
             dateSent: message.internalDate,
@@ -130,9 +120,7 @@ enum MailAppIntentsHelper {
         )
     }
 
-    // MARK: Draft mapping
-
-    static func mapDraft(_ draft: Draft, mailbox: Mailbox) -> MailDraftEntity {
+    public static func mapDraft(_ draft: Draft, mailbox: Mailbox) -> MailDraftEntity {
         let accountEntity = MailAccountEntity(
             id: mailbox.objectId,
             name: mailbox.mailbox,
@@ -153,9 +141,21 @@ enum MailAppIntentsHelper {
         )
     }
 
+    public static func mapMailbox(_ mailbox: Mailbox) -> MailboxEntity {
+        MailboxEntity(
+            id: mailbox.objectId,
+            name: mailbox.email,
+            account: MailAccountEntity(
+                id: mailbox.objectId,
+                name: mailbox.mailbox,
+                emailAddress: mailbox.email
+            )
+        )
+    }
+
     // MARK: Body conversion
 
-    static func attributedStringToHTML(_ attributedString: AttributedString) -> String {
+    public static func attributedStringToHTML(_ attributedString: AttributedString) -> String {
         let plainText = String(attributedString.characters)
         let escaped = plainText
             .replacingOccurrences(of: "&", with: "&amp;")
@@ -164,9 +164,7 @@ enum MailAppIntentsHelper {
         return escaped.replacingOccurrences(of: "\n", with: "<br>")
     }
 
-    // MARK: MailboxManager resolution
-
-    static func resolveMailboxManager(
+    public static func resolveMailboxManager(
         mailboxId: String,
         mailboxInfosManager: MailboxInfosManager,
         accountManager: AccountManager
@@ -179,7 +177,7 @@ enum MailAppIntentsHelper {
         return (mailbox, mailboxManager)
     }
 
-    static func resolveDefaultMailboxManager(
+    public static func resolveDefaultMailboxManager(
         account: MailAccountEntity?,
         mailboxInfosManager: MailboxInfosManager,
         accountManager: AccountManager
@@ -201,9 +199,7 @@ enum MailAppIntentsHelper {
         return (mailbox, mailboxManager)
     }
 
-    // MARK: Draft content setup
-
-    static func setupDraftContent(
+    public static func setupDraftContent(
         draftUUID: String,
         body: AttributedString?,
         subject: String?,
@@ -237,9 +233,7 @@ enum MailAppIntentsHelper {
         }
     }
 
-    // MARK: Draft action + sync
-
-    static func setDraftAction(
+    public static func setDraftAction(
         _ action: SaveDraftOption,
         draftUUID: String,
         mailboxManager: MailboxManager,
@@ -260,9 +254,7 @@ enum MailAppIntentsHelper {
         }
     }
 
-    // MARK: Attachments upload
-
-    static func uploadAttachments(
+    public static func uploadAttachments(
         _ intentFiles: [IntentFile],
         mailboxManager: MailboxManager,
         draftUUID: String
@@ -288,9 +280,29 @@ enum MailAppIntentsHelper {
         )
     }
 
-    // MARK: Reply / Forward
+    public struct ReplyForwardParams {
+        public init(
+            mailboxManager: MailboxManager,
+            target: MailMessageEntity,
+            replyMode: ReplyMode,
+            body: AttributedString? = nil,
+            subject: String? = nil,
+            to: [IntentPerson],
+            cc: [IntentPerson],
+            bcc: [IntentPerson],
+            attachments: [IntentFile]
+        ) {
+            self.mailboxManager = mailboxManager
+            self.target = target
+            self.replyMode = replyMode
+            self.body = body
+            self.subject = subject
+            self.to = to
+            self.cc = cc
+            self.bcc = bcc
+            self.attachments = attachments
+        }
 
-    struct ReplyForwardParams {
         var mailboxManager: MailboxManager
         var target: MailMessageEntity
         var replyMode: ReplyMode
@@ -302,7 +314,7 @@ enum MailAppIntentsHelper {
         var attachments: [IntentFile]
     }
 
-    static func performReplyOrForward(
+    public static func performReplyOrForward(
         params: ReplyForwardParams,
         draftManager: DraftManager
     ) async throws {
