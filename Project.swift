@@ -289,7 +289,10 @@ let project = Project(name: "Mail",
                                   entitlements: "MailResources/MailExtensions.entitlements",
                                   dependencies: [
                                       .target(name: "MailCore"),
-                                      .external(name: "InfomaniakDI")
+                                      .target(name: "MailResources"),
+                                      .target(name: "MailResources"),
+                                      .external(name: "InfomaniakConcurrency"),
+                                      .external(name: "Nuke")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailResources",
