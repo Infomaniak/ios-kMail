@@ -18,8 +18,8 @@
 
 import AppIntents
 import Foundation
-import MailCore
 import InfomaniakDI
+import MailCore
 
 // MARK: - Create Draft
 

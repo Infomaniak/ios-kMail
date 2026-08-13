@@ -18,6 +18,7 @@
 
 import AppIntents
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakDI
 import Nuke
 

@@ -291,6 +291,7 @@ let project = Project(name: "Mail",
                                       .target(name: "MailCore"),
                                       .target(name: "MailResources"),
                                       .target(name: "MailResources"),
+                                      .external(name: "InfomaniakDI"),
                                       .external(name: "InfomaniakConcurrency"),
                                       .external(name: "Nuke")
                                   ],

@@ -152,7 +152,7 @@ struct UpdateMailIntent {
         @InjectService var accountManager: AccountManager
 
         for entity in target {
-            let mailboxId = mailbox?.id ?? entity.mailbox.id
+            let mailboxId = entity.mailbox.id
             guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
                 mailboxId: mailboxId,
                 mailboxInfosManager: mailboxInfosManager,

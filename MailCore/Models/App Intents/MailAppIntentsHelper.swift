@@ -19,6 +19,7 @@
 import AppIntents
 import InfomaniakDI
 import OSLog
+import SwiftSoup
 
 @available(iOS 18.4, *)
 extension IntentFile: Attachable {
@@ -34,8 +35,11 @@ extension IntentFile: Attachable {
         } else {
             filenameWithExtension = filename
         }
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filenameWithExtension)
-        try data.write(to: tempURL)
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
+        let tempURL = temporaryDirectory.appendingPathComponent(URL(fileURLWithPath: filenameWithExtension).lastPathComponent)
+        try data.write(to: tempURL, options: .atomic)
         return (tempURL, nil)
     }
 }
@@ -85,23 +89,21 @@ public enum MailAppIntentsHelper {
 
         let sender: IntentPerson
         if let fromRecipient = message.from.first {
-            sender = IntentPerson(
-                identifier: .contact(fromRecipient.email),
-                name: .displayName(fromRecipient.name),
-                handle: nil
-            )
+            sender = mapRecipientToIntentPerson(fromRecipient)
         } else {
             sender = IntentPerson(
                 identifier: .applicationDefined("unknown"),
                 name: .displayName(""),
-                handle: nil
+                handle: .init(emailAddress: "")
             )
         }
 
         let bodyAttributedString = bodyToAttributedString(value: message.body?.value, type: message.body?.type)
 
+        let messageId = "\(mailbox.objectId)-\(message.uid)"
+
         return MailMessageEntity(
-            id: message.uid,
+            id: messageId,
             to: Array(message.to.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
             cc: Array(message.cc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
             bcc: Array(message.bcc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
@@ -211,7 +213,7 @@ public enum MailAppIntentsHelper {
         }
         let mailboxes = mailboxInfosManager.getMailboxes()
         guard let mailbox = mailboxes.first(where: { $0.isPrimary }) ?? mailboxes.first,
-            let mailboxManager = accountManager.getMailboxManager(for: mailbox)
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox)
         else {
             throw MailError.unknownError
         }
@@ -344,7 +346,11 @@ public enum MailAppIntentsHelper {
         }
 
         let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: params.replyMode)
-        let draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+        let draft = Draft.replying(
+            reply: messageReply,
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        )
 
         let paramsTo = mapIntentPersonsToRecipients(params.to).toRealmList()
         if !paramsTo.isEmpty {
