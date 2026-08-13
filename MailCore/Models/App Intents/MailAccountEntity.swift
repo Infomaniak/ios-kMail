@@ -20,6 +20,7 @@ import AppIntents
 import Foundation
 import InfomaniakConcurrency
 import InfomaniakDI
+import MailCore
 import Nuke
 
 @available(iOS 18.0, *)

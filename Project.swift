@@ -281,7 +281,7 @@ let project = Project(name: "Mail",
                                           "EXExtensionPointIdentifier": "com.apple.appintents-extension"
                                       ]
                                   ]),
-                                  sources: "MailAppIntentsExtension/**",
+                                  sources: ["MailAppIntentsExtension/**", "MailCore/Models/App intents/**"],
                                   resources: [
                                       "MailResources/**/*.strings",
                                       "MailResources/**/*.stringsdict"
@@ -293,7 +293,8 @@ let project = Project(name: "Mail",
                                       .target(name: "MailResources"),
                                       .external(name: "InfomaniakDI"),
                                       .external(name: "InfomaniakConcurrency"),
-                                      .external(name: "Nuke")
+                                      .external(name: "Nuke"),
+                                      .external(name: "SwiftSoup")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailResources",

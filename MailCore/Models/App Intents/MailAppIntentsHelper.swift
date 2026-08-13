@@ -18,6 +18,7 @@
 
 import AppIntents
 import InfomaniakDI
+import MailCore
 import OSLog
 import SwiftSoup
 
