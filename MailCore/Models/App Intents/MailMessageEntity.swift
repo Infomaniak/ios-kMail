@@ -19,6 +19,7 @@
 import AppIntents
 import CoreSpotlight
 import InfomaniakDI
+import MailResources
 
 @available(iOS 18.4, *)
 @AppEntity(schema: .mail.message)
@@ -203,7 +204,7 @@ public struct MailMessageEntity: IndexedEntity {
 
 @available(iOS 18.0, *)
 @AppEnum(schema: .mail.category)
-public enum MailCategory: String {
+public enum MailCategory: String, Sendable {
     case `default`
 
     public static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
