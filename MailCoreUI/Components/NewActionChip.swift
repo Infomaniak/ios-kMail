@@ -28,15 +28,13 @@ public struct NewActionChip: View {
     public init() {}
 
     public var body: some View {
-        VStack {
-            Text(MailResourcesStrings.Localizable.contentDescriptionIconNewMail)
-                .foregroundStyle(MailResourcesAsset.backgroundColor.swiftUIColor)
-                .fontWeight(.medium)
-                .padding(.horizontal, value: .mini)
-                .padding(.vertical, value: .micro)
-        }
-        .background(accentColor.primary.swiftUIColor)
-        .clipShape(Capsule())
+        Text(MailResourcesStrings.Localizable.contentDescriptionIconNewMail)
+            .foregroundStyle(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .fontWeight(.medium)
+            .padding(.horizontal, value: .mini)
+            .padding(.vertical, value: .micro)
+            .background(accentColor.primary.swiftUIColor)
+            .clipShape(Capsule())
     }
 }
 
