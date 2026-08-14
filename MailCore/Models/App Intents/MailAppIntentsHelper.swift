@@ -348,9 +348,10 @@ public enum MailAppIntentsHelper {
     ) async throws {
         let mailboxManager = params.mailboxManager
 
-        guard let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: params.target.id) else {
-            return
-        }
+        let message = try MailAppIntentsHelper.resolveMessage(
+            params.target,
+            mailboxManager: mailboxManager
+        )
 
         let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: params.replyMode)
         let draft = Draft.replying(
@@ -392,5 +393,40 @@ public enum MailAppIntentsHelper {
 
         try setDraftAction(.send, draftUUID: draftUUID, mailboxManager: mailboxManager)
         try await draftManager.sendDraft(localUUID: draftUUID, mailboxManager: mailboxManager)
+    }
+
+    @available(iOS 18.4, *)
+    public static func messageUID(
+        from entityID: String,
+        mailboxID: String
+    ) -> String? {
+        let prefix = "\(mailboxID)-"
+
+        guard entityID.hasPrefix(prefix) else {
+            return nil
+        }
+
+        let messageUID = String(entityID.dropFirst(prefix.count))
+        return messageUID.isEmpty ? nil : messageUID
+    }
+
+    @available(iOS 18.4, *)
+    public static func resolveMessage(
+        _ entity: MailMessageEntity,
+        mailboxManager: MailboxManager
+    ) throws -> Message {
+        guard let messageUID = messageUID(
+            from: entity.id,
+            mailboxID: entity.mailbox.id
+        ),
+            let message = mailboxManager.fetchObject(
+                ofType: Message.self,
+                forPrimaryKey: messageUID
+            )
+        else {
+            throw MailError.localMessageNotFound
+        }
+
+        return message
     }
 }

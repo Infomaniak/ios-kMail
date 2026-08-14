@@ -159,9 +159,21 @@ public struct MailMessageEntity: IndexedEntity {
                     return []
                 }
 
-                let messages = mailboxManager.fetchResults(ofType: Message.self) {
-                    $0.filter(NSPredicate(format: "uid IN %@", identifiers))
+                let messageUIDs = identifiers.compactMap {
+                    MailAppIntentsHelper.messageUID(
+                        from: $0,
+                        mailboxID: mailbox.objectId
+                    )
                 }
+
+                guard !messageUIDs.isEmpty else {
+                    return []
+                }
+
+                let messages = mailboxManager.fetchResults(ofType: Message.self) {
+                    $0.filter(NSPredicate(format: "uid IN %@", messageUIDs))
+                }
+
                 return messages.map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
             }
         }
