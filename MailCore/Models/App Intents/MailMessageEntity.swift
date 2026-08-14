@@ -204,6 +204,7 @@ public struct MailMessageEntity: IndexedEntity {
 // MARK: - Category enum
 
 @available(iOS 18.0, *)
+@AppEnum(schema: .mail.category)
 public enum MailCategory: String, Sendable {
     case `default`
 

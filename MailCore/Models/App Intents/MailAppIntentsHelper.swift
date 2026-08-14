@@ -156,6 +156,12 @@ public enum MailAppIntentsHelper {
         )
     }
 
+    @available(iOS 27.0, *)
+    public static func mapThread(_ thread: MailCore.Thread, mailbox: Mailbox) -> MailThreadEntity {
+        let messagesEntities = Array(thread.messages.map { mapMessage($0, mailbox: mailbox) })
+        return MailThreadEntity(id: thread.uid, title: thread.subject ?? "", messages: messagesEntities)
+    }
+
     // MARK: Body conversion
 
     public static func bodyToAttributedString(value: String?, type: BodyType?) -> AttributedString? {
