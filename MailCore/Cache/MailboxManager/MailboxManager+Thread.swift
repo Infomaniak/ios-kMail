@@ -312,6 +312,11 @@ public extension MailboxManager {
             }
         }
 
+        if #available(iOS 18.4, *) {
+            let longUidsToDelete = messagesDelta.deletedShortUids.map { computeLongMessageUid(shortUid: $0, in: folder) }
+            SpotlightIndexer.deindexMessages(longUidsToDelete, mailboxObjectId: mailboxObjectId)
+        }
+
         expiringActivity.endAll()
     }
 
@@ -332,7 +337,7 @@ public extension MailboxManager {
     }
 
     private func handleUpdatedMessages(messagesDelta: MessagesDelta<MessageFlags>, folder: Folder) async {
-        await updateMessages(with: messagesDelta.updated, in: folder, messageUid: \.shortUid) { message, flags in
+        let updatedMessages = await updateMessages(with: messagesDelta.updated, in: folder, messageUid: \.shortUid) { message, flags in
             message.answered = flags.answered
             message.flagged = flags.isFavorite
             message.forwarded = flags.forwarded
@@ -347,6 +352,16 @@ public extension MailboxManager {
                 message.snoozeState = nil
                 message.snoozeUuid = nil
                 message.snoozeEndDate = nil
+            }
+        }
+
+        if #available(iOS 18.4, *), !updatedMessages.isEmpty {
+            let longUids = messagesDelta.updated.map { computeLongMessageUid(shortUid: $0.shortUid, in: folder) }
+            let messagesToReindex = fetchResults(ofType: Message.self) {
+                $0.filter(NSPredicate(format: "uid IN %@", longUids))
+            }.freeze()
+            if !messagesToReindex.isEmpty {
+                SpotlightIndexer.indexMessages(toMessageEntities(messages: Array(messagesToReindex)))
             }
         }
     }
@@ -380,6 +395,9 @@ public extension MailboxManager {
         try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else { return }
             impactedThreadUids = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
+        }
+        if #available(iOS 18.4, *) {
+            SpotlightIndexer.indexMessages(toMessageEntities(messages: messageByUidsResult.messages))
         }
         return impactedThreadUids
     }
@@ -607,6 +625,9 @@ public extension MailboxManager {
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
 
         writableRealm.delete(orphanMessages)
+        if #available(iOS 18.4, *) {
+            SpotlightIndexer.deindexMessages(orphanMessages.map(\.uid), mailboxObjectId: mailboxObjectId)
+        }
     }
 
     private func resetFolder(_ folder: Folder) async throws {
@@ -621,6 +642,10 @@ public extension MailboxManager {
             liveFolder.lastUpdate = nil
             liveFolder.cursor = nil
             liveFolder.unreadCount = 0
+
+            if #available(iOS 18.4, *) {
+                SpotlightIndexer.deindexMessages(liveFolder.messages.map(\.uid), mailboxObjectId: mailboxObjectId)
+            }
         }
     }
 
@@ -774,5 +799,13 @@ public extension MailboxManager {
             writableRealm.add(fetchedThreads, update: .modified)
             liveSearchFolder.threads.insert(objectsIn: fetchedThreads)
         }
+    }
+
+    @available(iOS 18.4,*)
+    func toMessageEntities(messages: [Message]) -> [MailMessageEntity] {
+        let entities = messages.map { message in
+            MailAppIntentsHelper.mapMessage(message, mailbox: mailbox)
+        }
+        return entities
     }
 }
