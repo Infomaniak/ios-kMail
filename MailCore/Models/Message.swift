@@ -289,7 +289,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public var shouldComplete: Bool {
-        return isDraft || !fullyDownloaded || hasPendingAcknowledgement
+        return isDraft || !fullyDownloaded
     }
 
     public var isSnoozed: Bool {

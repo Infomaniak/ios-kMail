@@ -69,6 +69,7 @@ public struct MessageFlags: DeltaFlags {
     public let forwarded: Bool
     public let scheduled: Bool
     public let seen: Bool
+    public let acknowledged: Bool
 
     private enum CodingKeys: String, CodingKey {
         case shortUid = "uid"
@@ -77,6 +78,7 @@ public struct MessageFlags: DeltaFlags {
         case forwarded
         case scheduled
         case seen
+        case acknowledged
     }
 }
 
