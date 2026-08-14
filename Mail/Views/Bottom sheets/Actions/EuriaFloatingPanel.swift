@@ -43,7 +43,6 @@ extension View {
 
 struct EuriaFloatingPanel: ViewModifier {
     @EnvironmentObject private var actionsProvider: ActionsProvider
-    @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var writerPanelState: AIWriterReplyPanelState?

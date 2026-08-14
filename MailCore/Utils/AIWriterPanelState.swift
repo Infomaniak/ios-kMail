@@ -19,7 +19,7 @@
 import Foundation
 
 public struct AIWriterReplyPanelState: Equatable {
-    private let id: String = UUID().uuidString
+    public let id: String = UUID().uuidString
     public let replyingMessageUid: String
 
     public init(replyingMessageUid: String) {
