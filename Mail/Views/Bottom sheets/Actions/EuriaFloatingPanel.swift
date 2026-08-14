@@ -111,11 +111,11 @@ struct EuriaFloatingPanel: ViewModifier {
             }
             .sheet(isPresented: $aiModel.isShowingProposition) {
                 AIPropositionView(aiModel: aiModel) { aiProposition in
-                    guard let replyingMessageUid = writerPanelState?.replyingMessageUid else { return }
+                    guard let writerPanelState else { return }
 
                     mainViewState.composeMessageIntent = .replyingWithEuriaTo(
-                        messageUid: replyingMessageUid,
-                        replyMode: .reply,
+                        messageUid: writerPanelState.replyingMessageUid,
+                        replyMode: writerPanelState.replyMode,
                         replyBody: aiProposition,
                         originMailboxManager: mailboxManager
                     )

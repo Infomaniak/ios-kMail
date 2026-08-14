@@ -21,8 +21,10 @@ import Foundation
 public struct AIWriterReplyPanelState: Equatable {
     public let id: String = UUID().uuidString
     public let replyingMessageUid: String
+    public let replyMode: ReplyMode
 
-    public init(replyingMessageUid: String) {
+    public init(replyingMessageUid: String, replyMode: ReplyMode) {
         self.replyingMessageUid = replyingMessageUid
+        self.replyMode = replyMode
     }
 }

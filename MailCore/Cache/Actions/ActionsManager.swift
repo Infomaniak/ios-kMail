@@ -370,6 +370,11 @@ public class ActionsManager: ObservableObject {
             featureAvailableProvider: mailboxManager.featureAvailableProvider
         ) else { return }
 
+        let replyMode: ReplyMode = replyingMessage.canReplyAll(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            aliases: mailboxManager.mailbox.aliases.toArray()
+        ) ? .replyAll : .reply
+
         if NoReplyAlert.verifySenders(
             message: replyingMessage,
             action: .reply,
@@ -377,10 +382,16 @@ public class ActionsManager: ObservableObject {
         ) {
             origin.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
                 origin.nearestAIWriterReplyPanel?
-                    .wrappedValue = AIWriterReplyPanelState(replyingMessageUid: replyingMessage.uid)
+                    .wrappedValue = AIWriterReplyPanelState(
+                        replyingMessageUid: replyingMessage.uid,
+                        replyMode: replyMode
+                    )
             }
         } else {
-            origin.nearestAIWriterReplyPanel?.wrappedValue = AIWriterReplyPanelState(replyingMessageUid: replyingMessage.uid)
+            origin.nearestAIWriterReplyPanel?.wrappedValue = AIWriterReplyPanelState(
+                replyingMessageUid: replyingMessage.uid,
+                replyMode: replyMode
+            )
         }
 
         UserDefaults.shared.hasUsedReplyWithEuria = true
