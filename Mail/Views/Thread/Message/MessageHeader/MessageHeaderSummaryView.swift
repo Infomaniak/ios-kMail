@@ -132,7 +132,7 @@ struct MessageHeaderSummaryView: View {
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) && !message.isDraft {
                 HStack(spacing: IKPadding.medium) {
                     Button {
-                        matomo.track(eventWithCategory: .messageActions, name: "AskEuriaShortCut")
+                        matomo.track(eventWithCategory: .messageActions, name: "askEuriaShortcut")
                         Task {
                             try? await actionsManager.performAction(
                                 target: [message],
