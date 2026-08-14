@@ -126,7 +126,6 @@ struct ActionsPanelViewModifier: ViewModifier {
                 listActionOrigin: listActionOrigin,
                 quickActionOrigin: quickActionOrigin,
                 isMultipleSelection: isMultipleSelection,
-                mailboxManager: mailboxManager,
                 completionHandler: completionHandler
             )
             .environmentObject(actionsManager)

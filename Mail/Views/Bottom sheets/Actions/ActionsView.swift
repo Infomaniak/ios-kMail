@@ -49,7 +49,6 @@ struct ActionsView: View {
         listActionOrigin: ActionOrigin,
         quickActionOrigin: ActionOrigin,
         isMultipleSelection: Bool,
-        mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) {
         targetMessages = messages
@@ -100,8 +99,7 @@ struct ActionsView: View {
         target: PreviewHelper.sampleThread.messages.toArray(),
         listActionOrigin: .floatingPanelListAction(source: .message),
         quickActionOrigin: .floatingPanelQuickAction(source: .message),
-        isMultipleSelection: false,
-        mailboxManager: PreviewHelper.sampleMailboxManager
+        isMultipleSelection: false
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
