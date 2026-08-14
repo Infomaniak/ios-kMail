@@ -339,7 +339,7 @@ public extension MailboxManager {
             message.scheduled = flags.scheduled
             message.seen = flags.seen
 
-            if  flags.acknowledged {
+            if flags.acknowledged {
                 message.acknowledge = AcknowledgeStatus.acknowledged.rawValue
             }
 
