@@ -30,8 +30,6 @@ import SwiftUI
 struct ActionsView: View {
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
-    @StateObject private var aiModel: AIModel
-
     private var quickActions: [Action] {
         actionsProvider.actionsFor(origin: quickActionOrigin, messages: targetMessages)
     }
@@ -59,24 +57,6 @@ struct ActionsView: View {
         self.quickActionOrigin = quickActionOrigin
         self.isMultipleSelection = isMultipleSelection
         self.completionHandler = completionHandler
-
-        let lastMessage = targetMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
-        var draft = Draft()
-
-        if let lastMessage {
-            let messageReply = MessageReply(frozenMessage: lastMessage.freeze(), replyMode: .reply)
-            draft = Draft.replying(
-                reply: messageReply,
-                currentMailboxEmail: mailboxManager.mailbox.email,
-                aliases: mailboxManager.mailbox.aliases.toArray()
-            )
-        }
-
-        let model = AIModel(mailboxManager: mailboxManager, draft: draft, isReplying: true)
-        _aiModel = StateObject(wrappedValue: model)
     }
 
     var body: some View {
@@ -102,8 +82,6 @@ struct ActionsView: View {
                     }
 
                     MessageActionView(
-                        aiModel: aiModel,
-                        noReplyAlert: .constant(nil),
                         targetMessages: targetMessages,
                         action: action,
                         origin: listActionOrigin,
@@ -203,10 +181,6 @@ struct MessageActionView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ObservedObject var aiModel: AIModel
-
-    @Binding var noReplyAlert: NoReplyAlertState?
-
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
@@ -214,8 +188,17 @@ struct MessageActionView: View {
     var completionHandler: ((Action) -> Void)?
 
     private var badgeType: ActionButtonLabel.BadgeType {
-        if action == .replyWithEuria && !UserDefaults.shared.hasUsedReplyWithEuria {
-            return .new
+        if action == .replyWithEuria {
+            let userLocalPack = mailboxManager.mailbox.pack
+            if userLocalPack == .kSuiteFree || userLocalPack == .starterPack {
+                return .kSuitePro
+            } else if userLocalPack == .myKSuiteFree {
+                return .myKSuite
+            }
+
+            if !UserDefaults.shared.hasUsedReplyWithEuria {
+                return .new
+            }
         }
         if action == .shareMailLink {
             let userLocalPack = mailboxManager.mailbox.pack
@@ -233,14 +216,10 @@ struct MessageActionView: View {
             ActionButtonLabel(action: action, badgeType: badgeType)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
-        .mailCustomAlert(item: $noReplyAlert) { state in
-            NoReplyAlertView(action: state.action)
-        }
     }
 
     private func didTapButton() {
         dismiss()
-        showEuriaBottomSheet(action: action)
         Task {
             await tryOrDisplayError {
                 try await actionsManager.performAction(
@@ -260,35 +239,6 @@ struct MessageActionView: View {
                 )
             }
         }
-    }
-
-    private func showEuriaBottomSheet(action: Action) {
-        guard action == .replyWithEuria else { return }
-
-        let lastMessage = targetMessages.lastMessageToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            featureAvailableProvider: mailboxManager.featureAvailableProvider
-        )
-        guard let lastMessage else { return }
-
-        let replyMode: ReplyMode = lastMessage.canReplyAll(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            aliases: mailboxManager.mailbox.aliases.toArray()
-        ) ? .replyAll : .reply
-        let replyAction: Action = replyMode == .reply ? .reply : .replyAll
-
-        if NoReplyAlert.verifySenders(
-            message: lastMessage,
-            action: replyAction,
-            currentMailboxEmail: mailboxManager.mailbox.email
-        ) {
-            noReplyAlert = NoReplyAlertState {
-                aiModel.isShowingPrompt = true
-            }
-            return
-        }
-
-        aiModel.isShowingPrompt = true
     }
 }
 

@@ -42,7 +42,7 @@ struct MessageHeaderSummaryView: View {
     @ModalState private var noReplyAlert: NoReplyAlertState?
 
     @State private var replyOrReplyAllMessage: Message?
-    @State private var euriaMessages: [Message]?
+    @State private var euriaMessage: Message?
 
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
@@ -133,7 +133,13 @@ struct MessageHeaderSummaryView: View {
                 HStack(spacing: IKPadding.medium) {
                     Button {
                         matomo.track(eventWithCategory: .messageActions, name: "AskEuriaShortCut")
-                        euriaMessages = [message]
+                        Task {
+                            try? await actionsManager.performAction(
+                                target: [message],
+                                action: .showEuriaActions,
+                                origin: .threadHeader(messageToProcessWithEuria: $euriaMessage)
+                            )
+                        }
                     } label: {
                         MailResourcesAsset.euria.swiftUIImage
                             .iconSize(.large)
@@ -164,7 +170,7 @@ struct MessageHeaderSummaryView: View {
             NoReplyAlertView(action: state.action)
         }
         .euriaFloatingPanel(
-            messages: $euriaMessages,
+            message: $euriaMessage,
             noReplyAlert: $noReplyAlert,
             mailboxManager: mailboxManager
         )

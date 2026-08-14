@@ -46,7 +46,7 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
-    @ModalState private var messagesToProcessWithEuria: [Message]?
+    @ModalState private var messageToProcessWithEuria: Message?
     @ModalState private var noReplyAlert: NoReplyAlertState?
 
     private let frozenThread: Thread
@@ -89,7 +89,7 @@ struct LargeToolbarModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -106,7 +106,7 @@ struct LargeToolbarModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -123,7 +123,7 @@ struct LargeToolbarModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -140,7 +140,7 @@ struct LargeToolbarModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -247,7 +247,7 @@ struct LargeToolbarModifier: ViewModifier {
                 folder: frozenFolder?.freezeIfNeeded()
             )
             .euriaFloatingPanel(
-                messages: $messagesToProcessWithEuria,
+                message: $messageToProcessWithEuria,
                 noReplyAlert: $noReplyAlert,
                 mailboxManager: mailboxManager
             )

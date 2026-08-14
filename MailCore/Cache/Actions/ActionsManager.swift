@@ -251,22 +251,12 @@ public class ActionsManager: ObservableObject {
             guard !platformDetector.isMac else { return }
             origin.messagesToDownload?.wrappedValue = messages
         case .shareMailLink:
-            let userLocalPack = mailboxManager.mailbox.pack
-            switch userLocalPack {
-            case .myKSuiteFree:
-                Task { @MainActor in
-                    mainViewState?.isShowingMyKSuiteUpgrade = true
-                }
-            case .kSuiteFree, .starterPack:
-                Task { @MainActor in
-                    mainViewState?.isShowingKSuiteProUpgrade = true
-                }
-            default:
-                guard let message = messagesWithDuplicates.first else { return }
-                let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
-                Task { @MainActor in
-                    origin.nearestShareMailLinkPanel?.wrappedValue = result
-                }
+            guard !displayUpgradeIfNeeded() else { return }
+
+            guard let message = messagesWithDuplicates.first else { return }
+            let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
+            Task { @MainActor in
+                origin.nearestShareMailLinkPanel?.wrappedValue = result
             }
         case .snooze, .modifySnooze:
             Task { @MainActor in
@@ -286,11 +276,15 @@ public class ActionsManager: ObservableObject {
             guard let message = messages.first, let locale else { return }
             try await mailboxManager.translate(message: message, threadViewState: threadViewState, locale: locale)
         case .showEuriaActions:
+            let message = messages.lastMessageToExecuteAction(
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                featureAvailableProvider: mailboxManager.featureAvailableProvider
+            )
             Task { @MainActor in
-                origin.messagesToProcessWithEuria?.wrappedValue = messages
+                origin.messageToProcessWithEuria?.wrappedValue = message
             }
         case .replyWithEuria:
-            UserDefaults.shared.hasUsedReplyWithEuria = true
+            performReplyWithEuria(messages: messages, origin: origin)
         case .forceDarkMode, .forceLightMode:
             guard let message = messages.first else { return }
             await forceTheme(messageUid: message.uid, light: action == .forceLightMode)
@@ -365,6 +359,48 @@ public class ActionsManager: ObservableObject {
             try await permanentlyDeleteTask.value
         } else {
             try await performMove(messages: messages, from: originFolder, to: .trash)
+        }
+    }
+
+    private func performReplyWithEuria(messages: [Message], origin: ActionOrigin) {
+        guard !displayUpgradeIfNeeded() else { return }
+
+        guard let replyingMessage = messages.lastMessageToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            featureAvailableProvider: mailboxManager.featureAvailableProvider
+        ) else { return }
+
+        if NoReplyAlert.verifySenders(
+            message: replyingMessage,
+            action: .reply,
+            currentMailboxEmail: mailboxManager.mailbox.email
+        ) {
+            origin.nearestNoReplyAlert?.wrappedValue = NoReplyAlertState {
+                origin.nearestAIWriterReplyPanel?
+                    .wrappedValue = AIWriterReplyPanelState(replyingMessageUid: replyingMessage.uid)
+            }
+        } else {
+            origin.nearestAIWriterReplyPanel?.wrappedValue = AIWriterReplyPanelState(replyingMessageUid: replyingMessage.uid)
+        }
+
+        UserDefaults.shared.hasUsedReplyWithEuria = true
+    }
+
+    private func displayUpgradeIfNeeded() -> Bool {
+        let userLocalPack = mailboxManager.mailbox.pack
+        switch userLocalPack {
+        case .myKSuiteFree:
+            Task { @MainActor in
+                mainViewState?.isShowingMyKSuiteUpgrade = true
+            }
+            return true
+        case .kSuiteFree, .starterPack:
+            Task { @MainActor in
+                mainViewState?.isShowingKSuiteProUpgrade = true
+            }
+            return true
+        default:
+            return false
         }
     }
 
@@ -488,17 +524,6 @@ public class ActionsManager: ObservableObject {
             mainViewState?.composeMessageIntent = .replyingTo(
                 message: message,
                 replyMode: mode,
-                originMailboxManager: mailboxManager
-            )
-        }
-    }
-
-    public func composeMessageWithContent(message: Message, mode: ReplyMode, content: String) {
-        Task { @MainActor in
-            mainViewState?.composeMessageIntent = .replyingWithEuriaTo(
-                message: message,
-                replyMode: mode,
-                replyBody: content,
                 originMailboxManager: mailboxManager
             )
         }

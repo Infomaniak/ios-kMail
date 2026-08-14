@@ -107,14 +107,14 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         )
     }
 
-    public static func replyingWithEuriaTo(message: Message,
+    public static func replyingWithEuriaTo(messageUid: String,
                                            replyMode: ReplyMode,
                                            replyBody: String,
                                            originMailboxManager: MailboxManager) -> ComposeMessageIntent {
         return ComposeMessageIntent(
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
-            type: .replyWithEuria(messageUid: message.uid, replyMode: replyMode, replyBody: replyBody)
+            type: .replyWithEuria(messageUid: messageUid, replyMode: replyMode, replyBody: replyBody)
         )
     }
 }
