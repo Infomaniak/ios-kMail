@@ -146,7 +146,7 @@ public struct MailMessageEntity: IndexedEntity {
 
     // MARK: Query
 
-    public struct MailMessageEntityQuery: EntityStringQuery {
+    public struct MailMessageEntityQuery: IndexedEntityQuery, EntityStringQuery {
         public init() {}
 
         public func entities(for identifiers: [MailMessageEntity.ID]) async throws -> [MailMessageEntity] {
@@ -208,6 +208,47 @@ public struct MailMessageEntity: IndexedEntity {
                 }
 
                 return Array(messages.prefix(10)).map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
+            }
+        }
+
+        @available(iOS 27.0, *)
+        public func reindexAllEntities(indexDescription: CSSearchableIndexDescription) async throws {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            @InjectService var accountManager: AccountManager
+            let mailboxes = mailboxInfosManager.getMailboxes()
+            for mailbox in mailboxes {
+                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+                    return
+                }
+                let messages = Array(mailboxManager.fetchResults(ofType: Message.self) { $0 }
+                    .map {
+                        MailAppIntentsHelper.mapMessage(
+                            $0,
+                            mailbox: mailbox
+                        )
+                    })
+                try await CSSearchableIndex(name: "Infomaniak Mail").indexAppEntities(messages)
+            }
+        }
+
+        @available(iOS 27.0, *)
+        public func reindexEntities(for identifiers: [String], indexDescription: CSSearchableIndexDescription) async throws {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            @InjectService var accountManager: AccountManager
+            let mailboxes = mailboxInfosManager.getMailboxes()
+            for mailbox in mailboxes {
+                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+                    return
+                }
+                let messages = Array(mailboxManager.fetchResults(ofType: Message.self) { $0 }
+                    .filter { identifiers.contains($0.uid) }
+                    .map {
+                        MailAppIntentsHelper.mapMessage(
+                            $0,
+                            mailbox: mailbox
+                        )
+                    })
+                try await CSSearchableIndex(name: "Infomaniak Mail").indexAppEntities(messages)
             }
         }
     }
