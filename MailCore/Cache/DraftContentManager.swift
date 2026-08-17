@@ -193,7 +193,14 @@ public extension DraftContentManager {
 
         let bodyImageProcessor = BodyImageProcessor()
 
-        var body = await bodyImageProcessor.appendDataCIDAttributeToImages(body: draft.body, attachments: attachmentsArray)
+        guard let bodyWithCIDAttributes = await bodyImageProcessor.appendDataCIDAttributeToImages(
+            body: draft.body,
+            attachments: attachmentsArray
+        ) else { return }
+
+        await Task { @MainActor in
+            self.draftContent = bodyWithCIDAttributes
+        }.value
 
         let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
         for attachments in chunks {
@@ -202,20 +209,17 @@ public extension DraftContentManager {
                 mailboxManager: mailboxManager
             )
 
-            body = await bodyImageProcessor.injectImagesInBody(
-                body: body,
+            let updatedBody = await bodyImageProcessor.injectImagesInBody(
+                body: draftContent,
                 attachments: attachments,
                 base64Images: base64attachments
             )
-        }
 
-        guard let updatedBody = body, !updatedBody.isEmpty else {
-            return
+            guard let updatedBody, !updatedBody.isEmpty else { return }
+            await Task { @MainActor in
+                self.draftContent = updatedBody
+            }.value
         }
-
-        await Task { @MainActor in
-            self.draftContent = updatedBody
-        }.value
     }
 
     private func replaceBase64ImageForContentId(body: String?) async -> String? {

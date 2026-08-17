@@ -344,9 +344,9 @@ struct ComposeMessageView: View {
                 aiModel.draftContentManager = draftContentManager
                 draftContentManager.startObservingDraft()
 
-                await draftContentManager.replaceInlineAttachments()
-
                 isLoadingContent = false
+
+                await draftContentManager.replaceInlineAttachments()
             } catch {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
