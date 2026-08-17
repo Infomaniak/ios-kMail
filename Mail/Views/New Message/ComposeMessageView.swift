@@ -223,8 +223,7 @@ struct ComposeMessageView: View {
                         draft: draft,
                         aliases: aliases,
                         editorBox: editorBox,
-                        messageReply: messageReply,
-                        mailboxManager: mailboxManager
+                        messageReply: messageReply
                     )
                     .environmentObject(attachmentsManager)
                     .overlay {

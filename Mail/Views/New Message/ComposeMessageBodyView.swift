@@ -55,7 +55,6 @@ struct ComposeMessageBodyView: View {
     @State private var bodyImageProcessor = BodyImageProcessor()
 
     let messageReply: MessageReply?
-    let mailboxManager: MailboxManager
 
     private var isEnvironmentCatalyst: Bool {
         #if targetEnvironment(macCatalyst)
@@ -193,7 +192,7 @@ struct ComposeMessageBodyView: View {
         editor.webView.loadUserScript(.observeMention)
         editor.webView.loadUserScript(.observeMentionDeletion)
         editor.webView.loadUserScript(.insertMention)
-	}
+    }
 
     private func replaceInlineAttachments() async {
         let attachmentsArray = draft.attachments.filter {
@@ -240,8 +239,7 @@ struct ComposeMessageBodyView: View {
         draft: draft,
         aliases: [],
         editorBox: EditorBox(),
-        messageReply: nil,
-		mailboxManager: PreviewHelper.sampleMailboxManager
+        messageReply: nil
     )
     .environmentObject(AttachmentsManager(
         draftLocalUUID: draft.localUUID,
