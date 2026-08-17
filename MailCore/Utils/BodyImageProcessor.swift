@@ -17,16 +17,19 @@
  */
 
 import Foundation
-import MailCore
 import OSLog
 import SwiftSoup
 import UIKit
 
-struct BodyImageProcessor {
+public typealias ImageBase64AndMime = (imageEncoded: String, mimeType: String)
+
+public struct BodyImageProcessor {
     private let bodyImageMutator = BodyImageMutator()
 
+    public init() {}
+
     /// Download and encode all images for the current chunk in parallel.
-    func fetchBase64Images(
+    public func fetchBase64Images(
         _ attachments: ArraySlice<Attachment>,
         mailboxManager: MailboxManager
     ) async -> [ImageBase64AndMime?] {
@@ -84,7 +87,7 @@ struct BodyImageProcessor {
     }
 
     /// Inject base64 images in a body
-    func injectImagesInBody(
+    public func injectImagesInBody(
         body: String?,
         attachments: ArraySlice<Attachment>,
         base64Images: [ImageBase64AndMime?]
@@ -114,7 +117,7 @@ struct BodyImageProcessor {
         return workingBody
     }
 
-    func appendDataCIDAttributeToImages(body: String?, attachments: [Attachment]) async -> String? {
+    public func appendDataCIDAttributeToImages(body: String?, attachments: [Attachment]) async -> String? {
         guard let body, !body.isEmpty else {
             return nil
         }
