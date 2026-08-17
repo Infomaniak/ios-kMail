@@ -172,7 +172,7 @@ extension DraftContentManager {
         guard let associatedMessage = mailboxManager.fetchObject(ofType: Message.self,
                                                                  forPrimaryKey: incompleteDraft.messageUid)?
             .freeze()
-                else { throw MailError.localMessageNotFound }
+        else { throw MailError.localMessageNotFound }
 
         let remoteDraft = try await mailboxManager.loadRemotely(fromMessage: associatedMessage, incompleteDraft: incompleteDraft)
 
@@ -183,7 +183,7 @@ extension DraftContentManager {
 // MARK: - Handle inline attachements
 
 public extension DraftContentManager {
-    public func replaceInlineAttachments() async {
+    func replaceInlineAttachments() async {
         guard let draft = try? getFrozenDraft(draftPrimaryKey: draftLocalUUID) else { return }
 
         let attachmentsArray = draft.attachments.filter { $0.contentId != nil && $0.contentId?.isEmpty == false }.toArray()
@@ -207,15 +207,15 @@ public extension DraftContentManager {
                 attachments: attachments,
                 base64Images: base64attachments
             )
-
-            guard let updatedBody = body, !updatedBody.isEmpty else {
-                return
-            }
-
-            await Task { @MainActor in
-                self.draftContent = updatedBody
-            }.value
         }
+
+        guard let updatedBody = body, !updatedBody.isEmpty else {
+            return
+        }
+
+        await Task { @MainActor in
+            self.draftContent = updatedBody
+        }.value
     }
 
     private func replaceBase64ImageForContentId(body: String?) async -> String? {
