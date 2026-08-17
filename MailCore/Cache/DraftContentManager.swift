@@ -172,11 +172,50 @@ extension DraftContentManager {
         guard let associatedMessage = mailboxManager.fetchObject(ofType: Message.self,
                                                                  forPrimaryKey: incompleteDraft.messageUid)?
             .freeze()
-        else { throw MailError.localMessageNotFound }
+                else { throw MailError.localMessageNotFound }
 
         let remoteDraft = try await mailboxManager.loadRemotely(fromMessage: associatedMessage, incompleteDraft: incompleteDraft)
 
         return remoteDraft.body
+    }
+}
+
+// MARK: - Handle inline attachements
+
+public extension DraftContentManager {
+    public func replaceInlineAttachments() async {
+        guard let draft = try? getFrozenDraft(draftPrimaryKey: draftLocalUUID) else { return }
+
+        let attachmentsArray = draft.attachments.filter { $0.contentId != nil && $0.contentId?.isEmpty == false }.toArray()
+        guard !attachmentsArray.isEmpty else {
+            return
+        }
+
+        let bodyImageProcessor = BodyImageProcessor()
+
+        var body = await bodyImageProcessor.appendDataCIDAttributeToImages(body: draft.body, attachments: attachmentsArray)
+
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+        for attachments in chunks {
+            let base64attachments = await bodyImageProcessor.fetchBase64Images(
+                attachments,
+                mailboxManager: mailboxManager
+            )
+
+            body = await bodyImageProcessor.injectImagesInBody(
+                body: body,
+                attachments: attachments,
+                base64Images: base64attachments
+            )
+
+            guard let updatedBody = body, !updatedBody.isEmpty else {
+                return
+            }
+
+            await Task { @MainActor in
+                self.draftContent = updatedBody
+            }.value
+        }
     }
 
     private func replaceBase64ImageForContentId(body: String?) async -> String? {
@@ -196,9 +235,7 @@ extension DraftContentManager {
             guard let contentId = try? attachment.attr("data-cid") else { continue }
 
             _ = try? attachment.removeAttr("src")
-
             _ = try? attachment.attr("src", "cid:\(contentId)")
-
             _ = try? attachment.removeAttr("data-cid")
         }
 

@@ -345,6 +345,8 @@ struct ComposeMessageView: View {
                 draftContentManager.startObservingDraft()
 
                 isLoadingContent = false
+
+                await draftContentManager.replaceInlineAttachments()
             } catch {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()

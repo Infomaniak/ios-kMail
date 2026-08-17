@@ -52,7 +52,6 @@ struct ComposeMessageBodyView: View {
     let editorBox: EditorBox
 
     @State private var inlineAttachmentHandler: InlineAttachmentHandler?
-    @State private var bodyImageProcessor = BodyImageProcessor()
 
     let messageReply: MessageReply?
 
@@ -133,7 +132,6 @@ struct ComposeMessageBodyView: View {
             editor.webView.loadUserScript(.observeInlineAttachmentsDeletion)
 
             editorBox.editor = editor
-            await replaceInlineAttachments()
         }
     }
 
@@ -192,35 +190,6 @@ struct ComposeMessageBodyView: View {
         editor.webView.loadUserScript(.observeMention)
         editor.webView.loadUserScript(.observeMentionDeletion)
         editor.webView.loadUserScript(.insertMention)
-    }
-
-    private func replaceInlineAttachments() async {
-        let attachmentsArray = draft.attachments.filter { $0.contentId != nil && $0.contentId?.isEmpty == false }.toArray()
-        guard !attachmentsArray.isEmpty else {
-            return
-        }
-
-        var body = await bodyImageProcessor.appendDataCIDAttributeToImages(body: draftBody, attachments: attachmentsArray)
-
-        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
-        for attachments in chunks {
-            let base64attachments = await bodyImageProcessor.fetchBase64Images(
-                attachments,
-                mailboxManager: mailboxManager
-            )
-
-            body = await bodyImageProcessor.injectImagesInBody(
-                body: body,
-                attachments: attachments,
-                base64Images: base64attachments
-            )
-
-            guard let body, !body.isEmpty else {
-                return
-            }
-
-            draftBody = body
-        }
     }
 }
 
