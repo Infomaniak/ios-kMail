@@ -51,11 +51,10 @@ struct BodyImageProcessor {
                         return ImageBase64AndMime(base64String, attachment.mimeType)
                     }
 
-                    let compressedImage = compressedBase64ImageAndMime(
+                    return compressedBase64ImageAndMime(
                         attachmentData: attachmentData,
                         attachmentMime: attachment.mimeType
                     )
-                    return compressedImage
                 } catch {
                     Logger.general.error("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
                     return nil
@@ -115,31 +114,28 @@ struct BodyImageProcessor {
         return workingBody
     }
 
-    func addContentIdAttributesInBody(body: String?, attachments: [Attachment]) async -> String? {
+    func appendDataCIDAttributeToImages(body: String?, attachments: [Attachment]) async -> String? {
         guard let body, !body.isEmpty else {
             return nil
         }
 
-        guard let htmlBody = try? await SwiftSoup.parse(body), let imageElements = try? await htmlBody.select("img[src]") else {
+        guard let htmlBody = try? await SwiftSoup.parse(body),
+              let imageElements = try? await htmlBody.select("img[src^=\"cid:\"]") else {
             return nil
         }
 
         for imageElement in imageElements.array() {
-            guard let src = try? imageElement.attr("src"),
-                  src.hasPrefix("cid:") else { continue }
+            guard let src = try? imageElement.attr("src"), src.hasPrefix("cid:") else { continue }
 
-            let contentId = String(src.dropFirst("cid:".count))
-
+            let contentId = src.removePrefix("cid:")
             guard attachments.contains(where: { $0.contentId == contentId }) else { continue }
 
             _ = try? imageElement.attr("data-cid", contentId)
         }
 
-        guard let updatedBody = try? htmlBody.outerHtml(),
-              await (try? SwiftSoup.parse(updatedBody)) != nil else {
+        guard let updatedBody = try? htmlBody.outerHtml() else {
             return nil
         }
-
         return updatedBody
     }
 }

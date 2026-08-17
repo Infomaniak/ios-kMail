@@ -203,7 +203,7 @@ struct ComposeMessageBodyView: View {
             return
         }
 
-        var body = await bodyImageProcessor.addContentIdAttributesInBody(body: draftBody, attachments: attachmentsArray)
+        var body = await bodyImageProcessor.appendDataCIDAttributeToImages(body: draftBody, attachments: attachmentsArray)
 
         let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
 
