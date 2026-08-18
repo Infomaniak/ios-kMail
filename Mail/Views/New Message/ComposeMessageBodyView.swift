@@ -75,7 +75,7 @@ struct ComposeMessageBodyView: View {
 
     private var commands: [HTMLEditorCustomAction] {
         [
-            HTMLEditorCustomAction(title: "Coller et adapter le style") { editor in
+            HTMLEditorCustomAction(title: MailResourcesStrings.Localizable.pasteAdjustStyleAction) { editor in
                 let pasteboard = UIPasteboard.general
                 guard pasteboard.numberOfItems > 0 else { return }
 
