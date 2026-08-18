@@ -339,6 +339,10 @@ public extension MailboxManager {
             message.scheduled = flags.scheduled
             message.seen = flags.seen
 
+            if flags.acknowledged {
+                message.acknowledge = AcknowledgeStatus.acknowledged.rawValue
+            }
+
             if message.snoozeState == .unsnoozed && message.seen {
                 message.snoozeState = nil
                 message.snoozeUuid = nil
