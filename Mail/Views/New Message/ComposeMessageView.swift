@@ -374,6 +374,7 @@ struct ComposeMessageView: View {
             mentionSuggestions = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
         }
         .onAppear {
+            draftManager.openDraftCount += 1
             attachmentsManager.importAttachments(
                 attachments: initialAttachments,
                 draft: draft,
@@ -396,6 +397,8 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
+            draftManager.openDraftCount -= 1
+
             guard !platformDetector.isMac && !Bundle.main.isExtension else {
                 return
             }

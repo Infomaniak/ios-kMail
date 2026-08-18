@@ -30,6 +30,7 @@ public final class DraftManager {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
+    @MainActor public var openDraftCount = 0
     private var currentSyncTask: Task<Void, Never>?
 
     /// Used by DI only
@@ -347,7 +348,9 @@ public final class DraftManager {
     @discardableResult
     private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
         guard await draftShouldBeSaved(draft: draft, mailboxManager: mailboxManager) else {
-            deleteEmptyDraft(draft: draft, for: mailboxManager)
+            if await openDraftCount == 0 {
+                deleteEmptyDraft(draft: draft, for: mailboxManager)
+            }
             return false
         }
 
