@@ -225,7 +225,6 @@ struct SendOptionFloatingPanelView: View {
                 draft.setScheduleOption(nil, mailboxManager: mailboxManager)
             }
         }
-//        .onChange(of: reminderV)
         .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
         .kSuitePanel(
             isPresented: $isShowingKSuiteProUpgrade,

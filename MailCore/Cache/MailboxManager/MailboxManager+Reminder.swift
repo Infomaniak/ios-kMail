@@ -101,12 +101,13 @@ public extension MailboxManager {
             reminderId: reminderId
         )
 
-        if response.data {
-            try? writeTransaction { writableRealm in
-                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                liveMessage.reminder = nil
-            }
-            Task { try await refreshFolder(from: [message], additionalFolder: nil) }
+        guard response.data else {
+            throw MailError.unknownError
         }
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+            liveMessage.reminder = nil
+        }
+        Task { try await refreshFolder(from: [message], additionalFolder: nil) }
     }
 }

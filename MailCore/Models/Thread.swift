@@ -76,8 +76,8 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
-    public func displayMessages(isEmojiReactionAvailable: Bool) -> List<Message> {
-        if isEmojiReactionAvailable {
+    public func displayMessages(isEmojiReactionAvailable: Bool, isReminderAvailable: Bool) -> List<Message> {
+        if isEmojiReactionAvailable || isReminderAvailable {
             return messagesToDisplay
         } else {
             return messages
@@ -389,7 +389,7 @@ public extension Thread {
                 numberOfScheduledDraft += 1
             }
             let targetMessageIds = message.inReplyTo ?? ""
-            let threadMessageIds: Set<String> = Set(messageIds)
+            let threadMessageIds = Set(messagesById.keys)
             let hideEmojiReaction = UserDefaults.shared.threadMode == .conversation && message
                 .isReaction && isTargetMessageInThread(
                     targetMessageIds: targetMessageIds,

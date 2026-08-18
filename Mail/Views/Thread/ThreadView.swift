@@ -60,8 +60,13 @@ struct ThreadView: View {
                 }
 
                 let isEmojiReactionAvailable = mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
+                let isReminderAvailable = mailboxManager.featureAvailableProvider.isAvailable(.reminder)
+
                 MessageListView(
-                    messages: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).toArray(),
+                    messages: thread.displayMessages(
+                        isEmojiReactionAvailable: isEmojiReactionAvailable,
+                        isReminderAvailable: isReminderAvailable
+                    ).toArray(),
                     mailboxManager: mailboxManager
                 )
             }

@@ -151,7 +151,7 @@ struct MessageReminderHeaderView: View {
 
     private func matomoForReschedule() {
         switch reminderState {
-        case .futureEditable:
+        case .pastEditable:
             matomo.track(eventWithCategory: .messageBanner, name: "rescheduleExpiredReminder")
         default:
             matomo.track(eventWithCategory: .messageBanner, name: "rescheduleActiveReminder")
