@@ -65,3 +65,46 @@ struct MailOpenDraft: OpenIntent {
         return .result()
     }
 }
+
+@available(iOS 27.0, *)
+@AppIntent(schema: .mail.openMessage)
+struct MailOpenMessage: OpenIntent {
+    var target: MailMessageEntity
+
+    func perform() async throws -> some IntentResult {
+        @InjectService var accountManager: AccountManager
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+
+        guard let mailbox = mailboxInfosManager.getMailbox(objectId: target.mailbox.id),
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+            throw MailError.localMessageNotFound
+        }
+
+        MailAppIntentsHelper.switchAccountIfNeeded(
+            mailbox: mailbox,
+            mailboxManager: mailboxManager,
+            accountManager: accountManager
+        )
+
+        guard let tappedMessage = try? MailAppIntentsHelper.resolveMessage(target, mailboxManager: mailboxManager)
+            .freezeIfNeeded(),
+            let folder = tappedMessage.folder else {
+            throw MailError.localMessageNotFound
+        }
+
+        @InjectService var mainViewStateStore: MainViewStateStore
+        let intentMainViewState = await mainViewStateStore.getOrCreateMainViewState(
+            for: mailboxManager,
+            initialFolder: folder
+        )
+
+        Task { @MainActor in
+            if let tappedThread = tappedMessage.originalThread {
+                intentMainViewState.selectedThread = tappedThread
+            } else {
+                throw MailError.localMessageNotFound
+            }
+        }
+        return .result()
+    }
+}
