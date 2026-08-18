@@ -78,12 +78,13 @@ public class DraftContentManager: ObservableObject {
 
     private func saveDraftBody(newBody: String) async {
         do {
+            let bodyWithoutAttachments = await replaceBase64ImageForContentId(body: newBody)
             try mailboxManager.writeTransaction { realm in
                 guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID) else {
                     throw MailError.unknownError
                 }
 
-                liveDraft.body = newBody
+                liveDraft.body = bodyWithoutAttachments ?? newBody
             }
         } catch {
             Logger.general.error("Error saving draft body \(error)")
@@ -161,12 +162,10 @@ extension DraftContentManager {
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
         guard replyMode == .forward else { return [] }
-        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+        return try await mailboxManager.apiFetcher.attachmentsToForward(
             mailbox: mailboxManager.mailbox,
             message: message
         ).attachments
-
-        return attachments
     }
 
     private func loadCompleteDraftIfNeeded(incompleteDraft: Draft) async throws -> String {
@@ -178,6 +177,73 @@ extension DraftContentManager {
         let remoteDraft = try await mailboxManager.loadRemotely(fromMessage: associatedMessage, incompleteDraft: incompleteDraft)
 
         return remoteDraft.body
+    }
+}
+
+// MARK: - Handle inline attachements
+
+public extension DraftContentManager {
+    func replaceInlineAttachments() async {
+        guard let draft = try? getFrozenDraft(draftPrimaryKey: draftLocalUUID) else { return }
+
+        let attachmentsArray = draft.attachments.filter { $0.contentId != nil && $0.contentId?.isEmpty == false }.toArray()
+        guard !attachmentsArray.isEmpty else {
+            return
+        }
+
+        let bodyImageProcessor = BodyImageProcessor()
+
+        guard let bodyWithCIDAttributes = await bodyImageProcessor.appendDataCIDAttributeToImages(
+            body: draft.body,
+            attachments: attachmentsArray
+        ) else { return }
+
+        await Task { @MainActor in
+            self.draftContent = bodyWithCIDAttributes
+        }.value
+
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+        for attachments in chunks {
+            let base64attachments = await bodyImageProcessor.fetchBase64Images(
+                attachments,
+                mailboxManager: mailboxManager
+            )
+
+            let updatedBody = await bodyImageProcessor.injectImagesInBody(
+                body: draftContent,
+                attachments: attachments,
+                base64Images: base64attachments
+            )
+
+            guard let updatedBody, !updatedBody.isEmpty else { return }
+            await Task { @MainActor in
+                self.draftContent = updatedBody
+            }.value
+        }
+    }
+
+    private func replaceBase64ImageForContentId(body: String?) async -> String? {
+        guard let body, !body.isEmpty else {
+            return nil
+        }
+
+        let htmlBody = try? await SwiftSoup.parse(body)
+
+        let attachments = try? await htmlBody?.select("[data-cid]")
+
+        guard let attachments, !attachments.isEmpty else {
+            return body
+        }
+
+        for attachment in attachments {
+            guard let contentId = try? attachment.attr("data-cid") else { continue }
+
+            _ = try? attachment.removeAttr("src")
+            _ = try? attachment.attr("src", "cid:\(contentId)")
+            _ = try? attachment.removeAttr("data-cid")
+        }
+
+        return try? htmlBody?.outerHtml()
     }
 }
 
@@ -362,8 +428,7 @@ extension DraftContentManager {
         let styleElementsFromHead = try head.getElementsByTag("style").array()
         try body.insertChildren(0, styleElementsFromHead)
 
-        let bodyHTML = try body.html()
-        return bodyHTML
+        return try body.html()
     }
 }
 

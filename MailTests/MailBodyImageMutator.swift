@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@testable import Infomaniak_Mail
+@testable import MailCore
 import MailResources
 @testable import SwiftSoup
 import XCTest
