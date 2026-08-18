@@ -98,6 +98,13 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
             },
             Factory(type: IKSnackBarPresentable.self) { _, _ in
                 SnackBarPresenter()
+            },
+            Factory(type: SpotlightIndexable.self) { _, _ in
+                if #available(iOS 18.4, *) {
+                    SpotlightIndexer()
+                } else {
+                    EmptySpotlightIndexer()
+                }
             }
         ]
     }

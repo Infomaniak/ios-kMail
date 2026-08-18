@@ -117,11 +117,6 @@ public class RootViewState: ObservableObject {
 
             transitionToRootViewState(.mainView(currentUser, mainViewState))
 
-            if #available(iOS 18.4, *) {
-                Task.detached(priority: .background) {
-                    await spotlightIndexer.indexAllMessages()
-                }
-            }
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 

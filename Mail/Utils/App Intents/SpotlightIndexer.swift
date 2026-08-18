@@ -28,6 +28,7 @@ public final class SpotlightIndexer: SpotlightIndexable {
     public init() {}
 
     public func indexAllMessages() async {
+        deindexAllMessages()
         @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
 

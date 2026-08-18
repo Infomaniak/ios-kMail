@@ -41,7 +41,8 @@ struct MailOpenDraft: OpenIntent {
             accountManager: accountManager
         )
 
-        guard let draft = try? MailAppIntentsHelper.resolveDraft(target, mailboxManager: mailboxManager).detached().freezeIfNeeded() else {
+        guard let draft = try? MailAppIntentsHelper.resolveDraft(target, mailboxManager: mailboxManager).detached()
+            .freezeIfNeeded() else {
             throw MailError.localMessageNotFound
         }
 
