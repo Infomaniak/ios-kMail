@@ -429,4 +429,29 @@ public enum MailAppIntentsHelper {
 
         return message
     }
+
+    @available(iOS 18.4, *)
+    public static func resolveDraft(
+        _ entity: MailDraftEntity,
+        mailboxManager: MailboxManager
+    ) throws -> Draft {
+        guard let draft = mailboxManager.draft(localUuid: entity.id) else {
+            throw MailError.localMessageNotFound
+        }
+        return draft
+    }
+
+    public static func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager, accountManager: AccountManager) {
+        if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accountManager.accounts
+                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                    accountManager.switchAccount(newUserId: switchedAccount.userId)
+                    accountManager.switchMailbox(newMailbox: mailbox)
+                }
+            } else {
+                accountManager.switchMailbox(newMailbox: mailbox)
+            }
+        }
+    }
 }

@@ -281,7 +281,7 @@ let project = Project(name: "Mail",
                                           "EXExtensionPointIdentifier": "com.apple.appintents-extension"
                                       ]
                                   ]),
-                                  sources: ["MailAppIntentsExtension/**", "MailCore/Models/App intents/**"],
+                                  sources: ["MailAppIntentsExtension/**", "Mail/Utils/App intents/**"],
                                   resources: [
                                       "MailResources/**/*.strings",
                                       "MailResources/**/*.stringsdict"

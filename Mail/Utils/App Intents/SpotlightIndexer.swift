@@ -44,8 +44,6 @@ enum SpotlightIndexer {
 
             totalCount += entities.count
         }
-
-        print("Spotlight: Indexed \(totalCount) messages in \(Date().timeIntervalSince(date)) seconds.")
     }
 
     static func indexMessages(_ entities: [MailMessageEntity]) {
