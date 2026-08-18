@@ -198,7 +198,8 @@ enum EditorToolbarAction: Identifiable {
         textAttributes: TextAttributes,
         isShowingLinkAlert: Binding<Bool>,
         isShowingFileSelection: Binding<Bool>,
-        isShowingAI: Binding<Bool>
+        isShowingAI: Binding<Bool>,
+        isShowingMailTemplatePanel: Binding<Bool>
     ) {
         switch self {
         case .bold:
@@ -222,6 +223,8 @@ enum EditorToolbarAction: Identifiable {
             isShowingFileSelection.wrappedValue = true
         case .ai:
             isShowingAI.wrappedValue = true
+        case .mailTemplate:
+            isShowingMailTemplatePanel.wrappedValue = true
         default:
             return
         }
