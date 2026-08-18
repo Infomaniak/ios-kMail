@@ -625,9 +625,10 @@ public extension MailboxManager {
         let orphanMessages = writableRealm.objects(Message.self).where { $0.folderId == folderId }
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
 
+        let orphanMessageUids = orphanMessages.map(\.uid).toArray()
         writableRealm.delete(orphanMessages)
         if #available(iOS 18.4, *) {
-            spotlightIndexer.deindexMessages(orphanMessages.map(\.uid), mailboxObjectId: mailboxObjectId)
+            spotlightIndexer.deindexMessages(orphanMessageUids, mailboxObjectId: mailboxObjectId)
         }
     }
 

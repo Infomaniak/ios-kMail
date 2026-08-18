@@ -22,5 +22,5 @@ public protocol SpotlightIndexable {
     func indexMessages(_ messages: [Message], mailbox: Mailbox)
     func indexAllMessages() async
     func deindexMessages(_ messageUids: [String], mailboxObjectId: String)
-    func deindexAllMessages()
+    func deindexAllMessages() async
 }

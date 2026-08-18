@@ -21,5 +21,5 @@ public final class EmptySpotlightIndexer: SpotlightIndexable {
     public func indexMessages(_ messages: [Message], mailbox: Mailbox) {}
     public func indexAllMessages() async {}
     public func deindexMessages(_ messageUids: [String], mailboxObjectId: String) {}
-    public func deindexAllMessages() {}
+    public func deindexAllMessages() async {}
 }

@@ -99,12 +99,12 @@ struct MailOpenMessage: OpenIntent {
             initialFolder: folder
         )
 
-        Task { @MainActor in
-            if let tappedThread = tappedMessage.originalThread {
-                intentMainViewState.selectedThread = tappedThread
-            } else {
-                throw MailError.localMessageNotFound
-            }
+        guard let tappedThread = tappedMessage.originalThread else {
+            throw MailError.localMessageNotFound
+        }
+
+        await MainActor.run {
+            intentMainViewState.selectedThread = tappedThread
         }
         return .result()
     }

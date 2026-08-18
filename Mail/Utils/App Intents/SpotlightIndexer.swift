@@ -28,7 +28,7 @@ public final class SpotlightIndexer: SpotlightIndexable {
     public init() {}
 
     public func indexAllMessages() async {
-        deindexAllMessages()
+        await deindexAllMessages()
         @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
 
@@ -68,9 +68,7 @@ public final class SpotlightIndexer: SpotlightIndexable {
         }
     }
 
-    public func deindexAllMessages() {
-        Task {
-            try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
-        }
+    public func deindexAllMessages() async {
+        try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
     }
 }

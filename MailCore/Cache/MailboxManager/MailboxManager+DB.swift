@@ -36,7 +36,9 @@ public extension MailboxManager {
         }
 
         if #available(iOS 18.4, *) {
-            spotlightIndexer.deindexAllMessages()
+            Task {
+                await spotlightIndexer.deindexAllMessages()
+            }
         }
     }
 }
