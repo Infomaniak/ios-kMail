@@ -41,7 +41,7 @@ public extension MailboxManager {
         }
 
         if #available(iOS 18.4, *) {
-            SpotlightIndexer.indexMessages(toMessageEntities(messages: [completedMessage]))
+            spotlightIndexer.indexMessages([completedMessage], mailbox: mailbox)
         }
     }
 

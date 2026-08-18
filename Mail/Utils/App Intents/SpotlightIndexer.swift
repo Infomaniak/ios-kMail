@@ -22,10 +22,12 @@ import InfomaniakDI
 import MailCore
 
 @available(iOS 18.4, *)
-enum SpotlightIndexer {
+public final class SpotlightIndexer: SpotlightIndexable {
     static let spotlightIndexName = "Infomaniak Mail"
 
-    static func indexAllMessages() async {
+    public init() {}
+
+    public func indexAllMessages() async {
         @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
 
@@ -40,20 +42,21 @@ enum SpotlightIndexer {
 
             let entities = messages.map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
 
-            try? await CSSearchableIndex(name: spotlightIndexName).indexAppEntities(entities)
+            try? await CSSearchableIndex(name: Self.spotlightIndexName).indexAppEntities(entities)
 
             totalCount += entities.count
         }
     }
 
-    static func indexMessages(_ entities: [MailMessageEntity]) {
-        guard !entities.isEmpty else { return }
+    public func indexMessages(_ messages: [Message], mailbox: Mailbox) {
+        guard !messages.isEmpty else { return }
+        let entities = messages.map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
         Task {
             try? await CSSearchableIndex(name: Self.spotlightIndexName).indexAppEntities(entities)
         }
     }
 
-    static func deindexMessages(_ messageUids: [String], mailboxObjectId: String) {
+    public func deindexMessages(_ messageUids: [String], mailboxObjectId: String) {
         guard !messageUids.isEmpty else { return }
         let entityIds = messageUids.map { "\(mailboxObjectId)-\($0)" }
         Task {
@@ -64,7 +67,7 @@ enum SpotlightIndexer {
         }
     }
 
-    static func deindexAllMessages() {
+    public func deindexAllMessages() {
         Task {
             try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
         }

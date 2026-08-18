@@ -144,6 +144,9 @@ open class MailAppTargetAssembly: TargetAssembly {
             },
             Factory(type: QuickActionsManager.self) { _, _ in
                 QuickActionsManager()
+            },
+            Factory(type: SpotlightIndexable.self) { _, _ in
+                EmptySpotlightIndexer()
             }
         ]
     }

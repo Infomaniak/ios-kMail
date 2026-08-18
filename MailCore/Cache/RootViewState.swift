@@ -87,6 +87,7 @@ public class RootViewState: ObservableObject {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var mainViewStateStore: MainViewStateStore
+        @InjectService var spotlightIndexer: SpotlightIndexable
 
         guard let currentAccount = targetAccount ?? accountManager.getCurrentAccount() else {
             transitionToRootViewState(.onboarding)
@@ -118,7 +119,7 @@ public class RootViewState: ObservableObject {
 
             if #available(iOS 18.4, *) {
                 Task.detached(priority: .background) {
-                    await SpotlightIndexer.indexAllMessages()
+                    await spotlightIndexer.indexAllMessages()
                 }
             }
         } else {
