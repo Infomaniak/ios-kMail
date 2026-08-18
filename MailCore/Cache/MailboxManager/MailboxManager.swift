@@ -27,7 +27,6 @@ import SwiftRegex
 public final class MailboxManager: ObservableObject, MailboxManageable {
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService var spotlightIndexer: SpotlightIndexable
-    
 
     lazy var refreshActor = RefreshActor(mailboxManager: self)
 
