@@ -1,5 +1,5 @@
 {
-  "originHash" : "a8b2ca68ba9bc8660cd588cb7dd296cc39c8ea7553f64b7921170562493bb52c",
+  "originHash" : "1cadf04dae776fadea7461f7c42f1bda3fbac2336267b2968fff3f1570c557a4",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "8cdf0fe8124d9daae8524f15c169c558a84ddacd",
-        "version" : "9.33.0"
+        "revision" : "2f64c77f77514acd01780d1aac86ae75b7fccd04",
+        "version" : "9.31.0"
       }
     },
     {
@@ -258,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
-        "version" : "1.7.5"
+        "revision" : "844289ac455816e193f1dbbe014f3c4dbe429410",
+        "version" : "1.7.4"
       }
     },
     {
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
-        "revision" : "5a774910f618ef31f26d27c1afbaab76209af7f3",
-        "version" : "3.3.1"
+        "branch" : "feat/custom-menu",
+        "revision" : "d53608d50c6d3c126d41de9bda53c7bc3f2dd020"
       }
     },
     {
