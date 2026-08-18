@@ -73,18 +73,16 @@ struct ComposeMessageBodyView: View {
         return MessageWebViewUtils.loadCSS(for: .editor(aliases: aliases)).joined()
     }
 
-    private var commands: [HTMLEditorCustomAction] {
-        [
-            HTMLEditorCustomAction(title: MailResourcesStrings.Localizable.pasteAdjustStyleAction) { editor in
-                let pasteboard = UIPasteboard.general
-                guard pasteboard.numberOfItems > 0 else { return }
+    @State private var commands: [HTMLEditorCustomAction] = [
+        HTMLEditorCustomAction(title: MailResourcesStrings.Localizable.pasteAdjustStyleAction) { editor in
+            let pasteboard = UIPasteboard.general
+            guard pasteboard.numberOfItems > 0 else { return }
 
-                if let text = pasteboard.string, !text.isEmpty {
-                    editor.pasteAndMatchStyle(text)
-                }
+            if let text = pasteboard.string, !text.isEmpty {
+                editor.pasteAndMatchStyle(text)
             }
-        ]
-    }
+        }
+    ]
 
     var body: some View {
         VStack {
