@@ -275,10 +275,13 @@ public class ActionsProvider: ObservableObject {
     }
 
     private func reminderActions(for message: Message, origin: ActionOrigin) -> [Action] {
-        guard featureAvailableProvider.isAvailable(.reminder) else {
+        guard featureAvailableProvider.isAvailable(.reminder), message.reminder == nil else {
             return []
         }
-        guard !message.hasReminder, origin.thread?.messages.last?.id == message.id || origin.thread == nil else {
+        guard !message.hasReminder, origin.thread?.messages.lastMessageToExecuteAction(
+            currentMailboxEmail: currentEmail,
+            featureAvailableProvider: featureAvailableProvider
+        )?.id == message.id || origin.thread == nil else {
             return []
         }
         return [.addReminder]

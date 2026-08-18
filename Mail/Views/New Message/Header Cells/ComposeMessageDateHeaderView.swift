@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -38,6 +40,8 @@ struct ComposeMessageDateHeaderView: View {
         ) {
             HStack {
                 Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .newMessage, name: "rescheduleReminderBanner")
                     isShowingSendOptionsPanel = true
                 }
                 MessageHeaderDivider()

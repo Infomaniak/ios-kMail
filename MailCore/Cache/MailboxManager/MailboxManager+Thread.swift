@@ -114,7 +114,7 @@ public extension MailboxManager {
             self.deleteOrphanMessages(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
-        /// We will now fetch new messages
+        // We will now fetch new messages
         while try await fetchOnePage(folder: folder, direction: .future) {
             guard !Task.isCancelled else { return }
         }
@@ -134,7 +134,7 @@ public extension MailboxManager {
             return
         }
 
-        /// Fetch old messages until folder history is completed
+        // Fetch old messages until folder history is completed
         var messagesToFetch = folderPrevious.remainingOldMessagesToFetch
         while messagesToFetch > 0 {
             guard !Task.isCancelled else { return }
@@ -185,7 +185,7 @@ public extension MailboxManager {
 
     /// This function get all the messages uids from the chosen folder
     private func fetchOldMessagesUids(folder: Folder) async throws -> String {
-        /// Get ALL uids
+        // Get ALL uids
         let messageUidsResult = try await apiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: folder.remoteId)
 
         try? writeTransaction { writableRealm in
@@ -254,6 +254,10 @@ public extension MailboxManager {
         } else if let messagesDelta = messagesDelta as? MessagesDelta<SnoozedFlags> {
             await handleDeletedMessages(messagesDelta: messagesDelta, folder: folder)
             await handleUpdatedMessages(messagesDelta: messagesDelta, folder: folder)
+        }
+
+        if folder.role == .sent, !messagesDelta.addedShortUids.isEmpty {
+            try? await Task.sleep(nanoseconds: UInt64(1_000_000_000))
         }
 
         handleNewMessageUids(messagesDelta: messagesDelta, folder: folder)
@@ -748,7 +752,8 @@ public extension MailboxManager {
                 return
             }
 
-            let resultThreads = result.threads?.map { Thread(value: $0) } ?? []
+            let resultThreads = (result.threads ?? []).map { Thread(value: $0) }
+                .filter { !$0.messages.allSatisfy { $0.shouldHideReminder } }
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: resultThreads)
 

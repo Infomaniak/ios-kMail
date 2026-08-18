@@ -4,7 +4,7 @@
  * Locale: nl, Dutch; Flemish
  * Tagged: ios
  * Exported by: Killian Mathias
- * Exported at: Tue, 28 Jul 2026 17:03:13 +0200
+ * Exported at: Tue, 04 Aug 2026 14:28:25 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1139,16 +1139,16 @@
 /* loco:62c4672bb812405fb22925f2 */
 "helpSubtitle" = "Om u te helpen";
 
-/* loco:6a68c2b7da46f41efe0f6402 */
+/* loco:6a6b68b0039c3265dd0a21a3 */
 "hoursBeforeSendingReminder" = "%d uur";
 
-/* loco:6a68c2b7da46f41efe0f6403 */
+/* loco:6a6b68b0039c3265dd0a21a4 */
 "hoursBeforeSendingReminder-plural" = "%d uur";
 
-/* loco:6a68c2b7da46f41efe0f6404 */
+/* loco:6a6b68b0039c3265dd0a21a5 */
 "hoursBeforeSendingReminder-plural-2" = "";
 
-/* loco:6a68c2b7da46f41efe0f6405 */
+/* loco:6a6b68b0039c3265dd0a21a6 */
 "hoursBeforeSendingReminder-plural-3" = "";
 
 /* loco:627a3c64f10f5f31f53e1c02 */
@@ -1919,6 +1919,12 @@
 
 /* loco:62b42e39dbeac92077145712 */
 "snackbarInvalidUrl" = "Ongeldige URL";
+
+/* loco:6a6b3d181907a93a8304f183 */
+"snackbarMarkAsDoneReminderFailure" = "Markeren van herinnering als voltooid mislukt";
+
+/* loco:6a6b3d40f4f72c6877078833 */
+"snackbarMarkAsDoneReminderSuccess" = "Herinnering gemarkeerd als voltooid";
 
 /* loco:638f5f9440687b206c230e64 */
 "snackbarMessageDeletedPermanently" = "Bericht verwijderd";

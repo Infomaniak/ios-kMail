@@ -17,6 +17,7 @@
  */
 
 import IKSnackbar
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -24,7 +25,8 @@ import MailResources
 import SwiftUI
 
 struct MessageReminderHeaderView: View {
-    @InjectService var snackbarPresenter: IKSnackBarPresentable
+    @LazyInjectService var matomo: MatomoUtils
+    @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var isShowingReschedulePanel = false
 
@@ -50,7 +52,7 @@ struct MessageReminderHeaderView: View {
                                 isShowingReschedulePanel = true
                             }
                             MessageHeaderDivider()
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: markAsDone)
                         }
 
                         VStack(alignment: .leading) {
@@ -61,7 +63,7 @@ struct MessageReminderHeaderView: View {
                                     isShowingReschedulePanel = true
                                 }
                             }
-                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: removeReminder)
+                            Button(MailResourcesStrings.Localizable.reminderMarkAsDoneButton, action: markAsDone)
                         }
                     }
                 }
@@ -110,6 +112,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func removeReminder() {
+        matomo.track(eventWithCategory: .messageBanner, name: "removeReminder")
         Task {
             do {
                 try await mailboxManager.deleteReminder(message: message)
@@ -121,6 +124,7 @@ struct MessageReminderHeaderView: View {
     }
 
     private func changeReminderDelta(newReminderOption: ReminderOption) {
+        matomoForReschedule()
         let delta = newReminderOption.inMinutes
         Task {
             do {
@@ -131,6 +135,27 @@ struct MessageReminderHeaderView: View {
             }
         }
         isShowingReschedulePanel = false
+    }
+
+    private func markAsDone() {
+        matomo.track(eventWithCategory: .messageBanner, name: "markAsDoneReminder")
+        Task {
+            do {
+                try await mailboxManager.markAsDone(message: message)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMarkAsDoneReminderSuccess)
+            } catch {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMarkAsDoneReminderFailure)
+            }
+        }
+    }
+
+    private func matomoForReschedule() {
+        switch reminderState {
+        case .pastEditable:
+            matomo.track(eventWithCategory: .messageBanner, name: "rescheduleExpiredReminder")
+        default:
+            matomo.track(eventWithCategory: .messageBanner, name: "rescheduleActiveReminder")
+        }
     }
 }
 

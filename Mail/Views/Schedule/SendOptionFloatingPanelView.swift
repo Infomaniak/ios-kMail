@@ -28,6 +28,7 @@ import RealmSwift
 import SwiftUI
 
 struct SendOptionFloatingPanelView: View {
+    @LazyInjectService var matomo: MatomoUtils
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var isShowingCustomScheduleAlert: Bool
@@ -127,6 +128,11 @@ struct SendOptionFloatingPanelView: View {
                                 option: option,
                                 isSelected: draft.reminderOption == option
                             ) {
+                                matomo.track(
+                                    eventWithCategory: .newMessage,
+                                    name: "selectedReminderDelta",
+                                    value: Float(option.inMinutes)
+                                )
                                 draft.setReminderOption(option, mailboxManager: mailboxManager)
                             }
                         }
@@ -139,6 +145,7 @@ struct SendOptionFloatingPanelView: View {
                             if isCustomOptionLimited {
                                 showUpgradeBottomSheet()
                             } else {
+                                matomo.track(eventWithCategory: .newMessage, name: "customReminder")
                                 customAlertType = .reminder(type: .option)
                                 isShowingCustomScheduleAlert = true
                             }
@@ -197,6 +204,7 @@ struct SendOptionFloatingPanelView: View {
             }
         }
         .onChange(of: isReminderEnabled) { newValue in
+            matomo.track(eventWithCategory: .newMessage, name: "toggleReminder", value: isReminderEnabled)
             if newValue {
                 // Auto-select first option when toggled ON
                 draft.setReminderOption(draft.reminderOption ?? .oneDay, mailboxManager: mailboxManager)
@@ -208,6 +216,7 @@ struct SendOptionFloatingPanelView: View {
             }
         }
         .onChange(of: isScheduleEnabled) { newValue in
+            matomo.track(eventWithCategory: .newMessage, name: "toggleSchedule", value: isScheduleEnabled)
             if newValue {
                 // Auto-select first available option when toggled ON
                 draft.setScheduleOption(draft.scheduleOption ?? scheduleOptions.first, mailboxManager: mailboxManager)

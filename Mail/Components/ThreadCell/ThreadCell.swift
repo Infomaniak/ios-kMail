@@ -132,6 +132,10 @@ struct ThreadCell: View {
         mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction)
     }
 
+    private var isReminderAvailable: Bool {
+        mailboxManager.featureAvailableProvider.isAvailable(.reminder)
+    }
+
     init(
         thread: Thread,
         density: ThreadDensity,
@@ -179,7 +183,10 @@ struct ThreadCell: View {
                         contextMailboxManager: mailboxManager,
                         style: dataHolder.isInWrittenByMeFolder ? .to : .from
                     ),
-                    messageCount: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).count,
+                    messageCount: thread.displayMessages(
+                        isEmojiReactionAvailable: isEmojiReactionAvailable,
+                        isReminderAvailable: isReminderAvailable
+                    ).count,
                     prominentMessageCount: thread.hasUnseenMessages,
                     displayDate: thread.displayDate,
                     showDraftPrefix: thread.hasDrafts

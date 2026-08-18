@@ -66,9 +66,14 @@ extension Draft {
         try? mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: localUUID) else { return }
 
+            guard let visibility else {
+                liveDraft.reminder = nil
+                return
+            }
+
             liveDraft.reminder = DraftReminder(
                 delta: liveDraft.reminder?.delta ?? 1440,
-                display: visibility.map { $0 == .recipientsAndMe } == true
+                display: visibility == .recipientsAndMe
             )
         }
     }

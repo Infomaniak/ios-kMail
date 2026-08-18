@@ -255,6 +255,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var reminder: Reminder?
     @Persisted public var reminderAction: String?
+    @Persisted public var isReminder: Bool
+    @Persisted public var displayReminder: Bool
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -347,8 +349,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public func canExecuteAction(featureAvailableProvider: FeatureAvailableProvider) -> Bool {
-        if featureAvailableProvider.isAvailable(.emojiReaction) {
-            return !isDraft && isDisplayable
+        if featureAvailableProvider.isAvailable(.emojiReaction) || featureAvailableProvider.isAvailable(.reminder) {
+            return !isDraft && isDisplayable && !shouldHideReminder
         }
 
         return !isDraft
@@ -372,6 +374,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var hasPendingAcknowledgement: Bool {
         return acknowledgeStatus == .pending
+    }
+
+    public var shouldHideReminder: Bool {
+        return isReminder && !displayReminder
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
@@ -478,6 +484,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case acknowledge
         case reminder
         case reminderAction
+        case displayReminder
+        case isReminder
     }
 
     override init() {
@@ -561,6 +569,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         acknowledge = try values.decodeIfPresent(String.self, forKey: .acknowledge)
         reminder = try values.decodeIfPresent(Reminder.self, forKey: .reminder)
         reminderAction = try values.decodeIfPresent(String.self, forKey: .reminderAction)
+        displayReminder = try values.decodeIfPresent(Bool.self, forKey: .displayReminder) ?? false
+        isReminder = try values.decodeIfPresent(Bool.self, forKey: .isReminder) ?? false
     }
 
     public convenience init(
@@ -602,7 +612,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         emojiReaction: String? = nil,
         emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
         acknowledge: String? = nil,
-        reminder: Reminder? = nil
+        reminder: Reminder? = nil,
+        displayReminder: Bool = false,
+        isReminder: Bool = false
     ) {
         self.init()
 
@@ -646,6 +658,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
         self.acknowledge = acknowledge
         self.reminder = reminder
+        self.displayReminder = displayReminder
+        self.isReminder = isReminder
     }
 
     public func toThread() -> Thread {

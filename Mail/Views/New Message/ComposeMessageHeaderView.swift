@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -99,11 +101,9 @@ struct ComposeMessageHeaderView: View {
                 ComposeMessageDateHeaderView(
                     isShowingSendOptionsPanel: $isShowingSendOptionsPanel,
                     icon: MailResourcesAsset.alarmClock.swiftUIImage,
-                    message: reminderOption.headerText
-                ) {
-                    draft.setReminderOption(nil, mailboxManager: mailboxManager)
-                    draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
-                }
+                    message: reminderOption.headerText,
+                    onCancel: cancelReminder
+                )
             }
 
             if let scheduleOption = draft.scheduleOption {
@@ -119,6 +119,13 @@ struct ComposeMessageHeaderView: View {
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
+    }
+
+    func cancelReminder() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "deactivateReminderBanner")
+        draft.setReminderOption(nil, mailboxManager: mailboxManager)
+        draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
     }
 }
 

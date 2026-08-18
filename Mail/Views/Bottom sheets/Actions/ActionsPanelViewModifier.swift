@@ -204,7 +204,9 @@ struct ActionsPanelViewModifier: ViewModifier {
             isPresented: $isReminderFloatingPanelPresented,
             isRescheduling: false,
             dismissView: { messageToRemind = nil },
-            completionHandler: addReminder
+            completionHandler: { option in
+                addReminder(message: messageToRemind, option: option)
+            }
         )
         .euriaFloatingPanel(
             messages: $messagesToProcessWithEuria,
@@ -212,8 +214,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         )
     }
 
-    private func addReminder(option: ReminderOption) {
-        guard let message = messageToRemind else { return }
+    private func addReminder(message: Message?, option: ReminderOption) {
+        guard let message = message else { return }
         Task {
             await actionsManager.addReminder(message: message, delta: option.inMinutes)
             messageToRemind = nil

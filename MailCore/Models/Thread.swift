@@ -76,8 +76,8 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
-    public func displayMessages(isEmojiReactionAvailable: Bool) -> List<Message> {
-        if isEmojiReactionAvailable {
+    public func displayMessages(isEmojiReactionAvailable: Bool, isReminderAvailable: Bool) -> List<Message> {
+        if isEmojiReactionAvailable || isReminderAvailable {
             return messagesToDisplay
         } else {
             return messages
@@ -157,7 +157,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var hasReminder: Bool {
-        return messages.last?.reminder != nil
+        return messages.contains { $0.hasReminder }
     }
 
     public func updateUnseenMessages() {
@@ -307,7 +307,7 @@ public class Thread: Object, Decodable, Identifiable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         uid = try container.decode(String.self, forKey: .uid)
         messages = try container.decode(List<Message>.self, forKey: .messages)
-        messagesToDisplay = messages.filter { !$0.isReaction }.toRealmList()
+        messagesToDisplay = messages.filter { !$0.isReaction && !$0.shouldHideReminder }.toRealmList()
         unseenMessages = try container.decode(Int.self, forKey: .unseenMessages)
         from = try container.decode(List<Recipient>.self, forKey: .from)
         to = try container.decode(List<Recipient>.self, forKey: .to)
@@ -388,7 +388,19 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if UserDefaults.shared.threadMode == .conversation && message.isReaction {
+            let targetMessageIds = message.inReplyTo ?? ""
+            let threadMessageIds = Set(messagesById.keys)
+            let hideEmojiReaction = UserDefaults.shared.threadMode == .conversation && message
+                .isReaction && isTargetMessageInThread(
+                    targetMessageIds: targetMessageIds,
+                    threadMessageIds: threadMessageIds
+                )
+            let hideReminder = message.shouldHideReminder && (isTargetMessageInThread(
+                targetMessageIds: targetMessageIds,
+                threadMessageIds: threadMessageIds
+            ) || message.isScheduledDraft == true)
+
+            if hideEmojiReaction {
                 let hasAppliedReaction = applyReactionIfPossible(
                     from: message,
                     messagesById: messagesById,
@@ -396,7 +408,7 @@ public extension Thread {
                 )
 
                 message.isDisplayable = !(hasAppliedReaction || message.isDraft)
-            } else {
+            } else if !hideReminder {
                 messagesToDisplay.append(message)
             }
 
@@ -486,6 +498,10 @@ public extension Thread {
         }
 
         return messageById
+    }
+
+    private func isTargetMessageInThread(targetMessageIds: String, threadMessageIds: Set<String>) -> Bool {
+        return targetMessageIds.parseMessageIds().contains { threadMessageIds.contains($0) }
     }
 }
 
