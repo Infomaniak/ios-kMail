@@ -73,6 +73,19 @@ struct ComposeMessageBodyView: View {
         return MessageWebViewUtils.loadCSS(for: .editor(aliases: aliases)).joined()
     }
 
+    private var commands: [HTMLEditorCustomAction] {
+        [
+            HTMLEditorCustomAction(title: "Coller et adapter le style") { editor in
+                let pasteboard = UIPasteboard.general
+                guard pasteboard.numberOfItems > 0 else { return }
+
+                if let text = pasteboard.string, !text.isEmpty {
+                    editor.pasteAndMatchStyle(text)
+                }
+            }
+        ]
+    }
+
     var body: some View {
         VStack {
             #if os(macOS) || targetEnvironment(macCatalyst)
@@ -89,9 +102,12 @@ struct ComposeMessageBodyView: View {
             }
             #endif
             AttachmentsHeaderView()
-            RichHTMLEditor(html: $draftBody, selection: $selectedText, textAttributes: textAttributes,
+            RichHTMLEditor(html: $draftBody,
+                           selection: $selectedText,
+                           textAttributes: textAttributes,
                            spellCheckEnabled: !isEnvironmentCatalyst,
-                           autoCorrectEnabled: !isEnvironmentCatalyst)
+                           autoCorrectEnabled: !isEnvironmentCatalyst,
+                           commands: commands)
                 .focused($focusedField, equals: .editor)
                 .onEditorLoaded(perform: editorDidLoad)
                 .editorCSS(customCSS)
