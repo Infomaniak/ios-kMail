@@ -87,7 +87,6 @@ public class RootViewState: ObservableObject {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var mainViewStateStore: MainViewStateStore
-        @InjectService var spotlightIndexer: SpotlightIndexable
 
         guard let currentAccount = targetAccount ?? accountManager.getCurrentAccount() else {
             transitionToRootViewState(.onboarding)

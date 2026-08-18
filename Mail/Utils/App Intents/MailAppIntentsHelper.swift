@@ -48,7 +48,7 @@ extension IntentFile: Attachable {
 @available(iOS 18.4, *)
 final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
     @MainActor func contentWillChange() {}
-    @MainActor func handleGlobalError(_ error: MailError) {}
+    @MainActor func handleGlobalError(_: MailError) {}
 }
 
 @available(iOS 18.4, *)
