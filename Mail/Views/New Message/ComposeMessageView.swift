@@ -222,6 +222,7 @@ struct ComposeMessageView: View {
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
                         mentionQuery: $mentionQuery,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
                         draft: draft,
                         aliases: aliases,
                         editorBox: editorBox,
