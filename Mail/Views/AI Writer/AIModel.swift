@@ -51,7 +51,7 @@ final class AIModel: ObservableObject {
     var draftContentManager: DraftContentManager?
 
     private let mailboxManager: MailboxManager
-    private let draft: Draft
+    private let draftLocalUUID: String
 
     private var contextId: String?
 
@@ -77,7 +77,7 @@ final class AIModel: ObservableObject {
 
     init(mailboxManager: MailboxManager, draft: Draft, isReplying: Bool) {
         self.mailboxManager = mailboxManager
-        self.draft = draft
+        draftLocalUUID = draft.localUUID
         self.isReplying = isReplying
     }
 }
@@ -256,7 +256,7 @@ extension AIModel {
             name: shouldReplaceBody ? "replaceProposition" : "insertProposition"
         )
 
-        await draftContentManager?.replaceContent(subject: subject, body: body, draftPrimaryKey: draft.localUUID)
+        await draftContentManager?.replaceContent(subject: subject, body: body, draftPrimaryKey: draftLocalUUID)
         withAnimation {
             isShowingProposition = false
         }
@@ -288,7 +288,7 @@ extension AIModel {
 
 extension AIModel {
     private func getLiveDraft() -> Draft? {
-        return mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draft.localUUID)
+        return mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftLocalUUID)
     }
 
     private func shouldOverrideSubject() -> Bool {
