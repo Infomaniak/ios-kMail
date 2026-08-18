@@ -38,7 +38,6 @@ jobs:
           echo -e "enum Env {\n static let testAccountEmail = \"\"\n static let testAccountPassword = \"\"\n}" > $UI_ENV_PATH
 
       - name: Setup
-        run: tuist install && tuist generate --no-open
-
+        run: tuist install && tuist generate
       - name: Run API Tests
-        run: tuist test Mail-Workspace --test-targets MailTests/MailApiTests --no-selective-testing
+        run: tuist test Mail-Workspace --test-targets MailTests/MailApiTests --no-selective-testing --clean
