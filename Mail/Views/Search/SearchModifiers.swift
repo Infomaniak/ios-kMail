@@ -79,7 +79,7 @@ struct SearchToolbar: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     if multipleSelectionViewModel.isEnabled {
                         Button(MailResourcesStrings.Localizable.buttonCancel) {
                             matomo.track(eventWithCategory: .searchMultiSelection, name: "cancel")
