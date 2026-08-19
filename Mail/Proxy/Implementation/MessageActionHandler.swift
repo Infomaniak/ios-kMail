@@ -91,6 +91,11 @@ public struct MessageActionHandler: MessageActionHandlable {
         }
     }
 
+    func handleTapOnIncompleteNotification(mailbox: Mailbox, mailboxManager: MailboxManager) {
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.open)
+        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
+    }
+
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.open)
         await handleNotification(action: .tap, messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
