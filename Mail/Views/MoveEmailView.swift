@@ -57,7 +57,7 @@ struct MoveEmailView: View {
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .createFolder, name: "fromMove")

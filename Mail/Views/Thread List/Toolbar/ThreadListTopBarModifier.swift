@@ -150,7 +150,7 @@ struct LegacyThreadListTopBarModifier: ViewModifier {
                         }
                     }
 
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(selectAllButtonTitle) {
                                 withAnimation(.default.speed(2)) {
