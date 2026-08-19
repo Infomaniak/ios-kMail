@@ -24,6 +24,9 @@ protocol MessageActionHandlable {
     /// Present the new mail to the user with the correct account
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws
 
+    /// Try to switch to the mailbox associated to a notification with unknown message
+    func handleTapOnIncompleteNotification(mailbox: Mailbox, mailboxManager: MailboxManager)
+
     /// Silently move mail to `archive` folder
     func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws
 

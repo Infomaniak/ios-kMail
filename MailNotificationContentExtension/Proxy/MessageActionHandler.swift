@@ -21,6 +21,8 @@ import MailCore
 
 // Stub for extension mode
 public struct MessageActionHandler: MessageActionHandlable {
+    func handleTapOnIncompleteNotification(mailbox: Mailbox, mailboxManager: MailboxManager) {}
+
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {}
 
     func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {}

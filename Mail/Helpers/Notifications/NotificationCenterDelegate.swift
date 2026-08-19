@@ -47,9 +47,15 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
-              let mailboxManager = accountManager.getMailboxManager(for: mailbox),
-              let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+            return
+        }
+
+        guard let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               !messageUid.isEmpty else {
+            if identifier == UNNotificationDefaultActionIdentifier {
+                messageActions.handleTapOnIncompleteNotification(mailbox: mailbox, mailboxManager: mailboxManager)
+            }
             return
         }
 
