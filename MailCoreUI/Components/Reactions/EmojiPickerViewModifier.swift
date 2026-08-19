@@ -61,8 +61,11 @@ struct EmojiPickerViewModifier: ViewModifier {
         @InjectService var platformDetector: PlatformDetectable
         if platformDetector.isMacCatalyst {
             return 400
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            return 320
+        } else {
+            return nil
         }
-        return UIDevice.current.userInterfaceIdiom == .pad ? 320 : nil
     }
 
     private var backgroundColor: Color? {
