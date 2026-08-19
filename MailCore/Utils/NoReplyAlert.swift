@@ -17,7 +17,9 @@
  */
 
 enum NoReplyAlert {
-    static let noReplyPrefixes: Set = ["no-reply", "noreply", "postmaster", "catchall"]
+    static let noReplyPrefixes: Set = [
+        "no-reply", "noreply", "do-not-reply", "donotreply", "postmaster", "catchall", "notification", "ne-pas-repondre", "nepasrepondre"
+    ]
 
     static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
         let isReplyingAll = action == .replyAll

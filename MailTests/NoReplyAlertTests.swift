@@ -268,6 +268,5 @@ final class NoReplyAlertTests: XCTestCase {
         XCTAssertTrue(prefixes.contains("noreply"), "Should contain 'noreply'")
         XCTAssertTrue(prefixes.contains("postmaster"), "Should contain 'postmaster'")
         XCTAssertTrue(prefixes.contains("catchall"), "Should contain 'catchall'")
-        XCTAssertEqual(prefixes.count, 4, "Should have exactly 4 prefixes")
     }
 }
