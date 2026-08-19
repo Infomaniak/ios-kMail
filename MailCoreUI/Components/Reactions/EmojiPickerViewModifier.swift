@@ -29,6 +29,8 @@ extension View {
 }
 
 struct EmojiPickerViewModifier: ViewModifier {
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
     @Binding var isPresented: Bool
     @Binding var selectedEmoji: Emoji?
 
@@ -61,7 +63,7 @@ struct EmojiPickerViewModifier: ViewModifier {
         @InjectService var platformDetector: PlatformDetectable
         if platformDetector.isMacCatalyst {
             return 400
-        } else if UIDevice.current.userInterfaceIdiom == .pad {
+        } else if !isCompactWindow {
             return 320
         } else {
             return nil
