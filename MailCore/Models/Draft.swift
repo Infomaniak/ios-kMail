@@ -275,8 +275,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
 
     public static func replying(reply: MessageReply,
                                 currentMailboxEmail: String,
-                                aliases: [String],
-                                euriaReply: String = "") -> Draft {
+                                aliases: [String]) -> Draft {
         let message = reply.frozenMessage
         let mode = reply.replyMode
         let encrypted = message.encrypted
@@ -308,7 +307,6 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                      references: "\(message.references ?? "") \(message.messageId ?? "")",
                      inReplyTo: message.messageId,
                      subject: subject,
-                     body: euriaReply,
                      to: recipientHolder.to,
                      cc: recipientHolder.cc,
                      encrypted: encrypted)

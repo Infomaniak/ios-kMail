@@ -21,13 +21,15 @@ import Foundation
 public struct MessageReply {
     public let frozenMessage: Message
     public let replyMode: ReplyMode
+    public let euriaReply: String?
 
     public var isReplying: Bool {
         replyMode == .reply || replyMode == .replyAll
     }
 
-    public init(frozenMessage: Message, replyMode: ReplyMode) {
+    public init(frozenMessage: Message, replyMode: ReplyMode, euriaReply: String? = nil) {
         self.frozenMessage = frozenMessage
         self.replyMode = replyMode
+        self.euriaReply = euriaReply
     }
 }

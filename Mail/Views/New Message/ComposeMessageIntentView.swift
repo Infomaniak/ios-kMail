@@ -113,26 +113,18 @@ struct ComposeMessageIntentView: View, IntentViewable {
             draftToWrite = Draft.mailTo(urlComponents: mailToURLComponents)
         case .writeTo(let recipient):
             draftToWrite = Draft.writing(to: recipient)
-        case .reply(let messageUid, let replyMode):
-            // TODO: Can we move this transaction away from the main actor ?
+        case .reply(let messageUid, let replyMode, let euriaReply):
             if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
-                let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
+                let messageReply = MessageReply(
+                    frozenMessage: frozenMessage,
+                    replyMode: replyMode,
+                    euriaReply: euriaReply
+                )
                 maybeMessageReply = messageReply
                 draftToWrite = Draft.replying(
                     reply: messageReply,
                     currentMailboxEmail: mailboxManager.mailbox.email,
                     aliases: mailboxManager.mailbox.aliases.toArray()
-                )
-            }
-        case .replyWithEuria(let messageUid, let replyMode, let replyBody):
-            if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
-                let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
-                maybeMessageReply = messageReply
-                draftToWrite = Draft.replying(
-                    reply: messageReply,
-                    currentMailboxEmail: mailboxManager.mailbox.email,
-                    aliases: mailboxManager.mailbox.aliases.toArray(),
-                    euriaReply: replyBody
                 )
             }
         }

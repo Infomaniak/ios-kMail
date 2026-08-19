@@ -25,8 +25,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         case existingRemote(messageUid: String)
         case mailTo(mailToURLComponents: URLComponents)
         case writeTo(recipient: Recipient)
-        case reply(messageUid: String, replyMode: ReplyMode)
-        case replyWithEuria(messageUid: String, replyMode: ReplyMode, replyBody: String)
+        case reply(messageUid: String, replyMode: ReplyMode, euriaReply: String?)
     }
 
     public let id: UUID
@@ -103,18 +102,18 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         return ComposeMessageIntent(
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
-            type: .reply(messageUid: message.uid, replyMode: replyMode)
+            type: .reply(messageUid: message.uid, replyMode: replyMode, euriaReply: nil)
         )
     }
 
     public static func replyingWithEuriaTo(messageUid: String,
                                            replyMode: ReplyMode,
-                                           replyBody: String,
+                                           euriaReply: String,
                                            originMailboxManager: MailboxManager) -> ComposeMessageIntent {
         return ComposeMessageIntent(
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
-            type: .replyWithEuria(messageUid: messageUid, replyMode: replyMode, replyBody: replyBody)
+            type: .reply(messageUid: messageUid, replyMode: replyMode, euriaReply: euriaReply)
         )
     }
 }

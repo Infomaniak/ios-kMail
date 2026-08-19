@@ -116,7 +116,7 @@ struct EuriaFloatingPanel: ViewModifier {
                     mainViewState.composeMessageIntent = .replyingWithEuriaTo(
                         messageUid: writerPanelState.replyingMessageUid,
                         replyMode: writerPanelState.replyMode,
-                        replyBody: aiProposition,
+                        euriaReply: aiProposition,
                         originMailboxManager: mailboxManager
                     )
                 }
