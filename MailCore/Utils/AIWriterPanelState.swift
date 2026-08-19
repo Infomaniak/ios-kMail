@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,18 +18,13 @@
 
 import Foundation
 
-public struct MessageReply {
-    public let frozenMessage: Message
+public struct AIWriterReplyPanelState: Equatable {
+    public let id: String = UUID().uuidString
+    public let replyingMessageUid: String
     public let replyMode: ReplyMode
-    public let euriaReply: String?
 
-    public var isReplying: Bool {
-        replyMode == .reply || replyMode == .replyAll
-    }
-
-    public init(frozenMessage: Message, replyMode: ReplyMode, euriaReply: String? = nil) {
-        self.frozenMessage = frozenMessage
+    public init(replyingMessageUid: String, replyMode: ReplyMode) {
+        self.replyingMessageUid = replyingMessageUid
         self.replyMode = replyMode
-        self.euriaReply = euriaReply
     }
 }

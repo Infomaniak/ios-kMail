@@ -57,7 +57,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
-    @ModalState private var messagesToProcessWithEuria: [Message]?
+    @ModalState private var messageToProcessWithEuria: Message?
     @ModalState private var noReplyAlert: NoReplyAlertState?
 
     @Binding var messages: [Message]?
@@ -80,7 +80,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -98,7 +98,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
-            messagesToProcessWithEuria: $messagesToProcessWithEuria
+            messageToProcessWithEuria: $messageToProcessWithEuria
         )
     }
 
@@ -128,7 +128,6 @@ struct ActionsPanelViewModifier: ViewModifier {
                 isMultipleSelection: isMultipleSelection,
                 completionHandler: completionHandler
             )
-            .environmentObject(mailboxManager)
             .environmentObject(actionsManager)
             .environmentObject(actionsProvider)
         }
@@ -187,7 +186,9 @@ struct ActionsPanelViewModifier: ViewModifier {
             completionHandler: completionHandler
         )
         .euriaFloatingPanel(
-            messages: $messagesToProcessWithEuria,
+            message: $messageToProcessWithEuria,
+            noReplyAlert: $noReplyAlert,
+            mailboxManager: mailboxManager,
             completionHandler: completionHandler
         )
     }

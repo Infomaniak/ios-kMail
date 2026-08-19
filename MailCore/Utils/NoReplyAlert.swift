@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enum NoReplyAlert {
+public enum NoReplyAlert {
     private static let noReplyBasePrefixes = [
         "no-reply", "do-not-reply", "ne-pas-repondre", "postmaster", "catchall", "notification"
     ]
@@ -25,7 +25,7 @@ enum NoReplyAlert {
 
     static let noReplyPrefixes: Set<String> = Set(noReplyBasePrefixes.flatMap(expandedPrefixes))
 
-    static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
+    public static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
         let isReplyingAll = action == .replyAll
         let recipientHolder = message.recipientsForReplyTo(replyAll: isReplyingAll, currentMailboxEmail: currentMailboxEmail)
 

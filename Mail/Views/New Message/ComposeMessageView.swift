@@ -331,6 +331,10 @@ struct ComposeMessageView: View {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft(incompleteDraft: draft)
 
+                if let euriaReply = messageReply?.euriaReply {
+                    await draftContentManager.replaceContent(subject: nil, body: euriaReply, draftPrimaryKey: draft.localUUID)
+                }
+
                 await withTaskGroup(of: Void.self) { group in
                     group.addTask {
                         await attachmentsManager.completeUploadedAttachments()

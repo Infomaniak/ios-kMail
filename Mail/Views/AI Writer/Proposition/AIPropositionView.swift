@@ -37,12 +37,19 @@ struct AIPropositionView: View {
 
     @Namespace private var errorID
 
+    let completionHandler: ((String) -> Void)?
+
     private var secondaryButtonsTint: Color {
         if #available(iOS 26, *) {
             return .primary
         } else {
             return MailResourcesAsset.textSecondaryColor.swiftUIColor
         }
+    }
+
+    init(aiModel: AIModel, completionHandler: ((String) -> Void)? = nil) {
+        self.aiModel = aiModel
+        self.completionHandler = completionHandler
     }
 
     var body: some View {
@@ -154,9 +161,16 @@ struct AIPropositionView: View {
 
     private var insertButton: some View {
         Button {
-            Task {
-                await aiModel.didTapInsert()
+            if let completionHandler {
+                let proposition = aiModel.getPropositionBody()
+                completionHandler(proposition)
+                dismiss()
+            } else {
+                Task {
+                    await aiModel.didTapInsert()
+                }
             }
+
         } label: {
             Label {
                 Text(MailResourcesStrings.Localizable.aiButtonInsert)

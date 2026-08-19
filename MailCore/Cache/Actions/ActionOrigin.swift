@@ -67,9 +67,10 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
+    private(set) var nearestAIWriterReplyPanel: Binding<AIWriterReplyPanelState?>?
     private(set) var nearestMessagesToSnooze: Binding<[Message]?>?
     private(set) var messagesToDownload: Binding<[Message]?>?
-    private(set) var messagesToProcessWithEuria: Binding<[Message]?>?
+    private(set) var messageToProcessWithEuria: Binding<Message?>?
 
     init(
         type: ActionOriginType,
@@ -84,9 +85,10 @@ public struct ActionOrigin {
         nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+        nearestAIWriterReplyPanel: Binding<AIWriterReplyPanelState?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil,
-        messagesToProcessWithEuria: Binding<[Message]?>? = nil
+        messageToProcessWithEuria: Binding<Message?>? = nil
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
@@ -101,8 +103,9 @@ public struct ActionOrigin {
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
         self.nearestMessagesToSnooze = nearestMessagesToSnooze
+        self.nearestAIWriterReplyPanel = nearestAIWriterReplyPanel
         self.messagesToDownload = messagesToDownload
-        self.messagesToProcessWithEuria = messagesToProcessWithEuria
+        self.messageToProcessWithEuria = messageToProcessWithEuria
     }
 
     public static func toolbarLarge(
@@ -118,7 +121,7 @@ public struct ActionOrigin {
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
         nearestMessagesToSnooze: Binding<[Message]?>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil,
-        messagesToProcessWithEuria: Binding<[Message]?>? = nil
+        messageToProcessWithEuria: Binding<Message?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar(mode: .large(group: group)),
@@ -134,7 +137,7 @@ public struct ActionOrigin {
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
             messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            messageToProcessWithEuria: messageToProcessWithEuria
         )
     }
 
@@ -142,14 +145,16 @@ public struct ActionOrigin {
         originFolder: Folder? = nil,
         nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestmessageToProcessWithEuria: Binding<Message?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .toolbar(mode: .compact),
             folder: originFolder,
             nearestDestructiveAlert: nearestDestructiveAlert,
             nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            messageToProcessWithEuria: nearestmessageToProcessWithEuria
         )
     }
 
@@ -165,7 +170,7 @@ public struct ActionOrigin {
                                                nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
                                                nearestMessagesToSnooze: Binding<[Message]?>? = nil,
                                                messagesToDownload: Binding<[Message]?>? = nil,
-                                               messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                               messageToProcessWithEuria: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanelListAction(source: source),
             folder: originFolder,
@@ -179,7 +184,7 @@ public struct ActionOrigin {
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
             messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            messageToProcessWithEuria: messageToProcessWithEuria
         )
     }
 
@@ -195,7 +200,7 @@ public struct ActionOrigin {
                                                 nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
                                                 nearestMessagesToSnooze: Binding<[Message]?>? = nil,
                                                 messagesToDownload: Binding<[Message]?>? = nil,
-                                                messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
+                                                messageToProcessWithEuria: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanelQuickAction(source: source),
             folder: originFolder,
@@ -209,7 +214,7 @@ public struct ActionOrigin {
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             nearestMessagesToSnooze: nearestMessagesToSnooze,
             messagesToDownload: messagesToDownload,
-            messagesToProcessWithEuria: messagesToProcessWithEuria
+            messageToProcessWithEuria: messageToProcessWithEuria
         )
     }
 
@@ -262,17 +267,28 @@ public struct ActionOrigin {
     public static func threadHeader(
         originFolder: Folder? = nil,
         nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
-        nearestMessagesToSnooze: Binding<[Message]?>? = nil
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
+        messageToProcessWithEuria: Binding<Message?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(
             type: .threadHeader,
             folder: originFolder,
             nearestNoReplyAlert: nearestNoReplyAlert,
-            nearestMessagesToSnooze: nearestMessagesToSnooze
+            nearestMessagesToSnooze: nearestMessagesToSnooze,
+            messageToProcessWithEuria: messageToProcessWithEuria
         )
     }
 
-    public static func euriaActions(messagesToProcessWithEuria: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .euriaActions, messagesToProcessWithEuria: messagesToProcessWithEuria)
+    public static func euriaActions(
+        nearestNoReplyAlert: Binding<NoReplyAlertState?>? = nil,
+        nearestAIWriterReplyPanel: Binding<AIWriterReplyPanelState?>? = nil,
+        messageToProcessWithEuria: Binding<Message?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(
+            type: .euriaActions,
+            nearestNoReplyAlert: nearestNoReplyAlert,
+            nearestAIWriterReplyPanel: nearestAIWriterReplyPanel,
+            messageToProcessWithEuria: messageToProcessWithEuria
+        )
     }
 }

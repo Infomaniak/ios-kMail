@@ -20,16 +20,21 @@ import InfomaniakCore
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
     func euriaFloatingPanel(
-        messages: Binding<[Message]?>,
+        message: Binding<Message?>,
+        noReplyAlert: Binding<NoReplyAlertState?>,
+        mailboxManager: MailboxManager,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             EuriaFloatingPanel(
-                messages: messages,
+                message: message,
+                noReplyAlert: noReplyAlert,
+                mailboxManager: mailboxManager,
                 completionHandler: completionHandler
             )
         )
@@ -38,45 +43,83 @@ extension View {
 
 struct EuriaFloatingPanel: ViewModifier {
     @EnvironmentObject private var actionsProvider: ActionsProvider
+    @EnvironmentObject private var mainViewState: MainViewState
 
-    @State private var isShowingPanel = false
+    @State private var writerPanelState: AIWriterReplyPanelState?
 
-    @Binding var messages: [Message]?
+    @StateObject private var aiModel: AIModel
+
+    @Binding private var message: Message?
+    @Binding private var noReplyAlert: NoReplyAlertState?
+
     let completionHandler: ((Action) -> Void)?
+    let mailboxManager: MailboxManager
 
     private var origin: ActionOrigin {
-        return .euriaActions(messagesToProcessWithEuria: $messages)
+        return .euriaActions(
+            nearestNoReplyAlert: $noReplyAlert,
+            nearestAIWriterReplyPanel: $writerPanelState,
+            messageToProcessWithEuria: $message
+        )
+    }
+
+    init(
+        message: Binding<Message?>,
+        noReplyAlert: Binding<NoReplyAlertState?>,
+        mailboxManager: MailboxManager,
+        completionHandler: ((Action) -> Void)? = nil
+    ) {
+        self.completionHandler = completionHandler
+        _message = message
+        _noReplyAlert = noReplyAlert
+        self.mailboxManager = mailboxManager
+
+        _aiModel = StateObject(wrappedValue: AIModel(
+            mailboxManager: mailboxManager,
+            draft: Draft(),
+            isReplying: true
+        ))
     }
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: messages) { newValue in
-                isShowingPanel = newValue != nil && !availableActions(for: newValue).isEmpty
+            .onChange(of: writerPanelState) { newValue in
+                if newValue != nil {
+                    aiModel.isShowingPrompt = true
+                }
             }
-            .mailFloatingPanel(isPresented: $isShowingPanel, title: MailResourcesStrings.Localizable.askEuriaTitle) {
+            .mailFloatingPanel(item: $message, title: MailResourcesStrings.Localizable.askEuriaTitle) { message in
                 VStack(alignment: .leading, spacing: 0) {
-                    let availableActions = availableActions(for: messages)
-
+                    let availableActions = actionsProvider.actionsFor(origin: origin, messages: [message])
                     ForEach(availableActions) { action in
                         if action != availableActions.first {
                             IKDivider()
                         }
 
                         MessageActionView(
-                            targetMessages: messages ?? [],
+                            targetMessages: [message],
                             action: action,
                             origin: origin,
-                            isMultipleSelection: (messages ?? []).count > 1,
+                            isMultipleSelection: false,
                             completionHandler: completionHandler
                         )
                     }
                 }
             }
-    }
+            .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+                AIPromptView(aiModel: aiModel)
+            }
+            .sheet(isPresented: $aiModel.isShowingProposition) {
+                AIPropositionView(aiModel: aiModel) { aiProposition in
+                    guard let writerPanelState else { return }
 
-    private func availableActions(for messages: [Message]?) -> [Action] {
-        guard let messages else { return [] }
-
-        return actionsProvider.actionsFor(origin: origin, messages: messages)
+                    mainViewState.composeMessageIntent = .replyingWithEuriaTo(
+                        messageUid: writerPanelState.replyingMessageUid,
+                        replyMode: writerPanelState.replyMode,
+                        euriaReply: aiProposition,
+                        originMailboxManager: mailboxManager
+                    )
+                }
+            }
     }
 }

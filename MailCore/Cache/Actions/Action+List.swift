@@ -330,6 +330,12 @@ public extension Action {
         iconResource: MailResourcesAsset.euria,
         matomoName: ""
     )
+    static let replyWithEuria = Action(
+        id: "replyWithEuria",
+        title: MailResourcesStrings.Localizable.actionReply,
+        iconResource: MailResourcesAsset.magicBubble,
+        matomoName: "replyWithEuria"
+    )
     /// Used to return an Action in the movePanel completion
     static let moved = Action(
         id: "fakeActionMove",
