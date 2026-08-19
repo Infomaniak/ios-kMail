@@ -17,9 +17,13 @@
  */
 
 enum NoReplyAlert {
-    static let noReplyPrefixes: Set = [
-        "no-reply", "noreply", "do-not-reply", "donotreply", "postmaster", "catchall", "notification", "ne-pas-repondre", "nepasrepondre"
+    private static let noReplyBasePrefixes = [
+        "no-reply", "do-not-reply", "ne-pas-repondre", "postmaster", "catchall", "notification"
     ]
+
+    private static let wordSeparators = ["", "-", "_", "."]
+
+    static let noReplyPrefixes: Set<String> = Set(noReplyBasePrefixes.flatMap(expandedPrefixes))
 
     static func verifySenders(message: Message, action: Action, currentMailboxEmail: String) -> Bool {
         let isReplyingAll = action == .replyAll
@@ -30,6 +34,13 @@ enum NoReplyAlert {
         return recipientsToCheck.contains { sender in
             isNoReply(email: sender.email)
         }
+    }
+
+    private static func expandedPrefixes(for basePrefix: String) -> [String] {
+        let words = basePrefix.split(separator: "-").map { "\($0)" }
+        guard words.count > 1 else { return [basePrefix] }
+
+        return wordSeparators.map { words.joined(separator: $0) }
     }
 
     private static func isNoReply(email: String) -> Bool {
