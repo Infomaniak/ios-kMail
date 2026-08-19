@@ -268,6 +268,52 @@ final class NoReplyAlertTests: XCTestCase {
         XCTAssertTrue(prefixes.contains("noreply"), "Should contain 'noreply'")
         XCTAssertTrue(prefixes.contains("postmaster"), "Should contain 'postmaster'")
         XCTAssertTrue(prefixes.contains("catchall"), "Should contain 'catchall'")
-        XCTAssertEqual(prefixes.count, 4, "Should have exactly 4 prefixes")
+    }
+
+    func testMultiWordPrefixesAreExpandedWithEverySeparator() {
+        // GIVEN / WHEN
+        let prefixes = NoReplyAlert.noReplyPrefixes
+
+        // THEN
+        let expectedPrefixes = [
+            "noreply", "no-reply", "no_reply", "no.reply",
+            "donotreply", "do-not-reply", "do_not_reply", "do.not.reply",
+            "nepasrepondre", "ne-pas-repondre", "ne_pas_repondre", "ne.pas.repondre"
+        ]
+
+        for prefix in expectedPrefixes {
+            XCTAssertTrue(prefixes.contains(prefix), "Should contain '\(prefix)'")
+        }
+    }
+
+    func testSingleWordPrefixesAreNotExpanded() {
+        // GIVEN / WHEN
+        let prefixes = NoReplyAlert.noReplyPrefixes
+
+        // THEN
+        XCTAssertTrue(prefixes.contains("notification"), "Should contain 'notification'")
+        XCTAssertFalse(prefixes.contains("notificatio-n"), "Single word prefixes should not be split")
+    }
+
+    func testExpandedSeparatorVariants_returnsTrue() {
+        // GIVEN
+        let noReplyEmails = [
+            "no_reply@example.com",
+            "no.reply@example.com",
+            "do_not_reply@example.com",
+            "ne_pas_repondre@example.com",
+            "ne.pas.repondre@example.com",
+            "nepasrepondre@example.com"
+        ]
+
+        for email in noReplyEmails {
+            let message = createMessage(from: [email])
+
+            // WHEN
+            let result = NoReplyAlert.verifySenders(message: message, action: .reply, currentMailboxEmail: currentMailBoxEmail)
+
+            // THEN
+            XCTAssertTrue(result, "Expected \(email) to be detected as no-reply")
+        }
     }
 }
