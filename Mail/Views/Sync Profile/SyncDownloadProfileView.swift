@@ -110,8 +110,7 @@ struct SyncDownloadProfileView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         SyncDownloadProfileView(navigationPath: .constant([]))
     }
-    .navigationViewStyle(.stack)
 }

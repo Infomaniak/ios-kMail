@@ -39,7 +39,7 @@ struct UnavailableMailboxesView: View {
     let currentUserId: Int
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: IKPadding.medium) {
                 ScrollView {
                     VStack(spacing: IKPadding.medium) {
@@ -83,7 +83,6 @@ struct UnavailableMailboxesView: View {
                 .matomoView(view: ["UnavailableMailboxesView"])
             }
         }
-        .navigationViewStyle(.stack)
         .mailFloatingPanel(
             item: $presentedSwitchAccountUser,
             title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)

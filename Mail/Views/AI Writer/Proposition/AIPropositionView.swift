@@ -53,7 +53,7 @@ struct AIPropositionView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollViewReader { proxy in
                 ScrollView {
                     Group {

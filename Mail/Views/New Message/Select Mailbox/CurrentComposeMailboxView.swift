@@ -44,7 +44,7 @@ struct CurrentComposeMailboxView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 accentColor.mailboxImage.swiftUIImage
                     .padding(.bottom, value: .medium)

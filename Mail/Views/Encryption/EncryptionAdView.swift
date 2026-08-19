@@ -31,7 +31,7 @@ struct EncryptionAdView: View {
     let enableEncryption: () -> Void
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: IKPadding.huge) {
                 MailResourcesAsset.encryptEnvelop.swiftUIImage
 

@@ -47,7 +47,7 @@ struct AttachmentPreview: View {
     @ObservedRealmObject var attachment: MailCore.Attachment
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
                     PreviewController(url: attachment.getLocalURL(mailboxManager: mailboxManager))
@@ -58,7 +58,8 @@ struct AttachmentPreview: View {
                     ProgressView()
                 }
             }
-            .navigationBarTitle(attachment.name, displayMode: .inline)
+            .navigationTitle(attachment.name)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     ToolbarCloseButton(dismissAction: dismiss)

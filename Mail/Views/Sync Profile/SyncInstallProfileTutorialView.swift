@@ -142,8 +142,7 @@ struct SyncInstallProfileTutorialView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         SyncInstallProfileTutorialView()
     }
-    .navigationViewStyle(.stack)
 }
