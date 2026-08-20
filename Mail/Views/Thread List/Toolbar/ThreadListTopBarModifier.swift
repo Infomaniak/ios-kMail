@@ -132,7 +132,7 @@ struct LegacyThreadListTopBarModifier: ViewModifier {
             content
                 .navigationBarThreadListStyle()
                 .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                    ToolbarItemGroup(placement: .topBarLeading) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel, role: .cancel) {
                                 @InjectService var matomo: MatomoUtils
@@ -150,7 +150,7 @@ struct LegacyThreadListTopBarModifier: ViewModifier {
                         }
                     }
 
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(selectAllButtonTitle) {
                                 withAnimation(.default.speed(2)) {

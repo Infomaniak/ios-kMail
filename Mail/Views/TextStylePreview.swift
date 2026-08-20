@@ -20,7 +20,7 @@ import SwiftUI
 
 struct TextStylePreview: View {
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 8) {
                 Group {
                     Text("Header 1")

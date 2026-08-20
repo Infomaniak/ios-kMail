@@ -56,7 +56,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
             if composeMessageIntent.shouldSelectMailbox {
                 CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
             } else {
-                NavigationView {
+                NavigationStack {
                     if let resolvedIntent = resolvedIntent.wrappedValue, !resolvedIntent.draft.isInvalidated {
                         ComposeMessageView(
                             draft: resolvedIntent.draft,
@@ -78,7 +78,6 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 }
             }
         }
-        .navigationViewStyle(.stack)
         .interactiveDismissDisabled()
     }
 

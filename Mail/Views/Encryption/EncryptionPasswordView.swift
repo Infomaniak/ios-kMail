@@ -37,7 +37,7 @@ struct EncryptionPasswordView: View {
     @ObservedRealmObject var draft: Draft
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack {
                     VStack(alignment: .leading, spacing: IKPadding.huge) {
@@ -133,7 +133,6 @@ struct EncryptionPasswordView: View {
             .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationViewStyle(.stack)
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
             generatePassword(regenerate: false)

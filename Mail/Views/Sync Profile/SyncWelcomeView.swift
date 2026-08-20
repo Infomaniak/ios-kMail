@@ -55,8 +55,7 @@ struct SyncWelcomeView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         SyncWelcomeView(navigationPath: .constant([]))
     }
-    .navigationViewStyle(.stack)
 }

@@ -44,7 +44,7 @@ struct CurrentComposeMailboxView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 accentColor.mailboxImage.swiftUIImage
                     .padding(.bottom, value: .medium)
@@ -90,7 +90,7 @@ struct CurrentComposeMailboxView: View {
             .backButtonDisplayMode(.minimal)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     if !platformDetector.isMac || platformDetector.isInExtension {
                         ToolbarCloseButton(dismissHandler: dismissMessageView)
                     }

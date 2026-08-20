@@ -35,7 +35,7 @@ struct SearchFilterFolderCellSheetView: View {
         .navigationTitle(MailResourcesStrings.Localizable.searchFolderName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 if !selectedFolderId.isEmpty {
                     Button {
                         changeSelectedFolderId(folderId: SearchFilterFolderCell.allFoldersItem.id)
