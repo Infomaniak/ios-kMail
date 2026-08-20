@@ -246,6 +246,12 @@ struct SplitView: View {
             Task {
                 try? await mailboxManager.featureFlagsManager.fetchFlags()
             }
+            if #available(iOS 18.4, *) {
+                Task {
+                    @InjectService var spotlightIndexer: SpotlightIndexable
+                    await spotlightIndexer.indexAllMessages()
+                }
+            }
 
             draftManager.startSyncDraft(
                 mailboxManager: mainViewState.mailboxManager,

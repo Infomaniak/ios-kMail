@@ -34,5 +34,11 @@ public extension MailboxManager {
                 folder.computeUnreadCount()
             }
         }
+
+        if #available(iOS 18.4, *) {
+            Task {
+                await spotlightIndexer.deindexAllMessages()
+            }
+        }
     }
 }

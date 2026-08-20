@@ -158,7 +158,10 @@ struct UpdateMailIntent {
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
+                let message = try? MailAppIntentsHelper.resolveMessage(
+                    entity,
+                    mailboxManager: mailboxManager
+                )
             else {
                 continue
             }
@@ -196,11 +199,14 @@ private extension MailMessageEntity {
                 mailboxId: entity.mailbox.id,
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
-            ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
-            else {
+            ) else {
                 continue
             }
+
+            let message = try MailAppIntentsHelper.resolveMessage(
+                entity,
+                mailboxManager: mailboxManager
+            )
 
             _ = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folderRole)
         }

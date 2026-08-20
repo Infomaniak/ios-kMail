@@ -39,6 +39,10 @@ public extension MailboxManager {
             keepCacheAttributes(for: completedMessage, keepProperties: .reactions, using: writableRealm)
             writableRealm.add(completedMessage, update: .modified)
         }
+
+        if #available(iOS 18.4, *) {
+            spotlightIndexer.indexMessages([completedMessage], mailbox: mailbox)
+        }
     }
 
     func attachmentData(_ attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data {

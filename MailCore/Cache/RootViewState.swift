@@ -115,6 +115,7 @@ public class RootViewState: ObservableObject {
             )
 
             transitionToRootViewState(.mainView(currentUser, mainViewState))
+
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 

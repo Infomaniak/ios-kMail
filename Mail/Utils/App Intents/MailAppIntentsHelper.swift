@@ -48,7 +48,7 @@ extension IntentFile: Attachable {
 @available(iOS 18.4, *)
 final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
     @MainActor func contentWillChange() {}
-    @MainActor func handleGlobalError(_ error: MailError) {}
+    @MainActor func handleGlobalError(_: MailError) {}
 }
 
 @available(iOS 18.4, *)
@@ -154,6 +154,12 @@ public enum MailAppIntentsHelper {
                 emailAddress: mailbox.email
             )
         )
+    }
+
+    @available(iOS 27.0, *)
+    public static func mapThread(_ thread: MailCore.Thread, mailbox: Mailbox) -> MailThreadEntity {
+        let messagesEntities = Array(thread.messages.map { mapMessage($0, mailbox: mailbox) })
+        return MailThreadEntity(id: thread.uid, title: thread.subject ?? "", messages: messagesEntities)
     }
 
     // MARK: Body conversion
@@ -342,9 +348,10 @@ public enum MailAppIntentsHelper {
     ) async throws {
         let mailboxManager = params.mailboxManager
 
-        guard let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: params.target.id) else {
-            return
-        }
+        let message = try MailAppIntentsHelper.resolveMessage(
+            params.target,
+            mailboxManager: mailboxManager
+        )
 
         let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: params.replyMode)
         let draft = Draft.replying(
@@ -386,5 +393,65 @@ public enum MailAppIntentsHelper {
 
         try setDraftAction(.send, draftUUID: draftUUID, mailboxManager: mailboxManager)
         try await draftManager.sendDraft(localUUID: draftUUID, mailboxManager: mailboxManager)
+    }
+
+    @available(iOS 18.4, *)
+    public static func messageUID(
+        from entityID: String,
+        mailboxID: String
+    ) -> String? {
+        let prefix = "\(mailboxID)-"
+
+        guard entityID.hasPrefix(prefix) else {
+            return nil
+        }
+
+        let messageUID = String(entityID.dropFirst(prefix.count))
+        return messageUID.isEmpty ? nil : messageUID
+    }
+
+    @available(iOS 18.4, *)
+    public static func resolveMessage(
+        _ entity: MailMessageEntity,
+        mailboxManager: MailboxManager
+    ) throws -> Message {
+        guard let messageUID = messageUID(
+            from: entity.id,
+            mailboxID: entity.mailbox.id
+        ),
+            let message = mailboxManager.fetchObject(
+                ofType: Message.self,
+                forPrimaryKey: messageUID
+            )
+        else {
+            throw MailError.localMessageNotFound
+        }
+
+        return message
+    }
+
+    @available(iOS 18.4, *)
+    public static func resolveDraft(
+        _ entity: MailDraftEntity,
+        mailboxManager: MailboxManager
+    ) throws -> Draft {
+        guard let draft = mailboxManager.draft(localUuid: entity.id) else {
+            throw MailError.localMessageNotFound
+        }
+        return draft
+    }
+
+    public static func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager, accountManager: AccountManager) {
+        if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accountManager.accounts
+                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                    accountManager.switchAccount(newUserId: switchedAccount.userId)
+                    accountManager.switchMailbox(newMailbox: mailbox)
+                }
+            } else {
+                accountManager.switchMailbox(newMailbox: mailbox)
+            }
+        }
     }
 }

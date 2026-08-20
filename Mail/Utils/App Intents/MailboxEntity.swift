@@ -17,6 +17,7 @@
  */
 
 import AppIntents
+import CoreSpotlight
 import Foundation
 import InfomaniakDI
 import MailCore
