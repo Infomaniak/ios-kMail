@@ -1,1 +1,7 @@
-- Correction de bugs.
+- Ajout de la fonctionnalité: Répondre avec Euria.
+- Les pièces jointes intégrées s’affichent désormais correctement dans l’éditeur.
+- Amélioration de la détection des adresses « no-reply ».
+- Correction de l’ouverture du message associé depuis une notification.
+- Correction de la synchronisation des accusés de réception avec l’application web.
+- Correction de la suppression prématurée de certains brouillons.
+- Correction de la taille du sélecteur d’emojis sur iPad.
