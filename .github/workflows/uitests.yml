@@ -21,8 +21,8 @@ jobs:
       - name: Create test env
         env:
           ENV_PATH: "MailUITests/Env.swift"
-          UITEST_ACCOUNT_EMAIL: ${{ secrets.UITEST_ACCOUNT_EMAIL }}
-          UITEST_ACCOUNT_PASSWORD: ${{ secrets.UITEST_ACCOUNT_PASSWORD }}
+          UITEST_ACCOUNT_EMAIL: ${{ secrets.BOT_MOBILE_GPG_PRIVATE_KEY }}
+          UITEST_ACCOUNT_PASSWORD: ${{ secrets.BOT_MOBILE_GPG_PASSPHRASE }}
         run: |
           touch $ENV_PATH
           echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
