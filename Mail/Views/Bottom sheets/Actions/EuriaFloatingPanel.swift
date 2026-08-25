@@ -105,6 +105,7 @@ struct EuriaFloatingPanel: ViewModifier {
                         )
                     }
                 }
+                .environmentObject(mailboxManager)
             }
             .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
                 AIPromptView(aiModel: aiModel)
