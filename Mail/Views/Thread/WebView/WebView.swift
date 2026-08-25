@@ -38,6 +38,13 @@ final class WebViewController: UIViewController {
     private var mentionMenuAnchor: UIButton?
     private var lastPresentedMentionID: UUID?
 
+    #if targetEnvironment(macCatalyst)
+    private static let zoomScaleTolerance = 0.01
+    private static let horizontalOverflowThreshold = 4.0
+
+    private var scrollLockObservations = [NSKeyValueObservation]()
+    #endif
+
     init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
         self.messageUid = messageUid
         self.openURL = openURL
@@ -81,6 +88,13 @@ final class WebViewController: UIViewController {
         widthSubject.send(size.width)
     }
 
+    #if targetEnvironment(macCatalyst)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateScrollLock(webView.scrollView)
+    }
+    #endif
+
     private func setUpWebView(_ webView: WKWebView) {
         webView.navigationDelegate = self
         webView.scrollView.bounces = false
@@ -90,6 +104,10 @@ final class WebViewController: UIViewController {
         webView.scrollView.alwaysBounceVertical = false
         webView.scrollView.alwaysBounceHorizontal = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+
+        #if targetEnvironment(macCatalyst)
+        setUpScrollLock(webView.scrollView)
+        #endif
 
         #if DEBUG
         webView.isInspectable = true
@@ -202,6 +220,35 @@ final class WebViewController: UIViewController {
     }
 }
 
+#if targetEnvironment(macCatalyst)
+extension WebViewController {
+    func setUpScrollLock(_ scrollView: UIScrollView) {
+        scrollLockObservations = [
+            scrollView.observe(\.zoomScale) { [weak self] scrollView, _ in
+                self?.updateScrollLock(scrollView)
+            },
+            scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
+                self?.updateScrollLock(scrollView)
+            }
+        ]
+
+        updateScrollLock(scrollView)
+    }
+
+    func updateScrollLock(_ scrollView: UIScrollView) {
+        let isZoomedIn = scrollView.zoomScale > 1 + Self.zoomScaleTolerance
+        let horizontalOverflow = scrollView.contentSize.width - scrollView.bounds.width
+        let hasHorizontalOverflow = horizontalOverflow > Self.horizontalOverflowThreshold
+
+        scrollView.panGestureRecognizer.isEnabled = isZoomedIn || hasHorizontalOverflow
+
+        if !isZoomedIn && scrollView.contentOffset.y != 0 {
+            scrollView.contentOffset.y = 0
+        }
+    }
+}
+#endif
+
 extension WebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         Task { @MainActor in
@@ -270,13 +317,12 @@ struct WebView: UIViewControllerRepresentable {
     var onWebKitProcessTerminated: (() -> Void)?
 
     func makeUIViewController(context: Context) -> WebViewController {
-        let controller = WebViewController(
+        return WebViewController(
             messageUid: messageUid,
             openURL: openURL,
             webView: webView,
             onWebKitProcessTerminated: onWebKitProcessTerminated
         )
-        return controller
     }
 
     func updateUIViewController(_ uiViewController: WebViewController, context: Context) {
