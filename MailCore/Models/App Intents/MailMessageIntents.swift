@@ -66,7 +66,7 @@ struct ForwardMailIntent: AppIntent {
         @InjectService var draftManager: DraftManager
 
         let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.mailbox.id,
+            mailboxId: target.id.mailboxId,
             mailboxInfosManager: mailboxInfosManager,
             accountManager: accountManager
         )
@@ -111,7 +111,7 @@ struct ReplyMailIntent: AppIntent {
         @InjectService var draftManager: DraftManager
 
         let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.mailbox.id,
+            mailboxId: target.id.mailboxId,
             mailboxInfosManager: mailboxInfosManager,
             accountManager: accountManager
         )
@@ -151,14 +151,12 @@ struct UpdateMailIntent {
         @InjectService var accountManager: AccountManager
 
         for entity in target {
-            let mailboxId = entity.mailbox.id
             guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
-                mailboxId: mailboxId,
+                mailboxId: entity.id.mailboxId,
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: entity.id)?.messageId,
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId)
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
             else {
                 continue
             }
@@ -193,12 +191,11 @@ private extension MailMessageEntity {
 
         for entity in entities {
             guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
-                mailboxId: entity.mailbox.id,
+                mailboxId: entity.id.mailboxId,
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: entity.id)?.messageId,
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId)
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
             else {
                 continue
             }

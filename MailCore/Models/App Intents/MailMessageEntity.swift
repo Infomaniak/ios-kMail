@@ -24,6 +24,32 @@ import MailResources
 @available(iOS 18.4, *)
 @AppEntity(schema: .mail.message)
 public struct MailMessageEntity: IndexedEntity {
+    public struct Identifier: Hashable, EntityIdentifierConvertible {
+        public let mailboxId: String
+        public let messageId: String
+
+        public var entityIdentifierString: String {
+            "\(mailboxId)-\(messageId)"
+        }
+
+        public init(mailboxId: String, messageId: String) {
+            self.mailboxId = mailboxId
+            self.messageId = messageId
+        }
+
+        public static func entityIdentifier(for entityIdentifierString: String) -> Identifier? {
+            let components = entityIdentifierString.split(separator: "-", maxSplits: 1)
+            guard components.count == 2 else {
+                return nil
+            }
+
+            return Identifier(
+                mailboxId: String(components[0]),
+                messageId: String(components[1])
+            )
+        }
+    }
+
     // MARK: Static
 
     public static let defaultQuery = MailMessageEntityQuery()
@@ -34,7 +60,7 @@ public struct MailMessageEntity: IndexedEntity {
 
     // MARK: Properties
 
-    public let id: String
+    public let id: Identifier
 
     public var to: [IntentPerson]
     public var cc: [IntentPerson]
@@ -102,7 +128,7 @@ public struct MailMessageEntity: IndexedEntity {
     }
 
     public init(
-        id: String,
+        id: Identifier,
         to: [IntentPerson],
         cc: [IntentPerson],
         bcc: [IntentPerson],
@@ -150,9 +176,7 @@ public struct MailMessageEntity: IndexedEntity {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             @InjectService var accountManager: AccountManager
 
-            let resolvedIdentifiers = identifiers.compactMap { MailAppIntentsHelper.mailboxIdAndMessageId(for: $0) }
-
-            return resolvedIdentifiers.compactMap {
+            return identifiers.compactMap {
                 guard let mailbox = mailboxInfosManager.getMailbox(objectId: $0.mailboxId),
                       let mailboxManager = accountManager.getMailboxManager(for: mailbox),
                       let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: $0.messageId) else {

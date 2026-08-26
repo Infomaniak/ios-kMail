@@ -53,16 +53,6 @@ final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
 
 @available(iOS 18.4, *)
 public enum MailAppIntentsHelper {
-    public static func mailboxIdAndMessageId(for entityIdentifierString: String) -> (mailboxId: String, messageId: String)? {
-        let components = entityIdentifierString.split(separator: "-", maxSplits: 1)
-        guard components.count == 2 else {
-            return nil
-        }
-        let mailboxObjectId = String(components[0])
-        let messageId = String(components[1])
-        return (mailboxId: mailboxObjectId, messageId: messageId)
-    }
-
     public static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
         guard case .emailAddress(let email) = person.handle?.value else { return nil }
         let name: String
@@ -111,10 +101,8 @@ public enum MailAppIntentsHelper {
 
         let bodyAttributedString = bodyToAttributedString(value: message.body?.value, type: message.body?.type)
 
-        let messageId = "\(mailbox.objectId)-\(message.uid)"
-
         return MailMessageEntity(
-            id: messageId,
+            id: .init(mailboxId: mailbox.objectId, messageId: message.uid),
             to: Array(message.to.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
             cc: Array(message.cc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
             bcc: Array(message.bcc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
@@ -352,8 +340,10 @@ public enum MailAppIntentsHelper {
     ) async throws {
         let mailboxManager = params.mailboxManager
 
-        guard let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: params.target.id)?.messageId,
-              let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId) else {
+        guard let message = mailboxManager.fetchObject(
+            ofType: Message.self,
+            forPrimaryKey: params.target.id.messageId
+        ) else {
             return
         }
 
