@@ -20,6 +20,7 @@ import AppLock
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakCoreUIResources
 import InfomaniakDI
 import InfomaniakPrivacyManagement
 import MailCore
@@ -200,9 +201,9 @@ struct SettingsView: View {
 
                     // MARK: Theme
 
-                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsThemeTitle, subtitle: theme.title) {
+                    SettingsSubMenuCell(title: InfomaniakCoreUIResources.CoreUILocalizable.themeTitle, subtitle: theme.title) {
                         SettingsOptionView(
-                            title: MailResourcesStrings.Localizable.settingsThemeTitle,
+                            title: InfomaniakCoreUIResources.CoreUILocalizable.themeTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
                             keyPath: \.theme,
                             matomoCategory: .settingsTheme,
