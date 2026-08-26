@@ -19,7 +19,6 @@
 import AppIntents
 import Foundation
 import InfomaniakDI
-import MailCore
 
 @available(iOS 18.4, *)
 @AppEntity(schema: .mail.mailbox)

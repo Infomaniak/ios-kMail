@@ -19,7 +19,6 @@
 import AppIntents
 import CoreSpotlight
 import InfomaniakDI
-import MailCore
 import MailResources
 
 @available(iOS 18.4, *)
@@ -68,9 +67,7 @@ public struct MailMessageEntity: IndexedEntity {
         )
     }
 
-    public var hideInSpotlight: Bool {
-        return false
-    }
+    public var hideInSpotlight = false
 
     public var attributeSet: CSSearchableItemAttributeSet {
         let set = CSSearchableItemAttributeSet(contentType: .emailMessage)
