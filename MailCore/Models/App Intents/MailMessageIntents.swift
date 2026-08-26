@@ -157,7 +157,8 @@ struct UpdateMailIntent {
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
+                let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: entity.id)?.messageId,
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId)
             else {
                 continue
             }
@@ -196,7 +197,8 @@ private extension MailMessageEntity {
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id)
+                let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: entity.id)?.messageId,
+                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId)
             else {
                 continue
             }

@@ -53,6 +53,16 @@ final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
 
 @available(iOS 18.4, *)
 public enum MailAppIntentsHelper {
+    public static func mailboxIdAndMessageId(for entityIdentifierString: String) -> (mailboxId: String, messageId: String)? {
+        let components = entityIdentifierString.split(separator: "-", maxSplits: 1)
+        guard components.count == 2 else {
+            return nil
+        }
+        let mailboxObjectId = String(components[0])
+        let messageId = String(components[1])
+        return (mailboxId: mailboxObjectId, messageId: messageId)
+    }
+
     public static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
         guard case .emailAddress(let email) = person.handle?.value else { return nil }
         let name: String
@@ -342,7 +352,8 @@ public enum MailAppIntentsHelper {
     ) async throws {
         let mailboxManager = params.mailboxManager
 
-        guard let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: params.target.id) else {
+        guard let messageId = MailAppIntentsHelper.mailboxIdAndMessageId(for: params.target.id)?.messageId,
+              let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageId) else {
             return
         }
 

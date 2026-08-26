@@ -150,16 +150,16 @@ public struct MailMessageEntity: IndexedEntity {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             @InjectService var accountManager: AccountManager
 
-            let mailboxes = mailboxInfosManager.getMailboxes()
-            return mailboxes.flatMap { mailbox -> [MailMessageEntity] in
-                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
-                    return []
+            let resolvedIdentifiers = identifiers.compactMap { MailAppIntentsHelper.mailboxIdAndMessageId(for: $0) }
+
+            return resolvedIdentifiers.compactMap {
+                guard let mailbox = mailboxInfosManager.getMailbox(objectId: $0.mailboxId),
+                      let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+                      let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: $0.messageId) else {
+                    return nil
                 }
 
-                let messages = mailboxManager.fetchResults(ofType: Message.self) {
-                    $0.filter(NSPredicate(format: "uid IN %@", identifiers))
-                }
-                return messages.map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
+                return MailAppIntentsHelper.mapMessage(message, mailbox: mailbox)
             }
         }
 
