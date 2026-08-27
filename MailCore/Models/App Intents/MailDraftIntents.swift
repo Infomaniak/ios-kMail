@@ -74,7 +74,7 @@ struct CreateDraftIntent {
             emailAddress: mailbox.email
         )
         return .result(value: MailDraftEntity(
-            id: draftUUID,
+            id: .init(mailboxId: mailbox.objectId, draftId: draftUUID),
             to: to,
             cc: cc,
             bcc: bcc,
@@ -106,12 +106,12 @@ struct UpdateDraftIntent {
         @InjectService var draftManager: DraftManager
 
         let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.account.id,
+            mailboxId: target.id.mailboxId,
             mailboxInfosManager: mailboxInfosManager,
             accountManager: accountManager
         )
 
-        let draftUUID = target.id
+        let draftUUID = target.id.draftId
 
         guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
             throw MailError.unknownError
@@ -179,12 +179,12 @@ struct SaveDraftIntent {
         @InjectService var draftManager: DraftManager
 
         let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.account.id,
+            mailboxId: target.id.mailboxId,
             mailboxInfosManager: mailboxInfosManager,
             accountManager: accountManager
         )
 
-        let draftUUID = target.id
+        let draftUUID = target.id.draftId
 
         guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
             throw MailError.unknownError
@@ -210,11 +210,11 @@ struct DeleteDraftIntent: DeleteIntent {
 
         for entity in entities {
             guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
-                mailboxId: entity.account.id,
+                mailboxId: entity.id.mailboxId,
                 mailboxInfosManager: mailboxInfosManager,
                 accountManager: accountManager
             ),
-                let draft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: entity.id)
+                let draft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: entity.id.draftId)
             else {
                 continue
             }
@@ -240,12 +240,12 @@ struct SendDraftIntent {
         @InjectService var draftManager: DraftManager
 
         let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.account.id,
+            mailboxId: target.id.mailboxId,
             mailboxInfosManager: mailboxInfosManager,
             accountManager: accountManager
         )
 
-        let draftUUID = target.id
+        let draftUUID = target.id.draftId
 
         guard mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftUUID) != nil else {
             throw MailError.unknownError

@@ -24,13 +24,39 @@ import MailResources
 @available(iOS 18.4, *)
 @AppEntity(schema: .mail.draft)
 public struct MailDraftEntity: IndexedEntity {
+    public struct Identifier: Hashable, Sendable, EntityIdentifierConvertible {
+        public let mailboxId: String
+        public let draftId: String
+
+        public var entityIdentifierString: String {
+            "\(mailboxId)-\(draftId)"
+        }
+
+        public init(mailboxId: String, draftId: String) {
+            self.mailboxId = mailboxId
+            self.draftId = draftId
+        }
+
+        public static func entityIdentifier(for entityIdentifierString: String) -> Identifier? {
+            let components = entityIdentifierString.split(separator: "-", maxSplits: 1)
+            guard components.count == 2 else {
+                return nil
+            }
+
+            return Identifier(
+                mailboxId: String(components[0]),
+                draftId: String(components[1])
+            )
+        }
+    }
+
     // MARK: Static
 
     public static let defaultQuery = MailDraftEntityQuery()
 
     // MARK: Properties
 
-    public let id: String
+    public let id: Identifier
 
     public var to: [IntentPerson]
     public var cc: [IntentPerson]
@@ -48,7 +74,7 @@ public struct MailDraftEntity: IndexedEntity {
     }
 
     public init(
-        id: String,
+        id: Identifier,
         to: [IntentPerson],
         cc: [IntentPerson],
         bcc: [IntentPerson],
@@ -76,16 +102,14 @@ public struct MailDraftEntity: IndexedEntity {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             @InjectService var accountManager: AccountManager
 
-            let mailboxes = mailboxInfosManager.getMailboxes()
-            return mailboxes.flatMap { mailbox -> [MailDraftEntity] in
-                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
-                    return []
+            return identifiers.compactMap {
+                guard let mailbox = mailboxInfosManager.getMailbox(objectId: $0.mailboxId),
+                      let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+                      let draft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: $0.draftId) else {
+                    return nil
                 }
 
-                let drafts = mailboxManager.fetchResults(ofType: Draft.self) {
-                    $0.filter(NSPredicate(format: "localUUID IN %@", identifiers))
-                }
-                return drafts.map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
+                return MailAppIntentsHelper.mapDraft(draft, mailbox: mailbox)
             }
         }
 

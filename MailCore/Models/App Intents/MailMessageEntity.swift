@@ -24,7 +24,7 @@ import MailResources
 @available(iOS 18.4, *)
 @AppEntity(schema: .mail.message)
 public struct MailMessageEntity: IndexedEntity {
-    public struct Identifier: Hashable, EntityIdentifierConvertible {
+    public struct Identifier: Hashable, Sendable, EntityIdentifierConvertible {
         public let mailboxId: String
         public let messageId: String
 

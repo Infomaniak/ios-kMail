@@ -131,7 +131,7 @@ public enum MailAppIntentsHelper {
         let bodyAttributedString = htmlToAttributedString(draft.body)
 
         return MailDraftEntity(
-            id: draft.localUUID,
+            id: .init(mailboxId: mailbox.objectId, draftId: draft.localUUID),
             to: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.to.toArray()),
             cc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.cc.toArray()),
             bcc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.bcc.toArray()),
