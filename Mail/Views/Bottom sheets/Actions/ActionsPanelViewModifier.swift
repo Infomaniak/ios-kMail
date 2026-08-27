@@ -130,6 +130,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
             .environmentObject(actionsManager)
             .environmentObject(actionsProvider)
+            .environmentObject(mailboxManager)
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(
