@@ -57,6 +57,7 @@ struct ForwardMailIntent: AppIntent {
     var cc: [IntentPerson]
     var bcc: [IntentPerson]
     var subject: String?
+    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]
 
@@ -96,6 +97,7 @@ struct ReplyMailIntent: AppIntent {
     var target: MailMessageEntity
     var body: AttributedString?
     var subject: String?
+    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]
     var to: [IntentPerson]
@@ -138,6 +140,7 @@ struct UpdateMailIntent {
     var isRead: Bool?
     var isFlagged: Bool?
     var isJunk: Bool?
+    // periphery:ignore - Used by AppIntent macro
     var mailbox: MailboxEntity?
 
     func perform() async throws -> some IntentResult {
@@ -175,7 +178,6 @@ struct UpdateMailIntent {
 @available(iOS 18.4, *)
 private extension MailMessageEntity {
     static func moveEntities(_ entities: [MailMessageEntity], to folderRole: FolderRole) async throws {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
 
         for entity in entities {

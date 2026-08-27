@@ -34,7 +34,6 @@ struct CreateDraftIntent {
     var attachments: [IntentFile]
 
     func perform() async throws -> some ReturnsValue<MailDraftEntity> {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
         @InjectService var draftManager: DraftManager
 
@@ -103,6 +102,7 @@ struct UpdateDraftIntent {
     var bcc: [IntentPerson]?
     var subject: String?
     var body: AttributedString?
+    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]?
 
