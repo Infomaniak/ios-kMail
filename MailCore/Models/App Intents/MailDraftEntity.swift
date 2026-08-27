@@ -109,7 +109,7 @@ public struct MailDraftEntity: IndexedEntity {
                     return nil
                 }
 
-                return MailAppIntentsHelper.mapDraft(draft, mailbox: mailbox)
+                return MailDraftEntity(draft: draft, mailbox: mailbox)
             }
         }
 
@@ -127,7 +127,7 @@ public struct MailDraftEntity: IndexedEntity {
                 }
 
                 let drafts = mailboxManager.fetchResults(ofType: Draft.self) { $0 }
-                return Array(drafts.prefix(10)).map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
+                return Array(drafts.prefix(10)).map { MailDraftEntity(draft: $0, mailbox: mailbox) }
             }
         }
 
@@ -144,8 +144,22 @@ public struct MailDraftEntity: IndexedEntity {
                     $0.filter(NSPredicate(format: "subject CONTAINS[cd] %@", query))
                 }
 
-                return Array(drafts.prefix(10)).map { MailAppIntentsHelper.mapDraft($0, mailbox: mailbox) }
+                return Array(drafts.prefix(10)).map { MailDraftEntity(draft: $0, mailbox: mailbox) }
             }
         }
+    }
+}
+
+@available(iOS 18.4, *)
+extension MailDraftEntity {
+    init(draft: Draft, mailbox: Mailbox) {
+        id = .init(mailboxId: mailbox.objectId, draftId: draft.localUUID)
+        to = draft.to.map { IntentPerson(recipient: $0) }
+        cc = draft.cc.map { IntentPerson(recipient: $0) }
+        bcc = draft.bcc.map { IntentPerson(recipient: $0) }
+        subject = draft.subject
+        body = MailAppIntentsHelper.htmlToAttributedString(draft.body)
+        attachments = []
+        account = MailAccountEntity(mailbox: mailbox)
     }
 }

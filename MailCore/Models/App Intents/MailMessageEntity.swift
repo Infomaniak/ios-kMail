@@ -163,10 +163,6 @@ public struct MailMessageEntity: IndexedEntity {
         self.mailbox = mailbox
     }
 
-    public init(from message: Message, mailbox: Mailbox) {
-        self = MailAppIntentsHelper.mapMessage(message, mailbox: mailbox)
-    }
-
     // MARK: Query
 
     public struct MailMessageEntityQuery: EntityStringQuery {
@@ -183,7 +179,7 @@ public struct MailMessageEntity: IndexedEntity {
                     return nil
                 }
 
-                return MailAppIntentsHelper.mapMessage(message, mailbox: mailbox)
+                return MailMessageEntity(message: message, mailbox: mailbox)
             }
         }
 
@@ -200,7 +196,7 @@ public struct MailMessageEntity: IndexedEntity {
                 }
 
                 let sortedMessages = folder.messages.sorted(by: \.date, ascending: false)
-                return Array(sortedMessages.prefix(10)).map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
+                return Array(sortedMessages.prefix(10)).map { MailMessageEntity(message: $0, mailbox: mailbox) }
             }
         }
 
@@ -216,9 +212,44 @@ public struct MailMessageEntity: IndexedEntity {
                     $0.filter(NSPredicate(format: "subject CONTAINS[cd] %@ OR preview CONTAINS[cd] %@", query, query))
                 }
 
-                return Array(messages.prefix(10)).map { MailAppIntentsHelper.mapMessage($0, mailbox: mailbox) }
+                return Array(messages.prefix(10)).map { MailMessageEntity(message: $0, mailbox: mailbox) }
             }
         }
+    }
+}
+
+@available(iOS 18.4, *)
+extension MailMessageEntity {
+    init(message: Message, mailbox: Mailbox) {
+        let mailboxEntity = MailboxEntity(mailbox: mailbox)
+
+        let sender: IntentPerson
+        if let fromRecipient = message.from.first {
+            sender = IntentPerson(recipient: fromRecipient)
+        } else {
+            sender = IntentPerson(
+                identifier: .applicationDefined("unknown"),
+                name: .displayName(""),
+                handle: .init(emailAddress: "")
+            )
+        }
+
+        id = .init(mailboxId: mailbox.objectId, messageId: message.uid)
+        to = Array(message.to.map { IntentPerson(recipient: $0) })
+        cc = Array(message.cc.map { IntentPerson(recipient: $0) })
+        bcc = Array(message.bcc.map { IntentPerson(recipient: $0) })
+        subject = message.subject
+        body = MailAppIntentsHelper.bodyToAttributedString(value: message.body?.value, type: message.body?.type)
+        preview = message.preview
+        attachments = []
+        self.sender = sender
+        dateSent = message.internalDate
+        dateReceived = message.date
+        isRead = message.seen
+        isJunk = message.isSpam
+        isFlagged = message.flagged
+        account = mailboxEntity.account
+        self.mailbox = mailboxEntity
     }
 }
 

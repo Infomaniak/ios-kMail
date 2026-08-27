@@ -71,9 +71,7 @@ public struct MailAccountEntity: IndexedEntity {
             let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { idSet.contains($0.objectId) }
             return await matchingMailboxes.asyncMap { mailbox in
                 await MailAccountEntity(
-                    id: mailbox.objectId,
-                    name: mailbox.mailbox,
-                    emailAddress: mailbox.email,
+                    mailbox: mailbox,
                     avatarData: fetchAvatarData(for: mailbox)
                 )
             }
@@ -84,12 +82,20 @@ public struct MailAccountEntity: IndexedEntity {
 
             return await mailboxInfosManager.getMailboxes().asyncMap { mailbox in
                 await MailAccountEntity(
-                    id: mailbox.objectId,
-                    name: mailbox.mailbox,
-                    emailAddress: mailbox.email,
+                    mailbox: mailbox,
                     avatarData: fetchAvatarData(for: mailbox)
                 )
             }
         }
+    }
+}
+
+@available(iOS 18.0, *)
+extension MailAccountEntity {
+    init(mailbox: Mailbox, avatarData: Data? = nil) {
+        id = mailbox.objectId
+        name = mailbox.email
+        emailAddress = mailbox.email
+        self.avatarData = avatarData
     }
 }

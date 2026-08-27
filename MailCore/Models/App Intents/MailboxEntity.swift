@@ -56,12 +56,21 @@ public struct MailboxEntity: IndexedEntity {
             let idSet = Set(identifiers)
             return mailboxInfosManager.getMailboxes()
                 .filter { idSet.contains($0.objectId) }
-                .map { MailAppIntentsHelper.mapMailbox($0) }
+                .map { MailboxEntity(mailbox: $0) }
         }
 
         public func suggestedEntities() async throws -> [MailboxEntity] {
             @InjectService var mailboxInfosManager: MailboxInfosManager
-            return mailboxInfosManager.getMailboxes().map { MailAppIntentsHelper.mapMailbox($0) }
+            return mailboxInfosManager.getMailboxes().map { MailboxEntity(mailbox: $0) }
         }
+    }
+}
+
+@available(iOS 18.4, *)
+extension MailboxEntity {
+    init(mailbox: Mailbox) {
+        id = mailbox.objectId
+        name = mailbox.email
+        account = MailAccountEntity(mailbox: mailbox)
     }
 }

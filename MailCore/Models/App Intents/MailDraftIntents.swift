@@ -47,9 +47,9 @@ struct CreateDraftIntent {
         let draft = Draft(
             subject: subject ?? "",
             body: "",
-            to: MailAppIntentsHelper.mapIntentPersonsToRecipients(to),
-            cc: MailAppIntentsHelper.mapIntentPersonsToRecipients(cc),
-            bcc: MailAppIntentsHelper.mapIntentPersonsToRecipients(bcc)
+            to: to.compactMap { $0.recipient },
+            cc: cc.compactMap { $0.recipient },
+            bcc: bcc.compactMap { $0.recipient }
         )
         let draftUUID = draft.localUUID
 
@@ -121,13 +121,13 @@ struct UpdateDraftIntent {
         try mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftUUID) else { return }
             if let to {
-                liveDraft.to = MailAppIntentsHelper.mapIntentPersonsToRecipients(to).toRealmList()
+                liveDraft.to = to.compactMap { $0.recipient }.toRealmList()
             }
             if let cc {
-                liveDraft.cc = MailAppIntentsHelper.mapIntentPersonsToRecipients(cc).toRealmList()
+                liveDraft.cc = cc.compactMap { $0.recipient }.toRealmList()
             }
             if let bcc {
-                liveDraft.bcc = MailAppIntentsHelper.mapIntentPersonsToRecipients(bcc).toRealmList()
+                liveDraft.bcc = bcc.compactMap { $0.recipient }.toRealmList()
             }
             if let subject {
                 liveDraft.subject = subject

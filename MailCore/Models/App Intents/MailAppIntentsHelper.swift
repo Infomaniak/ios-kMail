@@ -18,7 +18,6 @@
 
 import AppIntents
 import InfomaniakDI
-import MailCore
 import OSLog
 import SwiftSoup
 
@@ -51,109 +50,31 @@ final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
     @MainActor func handleGlobalError(_ error: MailError) {}
 }
 
-@available(iOS 18.4, *)
-public enum MailAppIntentsHelper {
-    public static func mapIntentPersonToRecipient(_ person: IntentPerson) -> Recipient? {
-        guard case .emailAddress(let email) = person.handle?.value else { return nil }
-        let name: String
-        if case .displayName(let displayName) = person.name {
-            name = displayName
-        } else {
-            name = ""
-        }
-        return Recipient(email: email, name: name)
-    }
-
-    public static func mapIntentPersonsToRecipients(_ persons: [IntentPerson]) -> [Recipient] {
-        persons.compactMap { mapIntentPersonToRecipient($0) }
-    }
-
-    public static func mapRecipientToIntentPerson(_ recipient: Recipient) -> IntentPerson {
-        IntentPerson(
+extension IntentPerson {
+    init(recipient: Recipient) {
+        self.init(
             identifier: .applicationDefined(recipient.id),
             name: .displayName(recipient.name),
             handle: .init(emailAddress: recipient.email)
         )
     }
 
-    public static func mapRecipientsToIntentPersons(_ recipients: [Recipient]) -> [IntentPerson] {
-        recipients.map { mapRecipientToIntentPerson($0) }
-    }
+    var recipient: Recipient? {
+        guard case .emailAddress(let email) = handle?.value else { return nil }
 
-    public static func mapMessage(_ message: Message, mailbox: Mailbox) -> MailMessageEntity {
-        let accountEntity = MailAccountEntity(
-            id: mailbox.objectId,
-            name: mailbox.mailbox,
-            emailAddress: mailbox.email
-        )
-        let mailboxEntity = MailboxEntity(id: mailbox.objectId, name: mailbox.email, account: accountEntity)
-
-        let sender: IntentPerson
-        if let fromRecipient = message.from.first {
-            sender = mapRecipientToIntentPerson(fromRecipient)
-        } else {
-            sender = IntentPerson(
-                identifier: .applicationDefined("unknown"),
-                name: .displayName(""),
-                handle: .init(emailAddress: "")
-            )
+        switch name {
+        case .displayName(let displayName):
+            return Recipient(email: email, name: displayName)
+        case .components(let components):
+            return Recipient(email: email, name: components.formatted(.name(style: .long)))
+        default:
+            return Recipient(email: email, name: "Unknown")
         }
-
-        let bodyAttributedString = bodyToAttributedString(value: message.body?.value, type: message.body?.type)
-
-        return MailMessageEntity(
-            id: .init(mailboxId: mailbox.objectId, messageId: message.uid),
-            to: Array(message.to.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
-            cc: Array(message.cc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
-            bcc: Array(message.bcc.map { MailAppIntentsHelper.mapRecipientToIntentPerson($0) }),
-            subject: message.subject,
-            body: bodyAttributedString,
-            preview: message.preview,
-            attachments: [],
-            sender: sender,
-            dateSent: message.internalDate,
-            dateReceived: message.date,
-            isRead: message.seen,
-            isJunk: message.isSpam,
-            isFlagged: message.flagged,
-            account: accountEntity,
-            mailbox: mailboxEntity
-        )
     }
+}
 
-    public static func mapDraft(_ draft: Draft, mailbox: Mailbox) -> MailDraftEntity {
-        let accountEntity = MailAccountEntity(
-            id: mailbox.objectId,
-            name: mailbox.mailbox,
-            emailAddress: mailbox.email
-        )
-
-        let bodyAttributedString = htmlToAttributedString(draft.body)
-
-        return MailDraftEntity(
-            id: .init(mailboxId: mailbox.objectId, draftId: draft.localUUID),
-            to: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.to.toArray()),
-            cc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.cc.toArray()),
-            bcc: MailAppIntentsHelper.mapRecipientsToIntentPersons(draft.bcc.toArray()),
-            subject: draft.subject,
-            body: bodyAttributedString,
-            attachments: [],
-            account: accountEntity
-        )
-    }
-
-    public static func mapMailbox(_ mailbox: Mailbox) -> MailboxEntity {
-        MailboxEntity(
-            id: mailbox.objectId,
-            name: mailbox.email,
-            account: MailAccountEntity(
-                id: mailbox.objectId,
-                name: mailbox.mailbox,
-                emailAddress: mailbox.email
-            )
-        )
-    }
-
+@available(iOS 18.4, *)
+public enum MailAppIntentsHelper {
     // MARK: Body conversion
 
     public static func bodyToAttributedString(value: String?, type: BodyType?) -> AttributedString? {
@@ -354,17 +275,17 @@ public enum MailAppIntentsHelper {
             aliases: mailboxManager.mailbox.aliases.toArray()
         )
 
-        let paramsTo = mapIntentPersonsToRecipients(params.to).toRealmList()
+        let paramsTo = params.to.compactMap { $0.recipient }.toRealmList()
         if !paramsTo.isEmpty {
             draft.to = paramsTo
         }
 
-        let paramsCc = mapIntentPersonsToRecipients(params.cc).toRealmList()
+        let paramsCc = params.cc.compactMap { $0.recipient }.toRealmList()
         if !paramsCc.isEmpty {
             draft.cc = paramsCc
         }
 
-        let paramsBcc = mapIntentPersonsToRecipients(params.bcc).toRealmList()
+        let paramsBcc = params.bcc.compactMap { $0.recipient }.toRealmList()
         if !paramsBcc.isEmpty {
             draft.bcc = paramsBcc
         }
