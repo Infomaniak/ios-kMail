@@ -105,41 +105,6 @@ public enum MailAppIntentsHelper {
         return escaped.replacingOccurrences(of: "\n", with: "<br>")
     }
 
-    public static func resolveMailboxManager(
-        mailboxId: String,
-        mailboxInfosManager: MailboxInfosManager,
-        accountManager: AccountManager
-    ) throws -> (Mailbox, MailboxManager) {
-        guard let mailbox = mailboxInfosManager.getMailbox(objectId: mailboxId),
-              let mailboxManager = accountManager.getMailboxManager(for: mailbox)
-        else {
-            throw MailError.unknownError
-        }
-        return (mailbox, mailboxManager)
-    }
-
-    public static func resolveDefaultMailboxManager(
-        account: MailAccountEntity?,
-        mailboxInfosManager: MailboxInfosManager,
-        accountManager: AccountManager
-    ) throws -> (Mailbox, MailboxManager) {
-        let mailboxId = account?.id
-        if let mailboxId {
-            return try resolveMailboxManager(
-                mailboxId: mailboxId,
-                mailboxInfosManager: mailboxInfosManager,
-                accountManager: accountManager
-            )
-        }
-        let mailboxes = mailboxInfosManager.getMailboxes()
-        guard let mailbox = mailboxes.first(where: { $0.isPrimary }) ?? mailboxes.first,
-              let mailboxManager = accountManager.getMailboxManager(for: mailbox)
-        else {
-            throw MailError.unknownError
-        }
-        return (mailbox, mailboxManager)
-    }
-
     public static func setupDraftContent(
         draftUUID: String,
         body: AttributedString?,

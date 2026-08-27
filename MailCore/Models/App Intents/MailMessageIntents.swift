@@ -61,15 +61,12 @@ struct ForwardMailIntent: AppIntent {
     var attachments: [IntentFile]
 
     func perform() async throws -> some IntentResult {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
         @InjectService var draftManager: DraftManager
 
-        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.id.mailboxId,
-            mailboxInfosManager: mailboxInfosManager,
-            accountManager: accountManager
-        )
+        guard let mailboxManager = accountManager.getMailboxManager(for: target.id.mailboxId) else {
+            throw MailError.unknownError
+        }
 
         try await MailAppIntentsHelper.performReplyOrForward(
             params: .init(
@@ -106,15 +103,12 @@ struct ReplyMailIntent: AppIntent {
     var bcc: [IntentPerson]
 
     func perform() async throws -> some IntentResult {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
         @InjectService var draftManager: DraftManager
 
-        let (_, mailboxManager) = try MailAppIntentsHelper.resolveMailboxManager(
-            mailboxId: target.id.mailboxId,
-            mailboxInfosManager: mailboxInfosManager,
-            accountManager: accountManager
-        )
+        guard let mailboxManager = accountManager.getMailboxManager(for: target.id.mailboxId) else {
+            throw MailError.unknownError
+        }
 
         try await MailAppIntentsHelper.performReplyOrForward(
             params: .init(
@@ -147,16 +141,11 @@ struct UpdateMailIntent {
     var mailbox: MailboxEntity?
 
     func perform() async throws -> some IntentResult {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
         @InjectService var accountManager: AccountManager
 
         for entity in target {
-            guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
-                mailboxId: entity.id.mailboxId,
-                mailboxInfosManager: mailboxInfosManager,
-                accountManager: accountManager
-            ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
+            guard let mailboxManager = accountManager.getMailboxManager(for: entity.id.mailboxId),
+                  let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
             else {
                 continue
             }
@@ -190,12 +179,8 @@ private extension MailMessageEntity {
         @InjectService var accountManager: AccountManager
 
         for entity in entities {
-            guard let (_, mailboxManager) = try? MailAppIntentsHelper.resolveMailboxManager(
-                mailboxId: entity.id.mailboxId,
-                mailboxInfosManager: mailboxInfosManager,
-                accountManager: accountManager
-            ),
-                let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
+            guard let mailboxManager = accountManager.getMailboxManager(for: entity.id.mailboxId),
+                  let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: entity.id.messageId)
             else {
                 continue
             }

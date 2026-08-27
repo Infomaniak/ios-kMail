@@ -122,16 +122,14 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return getMailboxManager(for: mailbox.mailboxId, userId: mailbox.userId)
     }
 
-    public func getMailboxManager(for mailboxId: Int, userId: Int) -> MailboxManager? {
-        let objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
-
+    public func getMailboxManager(for objectId: String) -> MailboxManager? {
         if let mailboxManager = mailboxManagers[objectId] {
             return mailboxManager
-        } else if account(for: userId) != nil,
-                  let token = tokenStore.tokenFor(userId: userId),
-                  let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId) {
-            let apiFetcher = getApiFetcher(for: userId, token: token)
-            let contactManager = getContactManager(for: userId, apiFetcher: apiFetcher)
+        } else if let mailbox = mailboxInfosManager.getMailbox(objectId: objectId),
+                  account(for: mailbox.userId) != nil,
+                  let token = tokenStore.tokenFor(userId: mailbox.userId) {
+            let apiFetcher = getApiFetcher(for: mailbox.userId, token: token)
+            let contactManager = getContactManager(for: mailbox.userId, apiFetcher: apiFetcher)
             mailboxManagers[objectId] = MailboxManager(mailbox: mailbox,
                                                        apiFetcher: apiFetcher,
                                                        contactManager: contactManager)
@@ -139,6 +137,12 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         } else {
             return nil
         }
+    }
+
+    public func getMailboxManager(for mailboxId: Int, userId: Int) -> MailboxManager? {
+        let objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
+
+        return getMailboxManager(for: objectId)
     }
 
     public func getContactManager(for userId: Int, apiFetcher: MailApiFetcher) -> ContactManager {
