@@ -1,7 +1,1 @@
-- Added Reply with Euria
-- Inline attachments now appear correctly in the message editor
-- Improved detection of no-reply email addresses
-- Fixed notifications sometimes failing to open the corresponding message
-- Fixed acknowledgement status not syncing with the web app
-- Fixed drafts being deleted prematurely
-- Fixed the emoji picker size on iPad
+- Bug fixes
