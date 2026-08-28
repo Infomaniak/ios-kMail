@@ -28,26 +28,14 @@ extension IntentFile: Attachable {
     }
 
     public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
-        let filenameWithExtension: String
-        if let ext = type?.preferredFilenameExtension,
-           !filename.capitalized.hasSuffix(".\(ext.capitalized)") {
-            filenameWithExtension = "\(filename).\(ext)"
-        } else {
-            filenameWithExtension = filename
-        }
-        let temporaryDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
-        let tempURL = temporaryDirectory.appendingPathComponent(URL(fileURLWithPath: filenameWithExtension).lastPathComponent)
-        try data.write(to: tempURL, options: .atomic)
-        return (tempURL, nil)
+        return try await data.writeToTemporaryURL()
     }
 }
 
 @available(iOS 18.4, *)
 final class NoOpAttachmentsDelegate: AttachmentsContentUpdatable {
-    @MainActor func contentWillChange() {}
-    @MainActor func handleGlobalError(_ error: MailError) {}
+    func contentWillChange() {}
+    func handleGlobalError(_ error: MailError) {}
 }
 
 extension IntentPerson {
@@ -77,34 +65,6 @@ extension IntentPerson {
 public enum MailAppIntentsHelper {
     // MARK: Body conversion
 
-    public static func bodyToAttributedString(value: String?, type: BodyType?) -> AttributedString? {
-        guard let value else { return nil }
-        switch type {
-        case .textPlain:
-            return try? AttributedString(markdown: value)
-        case .textHtml, nil:
-            return htmlToAttributedString(value)
-        }
-    }
-
-    public static func htmlToAttributedString(_ html: String) -> AttributedString? {
-        guard let document = try? SwiftSoup.parse(html),
-              let body = document.body() else {
-            return AttributedString(html)
-        }
-        let plainText = (try? body.text()) ?? html
-        return try? AttributedString(markdown: plainText)
-    }
-
-    public static func attributedStringToHTML(_ attributedString: AttributedString) -> String {
-        let plainText = String(attributedString.characters)
-        let escaped = plainText
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: ">", with: "&gt;")
-        return escaped.replacingOccurrences(of: "\n", with: "<br>")
-    }
-
     public static func setupDraftContent(
         draftUUID: String,
         body: AttributedString?,
@@ -123,10 +83,9 @@ public enum MailAppIntentsHelper {
             _ = try await draftContentManager.prepareCompleteDraft(incompleteDraft: frozenDraft)
         }
 
-        let bodyText = body.map { attributedStringToHTML($0) } ?? ""
         await draftContentManager.replaceContent(
             subject: subject,
-            body: bodyText,
+            body: body?.htmlString ?? "",
             draftPrimaryKey: draftUUID
         )
 

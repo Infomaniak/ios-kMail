@@ -239,7 +239,7 @@ extension MailMessageEntity {
         cc = Array(message.cc.map { IntentPerson(recipient: $0) })
         bcc = Array(message.bcc.map { IntentPerson(recipient: $0) })
         subject = message.subject
-        body = MailAppIntentsHelper.bodyToAttributedString(value: message.body?.value, type: message.body?.type)
+        body = AttributedString(body: message.body)
         preview = message.preview
         attachments = []
         self.sender = sender
