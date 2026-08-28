@@ -44,32 +44,27 @@ public final class SpotlightIndexer {
 
                 let date = Date()
 
-                let allMessages: [MailMessageEntity] = mailboxInfosManager.getMailboxes()
-                    .filter { !$0.isLocked }
-                    .flatMap { mailbox -> [MailMessageEntity] in
-                        guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return [] }
+                let searchableIndex = CSSearchableIndex(name: Self.spotlightIndexName)
+                try? await searchableIndex.deleteAppEntities(ofType: MailMessageEntity.self)
 
-                        return Array(
+                await mailboxInfosManager.getMailboxes()
+                    .filter { !$0.isLocked }
+                    .map { $0.freeze() }
+                    .concurrentForEach { mailbox in
+                        guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return }
+
+                        let entities = Array(
                             mailboxManager
                                 .fetchResults(ofType: Message.self) { $0 }
                                 .sorted(by: \.date, ascending: false)
                                 .prefix(Self.maxIndexedMessages)
                                 .map { MailMessageEntity(message: $0, mailbox: mailbox) }
                         )
+
+                        try? await searchableIndex.indexAppEntities(entities)
                     }
 
-                let cappedEntities = allMessages.max(count: Self.maxIndexedMessages) { $0.dateReceived > $1.dateReceived }
-
-                do {
-                    let searchableIndex = CSSearchableIndex(name: Self.spotlightIndexName)
-                    try await searchableIndex.deleteAppEntities(ofType: MailMessageEntity.self)
-                    try await searchableIndex.indexAppEntities(cappedEntities)
-                } catch {
-                    Self.logger.error("Failed to rebuild the Spotlight index: \(error)")
-                }
-
-                Self.logger
-                    .info("Indexed \(cappedEntities.count) messages in Spotlight in \(Date().timeIntervalSince(date)) seconds")
+                Self.logger.info("Spotlight updated in \(Date().timeIntervalSince(date)) seconds")
             }
         }
     }
