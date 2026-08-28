@@ -53,7 +53,7 @@ public enum ReplyMode: String, Codable, Hashable, Equatable {
     case reply, replyAll
     case forward
 
-    var isReply: Bool {
+    public var isReply: Bool {
         return self == .reply || self == .replyAll
     }
 }

@@ -25,7 +25,8 @@ struct AccountEntityQuery: EntityQuery {
     func entities(for identifiers: [AccountEntity.ID]) async throws -> [AccountEntity] {
         @InjectService var mailboxInfosManager: MailboxInfosManager
 
-        let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { identifiers.contains($0.objectId) }
+        let idSet = Set(identifiers)
+        let matchingMailboxes = mailboxInfosManager.getMailboxes().filter { idSet.contains($0.objectId) }
         return matchingMailboxes.map { AccountEntity(id: $0.objectId, mailbox: $0.email) }
     }
 
