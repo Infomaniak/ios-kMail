@@ -45,17 +45,14 @@ extension IntentPerson {
     }
 
     var searchableName: String? {
-        let name: String?
-        switch self.name {
+        switch name {
         case .displayName(let displayName):
-            name = displayName
+            return displayName
         case .components(let components):
-            name = components.formatted(.name(style: .long))
+            return components.formatted(.name(style: .long))
         default:
-            name = nil
+            return nil
         }
-
-        return name
     }
 
     var emailAddress: String? {
