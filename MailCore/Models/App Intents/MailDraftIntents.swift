@@ -62,15 +62,15 @@ struct CreateDraftIntent {
             realm.add(draft, update: .modified)
         }
 
-        try await MailAppIntentsHelper.setupDraftContent(
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
+        try await draftContentHelper.setupDraftContent(
             draftUUID: draftUUID,
             body: body,
             subject: subject,
-            attachments: attachments,
-            mailboxManager: mailboxManager
+            attachments: attachments
         )
 
-        try MailAppIntentsHelper.setDraftAction(.initialSave, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        try draftContentHelper.setDraftAction(.initialSave, draftUUID: draftUUID)
         await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
 
         let accountEntity = MailAccountEntity(
@@ -134,32 +134,26 @@ struct UpdateDraftIntent {
             }
         }
 
-        // Update body and upload attachments
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
         if let body, let attachments {
-            try await MailAppIntentsHelper.setupDraftContent(
+            try await draftContentHelper.setupDraftContent(
                 draftUUID: draftUUID,
                 body: body,
                 subject: subject,
-                attachments: attachments,
-                mailboxManager: mailboxManager
+                attachments: attachments
             )
         } else if let body {
-            try await MailAppIntentsHelper.setupDraftContent(
+            try await draftContentHelper.setupDraftContent(
                 draftUUID: draftUUID,
                 body: body,
                 subject: subject,
-                attachments: [],
-                mailboxManager: mailboxManager
+                attachments: []
             )
         } else if let attachments, !attachments.isEmpty {
-            await MailAppIntentsHelper.uploadAttachments(
-                attachments,
-                mailboxManager: mailboxManager,
-                draftUUID: draftUUID
-            )
+            await draftContentHelper.uploadAttachments(attachments, draftUUID: draftUUID)
         }
 
-        try MailAppIntentsHelper.setDraftAction(.save, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        try draftContentHelper.setDraftAction(.save, draftUUID: draftUUID)
         await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
 
         return .result()
@@ -184,7 +178,8 @@ struct SaveDraftIntent {
             throw MailError.unknownError
         }
 
-        try MailAppIntentsHelper.setDraftAction(.save, draftUUID: draftUUID, mailboxManager: mailboxManager)
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
+        try draftContentHelper.setDraftAction(.save, draftUUID: draftUUID)
         await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
 
         return .result()
@@ -234,16 +229,13 @@ struct SendDraftIntent {
             throw MailError.unknownError
         }
 
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
+
         if let sendLaterDate {
-            try MailAppIntentsHelper.setDraftAction(
-                .schedule,
-                draftUUID: draftUUID,
-                mailboxManager: mailboxManager,
-                scheduleDate: sendLaterDate
-            )
+            try draftContentHelper.setDraftAction(.schedule, draftUUID: draftUUID, scheduleDate: sendLaterDate)
             await draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: false)
         } else {
-            try MailAppIntentsHelper.setDraftAction(.send, draftUUID: draftUUID, mailboxManager: mailboxManager)
+            try draftContentHelper.setDraftAction(.send, draftUUID: draftUUID)
             try await draftManager.sendDraft(localUUID: draftUUID, mailboxManager: mailboxManager)
         }
 

@@ -49,8 +49,19 @@ struct DeleteMailIntent: DeleteIntent {
 // MARK: - Forward
 
 @available(iOS 18.4, *)
+protocol ReplyForwardIntent {
+    var target: MailMessageEntity { get }
+    var body: AttributedString? { get }
+    var subject: String? { get }
+    var to: [IntentPerson] { get }
+    var cc: [IntentPerson] { get }
+    var bcc: [IntentPerson] { get }
+    var attachments: [IntentFile] { get }
+}
+
+@available(iOS 18.4, *)
 @AppIntent(schema: .mail.forwardMail)
-struct ForwardMailIntent: AppIntent {
+struct ForwardMailIntent: AppIntent, ReplyForwardIntent {
     var target: MailMessageEntity
     var to: [IntentPerson]
     var body: AttributedString?
@@ -69,20 +80,8 @@ struct ForwardMailIntent: AppIntent {
             throw MailError.unknownError
         }
 
-        try await MailAppIntentsHelper.performReplyOrForward(
-            params: .init(
-                mailboxManager: mailboxManager,
-                target: target,
-                replyMode: .forward,
-                body: body,
-                subject: subject,
-                to: to,
-                cc: cc,
-                bcc: bcc,
-                attachments: attachments
-            ),
-            draftManager: draftManager
-        )
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
+        try await draftContentHelper.performReplyOrForward(draftManager: draftManager, replyMode: .forward, intent: self)
 
         return .result()
     }
@@ -92,7 +91,7 @@ struct ForwardMailIntent: AppIntent {
 
 @available(iOS 18.4, *)
 @AppIntent(schema: .mail.replyMail)
-struct ReplyMailIntent: AppIntent {
+struct ReplyMailIntent: AppIntent, ReplyForwardIntent {
     var isReplyAll: Bool
     var target: MailMessageEntity
     var body: AttributedString?
@@ -112,19 +111,11 @@ struct ReplyMailIntent: AppIntent {
             throw MailError.unknownError
         }
 
-        try await MailAppIntentsHelper.performReplyOrForward(
-            params: .init(
-                mailboxManager: mailboxManager,
-                target: target,
-                replyMode: isReplyAll ? .replyAll : .reply,
-                body: body,
-                subject: subject,
-                to: to,
-                cc: cc,
-                bcc: bcc,
-                attachments: attachments
-            ),
-            draftManager: draftManager
+        let draftContentHelper = AppIntentDraftContentHelper(mailboxManager: mailboxManager)
+        try await draftContentHelper.performReplyOrForward(
+            draftManager: draftManager,
+            replyMode: isReplyAll ? .replyAll : .reply,
+            intent: self
         )
 
         return .result()
