@@ -52,7 +52,7 @@ public struct MessageActionHandler: MessageActionHandlable {
     }
 
     private func handleNotification(action: Action, messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
-        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
+        accountManager.switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
         guard let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else { return }
 
@@ -93,7 +93,7 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     func handleTapOnIncompleteNotification(mailbox: Mailbox, mailboxManager: MailboxManager) {
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.open)
-        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
+        accountManager.switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
     }
 
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
@@ -153,24 +153,6 @@ public struct MessageActionHandler: MessageActionHandlable {
         }
 
         _ = try await mailboxManager.move(messages: [notificationMessage.freezeIfNeeded()], to: folderRole)
-    }
-
-    /// Switch logged in account if needed, given a mailbox and a mailboxManager
-    /// - Parameters:
-    ///   - mailbox: the mailbox related to a message
-    ///   - mailboxManager: the mailboxmanager
-    private func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager) {
-        if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
-            if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
-                if let switchedAccount = accountManager.accounts
-                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
-                    accountManager.switchAccount(newUserId: switchedAccount.userId)
-                    accountManager.switchMailbox(newMailbox: mailbox)
-                }
-            } else {
-                accountManager.switchMailbox(newMailbox: mailbox)
-            }
-        }
     }
 
     /// Update the unread count

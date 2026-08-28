@@ -38,11 +38,7 @@ struct MailMessageOpenIntent: OpenIntent {
             throw MailError.localMessageNotFound
         }
 
-        MailAppIntentsHelper.switchAccountIfNeeded(
-            mailbox: mailbox,
-            mailboxManager: mailboxManager,
-            accountManager: accountManager
-        )
+        accountManager.switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
         guard let tappedMessage = mailboxManager
             .fetchObject(ofType: Message.self, forPrimaryKey: target.id.messageId)?

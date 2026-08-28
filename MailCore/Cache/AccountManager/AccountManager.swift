@@ -391,6 +391,20 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
+    public func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager) {
+        if currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accounts
+                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                    switchAccount(newUserId: switchedAccount.userId)
+                    switchMailbox(newMailbox: mailbox)
+                }
+            } else {
+                switchMailbox(newMailbox: mailbox)
+            }
+        }
+    }
+
     public func setCurrentAccount(account: ApiToken) {
         currentAccount = account
         currentUserId = account.userId
