@@ -26,6 +26,14 @@ extension IntentFile: Attachable {
     }
 
     public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
-        return try await data.writeToTemporaryURL()
+        if let fileURL {
+            return try await fileURL.writeToTemporaryURL()
+        } else {
+            let temporaryDirectoryURL = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+            try FileManager.default.createDirectory(at: temporaryDirectoryURL, withIntermediateDirectories: true)
+            let temporaryURL = temporaryDirectoryURL.appending(path: filename.safeLastPathComponent ?? UUID().uuidString)
+            try data.write(to: temporaryURL)
+            return (temporaryURL, filename)
+        }
     }
 }

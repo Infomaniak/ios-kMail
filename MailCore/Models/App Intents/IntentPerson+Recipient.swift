@@ -20,6 +20,7 @@ import AppIntents
 import Contacts
 import CoreSpotlight
 import Foundation
+import MailResources
 
 extension IntentPerson {
     init(recipient: Recipient) {
@@ -39,7 +40,7 @@ extension IntentPerson {
         case .components(let components):
             return Recipient(email: email, name: components.formatted(.name(style: .long)))
         default:
-            return Recipient(email: email, name: "Unknown")
+            return Recipient(email: email, name: MailResourcesStrings.Localizable.unknownRecipientTitle)
         }
     }
 
