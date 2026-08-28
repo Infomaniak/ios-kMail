@@ -161,11 +161,16 @@ public final class MailboxInfosManager {
         mailbox.unseenMessages = savedMailbox.unseenMessages
     }
 
-    public func removeMailboxesFor(userId: Int) {
+    @discardableResult
+    public func removeMailboxesFor(userId: Int) -> [String] {
+        var userMailboxIds: [String] = []
         try? writeTransaction { writableRealm in
             let userMailboxes = writableRealm.objects(Mailbox.self).where { $0.userId == userId }
+            userMailboxIds = userMailboxes.map(\.objectId)
             writableRealm.delete(userMailboxes)
         }
+
+        return userMailboxIds
     }
 
     public func updateSendersRestrictions(mailboxObjectId: String, sendersRestrictions: SendersRestrictions) {

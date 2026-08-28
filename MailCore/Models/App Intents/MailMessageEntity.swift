@@ -90,7 +90,7 @@ public struct MailMessageEntity: IndexedEntity {
     public var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(
             title: "\(subject ?? "")",
-            subtitle: "\(mailbox.name)"
+            subtitle: "\(preview)"
         )
     }
 

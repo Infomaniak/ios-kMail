@@ -391,6 +391,20 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
+    public func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager) {
+        if currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accounts
+                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                    switchAccount(newUserId: switchedAccount.userId)
+                    switchMailbox(newMailbox: mailbox)
+                }
+            } else {
+                switchMailbox(newMailbox: mailbox)
+            }
+        }
+    }
+
     public func setCurrentAccount(account: ApiToken) {
         currentAccount = account
         currentUserId = account.userId
@@ -423,11 +437,12 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         MailboxManager.deleteUserMailbox(userId: userId)
         ContactManager.deleteUserContacts(userId: userId)
-        mailboxInfosManager.removeMailboxesFor(userId: userId)
+        let removedMailboxIds = mailboxInfosManager.removeMailboxesFor(userId: userId)
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
         deviceManager.forgetLocalDeviceHash(forUserId: userId)
+        SpotlightIndexer.shared.deindexMessagesForMailbox(ids: removedMailboxIds)
 
         Task {
             @InjectService var mainViewStateStore: MainViewStateStore
@@ -465,6 +480,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func cleanAllRealms() async {
+        SpotlightIndexer.shared.deindexAllMessages()
+
         for account in accounts {
             for mailbox in mailboxInfosManager.getMailboxes(for: account.userId) {
                 if let mailboxManager = getMailboxManager(for: mailbox) {
