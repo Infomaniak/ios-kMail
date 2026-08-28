@@ -17,6 +17,8 @@
  */
 
 import AppIntents
+import Contacts
+import CoreSpotlight
 import InfomaniakDI
 import OSLog
 import SwiftSoup
@@ -58,6 +60,39 @@ extension IntentPerson {
         default:
             return Recipient(email: email, name: "Unknown")
         }
+    }
+
+    var searchableName: String? {
+        let name: String?
+        switch self.name {
+        case .displayName(let displayName):
+            name = displayName
+        case .components(let components):
+            name = components.formatted(.name(style: .long))
+        default:
+            name = nil
+        }
+
+        return name
+    }
+
+    var emailAddress: String? {
+        guard case .emailAddress(let emailAddress) = handle?.value else {
+            return nil
+        }
+        return emailAddress
+    }
+
+    var searchablePerson: CSPerson? {
+        guard searchableName != nil || emailAddress != nil else {
+            return nil
+        }
+
+        return CSPerson(
+            displayName: searchableName,
+            handles: emailAddress.map { [$0] } ?? [],
+            handleIdentifier: CNContactEmailAddressesKey
+        )
     }
 }
 

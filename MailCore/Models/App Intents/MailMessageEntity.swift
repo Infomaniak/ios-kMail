@@ -17,6 +17,7 @@
  */
 
 import AppIntents
+import Contacts
 import CoreSpotlight
 import InfomaniakDI
 import MailResources
@@ -97,32 +98,26 @@ public struct MailMessageEntity: IndexedEntity {
 
     public var attributeSet: CSSearchableItemAttributeSet {
         let set = CSSearchableItemAttributeSet(contentType: .emailMessage)
+        let recipients = to + cc + bcc
 
-        let senderName: String = {
-            if case .displayName(let name) = sender.name, !name.isEmpty {
-                return name
-            }
-            if case .emailAddress(let email) = sender.handle?.value {
-                return email
-            }
-            return ""
-        }()
-        set.displayName = senderName
-        set.authorNames = [senderName]
-        if case .emailAddress(let email) = sender.handle?.value {
-            set.authorEmailAddresses = [email]
-        }
-
+        set.displayName = subject ?? preview
         set.title = subject
-        set.subject = subject
-
         set.contentDescription = preview
-        set.textContent = preview
+        set.textContent = body.map { String($0.characters) } ?? preview
 
-        set.contentCreationDate = dateReceived
-        set.contentModificationDate = dateSent
-        set.mailboxIdentifiers = [mailbox.name]
+        set.authors = sender.searchablePerson.map { [$0] }
+        set.primaryRecipients = to.compactMap(\.searchablePerson)
+        set.additionalRecipients = cc.compactMap(\.searchablePerson)
+        set.hiddenAdditionalRecipients = bcc.compactMap(\.searchablePerson)
+        set.authorNames = sender.searchableName.map { [$0] }
+        set.authorEmailAddresses = sender.emailAddress.map { [$0] }
+        set.recipientNames = recipients.compactMap(\.searchableName)
+        set.recipientEmailAddresses = recipients.compactMap(\.emailAddress)
+
         set.accountIdentifier = account.id
+        set.accountHandles = [account.emailAddress]
+        set.domainIdentifier = mailbox.id
+        set.likelyJunk = NSNumber(value: isJunk)
 
         return set
     }
