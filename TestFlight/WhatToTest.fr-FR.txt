@@ -1,1 +1,3 @@
-- Correction de bugs
+- Recherche et ouverture des e-mails depuis Spotlight
+- Nouvelles actions Mail pour Siri et Raccourcis : créer et envoyer des brouillons, répondre, transférer, archiver et supprimer des e-mails
+- Correction de la traduction allemande du réglage du thème
