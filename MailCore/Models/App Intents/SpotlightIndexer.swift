@@ -21,66 +21,98 @@ import Foundation
 import InfomaniakDI
 import OSLog
 
-@available(iOS 18.4, *)
 public final class SpotlightIndexer {
     private static let logger = Logger(category: "SpotlightIndexer")
 
     public static let spotlightIndexName = "Infomaniak Mail"
     public static let maxIndexedMessages = 500
+    public static let shared = SpotlightIndexer()
 
-    public init() {}
+    private let operationQueue = SpotlightIndexOperationQueue()
 
-    public func indexAllMessages() async {
-        await deindexAllMessages()
-        @InjectService var mailboxInfosManager: MailboxInfosManager
-        @InjectService var accountManager: AccountManager
+    private init() {}
 
-        let date = Date()
+    public func indexAllMessages() {
+        guard #available(iOS 18.4, *) else {
+            return
+        }
 
-        let allMessages: [MailMessageEntity] = mailboxInfosManager.getMailboxes()
-            .filter { !$0.isLocked }
-            .flatMap { mailbox -> [MailMessageEntity] in
-                guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return [] }
+        Task {
+            await operationQueue.perform {
+                @InjectService var mailboxInfosManager: MailboxInfosManager
+                @InjectService var accountManager: AccountManager
 
-                return Array(
-                    mailboxManager
-                        .fetchResults(ofType: Message.self) { $0 }
-                        .sorted(by: \.date, ascending: false)
-                        .prefix(Self.maxIndexedMessages)
-                        .map { MailMessageEntity(message: $0, mailbox: mailbox) }
-                )
+                let date = Date()
+
+                let allMessages: [MailMessageEntity] = mailboxInfosManager.getMailboxes()
+                    .filter { !$0.isLocked }
+                    .flatMap { mailbox -> [MailMessageEntity] in
+                        guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return [] }
+
+                        return Array(
+                            mailboxManager
+                                .fetchResults(ofType: Message.self) { $0 }
+                                .sorted(by: \.date, ascending: false)
+                                .prefix(Self.maxIndexedMessages)
+                                .map { MailMessageEntity(message: $0, mailbox: mailbox) }
+                        )
+                    }
+
+                let cappedEntities = allMessages.max(count: Self.maxIndexedMessages) { $0.dateReceived > $1.dateReceived }
+
+                do {
+                    let searchableIndex = CSSearchableIndex(name: Self.spotlightIndexName)
+                    try await searchableIndex.deleteAppEntities(ofType: MailMessageEntity.self)
+                    try await searchableIndex.indexAppEntities(cappedEntities)
+                } catch {
+                    Self.logger.error("Failed to rebuild the Spotlight index: \(error)")
+                }
+
+                Self.logger
+                    .info("Indexed \(cappedEntities.count) messages in Spotlight in \(Date().timeIntervalSince(date)) seconds")
             }
-
-        let cappedEntities = allMessages.max(count: Self.maxIndexedMessages) { $0.dateReceived > $1.dateReceived }
-
-        try? await CSSearchableIndex(name: Self.spotlightIndexName).indexAppEntities(cappedEntities)
-
-        Self.logger.info("Indexed \(cappedEntities.count) messages in Spotlight in \(Date().timeIntervalSince(date)) seconds")
-    }
-
-    public func indexMessages(_ messages: [Message], mailbox: Mailbox) {
-        guard !messages.isEmpty else { return }
-        let entities = messages.map { MailMessageEntity(message: $0, mailbox: mailbox) }
-        Task {
-            try? await CSSearchableIndex(name: Self.spotlightIndexName).indexAppEntities(entities)
         }
     }
 
-    public func deindexMessages(_ messageUids: [MailMessageEntity.Identifier]) {
-        guard !messageUids.isEmpty else { return }
+    public func deindexMessagesForMailbox(ids: [String]) {
         Task {
-            try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(
-                identifiedBy: messageUids,
-                ofType: MailMessageEntity.self
-            )
+            await operationQueue.perform {
+                do {
+                    try await CSSearchableIndex(name: Self.spotlightIndexName).deleteSearchableItems(withDomainIdentifiers: ids)
+                } catch {
+                    Self.logger.error("Failed to remove a mailbox from Spotlight: \(error)")
+                }
+            }
         }
     }
 
-    public func deindexMessagesForMailbox(id: String) async {
-        try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteSearchableItems(withDomainIdentifiers: [id])
-    }
+    public func deindexAllMessages() {
+        guard #available(iOS 18.4, *) else {
+            return
+        }
 
-    public func deindexAllMessages() async {
-        try? await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
+        Task {
+            await operationQueue.perform {
+                do {
+                    try await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
+                } catch {
+                    Self.logger.error("Failed to clear the Spotlight index: \(error)")
+                }
+            }
+        }
+    }
+}
+
+private actor SpotlightIndexOperationQueue {
+    private var pendingOperation: Task<Void, Never>?
+
+    func perform(_ operation: @escaping @Sendable () async -> Void) async {
+        let previousOperation = pendingOperation
+        let operationTask = Task {
+            await previousOperation?.value
+            await operation()
+        }
+        pendingOperation = operationTask
+        await operationTask.value
     }
 }

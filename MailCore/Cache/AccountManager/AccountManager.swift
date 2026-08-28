@@ -423,11 +423,12 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         MailboxManager.deleteUserMailbox(userId: userId)
         ContactManager.deleteUserContacts(userId: userId)
-        mailboxInfosManager.removeMailboxesFor(userId: userId)
+        let removedMailboxIds = mailboxInfosManager.removeMailboxesFor(userId: userId)
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
         deviceManager.forgetLocalDeviceHash(forUserId: userId)
+        SpotlightIndexer.shared.deindexMessagesForMailbox(ids: removedMailboxIds)
 
         Task {
             @InjectService var mainViewStateStore: MainViewStateStore
@@ -465,6 +466,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func cleanAllRealms() async {
+        SpotlightIndexer.shared.deindexAllMessages()
+
         for account in accounts {
             for mailbox in mailboxInfosManager.getMailboxes(for: account.userId) {
                 if let mailboxManager = getMailboxManager(for: mailbox) {

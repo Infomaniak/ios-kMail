@@ -247,6 +247,8 @@ struct SplitView: View {
                 try? await mailboxManager.featureFlagsManager.fetchFlags()
             }
 
+            SpotlightIndexer.shared.indexAllMessages()
+
             draftManager.startSyncDraft(
                 mailboxManager: mainViewState.mailboxManager,
                 showSnackbar: false
