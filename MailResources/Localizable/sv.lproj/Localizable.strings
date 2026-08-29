@@ -1,12 +1,3 @@
-/*
- * Loco ios export: Xcode Strings (legacy)
- * Project: kMail
- * Locale: sv, Swedish
- * Tagged: ios
- * Exported by: Killian Mathias
- * Exported at: Mon, 15 Jun 2026 13:05:15 +0200
- */
-
 /* loco:62bb154d7513e127cb2e9c94 */
 "accentColorBlueTitle" = "Blå";
 
@@ -601,6 +592,9 @@
 /* loco:628c99d77702e65f5779df32 */
 "contentDescriptionButtonMenu" = "Meny";
 
+/* loco:6a7c79858c2c54ebea0ba793 */
+"contentDescriptionButtonModel" = "Knappen ”Modeller”";
+
 /* loco:630c6314609abb40215d6482 */
 "contentDescriptionButtonNext" = "Nästa";
 
@@ -1174,6 +1168,9 @@
 
 /* loco:69ca51d3ab0a8c7268007f32 */
 "messageTranslatedTitle" = "Översatt i %@";
+
+/* loco:6a7c76b7824c9644a0065fd2 */
+"modelsTitle" = "Modeller";
 
 /* loco:6723980d4062e74f78028152 */
 "mondayAfternoon" = "Måndag eftermiddag";
@@ -1954,6 +1951,9 @@
 
 /* loco:6995a893d03cfb81d80e25c2 */
 "unknownTag" = "Okänd";
+
+/* loco:6a7c761d2871d2ff210e14f2 */
+"unnamedModel" = "Modell utan namn";
 
 /* loco:690387a073a26a6c7a0ca602 */
 "unsubscribeButtonTitle" = "Avregistrera";
