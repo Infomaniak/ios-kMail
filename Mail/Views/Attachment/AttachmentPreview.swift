@@ -50,10 +50,16 @@ struct AttachmentPreview: View {
         NavigationStack {
             Group {
                 if FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
-                    PreviewController(url: attachment.getLocalURL(mailboxManager: mailboxManager))
+                    PreviewController(
+                        url: attachment.getLocalURL(mailboxManager: mailboxManager),
+                        mimeType: attachment.mimeType
+                    )
                 } else if let temporaryLocalUrl = attachment.temporaryLocalUrl,
                           FileManager.default.fileExists(atPath: temporaryLocalUrl) {
-                    PreviewController(url: URL(fileURLWithPath: temporaryLocalUrl))
+                    PreviewController(
+                        url: URL(fileURLWithPath: temporaryLocalUrl),
+                        mimeType: attachment.mimeType
+                    )
                 } else {
                     ProgressView()
                 }
