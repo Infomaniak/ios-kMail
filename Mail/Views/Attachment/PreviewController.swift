@@ -16,11 +16,38 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import PDFKit
 import QuickLook
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
-struct PreviewController: UIViewControllerRepresentable {
+struct PreviewController: View {
+    let url: URL
+    let mimeType: String
+
+    private var isPDF: Bool {
+        if UTType(mimeType: mimeType)?.conforms(to: .pdf) == true {
+            return true
+        }
+
+        return UTType(filenameExtension: url.pathExtension)?.conforms(to: .pdf) == true
+    }
+
+    var body: some View {
+        #if targetEnvironment(macCatalyst)
+        if isPDF {
+            PDFPreviewView(url: url)
+        } else {
+            QuickLookPreviewController(url: url)
+        }
+        #else
+        QuickLookPreviewController(url: url)
+        #endif
+    }
+}
+
+private struct QuickLookPreviewController: UIViewControllerRepresentable {
     let url: URL
 
     func makeUIViewController(context: Context) -> QLPreviewController {
@@ -38,9 +65,9 @@ struct PreviewController: UIViewControllerRepresentable {
     }
 
     class Coordinator: QLPreviewControllerDataSource {
-        let parent: PreviewController
+        let parent: QuickLookPreviewController
 
-        init(parent: PreviewController) {
+        init(parent: QuickLookPreviewController) {
             self.parent = parent
         }
 
@@ -53,3 +80,25 @@ struct PreviewController: UIViewControllerRepresentable {
         }
     }
 }
+
+#if targetEnvironment(macCatalyst)
+// On Mac Catalyst, the QuickLook preview is broken for PDF files.
+// The QL preview displays a static image of the first page of the PDF, and does not allow scrolling.
+private struct PDFPreviewView: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> PDFView {
+        let pdfView = PDFView()
+        pdfView.autoScales = true
+        pdfView.displayMode = .singlePageContinuous
+        pdfView.displayDirection = .vertical
+        pdfView.document = PDFDocument(url: url)
+        return pdfView
+    }
+
+    func updateUIView(_ pdfView: PDFView, context: Context) {
+        guard pdfView.document?.documentURL != url else { return }
+        pdfView.document = PDFDocument(url: url)
+    }
+}
+#endif
