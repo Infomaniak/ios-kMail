@@ -1553,15 +1553,6 @@
 /* loco:627a419ea4d53353fb587204 */
 "settingsOptionAskMe" = "Fråga mig";
 
-/* loco:627a40fe23cf464d52393803 */
-"settingsOptionDarkTheme" = "Mörk";
-
-/* loco:627a40e8203b0403f20a0db5 */
-"settingsOptionLightTheme" = "Ljus";
-
-/* loco:62cfb94ffe73905627441c62 */
-"settingsOptionSystemTheme" = "System";
-
 /* loco:627a413a4a9b8944955fd206 */
 "settingsOptionThreadModeConversation" = "Konversationer";
 

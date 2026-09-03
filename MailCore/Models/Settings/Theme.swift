@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreUIResources
 import MailResources
 import SwiftUI
 
@@ -48,11 +49,11 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .light:
-            return MailResourcesStrings.Localizable.settingsOptionLightTheme
+            return InfomaniakCoreUIResources.CoreUILocalizable.themeLight
         case .dark:
-            return MailResourcesStrings.Localizable.settingsOptionDarkTheme
+            return InfomaniakCoreUIResources.CoreUILocalizable.themeDark
         case .system:
-            return MailResourcesStrings.Localizable.settingsOptionSystemTheme
+            return InfomaniakCoreUIResources.CoreUILocalizable.themeSystem
         }
     }
 
