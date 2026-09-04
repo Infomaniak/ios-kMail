@@ -37,7 +37,7 @@ public final class ConfigWebServer {
     ) ?? ""
 
     public init() {
-        // Empty init for DI
+        server.listenAddressIPv4 = "127.0.0.1"
     }
 
     public func start(
@@ -74,7 +74,7 @@ public final class ConfigWebServer {
         }
 
         do {
-            try server.start()
+            try server.start(forceIPv4: true)
         } catch {
             Logger.general.error("Error starting config server \(error)")
         }
