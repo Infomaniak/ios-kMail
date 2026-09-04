@@ -1,3 +1,1 @@
-- Search for and open emails from Spotlight
-- New Mail actions for Siri and Shortcuts: create and send drafts, reply to, forward, archive and delete emails
-- Fixed the German translation of the theme setting
+- Bug fixes and improvements
