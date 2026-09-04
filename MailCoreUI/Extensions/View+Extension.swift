@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AppIntents
 import DesignSystem
 import InfomaniakCoreCommonUI
 import MailCore
@@ -72,6 +73,14 @@ public extension View {
             if isEmpty {
                 emptyView()
             }
+        }
+    }
+
+    func appEntityIdentifierIfAvailable(_ identifier: EntityIdentifier?) -> some View {
+        if #available(iOS 18.4, *) {
+            return appEntityIdentifier(identifier)
+        } else {
+            return self
         }
     }
 }
