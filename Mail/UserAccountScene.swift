@@ -65,6 +65,13 @@ struct UserAccountScene: Scene {
                     .standardWindow()
                     .environmentObject(mainViewState.mailboxManager)
                     .environment(\.currentUser, MandatoryEnvironmentContainer(value: user))
+                    .environmentObject(ActionsProvider(
+                        currentUser: user,
+                        featureAvailableProvider: mainViewState.mailboxManager.featureAvailableProvider,
+                        currentEmail: mainViewState.mailboxManager.mailbox.email,
+                        threadViewState: ThreadViewState(),
+                        colorScheme: .light
+                    ))
             }
         }
         .defaultAppStorage(.shared)
