@@ -62,6 +62,7 @@ public class MailError: LocalizedError, Encodable, ErrorWithCode {
     public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
     public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
     public static let noMailbox = MailError(code: "noMailbox")
+    public static let draftNotFound = MailError(code: "draftNotFound", shouldDisplay: false)
     public static let folderNotFound = MailError(code: "folderNotFound",
                                                  localizedDescription: MailResourcesStrings.Localizable.errorFolderNotFound,
                                                  shouldDisplay: true)

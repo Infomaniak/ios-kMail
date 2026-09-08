@@ -60,7 +60,9 @@ struct ComposeMessageHeaderView: View {
                 type: .to,
                 areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty,
                 isRecipientLimitExceeded: isRecipientLimitExceeded
-            )
+            ) { recipients in
+                try append(recipients, to: \.to, in: draft)
+            }
             .accessibilityElement(children: .contain)
 
             if showRecipientsFields {
@@ -71,7 +73,9 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .cc,
                     isRecipientLimitExceeded: isRecipientLimitExceeded
-                )
+                ) { recipients in
+                    try append(recipients, to: \.cc, in: draft)
+                }
                 .accessibilityLabel(MailResourcesStrings.Localizable.ccTitle)
 
                 ComposeMessageCellRecipients(
@@ -81,7 +85,9 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .bcc,
                     isRecipientLimitExceeded: isRecipientLimitExceeded
-                )
+                ) { recipients in
+                    try append(recipients, to: \.bcc, in: draft)
+                }
                 .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
             }
 
@@ -95,6 +101,22 @@ struct ComposeMessageHeaderView: View {
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
+        }
+    }
+
+    private func append(
+        _ recipients: [Recipient],
+        to keyPath: ReferenceWritableKeyPath<Draft, RealmSwift.List<Recipient>>,
+        in draft: Draft
+    ) throws {
+        guard !draft.isInvalidated,
+              let liveDraft = draft.thaw(),
+              let realm = liveDraft.realm else {
+            throw MailError.draftNotFound
+        }
+
+        try realm.safeWrite {
+            liveDraft[keyPath: keyPath].append(objectsIn: recipients)
         }
     }
 }
