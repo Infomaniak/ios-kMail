@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -177,9 +178,41 @@ struct MenuDrawerView: View {
 }
 
 struct AppVersionView: View {
+    @State private var archiveURL: IdentifiableURL?
+    @State private var isCreatingArchive = false
+
     var body: some View {
         Text(Constants.appVersionLabel)
             .textStyle(.labelSecondary)
+            .onTapGesture(count: 5) {
+                createRealmArchive()
+            }
+            .sheet(item: $archiveURL) { archiveURL in
+                ActivityView(activityItems: [archiveURL.url])
+                    .ignoresSafeArea(edges: [.bottom])
+                    .presentationDetents([.medium, .large])
+                    .onDisappear {
+                        try? FileManager.default.removeItem(at: archiveURL.url)
+                    }
+            }
+    }
+
+    private func createRealmArchive() {
+        guard !isCreatingArchive else { return }
+        isCreatingArchive = true
+
+        Task {
+            defer {
+                isCreatingArchive = false
+            }
+
+            do {
+                archiveURL = try await IdentifiableURL(url: RealmDebugArchiveBuilder().createArchive())
+            } catch {
+                @InjectService var snackbarPresenter: IKSnackBarPresentable
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            }
+        }
     }
 }
 
