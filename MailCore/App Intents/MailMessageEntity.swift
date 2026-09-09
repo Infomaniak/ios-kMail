@@ -56,7 +56,7 @@ public struct MailMessageEntity: IndexedEntity {
     public static let defaultQuery = MailMessageEntityQuery()
 
     public static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "Message")
+        TypeDisplayRepresentation(name: "emailLabel")
     }
 
     // MARK: Properties

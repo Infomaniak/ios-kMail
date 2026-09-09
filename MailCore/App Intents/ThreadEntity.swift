@@ -27,6 +27,10 @@ public struct MailThreadEntity: IndexedEntity {
 
     public static let defaultQuery = MailThreadEntityQuery()
 
+    public static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "conversationLabel")
+    }
+
     // MARK: Properties
 
     public let id: String

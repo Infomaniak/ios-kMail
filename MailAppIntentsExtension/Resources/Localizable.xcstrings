@@ -1,0 +1,753 @@
+{
+    "sourceLanguage": "en",
+    "strings": {
+        "activeFocusFilterTitle": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrering af postkasser"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtern von Postfächern"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Φιλτράρισμα γραμματοκιβωτίων"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtering mailboxes"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrado de buzones"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postilaatikoiden suodatus"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrage des boîtes aux lettres"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrare le caselle di posta elettronica"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrering av postbokser"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Mailboxen filteren"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrowanie skrzynek pocztowych"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtragem das caixas de correio"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrering av brevlådor"
+                    }
+                }
+            }
+        },
+        "conversationLabel": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Samtale"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Gespräch"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Συνομιλία"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Conversation"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Conversación"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Keskustelu"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Conversation"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Conversazione"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Samtale"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Gesprek"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Rozmowa"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Conversa"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Samtal"
+                    }
+                }
+            }
+        },
+        "draftLabel": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Udkast"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Entwurf"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Πρόχειρο κείμενο"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Draft"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Borrador"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Luonnos"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Brouillon"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Bozza"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Utkast"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Concept"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Projekt"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Rascunho"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Utkast"
+                    }
+                }
+            }
+        },
+        "emailLabel": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-Mail"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Ηλεκτρονικό ταχυδρομείο"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Email"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Correo electrónico"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Sähköposti"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-post"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mail"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-post"
+                    }
+                }
+            }
+        },
+        "filterFocusAllowedMailboxesTitle": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tilladte postkasser"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Erlaubte Mailboxen"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Επιτρεπόμενα γραμματοκιβώτια"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Allowed mailboxes"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Buzones autorizados"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Sallitut postilaatikot"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Boîtes aux lettres autorisées"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Cassette postali autorizzate"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tillatte postbokser"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Toegestane mailboxen"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Dozwolone skrzynki pocztowe"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Caixas de correio permitidas"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tillåtna brevlådor"
+                    }
+                }
+            }
+        },
+        "filterFocusDescription": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tillad notifikationer for valgte postkasser."
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Benachrichtigungen für ausgewählte Postfächer zulassen."
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Επιτρέψτε ειδοποιήσεις για τα επιλεγμένα γραμματοκιβώτια."
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Allow notifications for selected mailboxes."
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Permitir notificaciones para buzones seleccionados."
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Salli ilmoitukset valituille postilaatikoille."
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Autoriser les notifications pour les boîtes aux lettres sélectionnées."
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Consentire le notifiche per le caselle postali selezionate."
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tillat varsler for valgte postbokser."
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Meldingen toestaan voor geselecteerde mailboxen."
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Zezwól na powiadomienia dla wybranych skrzynek pocztowych."
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Permitir notificações para as caixas de correio selecionadas."
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Tillåt notiser för valda brevlådor."
+                    }
+                }
+            }
+        },
+        "filterFocusTitle": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrer postkasser"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Mailboxen filtern"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Φιλτράρισμα γραμματοκιβωτίων"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filter mailboxes"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrar buzones"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Suodata postilaatikoita"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrer les boîtes aux lettres"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrare le caselle di posta"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrer postbokser"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Mailboxen filteren"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtruj skrzynki pocztowe"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrar caixas de correio"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Filtrera brevlådor"
+                    }
+                }
+            }
+        },
+        "mailboxLabel": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postkasse"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postfach"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Θυρίδα αλληλογραφίας"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Mailbox"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Buzón"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postilaatikko"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Boîte aux lettres"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Casella di posta"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postkasse"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postvak"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Skrzynka pocztowa"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Caixa de correio"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Postlåda"
+                    }
+                }
+            }
+        },
+        "settingsSectionEmailAddresses": {
+            "extractionState": "manual",
+            "localizations": {
+                "da": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mailadresser"
+                    }
+                },
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-Mail-Adressen"
+                    }
+                },
+                "el": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Διευθύνσεις email"
+                    }
+                },
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Email addresses"
+                    }
+                },
+                "es": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Direcciones de correo electrónico"
+                    }
+                },
+                "fi": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Sähköpostiosoitteet"
+                    }
+                },
+                "fr": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Adresses mail"
+                    }
+                },
+                "it": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Indirizzi e-mail"
+                    }
+                },
+                "nb": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-postadresser"
+                    }
+                },
+                "nl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-mailadressen"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Adresy email"
+                    }
+                },
+                "pt": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Endereços de e-mail"
+                    }
+                },
+                "sv": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "E-postadresser"
+                    }
+                }
+            }
+        }
+    },
+    "version": "1.0"
+}
