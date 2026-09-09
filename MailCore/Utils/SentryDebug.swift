@@ -25,6 +25,21 @@ import RealmSwift
 import Sentry
 
 public enum SentryDebug {
+    private static let discardedURLErrorCodes: Set<Int> = [
+        NSURLErrorCancelled,
+        NSURLErrorTimedOut,
+        NSURLErrorCannotFindHost,
+        NSURLErrorCannotConnectToHost,
+        NSURLErrorNetworkConnectionLost,
+        NSURLErrorDNSLookupFailed,
+        NSURLErrorResourceUnavailable,
+        NSURLErrorNotConnectedToInternet,
+        NSURLErrorInternationalRoamingOff,
+        NSURLErrorCallIsActive,
+        NSURLErrorDataNotAllowed,
+        NSURLErrorBackgroundSessionWasDisconnected
+    ]
+
     public static func setUserId(_ userId: Int) {
         guard userId != 0 else { return }
         let user = Sentry.User(userId: "\(userId)")
@@ -203,21 +218,25 @@ public enum SentryDebug {
     }
 
     private static func shouldSendToSentry(error: Error) -> Bool {
+        if error is CancellationError {
+            return false
+        }
+
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain, discardedURLErrorCodes.contains(nsError.code) {
+            return false
+        }
+
         let possibleAfError = (error as? AFErrorWithContext)?.afError ?? error.asAFError
 
         if let possibleAfError {
             if possibleAfError.isExplicitlyCancelledError {
                 return false
-            } else if [NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut]
-                .contains((possibleAfError.underlyingError as? NSError)?.code) {
-                return false
-            } else {
-                return true
             }
-        } else if let wrappedAfError = (error as? AFErrorWithContext)?.afError {
-            return shouldSendToSentry(error: wrappedAfError)
-        } else if error is CancellationError {
-            return false
+
+            if let underlyingError = possibleAfError.underlyingError {
+                return shouldSendToSentry(error: underlyingError)
+            }
         }
 
         return true
