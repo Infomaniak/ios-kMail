@@ -56,7 +56,7 @@ public struct MailMessageEntity: IndexedEntity {
     public static let defaultQuery = MailMessageEntityQuery()
 
     public static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "Message")
+        TypeDisplayRepresentation(name: "emailLabel")
     }
 
     // MARK: Properties
@@ -251,6 +251,7 @@ extension MailMessageEntity {
 // MARK: - Category enum
 
 @available(iOS 18.0, *)
+@AppEnum(schema: .mail.category)
 public enum MailCategory: String, Sendable {
     case `default`
 
