@@ -118,6 +118,7 @@ struct MessageView: View {
                 threadForcedExpansion[message.uid] = isMessageExpanded ? .collapsed : .expanded
             }
         }
+        .appEntityIdentifierIfAvailable(message.appEntityIdentifier(mailboxId: mailboxManager.mailboxObjectId))
     }
 }
 

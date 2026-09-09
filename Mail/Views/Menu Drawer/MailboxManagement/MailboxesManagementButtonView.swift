@@ -87,6 +87,7 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
+        .appEntityIdentifierIfAvailable(mailbox.appEntityIdentifier())
     }
 }
 
