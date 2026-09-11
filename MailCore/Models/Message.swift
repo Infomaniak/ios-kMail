@@ -379,7 +379,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
 
-    public func canReplyAll(currentMailboxEmail: String, aliases: [String]) -> Bool {
+    public func canReplyAll(currentMailboxEmail: String, aliases: [String] = []) -> Bool {
         let holder = recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail, aliases: aliases)
         return !holder.cc.isEmpty
     }
@@ -617,7 +617,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         emojiReaction: String? = nil,
         emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil,
         acknowledge: String? = nil,
-        mentions: [String],
+        mentions: [String] = [],
         reminder: Reminder? = nil
     ) {
         self.init()
