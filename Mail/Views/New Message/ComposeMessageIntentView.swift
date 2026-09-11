@@ -131,7 +131,9 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: .followUp)
                 maybeMessageReply = messageReply
                 draftToWrite = Draft.replying(
-                    reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email
+                    reply: messageReply,
+                    currentMailboxEmail: mailboxManager.mailbox.email,
+                    aliases: mailboxManager.mailbox.aliases.toArray()
                 )
             }
         }
