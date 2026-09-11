@@ -47,6 +47,8 @@ struct ComposeMessageBodyView: View {
     @Binding var isShowingAI: Bool
     @Binding var selectedText: String
     @Binding var mentionQuery: String
+    @Binding var isShowingMailTemplatePanel: Bool
+
     let draft: Draft
     let aliases: [String]
     let editorBox: EditorBox
@@ -78,6 +80,7 @@ struct ComposeMessageBodyView: View {
                 isShowingLinkAlert: $isShowingLinkAlert,
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingAI: $isShowingAI,
+                isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
                 textAttributes: textAttributes
             )
             .onJavaScriptFunctionFail(perform: reportJavaScriptError)
@@ -119,6 +122,8 @@ struct ComposeMessageBodyView: View {
             disableDragAndDrop(editor: editor)
 
             editor.webView.loadUserScript(.fixEmailStyle)
+
+            editor.webView.loadUserScript(.insertHTMLAtCaret)
 
             if mailboxManager.featureFlagsManager.isEnabled(.mailComposeMention) {
                 activateMentions(for: editor)
@@ -202,6 +207,7 @@ struct ComposeMessageBodyView: View {
         isShowingAI: .constant(false),
         selectedText: .constant(""),
         mentionQuery: .constant(""),
+        isShowingMailTemplatePanel: .constant(false),
         draft: draft,
         aliases: [],
         editorBox: EditorBox(),

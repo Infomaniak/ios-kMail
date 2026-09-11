@@ -110,6 +110,8 @@ struct ComposeMessageView: View {
 
     @State private var isShowingEncryptStatePanel = false
 
+    @State private var isShowingMailTemplatePanel = false
+
     @State private var editorFrame: CGRect?
 
     @State private var selectedText = ""
@@ -220,6 +222,7 @@ struct ComposeMessageView: View {
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
                         mentionQuery: $mentionQuery,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
                         draft: draft,
                         aliases: aliases,
                         editorBox: editorBox,
@@ -308,6 +311,7 @@ struct ComposeMessageView: View {
                         isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText
@@ -421,6 +425,7 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
+        .mailTemplateFloatingPanel(isPresented: $isShowingMailTemplatePanel, editorBox: editorBox, draft: draft)
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
