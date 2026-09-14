@@ -28,6 +28,7 @@ enum SyncProfileStep {
 struct SyncProfileNavigationView: View {
     @Environment(\.dismiss) private var dismiss
 
+    // periphery:ignore - Used in body
     @State private var navigationPath: [SyncProfileStep] = []
 
     var body: some View {

@@ -31,7 +31,7 @@ struct SettingsNavigationView: View {
     @State private var navigationPath: [SettingsDestination]
 
     init(baseNavigationPath: [SettingsDestination]) {
-        _navigationPath = State(wrappedValue: baseNavigationPath)
+        navigationPath = baseNavigationPath
     }
 
     var body: some View {

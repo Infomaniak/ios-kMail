@@ -23,45 +23,7 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-/// Something to deal with the tracking and Upload of Attachments linked to a Draft.
-/// periphery:ignore - AttachmentsManageable is needed in case we later want to do tests
-@MainActor protocol AttachmentsManageable {
-    /// Live Attachments linked to the Draft
-    var liveAttachments: [Attachment] { get }
-
-    /// True if all uploaded
-    var allAttachmentsUploaded: Bool { get }
-
-    /// First error encountered
-    var globalError: MailError? { get }
-
-    /// Init a concrete manager type
-    /// - Parameters:
-    ///   - draftLocalUUID: the primary key of the draft
-    ///   - mailboxManager: the mailbox manager linked to this draft
-    init(draftLocalUUID: String, mailboxManager: MailboxManager)
-
-    /// Marks all uploads as done
-    func completeUploadedAttachments() async
-
-    /// Lookup and return _or_ new object representing a finished task instead.
-    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask
-
-    /// Removes an attachment for a specific primary key
-    /// - Parameter attachmentUUID: primary key of the object
-    func removeAttachment(_ attachmentUUID: String)
-
-    /// Uploads remotely a collection of `Attachable`
-    /// - Parameters:
-    ///   - attachments: collection of `Attachable`
-    ///   - draft: Draft containing the attachments
-    ///   - disposition: Is it inline ?
-    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition)
-}
-
-/// Something to track `Attachments` linked to a live `Draft`
-/// periphery:ignore - AttachmentsManageable is needed in case we later want to do tests
-@MainActor final class AttachmentsManager: ObservableObject, AttachmentsManageable {
+@MainActor final class AttachmentsManager: ObservableObject {
     /// Async attachment operations
     private let worker: AttachmentsManagerWorker
 

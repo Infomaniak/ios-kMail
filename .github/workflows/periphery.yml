@@ -8,7 +8,7 @@ concurrency:
 
 jobs:
   periphery:
-    uses: infomaniak/.github/.github/workflows/periphery.yml@643f8b476110ffb97aeabfa86ad9ff3da70dfa33
+    uses: infomaniak/.github/.github/workflows/periphery.yml@v2
     with:
       developer_dir: /Applications/Xcode-27.app/Contents/Developer
       setup_step: |

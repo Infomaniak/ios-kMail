@@ -27,7 +27,6 @@ extension MessagesWorker {
         case cantFetchMessage
     }
 
-    // periphery:ignore - Used as a cache key for presentable bodies
     struct PresentableBodyCacheKey: Hashable {
         let messageUid: String
         let isShowingTranslated: Bool

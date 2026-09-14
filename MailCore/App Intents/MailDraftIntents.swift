@@ -102,7 +102,6 @@ struct UpdateDraftIntent {
     var bcc: [IntentPerson]?
     var subject: String?
     var body: AttributedString?
-    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]?
 

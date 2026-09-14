@@ -43,6 +43,7 @@ struct SearchToolbar: ViewModifier {
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
     @State private var multipleSelectedMessages: [Message]?
+    // periphery:ignore - Used in body
     @State private var messagesToMove: [Message]?
 
     @ObservedObject var viewModel: SearchViewModel

@@ -34,6 +34,7 @@ struct AccountListView: View {
 
     @Environment(\.currentUser) private var currentUser
 
+    // periphery:ignore - Used in body
     @State private var isShowingNewAccountView = false
     @State private var users: [UserProfile]?
 

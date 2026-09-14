@@ -64,8 +64,11 @@ extension View {
 struct ScheduleFloatingPanel: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    // periphery:ignore - Used in body
     @State private var isShowingMyKSuiteUpgrade = false
+    // periphery:ignore - Used in body
     @State private var isShowingKSuiteProUpgrade = false
+    // periphery:ignore - Used in body
     @State private var isShowingMailPremiumUpgrade = false
     @State private var panelShouldBeShown = false
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isShowingCustomScheduleAlert: Bool

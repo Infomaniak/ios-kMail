@@ -68,7 +68,6 @@ struct ForwardMailIntent: AppIntent, ReplyForwardIntent {
     var cc: [IntentPerson]
     var bcc: [IntentPerson]
     var subject: String?
-    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]
 
@@ -96,7 +95,6 @@ struct ReplyMailIntent: AppIntent, ReplyForwardIntent {
     var target: MailMessageEntity
     var body: AttributedString?
     var subject: String?
-    // periphery:ignore - Used by AppIntent macro
     var account: MailAccountEntity?
     var attachments: [IntentFile]
     var to: [IntentPerson]
@@ -131,7 +129,6 @@ struct UpdateMailIntent {
     var isRead: Bool?
     var isFlagged: Bool?
     var isJunk: Bool?
-    // periphery:ignore - Used by AppIntent macro
     var mailbox: MailboxEntity?
 
     func perform() async throws -> some IntentResult {
