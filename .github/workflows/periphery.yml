@@ -10,6 +10,7 @@ jobs:
   periphery:
     uses: infomaniak/.github/.github/workflows/periphery.yml@v2
     with:
+      developer_dir: /Applications/Xcode-27.app/Contents/Developer
       setup_step: |
         echo -e "enum Env {\n static let token = \"\"\n static let userId = 0\n static let mailboxId = 0\n static let mailboxUuid = \"\"\n}" > MailTests/Env.swift;
         echo -e "enum Env {\n static let testAccountEmail = \"\"\n static let testAccountPassword = \"\"\n}" > MailUITests/Env.swift;

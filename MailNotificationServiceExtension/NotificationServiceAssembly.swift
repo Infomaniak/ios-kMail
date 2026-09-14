@@ -25,7 +25,6 @@ import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
 
-// periphery:ignore - Used by DI
 class NotificationServiceTargetAssembly: MailAppTargetAssembly {
     override class func getTargetServices() -> [Factory] {
         return [

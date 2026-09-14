@@ -104,8 +104,11 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+    // periphery:ignore - Used in body
     @State private var isShowingMyKSuitePanel = false
+    // periphery:ignore - Used in body
     @State private var isShowingKSuiteProPanel = false
+    // periphery:ignore - Used in body
     @State private var isShowingMailPremiumPanel = false
 
     @State private var isShowingEncryptStatePanel = false

@@ -20,11 +20,9 @@ import AppIntents
 import Foundation
 import InfomaniakDI
 
-@available(iOS 18.4, *)
+@available(iOS 27.0, *)
+@AppIntent(schema: .mail.openMessage)
 struct MailMessageOpenIntent: OpenIntent {
-    static let title: LocalizedStringResource = "Open Message"
-
-    @Parameter(title: "Message")
     var target: MailMessageEntity
 
     init() {}

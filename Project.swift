@@ -282,10 +282,7 @@ let project = Project(name: "Mail",
                                       ]
                                   ]),
                                   sources: ["MailAppIntentsExtension/**"],
-                                  resources: [
-                                      "MailResources/**/*.strings",
-                                      "MailResources/**/*.stringsdict"
-                                  ],
+                                  resources: ["MailAppIntentsExtension/Resources/Localizable.xcstrings"],
                                   entitlements: "MailResources/MailExtensions.entitlements",
                                   dependencies: [
                                       .target(name: "MailCore"),
@@ -320,6 +317,7 @@ let project = Project(name: "Mail",
                                   deploymentTargets: Constants.deploymentTarget,
                                   infoPlist: "MailCore/Info.plist",
                                   sources: "MailCore/**",
+                                  resources: ["MailAppIntentsExtension/Resources/Localizable.xcstrings"],
                                   dependencies: [
                                       .target(name: "MailResources"),
                                       .external(name: "Alamofire"),

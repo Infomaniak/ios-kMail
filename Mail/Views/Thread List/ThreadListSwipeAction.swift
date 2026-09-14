@@ -69,6 +69,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsProvider: ActionsProvider
 
+    // periphery:ignore - Used in body
     @State private var actionPanelMessages: [Message]?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var messagesToSnooze: [Message]?

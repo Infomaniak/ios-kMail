@@ -54,6 +54,10 @@ public struct MailDraftEntity: IndexedEntity {
 
     public static let defaultQuery = MailDraftEntityQuery()
 
+    public static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "draftLabel")
+    }
+
     // MARK: Properties
 
     public let id: Identifier

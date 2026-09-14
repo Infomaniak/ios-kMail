@@ -68,8 +68,7 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         return userFeatures.contains(feature)
     }
 
-    // periphery:ignore - Reserved for future use
-    private func isEnabledLocally(_ feature: FeatureFlag) -> Bool {
+    private func isEnabledLocally(_ _: FeatureFlag) -> Bool {
         true
     }
 

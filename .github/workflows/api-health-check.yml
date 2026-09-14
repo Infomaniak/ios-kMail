@@ -13,7 +13,9 @@ jobs:
   api-tests:
     name: Run API Tests
     runs-on: [ self-hosted, iOS ]
-
+    env:
+        DEVELOPER_DIR: /Applications/Xcode-27.app/Contents/Developer
+        
     steps:
       - name: Checkout
         uses: actions/checkout@v6

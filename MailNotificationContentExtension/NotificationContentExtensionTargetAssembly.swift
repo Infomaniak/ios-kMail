@@ -22,7 +22,6 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 
-// periphery:ignore - Used by DI
 class NotificationContentExtensionTargetAssembly: CommonAppAndShareTargetAssembly {
     override class func getTargetServices() -> [Factory] {
         return [

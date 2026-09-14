@@ -28,7 +28,7 @@ public struct MailboxEntity: IndexedEntity {
     public static let defaultQuery = MailboxEntityQuery()
 
     public static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "Mailbox")
+        TypeDisplayRepresentation(name: "mailboxLabel")
     }
 
     // MARK: Properties
