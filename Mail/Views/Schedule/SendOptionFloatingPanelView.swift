@@ -204,7 +204,6 @@ struct SendOptionFloatingPanelView: View {
             } else {
                 // Reset when toggled OFF
                 draft.setReminderOption(nil, mailboxManager: mailboxManager)
-                draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
             }
         }
         .onChange(of: isScheduleEnabled) { newValue in
