@@ -243,6 +243,7 @@ struct ComposeMessageView: View {
                     }
                 }
             }
+            .appEntityIdentifierIfAvailable(draft.appEntityIdentifier(mailboxId: mailboxManager.mailboxObjectId))
         }
         .scrollDismissesKeyboard(.interactively)
         .gesture(
