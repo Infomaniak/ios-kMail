@@ -66,6 +66,7 @@ struct ComposeMessageCellRecipients: View {
     var areCCAndBCCEmpty = false
 
     let isRecipientLimitExceeded: Bool
+    let appendRecipients: ([Recipient]) throws -> Void
 
     private let emailSeparators = CharacterSet(charactersIn: ",; ")
 
@@ -175,7 +176,7 @@ struct ComposeMessageCellRecipients: View {
         do {
             let mergedContacts = extractContacts(contact)
             let validContacts = try recipientCheck(mergedContacts: mergedContacts)
-            convertMergedContactsToRecipients(validContacts)
+            try convertMergedContactsToRecipients(validContacts)
         } catch RecipientError.invalidEmail {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
         } catch RecipientError.duplicateContact {
@@ -223,13 +224,15 @@ struct ComposeMessageCellRecipients: View {
         return Array(newUniqueContacts.prefix(max(remainingCapacity, 0)))
     }
 
-    private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
-        for mergedContact in mergedContacts {
+    private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) throws {
+        let newRecipients = mergedContacts.map { mergedContact in
             let newRecipient = Recipient(email: mergedContact.email, name: mergedContact.name)
-            withAnimation {
-                newRecipient.isAddedByMe = true
-                $recipients.append(newRecipient)
-            }
+            newRecipient.isAddedByMe = true
+            return newRecipient
+        }
+
+        try withAnimation {
+            try appendRecipients(newRecipients)
         }
     }
 }
@@ -241,7 +244,9 @@ struct ComposeMessageCellRecipients: View {
         autocompletionType: .constant(nil),
         type: .bcc,
         isRecipientLimitExceeded: false
-    )
+    ) { recipients in
+        PreviewHelper.sampleRecipientsList.append(objectsIn: recipients)
+    }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
