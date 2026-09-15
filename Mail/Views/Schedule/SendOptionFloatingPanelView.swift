@@ -94,6 +94,19 @@ struct SendOptionFloatingPanelView: View {
 
             IKDivider(type: .item)
 
+            Toggle(isOn: $draft.ackRequest) {
+                Label {
+                    Text(MailResourcesStrings.Localizable.settingsSendAcknowledgementTitle)
+                } icon: {
+                    MailResourcesAsset.envelopeCircleCheck.iconSize(.large)
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+            .tint(.accentColor)
+            .padding(value: .medium)
+
+            IKDivider(type: .item)
+
             if mailboxManager.featureAvailableProvider.isAvailable(.reminder) {
                 Toggle(isOn: $isReminderEnabled) {
                     Label {
