@@ -333,8 +333,6 @@ public extension DraftContentManager {
                 liveIncompleteDraft.attachments.append(attachment)
             }
 
-            liveIncompleteDraft.ackRequest = UserDefaults.shared.acknowledgement
-
             updatedDraftBody = liveIncompleteDraft.body
         }
 
