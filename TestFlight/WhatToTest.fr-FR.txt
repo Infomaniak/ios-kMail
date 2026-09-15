@@ -1,1 +1,3 @@
-- Correction de bugs et améliorations
+- Amélioration de la recherche Spotlight et des actions Mail pour Siri et Raccourcis sous iOS 27
+- Correction de l’ajout de destinataires à un brouillon devenu indisponible
+- Correction d’actions manquantes sur macOS
