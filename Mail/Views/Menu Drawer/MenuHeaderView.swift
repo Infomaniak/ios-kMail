@@ -44,13 +44,16 @@ struct MenuHeaderViewModifier: ViewModifier {
         if navigationDrawerState.useNativeToolbar && !isCompactWindow {
             content
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        if #available(iOS 26.0, *) {
+                    if #available(iOS 26.0, *) {
+                        ToolbarItem(placement: .topBarLeading) {
                             MailResourcesAsset.logoMail.swiftUIImage
                                 .resizable()
                                 .scaledToFit()
                                 .padding(2)
-                        } else {
+                        }
+                        .sharedBackgroundVisibility(.hidden)
+                    } else {
+                        ToolbarItem(placement: .topBarLeading) {
                             logoImage(Image(uiImage: MailResourcesAsset.logoText.image))
                                 .accessibilityHidden(true)
                         }

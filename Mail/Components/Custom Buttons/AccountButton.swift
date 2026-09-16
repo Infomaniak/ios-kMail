@@ -35,32 +35,31 @@ struct AccountButton: View {
     @State private var isShowingNewAccountListView = false
 
     var body: some View {
-        Button {
-            isShowingNewAccountListView = true
-        } label: {
-            AvatarView(mailboxManager: mailboxManager,
-                       contactConfiguration: .user(user: currentUser.value))
-                .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
-        }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 5.0, coordinateSpace: .local)
-                .onEnded { value in
-                    switch (value.translation.width, value.translation.height) {
-                    case (-100 ... 100, ...0):
-                        switchToNextAccount(goingUp: true)
-                    case (-100 ... 100, 0...):
-                        switchToNextAccount(goingUp: false)
-                    default:
-                        break
+        AvatarView(mailboxManager: mailboxManager,
+                   contactConfiguration: .user(user: currentUser.value))
+            .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
+            .onTapGesture {
+                isShowingNewAccountListView = true
+            }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 5.0, coordinateSpace: .local)
+                    .onEnded { value in
+                        switch (value.translation.width, value.translation.height) {
+                        case (-100 ... 100, ...0):
+                            switchToNextAccount(goingUp: true)
+                        case (-100 ... 100, 0...):
+                            switchToNextAccount(goingUp: false)
+                        default:
+                            break
+                        }
                     }
-                }
-        )
-        .mailFloatingPanel(
-            isPresented: $isShowingNewAccountListView,
-            title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
-        ) {
-            AccountListView(mailboxManager: mailboxManager)
-        }
+            )
+            .mailFloatingPanel(
+                isPresented: $isShowingNewAccountListView,
+                title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+            ) {
+                AccountListView(mailboxManager: mailboxManager)
+            }
     }
 
     private func switchToNextAccount(goingUp: Bool) {
