@@ -1,3 +1,1 @@
-- Improved Spotlight search and Mail actions for Siri and Shortcuts on iOS 27
-- Fixed recipients being added to a draft after it became unavailable
-- Fixed missing actions on macOS
+- Bug fixes
