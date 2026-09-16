@@ -25,7 +25,7 @@ extension AttributedString {
         case .textPlain:
             self = AttributedString(value)
         case .textHtml, nil:
-            guard let htmlAttributedString = AttributedString(htmlString: value) else {
+            guard let htmlAttributedString = AttributedString(htmlString: value, shouldSanitize: false) else {
                 return nil
             }
 
@@ -33,14 +33,22 @@ extension AttributedString {
         }
     }
 
-    init?(htmlString: String) {
-        guard let document = try? SwiftSoupUtils(fromHTML: htmlString).syncCleanBody(),
-              let body = document.body(),
-              let sanitizedHTML = try? body.outerHtml() else {
-            return nil
+    init?(htmlString: String, shouldSanitize: Bool) {
+        if shouldSanitize {
+            guard let document = try? SwiftSoupUtils(fromHTML: htmlString).syncCleanBody(),
+                  let body = document.body(),
+                  let sanitizedHTML = try? body.outerHtml()
+            else {
+                return nil
+            }
+            self.init(htmlString: sanitizedHTML)
+        } else {
+            self.init(htmlString: htmlString)
         }
+    }
 
-        let data = Data(sanitizedHTML.utf8)
+    private init?(htmlString: String) {
+        let data = Data(htmlString.utf8)
 
         guard let attributedString = try? NSAttributedString(
             data: data,
