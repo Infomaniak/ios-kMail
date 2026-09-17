@@ -108,6 +108,7 @@ tuist test # Or via Xcode Test Navigator
 ### Testing
 
 - **Unit tests:** `MailTests/` — XCTest-based.
+- **New unit tests:** Prefer Swift Testing (`@Suite`, `@Test`, `#expect`) over XCTest.
 - **UI tests:** `MailUITests/` — XCTest UI automation.
 - **Setup:** Duplicate `MailTests/Env.sample.swift` → `MailTests/Env.swift` and fill in `token`, `userId`, `mailboxId`, `mailboxUuid`. For UI tests, also set `testAccountEmail` and `testAccountPassword`.
 - **Run:** `tuist test` or Xcode Test Navigator.
