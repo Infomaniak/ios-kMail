@@ -28,7 +28,7 @@ struct CustomReminderVisibilityAlertView: View {
         static let contentHeight: CGFloat = 120
     }
 
-    @State private var selectedVisibility: ReminderVisibility = .recipientsAndMe
+    @State private var selectedVisibility: ReminderVisibility
 
     let confirmAction: (ReminderVisibility) -> Void
     let cancelAction: (() -> Void)?
@@ -38,12 +38,7 @@ struct CustomReminderVisibilityAlertView: View {
         confirmAction: @escaping (ReminderVisibility) -> Void,
         cancelAction: (() -> Void)? = nil
     ) {
-        if let visibility = currentVisibility {
-            selectedVisibility = visibility
-        } else {
-            selectedVisibility = .recipientsAndMe
-        }
-
+        _selectedVisibility = State(initialValue: currentVisibility ?? .recipientsAndMe)
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
     }

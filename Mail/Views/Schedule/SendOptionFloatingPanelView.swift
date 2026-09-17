@@ -92,8 +92,6 @@ struct SendOptionFloatingPanelView: View {
                 .padding(.top, value: .medium)
                 .padding(.bottom, value: .small)
 
-            IKDivider(type: .item)
-
             if mailboxManager.featureAvailableProvider.isAvailable(.reminder) {
                 Toggle(isOn: $isReminderEnabled) {
                     Label {
