@@ -16,17 +16,22 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Algorithms
 import CoreSpotlight
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import OSLog
+import RealmSwift
 
 public final class SpotlightIndexer {
     private static let logger = Logger(category: "SpotlightIndexer")
 
     public static let spotlightIndexName = "Infomaniak Mail"
-    public static let maxIndexedMessages = 500
+    public static let maxIndexedMessages = 100
     public static let shared = SpotlightIndexer()
+
+    private static let indexingBatchSize = 10
 
     private let operationQueue = SpotlightIndexOperationQueue()
 
@@ -37,46 +42,82 @@ public final class SpotlightIndexer {
             return
         }
 
-        Task {
-            await operationQueue.perform {
-                @InjectService var mailboxInfosManager: MailboxInfosManager
-                @InjectService var accountManager: AccountManager
+        var indexingTask: Task<Void, Never>?
+        BackgroundExecutor.executeWithBackgroundTask { taskCompleted in
+            indexingTask = Task {
+                do {
+                    try await self.reindexAllMessages()
+                } catch {
+                    Self.logger.error("Failed to update the Spotlight index: \(error)")
+                }
+                taskCompleted()
+            }
+        } onExpired: {
+            indexingTask?.cancel()
+        }
+    }
 
-                let date = Date()
+    @available(iOS 18.4, *)
+    func reindexAllMessages() async throws {
+        try await operationQueue.perform {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            @InjectService var accountManager: AccountManager
 
-                let searchableIndex = CSSearchableIndex(name: Self.spotlightIndexName)
-                try? await searchableIndex.deleteAppEntities(ofType: MailMessageEntity.self)
-
-                await mailboxInfosManager.getMailboxes()
-                    .filter { !$0.isLocked }
-                    .map { $0.freeze() }
-                    .concurrentForEach { mailbox in
-                        guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else { return }
-
-                        let entities = Array(
-                            mailboxManager
-                                .fetchResults(ofType: Message.self) { $0 }
-                                .sorted(by: \.date, ascending: false)
-                                .prefix(Self.maxIndexedMessages)
-                                .map { MailMessageEntity(message: $0, mailbox: mailbox) }
-                        )
-
-                        try? await searchableIndex.indexAppEntities(entities)
+            let date = Date()
+            var selection = SpotlightMessageSelection()
+            for mailbox in mailboxInfosManager.getMailboxes() where !mailbox.isLocked {
+                try Task.checkCancellation()
+                autoreleasepool {
+                    guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+                        Self.logger.warning("Skipping Spotlight indexing for an unavailable mailbox")
+                        return
                     }
 
-                Self.logger.info("Spotlight updated in \(Date().timeIntervalSince(date)) seconds")
+                    let messages = mailboxManager.fetchResults(ofType: Message.self) { $0 }
+                    selection.merge(messages, mailboxId: mailbox.objectId)
+                }
             }
+
+            try Task.checkCancellation()
+            let searchableIndex = CSSearchableIndex(name: Self.spotlightIndexName)
+            try await searchableIndex.deleteAppEntities(ofType: MailMessageEntity.self)
+
+            for batch in selection.candidates.chunks(ofCount: Self.indexingBatchSize) {
+                try Task.checkCancellation()
+                let entities = autoreleasepool {
+                    batch.compactMap { candidate -> MailMessageEntity? in
+                        guard let mailbox = mailboxInfosManager.getMailbox(objectId: candidate.mailboxId),
+                              !mailbox.isLocked,
+                              let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+                              let message = mailboxManager.fetchObject(
+                                  ofType: Message.self,
+                                  forPrimaryKey: candidate.messageId
+                              ) else {
+                            Self.logger.debug("Skipping a Spotlight candidate that is no longer available")
+                            return nil
+                        }
+
+                        return MailMessageEntity(message: message, mailbox: mailbox)
+                    }
+                }
+
+                if !entities.isEmpty {
+                    try await searchableIndex.indexAppEntities(entities)
+                }
+            }
+
+            Self.logger.info("Spotlight updated in \(Date().timeIntervalSince(date)) seconds")
         }
     }
 
     public func deindexMessagesForMailbox(ids: [String]) {
         Task {
-            await operationQueue.perform {
-                do {
+            do {
+                try await operationQueue.perform {
                     try await CSSearchableIndex(name: Self.spotlightIndexName).deleteSearchableItems(withDomainIdentifiers: ids)
-                } catch {
-                    Self.logger.error("Failed to remove a mailbox from Spotlight: \(error)")
                 }
+            } catch {
+                Self.logger.error("Failed to remove a mailbox from Spotlight: \(error)")
             }
         }
     }
@@ -87,27 +128,81 @@ public final class SpotlightIndexer {
         }
 
         Task {
-            await operationQueue.perform {
-                do {
+            do {
+                try await operationQueue.perform {
                     try await CSSearchableIndex(name: Self.spotlightIndexName).deleteAppEntities(ofType: MailMessageEntity.self)
-                } catch {
-                    Self.logger.error("Failed to clear the Spotlight index: \(error)")
                 }
+            } catch {
+                Self.logger.error("Failed to clear the Spotlight index: \(error)")
             }
         }
     }
 }
 
-private actor SpotlightIndexOperationQueue {
-    private var pendingOperation: Task<Void, Never>?
+struct SpotlightMessageSelection {
+    struct Candidate: Equatable {
+        let mailboxId: String
+        let messageId: String
+        let date: Date
 
-    func perform(_ operation: @escaping @Sendable () async -> Void) async {
+        func isOrderedBefore(_ other: Candidate) -> Bool {
+            return date > other.date
+        }
+    }
+
+    private(set) var candidates: [Candidate] = []
+
+    mutating func merge(_ messages: Results<Message>, mailboxId: String) {
+        let limit = SpotlightIndexer.maxIndexedMessages
+        var eligibleMessages = messages
+        if candidates.count == limit, let cutoff = candidates.last?.date {
+            eligibleMessages = eligibleMessages.where { $0.date > cutoff }
+        }
+
+        let sortedMessages = eligibleMessages.sorted(by: \.date, ascending: false)
+        var iterator = sortedMessages.lazy.prefix(limit).map {
+            Candidate(mailboxId: mailboxId, messageId: $0.uid, date: $0.date)
+        }.makeIterator()
+        var nextCandidate = iterator.next()
+        var currentIndex = 0
+        var merged: [Candidate] = []
+        merged.reserveCapacity(limit)
+
+        while merged.count < limit {
+            if let candidate = nextCandidate,
+               currentIndex == candidates.count || candidate.isOrderedBefore(candidates[currentIndex]) {
+                merged.append(candidate)
+                if merged.count < limit {
+                    nextCandidate = iterator.next()
+                }
+            } else if currentIndex < candidates.count {
+                merged.append(candidates[currentIndex])
+                currentIndex += 1
+            } else {
+                break
+            }
+        }
+
+        candidates = merged
+    }
+}
+
+private actor SpotlightIndexOperationQueue {
+    private var pendingOperation: Task<Void, Error>?
+
+    func perform(_ operation: @escaping @Sendable () async throws -> Void) async throws {
         let previousOperation = pendingOperation
         let operationTask = Task {
-            await previousOperation?.value
-            await operation()
+            // A previous failure is reported to its caller and must not block subsequent operations.
+            _ = try? await previousOperation?.value
+            try Task.checkCancellation()
+            try await operation()
         }
         pendingOperation = operationTask
-        await operationTask.value
+        try await withTaskCancellationHandler {
+            try await operationTask.value
+        } onCancel: {
+            operationTask.cancel()
+        }
     }
 }

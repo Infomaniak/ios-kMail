@@ -24,20 +24,7 @@ import InfomaniakDI
 @available(iOS 27.0, *)
 extension MailMessageEntity.MailMessageEntityQuery: IndexedEntityQuery {
     public func reindexAllEntities(indexDescription: CSSearchableIndexDescription) async throws {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
-        @InjectService var accountManager: AccountManager
-
-        let mailboxes = mailboxInfosManager.getMailboxes()
-
-        for mailbox in mailboxes {
-            guard let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
-                return
-            }
-            let messages = Array(mailboxManager.fetchResults(ofType: Message.self) { $0 }
-                .map { MailMessageEntity(message: $0, mailbox: mailbox) })
-
-            try await CSSearchableIndex(name: SpotlightIndexer.spotlightIndexName).indexAppEntities(messages)
-        }
+        try await SpotlightIndexer.shared.reindexAllMessages()
     }
 
     public func reindexEntities(for identifiers: [MailMessageEntity.Identifier],
