@@ -19,6 +19,7 @@
 import Algorithms
 import CoreSpotlight
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import OSLog
 import RealmSwift
@@ -41,12 +42,18 @@ public final class SpotlightIndexer {
             return
         }
 
-        Task {
-            do {
-                try await reindexAllMessages()
-            } catch {
-                Self.logger.error("Failed to update the Spotlight index: \(error)")
+        var indexingTask: Task<Void, Never>?
+        BackgroundExecutor.executeWithBackgroundTask { taskCompleted in
+            indexingTask = Task {
+                do {
+                    try await self.reindexAllMessages()
+                } catch {
+                    Self.logger.error("Failed to update the Spotlight index: \(error)")
+                }
+                taskCompleted()
             }
+        } onExpired: {
+            indexingTask?.cancel()
         }
     }
 
