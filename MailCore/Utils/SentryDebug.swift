@@ -89,6 +89,20 @@ public enum SentryDebug {
         }
     }
 
+    static func captureDeletedThread(error: Error, thread: Thread) {
+        let messages = thread.messages.map { ($0.uid, $0.messageId) }
+
+        SentrySDK.capture(error: error) { scope in
+            scope.setLevel(.error)
+            scope.setContext(value: [
+                "threadUID": thread.uid,
+                "threadSubject": thread.subject ?? "nil",
+                "folderID": thread.folderId,
+                "messages": messages
+            ], key: "Deleted Thread")
+        }
+    }
+
     public static func captureIncorrectSnoozedMessageIfNecessary(_ message: Message) {
         let isIncorrectlySnoozed = message.snoozeState == .snoozed && (message.snoozeUuid == nil || message.snoozeEndDate == nil)
         let isIncorrectlyUnsnoozed = message.snoozeState == .unsnoozed && message.snoozeEndDate == nil
@@ -116,7 +130,8 @@ public enum SentryDebug {
     private static func createBreadcrumb(level: SentryLevel,
                                          category: String,
                                          message: String,
-                                         data: [String: Any]? = nil) -> Breadcrumb {
+                                         data: [String: Any]? = nil) -> Breadcrumb
+    {
         let crumb = Breadcrumb(level: level, category: category)
         crumb.type = level == .info ? "info" : "error"
         crumb.message = message
@@ -249,7 +264,8 @@ public extension SentryDebug {
     static func addAsyncBreadcrumb(level: SentryLevel,
                                    category: String,
                                    message: String,
-                                   data: [String: Any]? = nil) {
+                                   data: [String: Any]? = nil)
+    {
         Task {
             let breadcrumb = Breadcrumb(level: level, category: category)
             breadcrumb.message = message

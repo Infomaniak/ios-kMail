@@ -665,6 +665,7 @@ public extension MailboxManager {
                 try thread.recomputeOrFail(currentMailbox: mailbox)
                 return true
             } catch {
+                SentryDebug.captureDeletedThread(error: error, thread: thread)
                 realm.delete(thread)
                 return false
             }
