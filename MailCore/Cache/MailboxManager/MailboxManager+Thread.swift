@@ -370,7 +370,9 @@ public extension MailboxManager {
     }
 
     private func addMessages(shortUids: [String], folder: Folder) async throws -> Set<String> {
-        guard !shortUids.isEmpty && !Task.isCancelled else { return [] }
+        try Task.checkCancellation()
+
+        guard !shortUids.isEmpty else { return [] }
 
         let messageByUidsResult = try await apiFetcher.messagesByUids(
             mailboxUuid: mailbox.uuid,

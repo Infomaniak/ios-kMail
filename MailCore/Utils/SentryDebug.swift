@@ -130,8 +130,7 @@ public enum SentryDebug {
     private static func createBreadcrumb(level: SentryLevel,
                                          category: String,
                                          message: String,
-                                         data: [String: Any]? = nil) -> Breadcrumb
-    {
+                                         data: [String: Any]? = nil) -> Breadcrumb {
         let crumb = Breadcrumb(level: level, category: category)
         crumb.type = level == .info ? "info" : "error"
         crumb.message = message
@@ -264,8 +263,7 @@ public extension SentryDebug {
     static func addAsyncBreadcrumb(level: SentryLevel,
                                    category: String,
                                    message: String,
-                                   data: [String: Any]? = nil)
-    {
+                                   data: [String: Any]? = nil) {
         Task {
             let breadcrumb = Breadcrumb(level: level, category: category)
             breadcrumb.message = message
