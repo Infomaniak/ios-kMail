@@ -34,10 +34,32 @@ class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
     }
 }
 
+private struct RefreshTask {
+    let mailboxId: String
+    let folder: Folder
+    let task: Task<Void, Never>
+
+    func fuzzyEquals(mailboxId: String, folder: Folder) -> Bool {
+        guard let currentRole = self.folder.role,
+              let newRole = folder.role,
+              self.mailboxId == mailboxId
+        else {
+            return self.folder.remoteId == folder.remoteId && self.mailboxId == mailboxId
+        }
+
+        if MailboxManager.additionalFolderRolesToFetch.contains(currentRole)
+            && MailboxManager.additionalFolderRolesToFetch.contains(newRole) {
+            return true
+        }
+
+        return self.folder.remoteId == folder.remoteId
+    }
+}
+
 public actor RefreshActor {
     weak var mailboxManager: MailboxManager?
 
-    private var refreshTask: Task<Void, Never>?
+    private var refreshTask: RefreshTask?
 
     public init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
@@ -83,24 +105,39 @@ public actor RefreshActor {
     }
 
     public func refreshFolderContent(_ folder: Folder) async {
-        await cancelRefresh()
+        guard let mailboxManager else { return }
 
-        refreshTask = Task {
+        let mailboxId = mailboxManager.mailboxObjectId
+        while let refreshTask {
+            if !refreshTask.task.isCancelled, refreshTask.fuzzyEquals(mailboxId: mailboxId, folder: folder) {
+                _ = await refreshTask.task.result
+                return
+            }
+
+            refreshTask.task.cancel()
+            _ = await refreshTask.task.result
+            self.refreshTask = nil
+        }
+
+        let task = Task {
             await tryOrDisplayError {
                 do {
-                    try await mailboxManager?.threads(folder: folder)
+                    try await mailboxManager.threads(folder: folder)
                 } catch let error as AFErrorWithContext where error.afError.responseCode ?? 0 >= 500 {
                     throw error
                 }
-                refreshTask = nil
             }
         }
-        _ = await refreshTask?.result
+        let refreshTask = RefreshTask(mailboxId: mailboxId, folder: folder, task: task)
+        self.refreshTask = refreshTask
+
+        _ = await task.result
+        self.refreshTask = nil
     }
 
     public func cancelRefresh() async {
-        refreshTask?.cancel()
-        _ = await refreshTask?.result
+        refreshTask?.task.cancel()
+        _ = await refreshTask?.task.result
         refreshTask = nil
     }
 
