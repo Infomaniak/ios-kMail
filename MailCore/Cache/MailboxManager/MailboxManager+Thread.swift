@@ -20,7 +20,6 @@ import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
 import RealmSwift
-import Sentry
 
 enum PageDirection {
     case future
@@ -101,10 +100,9 @@ public extension MailboxManager {
 
         guard !Task.isCancelled else { return }
 
-        try? writeTransaction { writableRealm in
+        try writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else {
-                self.logError(.missingFolder)
-                return
+                throw ErrorDomain.missingFolder
             }
 
             folder.computeUnreadCount()
@@ -160,7 +158,7 @@ public extension MailboxManager {
 
             try messagesDelta.ensureValidDelta()
 
-            await handleDelta(messagesDelta: messagesDelta, folder: folder)
+            try await handleDelta(messagesDelta: messagesDelta, folder: folder)
 
             return messagesDelta.cursor
         } else {
@@ -173,7 +171,7 @@ public extension MailboxManager {
 
             try messagesDelta.ensureValidDelta()
 
-            await handleDelta(messagesDelta: messagesDelta, folder: folder)
+            try await handleDelta(messagesDelta: messagesDelta, folder: folder)
 
             return messagesDelta.cursor
         }
@@ -188,10 +186,9 @@ public extension MailboxManager {
         /// Get ALL uids
         let messageUidsResult = try await apiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: folder.remoteId)
 
-        try? writeTransaction { writableRealm in
+        try writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else {
-                self.logError(.missingFolder)
-                return
+                throw ErrorDomain.missingFolder
             }
 
             folder.oldMessagesUidsToFetch = messageUidsResult.messageShortUids.map { MessageUid(uid: $0) }.toRealmList()
@@ -210,8 +207,10 @@ public extension MailboxManager {
         let nextUids: [String] = uidsToFetch[range].map { $0.uid }
         let impactedThreadUids = try await addMessages(shortUids: nextUids, folder: folder)
 
-        try? writeTransaction { writableRealm in
-            guard let freshFolder = folder.fresh(using: writableRealm) else { return }
+        try writeTransaction { writableRealm in
+            guard let freshFolder = folder.fresh(using: writableRealm) else {
+                throw ErrorDomain.missingFolder
+            }
             let uidsToRemove = freshFolder[keyPath: direction.uidsToFetch].where { $0.uid.in(nextUids) }
             writableRealm.delete(uidsToRemove)
 
@@ -247,7 +246,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - messagesDelta: The list added/updated/deleted message uids
     ///   - folder: Given folder
-    private func handleDelta<Flags: DeltaFlags>(messagesDelta: MessagesDelta<Flags>, folder: Folder) async {
+    private func handleDelta<Flags: DeltaFlags>(messagesDelta: MessagesDelta<Flags>, folder: Folder) async throws {
         if let messagesDelta = messagesDelta as? MessagesDelta<MessageFlags> {
             await handleDeletedMessages(messagesDelta: messagesDelta, folder: folder)
             await handleUpdatedMessages(messagesDelta: messagesDelta, folder: folder)
@@ -256,7 +255,7 @@ public extension MailboxManager {
             await handleUpdatedMessages(messagesDelta: messagesDelta, folder: folder)
         }
 
-        handleNewMessageUids(messagesDelta: messagesDelta, folder: folder)
+        try handleNewMessageUids(messagesDelta: messagesDelta, folder: folder)
     }
 
     private func handleDeletedMessages(messagesDelta: MessagesDelta<MessageFlags>, folder: Folder) async {
@@ -357,13 +356,16 @@ public extension MailboxManager {
         }
     }
 
-    private func handleNewMessageUids<Flags: DeltaFlags>(messagesDelta: MessagesDelta<Flags>, folder: Folder) {
-        try? writeTransaction { writableRealm in
-            let freshFolder = folder.fresh(using: writableRealm)
-            let messageUids = messagesDelta.addedShortUids.map { MessageUid(uid: $0) }
-            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids)
+    private func handleNewMessageUids<Flags: DeltaFlags>(messagesDelta: MessagesDelta<Flags>, folder: Folder) throws {
+        try writeTransaction { writableRealm in
+            guard let freshFolder = folder.fresh(using: writableRealm) else {
+                throw ErrorDomain.missingFolder
+            }
 
-            freshFolder?.remoteUnreadCount = messagesDelta.unreadCount
+            let messageUids = messagesDelta.addedShortUids.map { MessageUid(uid: $0) }
+            freshFolder.newMessagesUidsToFetch.append(objectsIn: messageUids)
+
+            freshFolder.remoteUnreadCount = messagesDelta.unreadCount
         }
     }
 
@@ -377,8 +379,10 @@ public extension MailboxManager {
         )
 
         var impactedThreadUids = Set<String>()
-        try? writeTransaction { writableRealm in
-            guard let folder = folder.fresh(using: writableRealm) else { return }
+        try writeTransaction { writableRealm in
+            guard let folder = folder.fresh(using: writableRealm) else {
+                throw ErrorDomain.missingFolder
+            }
             impactedThreadUids = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
         }
         return impactedThreadUids
