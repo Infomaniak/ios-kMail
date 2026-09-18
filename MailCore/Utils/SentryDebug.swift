@@ -89,6 +89,19 @@ public enum SentryDebug {
         }
     }
 
+    static func captureDeletedThread(error: Error, thread: Thread) {
+        let messages = thread.messages.map { ["uid": $0.uid, "messageID": $0.messageId] }
+
+        SentrySDK.capture(error: error) { scope in
+            scope.setLevel(.error)
+            scope.setContext(value: [
+                "threadUID": thread.uid,
+                "folderID": thread.folderId,
+                "messages": messages
+            ], key: "Deleted Thread")
+        }
+    }
+
     public static func captureIncorrectSnoozedMessageIfNecessary(_ message: Message) {
         let isIncorrectlySnoozed = message.snoozeState == .snoozed && (message.snoozeUuid == nil || message.snoozeEndDate == nil)
         let isIncorrectlyUnsnoozed = message.snoozeState == .unsnoozed && message.snoozeEndDate == nil
