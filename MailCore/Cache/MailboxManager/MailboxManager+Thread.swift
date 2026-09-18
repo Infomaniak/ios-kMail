@@ -48,6 +48,7 @@ enum PageDirection {
 
 public extension MailboxManager {
     private static let maxParallelUnsnooze = 4
+    static let additionalFolderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts, .snoozed])
 
     /// Fetch messages for given folder
     /// Then fetch messages of folder with roles if needed
@@ -63,7 +64,7 @@ public extension MailboxManager {
         try await messages(folder: freshFolder)
         fetchCurrentFolderCompleted()
 
-        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts, .snoozed])
+        var folderRolesToFetch = Self.additionalFolderRolesToFetch
         guard let currentRole = freshFolder.role, folderRolesToFetch.contains(currentRole) else { return }
 
         folderRolesToFetch.remove(currentRole)
