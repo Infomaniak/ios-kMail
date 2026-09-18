@@ -357,6 +357,8 @@ public extension MailboxManager {
     }
 
     private func handleNewMessageUids<Flags: DeltaFlags>(messagesDelta: MessagesDelta<Flags>, folder: Folder) throws {
+        try Task.checkCancellation()
+
         try writeTransaction { writableRealm in
             guard let freshFolder = folder.fresh(using: writableRealm) else {
                 throw ErrorDomain.missingFolder
