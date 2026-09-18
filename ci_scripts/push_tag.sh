@@ -42,7 +42,7 @@ RELEASE_URL=$(gh release create $TAG_NAME --generate-notes --target $CI_COMMIT -
 
 # MARK: - kChat Notification
 
-AAPL_LOGO=$(((RANDOM % 120) + 1))
+AAPL_LOGO=$(((RANDOM % 370) + 1))
 TESTFLIGHT_RELEASE_NOTE=$(cat "$CI_PRIMARY_REPOSITORY_PATH/TestFlight/WhatToTest.en-GB.txt")
 
 MESSAGE=$(cat <<EOF

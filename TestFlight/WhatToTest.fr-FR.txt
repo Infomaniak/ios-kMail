@@ -1,1 +1,1 @@
-- Correction de bugs.
+- Amélioration de la fiabilité de la synchronisation des messages et de la mise à jour des conversations.
