@@ -35,6 +35,7 @@ class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
 }
 
 private struct RefreshTask {
+    let id = UUID()
     let mailboxId: String
     let folder: Folder
     let task: Task<Void, Never>
@@ -116,7 +117,9 @@ public actor RefreshActor {
 
             refreshTask.task.cancel()
             _ = await refreshTask.task.result
-            self.refreshTask = nil
+            if self.refreshTask?.id == refreshTask.id {
+                self.refreshTask = nil
+            }
         }
 
         let task = Task {
@@ -132,13 +135,19 @@ public actor RefreshActor {
         self.refreshTask = refreshTask
 
         _ = await task.result
-        self.refreshTask = nil
+        if self.refreshTask?.id == refreshTask.id {
+            self.refreshTask = nil
+        }
     }
 
     public func cancelRefresh() async {
-        refreshTask?.task.cancel()
-        _ = await refreshTask?.task.result
-        refreshTask = nil
+        guard let refreshTask else { return }
+
+        refreshTask.task.cancel()
+        _ = await refreshTask.task.result
+        if self.refreshTask?.id == refreshTask.id {
+            self.refreshTask = nil
+        }
     }
 
     // MARK: Signatures
