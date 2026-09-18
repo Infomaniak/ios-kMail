@@ -90,13 +90,12 @@ public enum SentryDebug {
     }
 
     static func captureDeletedThread(error: Error, thread: Thread) {
-        let messages = thread.messages.map { ($0.uid, $0.messageId) }
+        let messages = thread.messages.map { ["uid": $0.uid, "messageID": $0.messageId] }
 
         SentrySDK.capture(error: error) { scope in
             scope.setLevel(.error)
             scope.setContext(value: [
                 "threadUID": thread.uid,
-                "threadSubject": thread.subject ?? "nil",
                 "folderID": thread.folderId,
                 "messages": messages
             ], key: "Deleted Thread")
