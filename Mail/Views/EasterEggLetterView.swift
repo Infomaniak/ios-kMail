@@ -32,6 +32,7 @@ private struct EasterEggAddress {
 
 /// Easter egg flow: an open envelope with a letter sliding out of it.
 /// Tapping the envelope reveals its front, which can be dragged away to send the mail.
+/// On foldable devices the flap follows the hinge angle and a closed phone presents the front.
 struct EasterEggLetterView: View {
     let draft: Draft
     let currentUser: UserProfile
@@ -44,9 +45,10 @@ struct EasterEggLetterView: View {
 
     @State private var isShowingEnvelopeFront = false
     @State private var isShowing = false
-    @State private var isFlapOpen = false
+    @State private var flapOpenness: CGFloat = 0
     @State private var isLetterOut = false
     @State private var isLetterFloating = false
+    @State private var hasPlayedAppearAnimation = false
 
     // MARK: - View
 
@@ -74,12 +76,12 @@ struct EasterEggLetterView: View {
             } else {
                 OpenEnvelopeIllustration(
                     accentColor: accentColor,
-                    isFlapOpen: isFlapOpen,
+                    flapOpenness: flapOpenness,
                     isLetterOut: isLetterOut,
                     isLetterFloating: isLetterFloating,
                     onEnvelopeTapped: presentEnvelopeFront
                 )
-                .scaleEffect(isShowing ? 1 : 0.85)
+                .scaleEffect(isShowing ? 1 : 0.85, anchor: .bottom)
                 .opacity(isShowing ? 1 : 0)
                 .transition(.opacity.combined(with: .scale(scale: 1.05)))
                 .onAppear(perform: playAppearAnimation)
@@ -111,6 +113,14 @@ struct EasterEggLetterView: View {
         guard let hinge = context.hinge else { return }
 
         setEnvelopeFrontVisible(hinge.status == .closed)
+        updateFlapOpenness(with: hinge)
+    }
+
+    /// Opens the envelope flap according to the hinge angle: 180° is fully open, 0° is closed
+    @available(iOS 27.1, *)
+    private func updateFlapOpenness(with hinge: DeviceHinge) {
+        // Applied without animation so that the flap mirrors the physical hinge in real time
+        flapOpenness = min(max(CGFloat(hinge.angle.degrees) / 180, 0), 1)
     }
 
     /// Shows or hides the envelope front with the phase transition animation
@@ -121,9 +131,14 @@ struct EasterEggLetterView: View {
     }
 
     private func playAppearAnimation() {
+        // The envelope illustration is re-inserted when coming back from the envelope front:
+        // the appear animation should only play once per screen lifetime
+        guard !hasPlayedAppearAnimation else { return }
+        hasPlayedAppearAnimation = true
+
         guard !reduceMotion else {
             isShowing = true
-            isFlapOpen = true
+            flapOpenness = 1
             isLetterOut = true
             return
         }
@@ -132,7 +147,7 @@ struct EasterEggLetterView: View {
             isShowing = true
         }
         withAnimation(.spring(response: 0.55, dampingFraction: 0.75).delay(0.3)) {
-            isFlapOpen = true
+            flapOpenness = 1
         }
         withAnimation(.spring(response: 0.9, dampingFraction: 0.6).delay(0.6)) {
             isLetterOut = true
@@ -148,7 +163,8 @@ struct EasterEggLetterView: View {
 /// An open envelope with a letter sliding out of it, drawn on a fixed 300x340 canvas.
 private struct OpenEnvelopeIllustration: View {
     let accentColor: AccentColor
-    let isFlapOpen: Bool
+    /// From 0 (closed flap) to 1 (fully open flap)
+    let flapOpenness: CGFloat
     let isLetterOut: Bool
     let isLetterFloating: Bool
     let onEnvelopeTapped: () -> Void
@@ -158,6 +174,8 @@ private struct OpenEnvelopeIllustration: View {
     private static let canvasSize = CGSize(width: 300, height: 340)
     private static let envelopeSize = CGSize(width: 260, height: 168)
     private static let letterSize = CGSize(width: 204, height: 240)
+    /// Margin between the envelope and the screen edges
+    private static let screenPadding = IKPadding.micro
     /// Height of the flap unfolding above the envelope
     private static let flapHeight: CGFloat = 92
     /// Depth of the "V" shaped opening at the top of the envelope pocket
@@ -186,6 +204,11 @@ private struct OpenEnvelopeIllustration: View {
         envelopeDrop - envelopeSize.height / 2 + pocketNotchDepth + hiddenLetterGap + letterSize.height / 2
     }
 
+    /// How far the letter slides back into the envelope as the flap closes
+    private static var letterRetreatDistance: CGFloat {
+        letterHiddenOffset - letterOutOffset
+    }
+
     private static var maskHeight: CGFloat {
         canvasSize.height / 2 + envelopeDrop + envelopeSize.height / 2
     }
@@ -197,17 +220,40 @@ private struct OpenEnvelopeIllustration: View {
     // MARK: - View
 
     var body: some View {
-        ZStack {
-            shadow
-            flap
-            envelopeBack
-            letterLayer
-            pocket
-            pocketCreases
+        GeometryReader { proxy in
+            let scale = Self.illustrationScale(for: proxy.size)
+            ZStack {
+                shadow
+                flap
+                envelopeBack
+                letterLayer
+                pocket
+                pocketCreases
+            }
+            .frame(width: Self.canvasSize.width, height: Self.canvasSize.height)
+            .contentShape(Rectangle())
+            .scaleEffect(scale, anchor: .bottom)
+            .onTapGesture(perform: onEnvelopeTapped)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .offset(y: Self.bottomPinningOffset(scale: scale))
         }
-        .frame(width: Self.canvasSize.width, height: Self.canvasSize.height)
-        .contentShape(Rectangle())
-        .onTapGesture(perform: onEnvelopeTapped)
+    }
+
+    /// Scales the illustration so that the envelope takes as much space as possible on screen
+    private static func illustrationScale(for availableSize: CGSize) -> CGFloat {
+        let horizontalScale = (availableSize.width - 2 * screenPadding) / envelopeSize.width
+        let verticalScale = (availableSize.height - 2 * screenPadding) / canvasSize.height
+        return min(horizontalScale, verticalScale)
+    }
+
+    /// Distance between the bottom of the canvas and the bottom of the envelope
+    private static var canvasHeightBelowEnvelope: CGFloat {
+        canvasSize.height / 2 - envelopeDrop - envelopeSize.height / 2
+    }
+
+    /// Vertical offset pinning the bottom edge of the envelope `screenPadding` above the bottom of the screen
+    private static func bottomPinningOffset(scale: CGFloat) -> CGFloat {
+        canvasHeightBelowEnvelope * scale - screenPadding
     }
 
     private var shadow: some View {
@@ -222,7 +268,12 @@ private struct OpenEnvelopeIllustration: View {
         OpenFlapShape()
             .fill(accentColor.secondary.swiftUIColor)
             .frame(width: Self.envelopeSize.width, height: Self.flapHeight)
-            .scaleEffect(y: isFlapOpen ? 1 : 0.001, anchor: .bottom)
+            .rotation3DEffect(
+                .degrees(Double((1 - flapOpenness) * 90)),
+                axis: (x: 1, y: 0, z: 0),
+                anchor: .bottom,
+                perspective: 0.5
+            )
             .offset(y: Self.flapOffset)
     }
 
@@ -235,7 +286,8 @@ private struct OpenEnvelopeIllustration: View {
 
     private var letterOffset: CGFloat {
         let restingOffset = isLetterOut ? Self.letterOutOffset : Self.letterHiddenOffset
-        return restingOffset - (isLetterFloating ? Self.floatAmplitude : 0)
+        let retreat = (1 - flapOpenness) * Self.letterRetreatDistance
+        return restingOffset + retreat - (isLetterFloating ? Self.floatAmplitude : 0)
     }
 
     private var letterLayer: some View {
