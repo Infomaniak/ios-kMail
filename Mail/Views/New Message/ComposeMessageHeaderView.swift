@@ -102,7 +102,6 @@ struct ComposeMessageHeaderView: View {
                     message: reminderOption.headerText
                 ) {
                     draft.setReminderOption(nil, mailboxManager: mailboxManager)
-                    draft.setReminderVisibility(nil, mailboxManager: mailboxManager)
                 }
             }
 

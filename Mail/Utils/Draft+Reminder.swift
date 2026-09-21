@@ -62,13 +62,13 @@ extension Draft {
         return reminder.display ? .recipientsAndMe : .onlyMe
     }
 
-    func setReminderVisibility(_ visibility: ReminderVisibility?, mailboxManager: MailboxManager) {
+    func setReminderVisibility(_ visibility: ReminderVisibility, mailboxManager: MailboxManager) {
         try? mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: localUUID) else { return }
 
             liveDraft.reminder = DraftReminder(
-                delta: liveDraft.reminder?.delta ?? 1440,
-                display: visibility.map { $0 == .recipientsAndMe } == true
+                delta: liveDraft.reminder?.delta ?? ReminderOption.oneDay.inMinutes,
+                display: visibility == .recipientsAndMe
             )
         }
     }
