@@ -51,7 +51,7 @@ struct EasterEggLetterView: View {
     // MARK: - View
 
     var body: some View {
-        ZStack(alignment: .top) {
+        let content = ZStack(alignment: .top) {
             MailResourcesAsset.backgroundColor.swiftUIColor
                 .ignoresSafeArea()
 
@@ -87,13 +87,36 @@ struct EasterEggLetterView: View {
         }
         .onTapGesture(perform: dismiss.callAsFunction)
         .matomoView(view: ["EasterEggLetterView"])
+
+        if #available(iOS 27.1, *) {
+            content
+                .onHingeChange { _, newContext in
+                    handleHingeContextChange(newContext)
+                }
+        } else {
+            content
+        }
     }
 
     // MARK: - Func
 
     private func presentEnvelopeFront() {
+        setEnvelopeFrontVisible(true)
+    }
+
+    /// Matches the displayed phase to the hinge status: a closed phone shows the letter front,
+    /// an open phone shows the open envelope
+    @available(iOS 27.1, *)
+    private func handleHingeContextChange(_ context: DeviceHingeContext) {
+        guard let hinge = context.hinge else { return }
+
+        setEnvelopeFrontVisible(hinge.status == .closed)
+    }
+
+    /// Shows or hides the envelope front with the phase transition animation
+    private func setEnvelopeFrontVisible(_ isVisible: Bool) {
         withAnimation(reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.85)) {
-            isShowingEnvelopeFront = true
+            isShowingEnvelopeFront = isVisible
         }
     }
 
