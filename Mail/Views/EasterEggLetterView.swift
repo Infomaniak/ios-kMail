@@ -59,9 +59,9 @@ struct EasterEggLetterView: View {
 
             HStack {
                 Spacer()
-                CloseButton { dismiss() }
+                /*CloseButton { dismiss() }
                     .padding(.trailing, value: .medium)
-                    .padding(.top, value: .small)
+                    .padding(.top, value: .small)*/
             }
 
             if isShowingEnvelopeFront {
@@ -71,6 +71,7 @@ struct EasterEggLetterView: View {
                     mailboxManager: mailboxManager,
                     onSent: dismiss.callAsFunction
                 )
+                .rotationEffect(.degrees(180)) // DEMO ONLY: letter upside down
                 .transition(.opacity.combined(with: .scale(scale: 0.92)))
                 .zIndex(1)
             } else {
