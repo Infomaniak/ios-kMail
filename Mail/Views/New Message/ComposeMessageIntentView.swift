@@ -107,7 +107,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
         case .existing(let existingDraftLocalUUID):
             draftToWrite = mailboxManager.draft(localUuid: existingDraftLocalUUID)
         case .existingRemote(let messageUid):
-            draftToWrite = Draft(messageUid: messageUid, ackRequest: UserDefaults.shared.acknowledgement)
+            draftToWrite = Draft(messageUid: messageUid)
         case .mailTo(let mailToURLComponents):
             draftToWrite = Draft.mailTo(urlComponents: mailToURLComponents)
             draftToWrite?.ackRequest = UserDefaults.shared.acknowledgement

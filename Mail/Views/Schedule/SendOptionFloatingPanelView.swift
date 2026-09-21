@@ -98,7 +98,8 @@ struct SendOptionFloatingPanelView: View {
                 Label {
                     Text(MailResourcesStrings.Localizable.settingsSendAcknowledgementTitle)
                 } icon: {
-                    MailResourcesAsset.envelopeCircleCheck.iconSize(.large)
+                    MailResourcesAsset.envelopeCircleCheck
+                        .iconSize(.large)
                         .foregroundStyle(Color.accentColor)
                 }
             }
