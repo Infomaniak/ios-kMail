@@ -104,6 +104,8 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+    @State private var isShowingEasterEggLetter = false
+    @State private var scheduleSendTapCount = 0
     // periphery:ignore - Used in body
     @State private var isShowingMyKSuitePanel = false
     // periphery:ignore - Used in body
@@ -286,7 +288,7 @@ struct ComposeMessageView: View {
 
             ToolbarItem(placement: .confirmationAction) {
                 Button {
-                    trySendingMessage()
+                    isShowingEasterEggLetter = true
                 } label: {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
@@ -464,6 +466,9 @@ struct ComposeMessageView: View {
         .mailPremiumPanel(isPresented: $isShowingMailPremiumPanel)
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
+        }
+        .fullScreenCover(isPresented: $isShowingEasterEggLetter) {
+            EasterEggLetterView()
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
