@@ -468,7 +468,11 @@ struct ComposeMessageView: View {
             AIPropositionView(aiModel: aiModel)
         }
         .fullScreenCover(isPresented: $isShowingEasterEggLetter) {
-            EasterEggLetterView()
+            EasterEggLetterView(
+                draft: draft,
+                currentUser: currentUser.value,
+                mailboxManager: mailboxManager
+            )
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])

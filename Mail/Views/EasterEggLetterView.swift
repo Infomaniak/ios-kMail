@@ -17,20 +17,32 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
-/// Easter egg screen presented when tapping several times in a row on the send button.
-/// It shows an open envelope with the letter sliding out of it.
+/// A name and email pair written on the envelope front
+private struct EasterEggAddress {
+    let name: String
+    let email: String
+}
+
+/// Easter egg flow: an open envelope with a letter sliding out of it.
+/// Tapping the envelope reveals its front, which can be dragged away to send the mail.
 struct EasterEggLetterView: View {
+    let draft: Draft
+    let currentUser: UserProfile
+    let mailboxManager: MailboxManager
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
 
+    @State private var isShowingEnvelopeFront = false
     @State private var isShowing = false
     @State private var isFlapOpen = false
     @State private var isLetterOut = false
@@ -50,22 +62,40 @@ struct EasterEggLetterView: View {
                     .padding(.top, value: .small)
             }
 
-            OpenEnvelopeIllustration(
-                accentColor: accentColor,
-                isFlapOpen: isFlapOpen,
-                isLetterOut: isLetterOut,
-                isLetterFloating: isLetterFloating
-            )
-            .scaleEffect(isShowing ? 1 : 0.85)
-            .opacity(isShowing ? 1 : 0)
-            .accessibilityHidden(true)
+            if isShowingEnvelopeFront {
+                EnvelopeFrontView(
+                    draft: draft,
+                    currentUser: currentUser,
+                    mailboxManager: mailboxManager,
+                    onSent: dismiss.callAsFunction
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.92)))
+                .zIndex(1)
+            } else {
+                OpenEnvelopeIllustration(
+                    accentColor: accentColor,
+                    isFlapOpen: isFlapOpen,
+                    isLetterOut: isLetterOut,
+                    isLetterFloating: isLetterFloating,
+                    onEnvelopeTapped: presentEnvelopeFront
+                )
+                .scaleEffect(isShowing ? 1 : 0.85)
+                .opacity(isShowing ? 1 : 0)
+                .transition(.opacity.combined(with: .scale(scale: 1.05)))
+                .onAppear(perform: playAppearAnimation)
+            }
         }
         .onTapGesture(perform: dismiss.callAsFunction)
         .matomoView(view: ["EasterEggLetterView"])
-        .onAppear(perform: playAppearAnimation)
     }
 
     // MARK: - Func
+
+    private func presentEnvelopeFront() {
+        withAnimation(reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.85)) {
+            isShowingEnvelopeFront = true
+        }
+    }
 
     private func playAppearAnimation() {
         guard !reduceMotion else {
@@ -90,7 +120,7 @@ struct EasterEggLetterView: View {
     }
 }
 
-// MARK: - Illustration
+// MARK: - Open Envelope Illustration
 
 /// An open envelope with a letter sliding out of it, drawn on a fixed 300x340 canvas.
 private struct OpenEnvelopeIllustration: View {
@@ -98,6 +128,7 @@ private struct OpenEnvelopeIllustration: View {
     let isFlapOpen: Bool
     let isLetterOut: Bool
     let isLetterFloating: Bool
+    let onEnvelopeTapped: () -> Void
 
     // MARK: Geometry
 
@@ -152,6 +183,8 @@ private struct OpenEnvelopeIllustration: View {
             pocketCreases
         }
         .frame(width: Self.canvasSize.width, height: Self.canvasSize.height)
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onEnvelopeTapped)
     }
 
     private var shadow: some View {
@@ -229,6 +262,297 @@ private struct OpenEnvelopeIllustration: View {
     }
 }
 
+// MARK: - Envelope Front
+
+/// Front of the envelope, like a real letter: sender and recipient addresses, a stamp with the Infomaniak logo.
+/// It follows the finger when dragged and the mail is sent once a threshold is passed.
+private struct EnvelopeFrontView: View {
+    enum SendPhase {
+        case ready, flying, sent
+    }
+
+    let draft: Draft
+    let currentUser: UserProfile
+    let mailboxManager: MailboxManager
+    let onSent: () -> Void
+
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+
+    @State private var dragOffset: CGSize = .zero
+    @State private var sendPhase: SendPhase = .ready
+
+    /// The mail is addressed to the sender when the draft has no recipient yet
+    private var recipient: EasterEggAddress {
+        draft.to.first.map { EasterEggAddress(name: $0.name, email: $0.email) } ?? sender
+    }
+
+    private var sender: EasterEggAddress {
+        EasterEggAddress(name: currentUser.displayName, email: mailboxManager.mailbox.email)
+    }
+
+    // MARK: Geometry
+
+    private static let envelopeSize = CGSize(width: 280, height: 184)
+    /// Margin between the envelope and the screen edges
+    private static let screenPadding = IKPadding.micro
+    /// Minimum drag distance to send the mail
+    private static let sendThreshold: CGFloat = 150
+    /// How far the envelope travels beyond the drag distance when it is sent
+    private static let escapeFactor: CGFloat = 12
+    /// Maximum tilt of the envelope while it is dragged
+    private static let maxTilt: CGFloat = 8
+
+    private var cardTilt: CGFloat {
+        let rawTilt = dragOffset.width / 18
+        return min(max(rawTilt, -Self.maxTilt), Self.maxTilt)
+    }
+
+    /// Handwritten style font used for the addresses written on the envelope
+    private static func addressFont(size: CGFloat, relativeTo textStyle: Font.TextStyle) -> Font {
+        .custom("Noteworthy-Bold", size: size, relativeTo: textStyle)
+    }
+
+    // MARK: - View
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                if sendPhase == .sent {
+                    SentBadgeView(accentColor: accentColor)
+                        .transition(.scale(scale: 0.3).combined(with: .opacity))
+                } else {
+                    envelopeCard
+                        .scaleEffect(Self.envelopeScale(for: proxy.size))
+                        .offset(dragOffset)
+                        .onTapGesture {
+                            // Swallows taps on the envelope so the screen level tap to dismiss is not triggered
+                        }
+                        .gesture(dragGesture)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .matomoView(view: ["EasterEggEnvelopeFront"])
+        }
+    }
+
+    /// Scales the envelope so that it takes as much space as possible on screen
+    private static func envelopeScale(for availableSize: CGSize) -> CGFloat {
+        let horizontalScale = (availableSize.width - 2 * screenPadding) / envelopeSize.width
+        let verticalScale = (availableSize.height - 2 * screenPadding) / envelopeSize.height
+        return min(horizontalScale, verticalScale)
+    }
+
+    private var envelopeCard: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: IKRadius.small, style: .continuous)
+                .fill(accentColor.primary.swiftUIColor)
+                .shadow(color: .black.opacity(0.18), radius: 14, x: 0, y: 6)
+
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
+                    senderAddress
+                        .padding(.leading, IKPadding.large)
+                    Spacer()
+                    PostmarkView(inkColor: accentColor.onAccent.swiftUIColor)
+                        .offset(x: PostmarkView.size / 2, y: IKPadding.micro)
+                        .zIndex(1)
+                    StampView(perforationColor: accentColor.primary.swiftUIColor)
+                        .padding(.trailing, IKPadding.medium)
+                }
+                .padding(.top, IKPadding.small)
+
+                Spacer()
+
+                recipientAddress
+                    .frame(maxWidth: .infinity)
+                    .offset(x: IKPadding.small)
+
+                Spacer()
+            }
+        }
+        .frame(width: Self.envelopeSize.width, height: Self.envelopeSize.height)
+        .rotationEffect(.degrees(cardTilt))
+    }
+
+    private var senderAddress: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if !sender.name.isEmpty && sender.name != sender.email {
+                Text(sender.name)
+                    .font(Self.addressFont(size: 11, relativeTo: .caption))
+            }
+            Text(sender.email)
+                .font(Self.addressFont(size: 9.5, relativeTo: .caption2))
+        }
+        .foregroundStyle(accentColor.onAccent.swiftUIColor.opacity(0.85))
+        .lineLimit(1)
+    }
+
+    private var recipientAddress: some View {
+        VStack(spacing: 2) {
+            if !recipient.name.isEmpty && recipient.name != recipient.email {
+                Text(recipient.name)
+                    .font(Self.addressFont(size: 20, relativeTo: .title3))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
+            }
+            Text(recipient.email)
+                .font(Self.addressFont(size: 12, relativeTo: .caption))
+                .lineLimit(1)
+                .minimumScaleFactor(0.4)
+        }
+        .foregroundStyle(accentColor.onAccent.swiftUIColor)
+        .padding(.horizontal, IKPadding.medium)
+    }
+
+    // MARK: - Func
+
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                guard sendPhase == .ready else { return }
+                dragOffset = value.translation
+            }
+            .onEnded { value in
+                guard sendPhase == .ready else { return }
+
+                let distance = hypot(value.translation.width, value.translation.height)
+                guard distance >= Self.sendThreshold else {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
+                        dragOffset = .zero
+                    }
+                    return
+                }
+
+                sendMail(with: value.translation)
+            }
+    }
+
+    private func sendMail(with translation: CGSize) {
+        sendPhase = .flying
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+        withAnimation(.easeIn(duration: 0.45)) {
+            dragOffset = CGSize(width: translation.width * Self.escapeFactor, height: translation.height * Self.escapeFactor)
+        }
+
+        Task {
+            try? await Task.sleep(for: .seconds(0.5))
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                sendPhase = .sent
+            }
+
+            try? await Task.sleep(for: .seconds(1.2))
+            onSent()
+        }
+    }
+}
+
+/// Green light confirming that the mail was sent
+private struct SentBadgeView: View {
+    let accentColor: AccentColor
+
+    private static let badgeDiameter: CGFloat = 76
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(accentColor.primary.swiftUIColor)
+                .frame(width: Self.badgeDiameter, height: Self.badgeDiameter)
+                .shadow(color: .black.opacity(0.18), radius: 12, x: 0, y: 4)
+            Image(systemName: "checkmark")
+                .font(.system(size: 30, weight: .bold))
+                .foregroundStyle(accentColor.onAccent.swiftUIColor)
+        }
+    }
+}
+
+// MARK: - Stamp
+
+/// Postage stamp with the Infomaniak logo and a perforated edge
+private struct StampView: View {
+    let perforationColor: Color
+
+    fileprivate static let size = CGSize(width: 62, height: 76)
+    fileprivate static let holeDiameter: CGFloat = 5
+    fileprivate static let holeSpacing: CGFloat = 11
+    private static let logoWidth: CGFloat = 44
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(MailResourcesAsset.textFieldColor.swiftUIColor)
+
+            MailResourcesAsset.splashscreenInfomaniak.swiftUIImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: Self.logoWidth)
+
+            Rectangle()
+                .stroke(perforationColor.opacity(0.3), lineWidth: 1)
+                .frame(
+                    width: Self.size.width - Self.holeDiameter * 2,
+                    height: Self.size.height - Self.holeDiameter * 2
+                )
+
+            StampPerforationShape(holeDiameter: Self.holeDiameter, holeSpacing: Self.holeSpacing)
+                .fill(perforationColor)
+        }
+        .frame(width: Self.size.width, height: Self.size.height)
+    }
+}
+
+/// Holes punched along the edges of the stamp
+private struct StampPerforationShape: Shape {
+    let holeDiameter: CGFloat
+    let holeSpacing: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let radius = holeDiameter / 2
+
+        let columns = max(1, Int(rect.width / holeSpacing))
+        let columnStep = rect.width / CGFloat(columns + 1)
+        for column in 1 ... columns {
+            let x = CGFloat(column) * columnStep
+            path.addEllipse(in: CGRect(x: x - radius, y: rect.minY - radius, width: holeDiameter, height: holeDiameter))
+            path.addEllipse(in: CGRect(x: x - radius, y: rect.maxY - radius, width: holeDiameter, height: holeDiameter))
+        }
+
+        let rows = max(1, Int(rect.height / holeSpacing))
+        let rowStep = rect.height / CGFloat(rows + 1)
+        for row in 1 ... rows {
+            let y = CGFloat(row) * rowStep
+            path.addEllipse(in: CGRect(x: rect.minX - radius, y: y - radius, width: holeDiameter, height: holeDiameter))
+            path.addEllipse(in: CGRect(x: rect.maxX - radius, y: y - radius, width: holeDiameter, height: holeDiameter))
+        }
+
+        return path
+    }
+}
+
+/// Ink marks over the stamp, like on a stamped letter
+private struct PostmarkView: View {
+    let inkColor: Color
+
+    fileprivate static let size: CGFloat = 48
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(inkColor.opacity(0.55), lineWidth: 1.5)
+            VStack(spacing: 3) {
+                Capsule()
+                    .fill(inkColor.opacity(0.55))
+                    .frame(width: 24, height: 1.5)
+                Capsule()
+                    .fill(inkColor.opacity(0.55))
+                    .frame(width: 16, height: 1.5)
+            }
+        }
+        .frame(width: Self.size, height: Self.size)
+    }
+}
+
 // MARK: - Shapes
 
 /// Triangle unfolding above the envelope, with its base on the envelope mouth
@@ -260,5 +584,11 @@ private struct EnvelopePocketShape: Shape {
 }
 
 #Preview {
-    EasterEggLetterView()
+    let draft = Draft()
+    draft.to.append(objectsIn: [Recipient(email: "camille.martin@infomaniak.com", name: "Camille Martin")])
+    return EasterEggLetterView(
+        draft: draft,
+        currentUser: PreviewHelper.sampleUser,
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }
