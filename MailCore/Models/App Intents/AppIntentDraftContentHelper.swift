@@ -93,6 +93,7 @@ struct AppIntentDraftContentHelper {
             currentMailboxEmail: mailboxManager.mailbox.email,
             aliases: mailboxManager.mailbox.aliases.toArray()
         )
+        draft.ackRequest = UserDefaults.shared.acknowledgement
 
         let paramsTo = intent.to.compactMap { $0.recipient }.toRealmList()
         if !paramsTo.isEmpty {

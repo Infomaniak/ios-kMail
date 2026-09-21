@@ -54,7 +54,8 @@ struct CreateDraftIntent {
             subject: subject ?? "",
             to: to.compactMap { $0.recipient },
             cc: cc.compactMap { $0.recipient },
-            bcc: bcc.compactMap { $0.recipient }
+            bcc: bcc.compactMap { $0.recipient },
+            ackRequest: UserDefaults.shared.acknowledgement
         )
         let draftUUID = draft.localUUID
 
