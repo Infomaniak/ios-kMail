@@ -92,8 +92,6 @@ struct SendOptionFloatingPanelView: View {
                 .padding(.top, value: .medium)
                 .padding(.bottom, value: .small)
 
-            IKDivider(type: .item)
-
             Toggle(isOn: $draft.ackRequest) {
                 Label {
                     Text(MailResourcesStrings.Localizable.settingsSendAcknowledgementTitle)
