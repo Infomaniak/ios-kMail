@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakLogin
 @testable import MailCore
+import MailResources
 import SwiftSoup
 import XCTest
 
@@ -29,6 +30,9 @@ final class SignatureTests: XCTestCase {
     /// A basic signature wrapped in the "editorUserSignature" class
     static let basicSignature =
         "<br><br><div class=\"editorUserSignature\"><p>test signature absolute bottom<br></p></div>"
+
+    static let quotedMessage =
+        "<div class=\"\(Constants.replyQuoteHTMLClass)\"><blockquote><div>Message cite</div></blockquote></div>"
 
     override static func setUp() {
         super.setUp()
@@ -85,5 +89,33 @@ final class SignatureTests: XCTestCase {
         } catch {
             XCTFail("Unexpected :\(error)")
         }
+    }
+
+    func testEditedFollowUpPlaceholderIsConsideredUserEdition() async {
+        let draft = Draft(
+            inReplyToUid: "missing-message",
+            body: "<div class=\"\(Constants.followUpPlaceholderHTMLClass)\">Texte modifie</div>\(Constants.editorFirstLines)\(Self.quotedMessage)"
+        )
+
+        let helper = DraftContentDiffHelper(draft: draft, transactionable: InMemoryRealmAccessor())
+
+        let containsUserEdition = await helper.userBodyContainsUserEdition()
+        XCTAssertTrue(containsUserEdition)
+    }
+
+    func testUntouchedFollowUpPlaceholderIsNotConsideredUserEdition() async {
+        let placeholderBody = MailResourcesStrings.Localizable.reminderFollowUpPlaceholderText.replacingOccurrences(
+            of: "\n",
+            with: "<br>"
+        )
+        let draft = Draft(
+            inReplyToUid: "missing-message",
+            body: "<div class=\"\(Constants.followUpPlaceholderHTMLClass)\">\(placeholderBody)</div>\(Constants.editorFirstLines)\(Self.quotedMessage)"
+        )
+
+        let helper = DraftContentDiffHelper(draft: draft, transactionable: InMemoryRealmAccessor())
+
+        let containsUserEdition = await helper.userBodyContainsUserEdition()
+        XCTAssertFalse(containsUserEdition)
     }
 }
