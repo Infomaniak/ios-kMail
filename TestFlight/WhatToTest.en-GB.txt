@@ -1,2 +1,2 @@
-- Offline search is more reliable for conversations with emoji reactions.
-- Drafts save and send more reliably when synchronization requests overlap.
+- Offline search is more reliable for conversations with emoji reactions
+- Drafts save and send more reliably when synchronization requests overlap

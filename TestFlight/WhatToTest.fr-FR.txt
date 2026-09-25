@@ -1,2 +1,2 @@
-- La recherche hors ligne est plus fiable pour les conversations contenant des réactions emoji.
-- L’enregistrement et l’envoi des brouillons sont plus fiables lorsque plusieurs synchronisations se chevauchent.
+- La recherche hors ligne est plus fiable pour les conversations contenant des réactions emoji
+- L’enregistrement et l’envoi des brouillons sont plus fiables lorsque plusieurs synchronisations se chevauchent
