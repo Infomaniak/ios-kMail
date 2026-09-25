@@ -31,7 +31,7 @@ public final class DraftManager {
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
     @MainActor public var openDraftCount = 0
-    private var currentSyncTask: Task<Void, Never>?
+    @MainActor private var currentSyncTask: Task<Void, Never>?
 
     /// Used by DI only
     public init() {}
@@ -102,16 +102,16 @@ public final class DraftManager {
         try? await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
     }
 
+    @MainActor
     public func syncDraft(
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
         changeFolderAction: ((Folder) -> Void)? = nil,
         kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
     ) async {
-        if currentSyncTask != nil {
-            await currentSyncTask?.value
-        }
-        currentSyncTask = Task {
+        let previousTask = currentSyncTask
+        let newTask = Task {
+            await previousTask?.value
             await syncDraftJob(
                 mailboxManager: mailboxManager,
                 showSnackbar: showSnackbar,
@@ -120,8 +120,12 @@ public final class DraftManager {
             )
         }
 
-        await currentSyncTask?.value
-        currentSyncTask = nil
+        currentSyncTask = newTask
+        await newTask.value
+
+        if currentSyncTask == newTask {
+            currentSyncTask = nil
+        }
     }
 
     public func startSyncDraft(
