@@ -1,1 +1,2 @@
-- Amélioration de la fiabilité de la synchronisation des messages et de la mise à jour des conversations.
+- La recherche hors ligne est plus fiable pour les conversations contenant des réactions emoji.
+- L’enregistrement et l’envoi des brouillons sont plus fiables lorsque plusieurs synchronisations se chevauchent.
