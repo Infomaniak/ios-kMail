@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreDB
+import MailResources
 import SwiftSoup
 
 public struct DraftContentDiffHelper {
@@ -43,6 +44,16 @@ public struct DraftContentDiffHelper {
     public func userBodyContainsUserEdition() async -> Bool {
         guard !draft.body.isEmpty, let document = try? await SwiftSoup.parse(draft.body) else {
             return false
+        }
+
+        if let placeholder = try? document.getElementsByClass(Constants.followUpPlaceholderHTMLClass).first(),
+           let original = try? await SwiftSoup.parse(
+               MailResourcesStrings.Localizable.reminderFollowUpPlaceholderText.replacingOccurrences(of: "\n", with: "<br>")
+           ),
+           let placeholderText = try? placeholder.text(),
+           let originalText = try? original.text(),
+           placeholderText == originalText {
+            _ = try? placeholder.remove()
         }
 
         for itemToExtract in Draft.appendedHTMLElements {
