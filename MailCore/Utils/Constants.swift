@@ -127,6 +127,7 @@ public enum Constants {
     public static let signatureHTMLClass = "editorUserSignature"
     public static let forwardQuoteHTMLClass = "forwardContentMessage"
     public static let replyQuoteHTMLClass = "ik_mail_quote"
+    public static let followUpPlaceholderHTMLClass = "followUpPlaceholder"
 
     public static let forwardRoot = "<div class=\"\(forwardQuoteHTMLClass)\">"
     public static let replyRoot = "<div class=\"\(replyQuoteHTMLClass)\">"

@@ -361,10 +361,11 @@ extension DraftContentManager {
             content = try await formatForward(message: message)
         case .followUp:
             content = try await formatForward(message: message)
-            placeholderText = MailResourcesStrings.Localizable.reminderFollowUpPlaceholderText.replacingOccurrences(
+            let placeholderBody = MailResourcesStrings.Localizable.reminderFollowUpPlaceholderText.replacingOccurrences(
                 of: "\n",
                 with: "<br>"
             )
+            placeholderText = "<div class=\"\(Constants.followUpPlaceholderHTMLClass)\">\(placeholderBody)</div>"
         }
 
         return "\(placeholderText)\(Constants.editorFirstLines)\(content)"
