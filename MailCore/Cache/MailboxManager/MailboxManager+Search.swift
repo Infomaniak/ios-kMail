@@ -159,6 +159,13 @@ public extension MailboxManager {
                 let newMessage = message.detached()
                 newMessage.uid = "offline\(newMessage.uid)"
                 newMessage.fromSearch = true
+                newMessage.reactionMessages = message.reactionMessages.toArray().map {
+                    let newReactionMessage = $0.detached()
+                    newReactionMessage.uid = "offline\(newReactionMessage.uid)"
+                    newReactionMessage.fromSearch = true
+
+                    return newReactionMessage
+                }.toRealmList()
 
                 let newThread = Thread(
                     uid: "offlineThread\(message.uid)",
