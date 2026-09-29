@@ -32,7 +32,6 @@ import SwiftUI
 
 struct AttachmentsView: View {
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
@@ -152,7 +151,7 @@ struct AttachmentsView: View {
                 trackDownloadTask[attachment.uuid] = nil
             }
 
-            do {
+            await tryOrDisplayError {
                 if !FileManager.default.fileExists(atPath: url.path) {
                     try await mailboxManager.saveAttachmentLocally(attachment: attachment) { progress in
                         Task { @MainActor in
@@ -160,9 +159,6 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-            } catch {
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-                return
             }
 
             try Task.checkCancellation()
