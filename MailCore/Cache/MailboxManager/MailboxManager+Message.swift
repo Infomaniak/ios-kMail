@@ -65,20 +65,16 @@ public extension MailboxManager {
         }
     }
 
-    func saveAttachmentLocally(attachment: Attachment, progressObserver: ((Double) -> Void)?) async {
-        do {
-            let data = try await attachmentData(attachment, progressObserver: progressObserver)
-            let url = attachment.getLocalURL(userId: mailbox.userId, mailboxId: mailbox.mailboxId)
+    func saveAttachmentLocally(attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws {
+        let data = try await attachmentData(attachment, progressObserver: progressObserver)
+        try Task.checkCancellation()
+        let url = attachment.getLocalURL(userId: mailbox.userId, mailboxId: mailbox.mailboxId)
 
-            let parentFolder = url.deletingLastPathComponent()
-            if !FileManager.default.fileExists(atPath: parentFolder.path) {
-                try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
-            }
-            try data.write(to: url)
-        } catch {
-            // Handle error
-            print("Failed to save attachment: \(error)")
+        let parentFolder = url.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: parentFolder.path) {
+            try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
         }
+        try data.write(to: url, options: .atomic)
     }
 
     func markAsSeen(message: Message, seen: Bool = true) async throws {

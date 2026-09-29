@@ -19,8 +19,11 @@
 import Foundation
 import MailResources
 import RealmSwift
+import UniformTypeIdentifiers
 
 public class Attachment: EmbeddedObject, Codable, ObjectKeyIdentifiable {
+    private static let walletPassType = UTType(filenameExtension: "pkpass")
+
     @Persisted public var uuid: String
     @Persisted public var partId: String // PROBLEM: Sometimes API return a String, sometimes an Int. Check with backend if we can have one type only? -- Asked to Julien A. on 08.09 - To follow up.
     @Persisted public var mimeType: String
@@ -42,6 +45,19 @@ public class Attachment: EmbeddedObject, Codable, ObjectKeyIdentifiable {
 
     public var icon: MailResourcesImages {
         return AttachmentHelper(type: mimeType, fileExtension: URL(filePath: name).pathExtension).icon
+    }
+
+    public var isWalletPass: Bool {
+        let type = mimeType.split(separator: ";", maxSplits: 1).first?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if type?.caseInsensitiveCompare("application/vnd.apple.pkpass") == .orderedSame {
+            return true
+        }
+
+        guard let walletPassType = Self.walletPassType,
+              let fileType = UTType(filenameExtension: URL(filePath: name).pathExtension) else {
+            return false
+        }
+        return fileType.conforms(to: walletPassType)
     }
 
     private enum CodingKeys: String, CodingKey {
