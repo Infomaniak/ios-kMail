@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -24,17 +25,20 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import PassKit
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentsView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
     @ModalState private var previewedAttachment: Attachment?
+    @ModalState private var walletPass: WalletPassPresentation?
     @ModalState private var attachmentsURL: AttachmentsURL?
     @State private var downloadProgressState: [String: Double] = [:]
     @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
@@ -121,6 +125,9 @@ struct AttachmentsView: View {
                 .environmentObject(mailboxManager)
                 .pagePresentationSizing()
         }
+        .sheet(item: $walletPass) { walletPass in
+            AddWalletPassView(controller: walletPass.controller)
+        }
         .sheet(item: $attachmentsURL) { attachmentsURL in
             DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
                 .ignoresSafeArea()
@@ -133,21 +140,48 @@ struct AttachmentsView: View {
     }
 
     private func openAttachment(_ attachment: Attachment) {
-        isDownloadDisabled = true
         matomo.track(eventWithCategory: .attachmentActions, name: "open")
-        previewedAttachment = attachment
-        if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
-            downloadProgressState[attachment.uuid] = 0.0
-            trackDownloadTask[attachment.uuid] = Task { @MainActor in
-                await mailboxManager.saveAttachmentLocally(attachment: attachment) { progress in
-                    Task { @MainActor in
-                        downloadProgressState[attachment.uuid] = progress
+        isDownloadDisabled = true
+        let url = attachment.getLocalURL(mailboxManager: mailboxManager)
+        if !FileManager.default.fileExists(atPath: url.path) {
+            downloadProgressState[attachment.uuid] = 0
+        }
+        trackDownloadTask[attachment.uuid] = Task { @MainActor in
+            defer {
+                isDownloadDisabled = false
+                trackDownloadTask[attachment.uuid] = nil
+            }
+
+            do {
+                if !FileManager.default.fileExists(atPath: url.path) {
+                    try await mailboxManager.saveAttachmentLocally(attachment: attachment) { progress in
+                        Task { @MainActor in
+                            downloadProgressState[attachment.uuid] = progress
+                        }
                     }
                 }
-                downloadProgressState[attachment.uuid] = 1.0
+            } catch {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+                return
             }
+
+            try Task.checkCancellation()
+
+            downloadProgressState[attachment.uuid] = 1
+            openPreviewOrWalletFor(attachment: attachment)
         }
-        isDownloadDisabled = false
+    }
+
+    private func openPreviewOrWalletFor(attachment: Attachment) {
+        if attachment.isWalletPass && PKAddPassesViewController.canAddPasses(),
+           let data = try? Data(contentsOf: attachment.getLocalURL(mailboxManager: mailboxManager), options: [.alwaysMapped]),
+           let pass = try? PKPass(data: data),
+           let controller = PKAddPassesViewController(pass: pass) {
+            walletPass = WalletPassPresentation(controller: controller)
+
+        } else {
+            previewedAttachment = attachment
+        }
     }
 
     private func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) {

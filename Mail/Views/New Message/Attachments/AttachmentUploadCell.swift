@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import IKSnackbar
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -25,6 +26,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentUploadCell: View {
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     private let attachment: Attachment
@@ -78,7 +81,13 @@ struct AttachmentUploadCell: View {
         previewedAttachment = attachment
         if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
             Task {
-                await mailboxManager.saveAttachmentLocally(attachment: attachment, progressObserver: nil)
+                do {
+                    try await mailboxManager.saveAttachmentLocally(attachment: attachment, progressObserver: nil)
+                } catch is CancellationError {
+                    return
+                } catch {
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+                }
             }
         }
     }
