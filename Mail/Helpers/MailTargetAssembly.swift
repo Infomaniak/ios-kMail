@@ -75,7 +75,7 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
     override class func getTargetServices() -> [Factory] {
         return super.getTargetServices() + [
             Factory(type: InAppTwoFactorAuthenticationManagerable.self) { _, _ in
-                InAppTwoFactorAuthenticationManager()
+                InAppTwoFactorAuthenticationManager(checkIntervalSeconds: 10)
             },
             Factory(type: RefreshAppBackgroundTask.self) { _, _ in
                 RefreshAppBackgroundTask()
