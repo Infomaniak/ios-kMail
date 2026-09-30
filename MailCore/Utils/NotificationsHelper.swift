@@ -328,7 +328,7 @@ public enum NotificationsHelper {
     }
 
     public static func getMessagePreview(from message: Message, mailboxManager: MailboxManager) async -> String {
-        if let cleanedBody = try? await computeCleanMessageBody(of: message) {
+        if let cleanedBody = try? await computeCleanMessageBody(of: message), !cleanedBody.isEmpty {
             try? await updateMessagePreview(preview: cleanedBody, message: message, mailboxManager: mailboxManager)
         }
 
