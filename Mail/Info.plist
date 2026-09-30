@@ -2,33 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIApplicationShortcutItems</key>
-	<array>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>newMessage</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>shortcutNewMessageTitle</string>
-			<key>UIApplicationShortcutItemIconSymbolName</key>
-			<string>square.and.pencil</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>search</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>searchAction</string>
-			<key>UIApplicationShortcutItemIconSymbolName</key>
-			<string>magnifyingglass</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>support</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>shortcutSupportTitle</string>
-			<key>UIApplicationShortcutItemIconSymbolName</key>
-			<string>questionmark.bubble</string>
-		</dict>
-	</array>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
@@ -108,18 +81,16 @@
 	<string>Local contacts will be used to show recipient info. We will NOT send them to the server.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>To be able to lock the app</string>
-	<key>NSUserActivityTypes</key>
-	<array>
-		<string>INSendMessageIntent</string>
-	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Photo access will be used to save pictures in your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo access will be used to save pictures in your photo library.</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>INSendMessageIntent</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -127,6 +98,43 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>square.and.pencil</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcutNewMessageTitle</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>newMessage</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>magnifyingglass</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>searchAction</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>search</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>person.crop.rectangle</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcutContactCardTitle</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>contactCard</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>questionmark.bubble</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcutSupportTitle</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>support</string>
+		</dict>
+	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

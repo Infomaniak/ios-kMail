@@ -31,6 +31,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingSyncProfile = false
     @ModalPublished public var isShowingSyncDiscovery = false
     @Published public var isShowingSearch = false
+    @ModalPublished public var isShowingContactCard = false
     @ModalPublished public var isShowingReviewAlert = false
     @ModalPublished public var isShowingSafariView: IdentifiableURL?
     @ModalPublished public var isShowingUpdateAvailable = false

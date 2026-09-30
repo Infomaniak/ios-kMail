@@ -23,6 +23,7 @@ public enum HomeScreenShortcut: String {
     case newMessage
     case search
     case support
+    case contactCard
 
     public init?(shortcutItem: UIApplicationShortcutItem) {
         guard let shortcut = HomeScreenShortcut(rawValue: shortcutItem.type) else { return nil }

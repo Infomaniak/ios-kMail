@@ -168,6 +168,9 @@ struct SplitView: View {
             SafariWebView(url: safariContent.url)
                 .ignoresSafeArea()
         }
+        .sheet(isPresented: $mainViewState.isShowingContactCard) {
+            ContactCardContentView(user: currentUser.value)
+        }
         .task(id: currentUser.value.id) {
             await cacheManager.refreshCacheDataFor(userId: currentUser.value.id)
         }
@@ -181,7 +184,6 @@ struct SplitView: View {
                    perform: handleOpenNotificationSettings)
         .onAppear {
             orientationManager.setOrientationLock(.all)
-            handleShortcutItem(shortcut: quickActionsManager.homeScreenShortcut)
         }
         .onChange(of: quickActionsManager.homeScreenShortcut) { newHomeScreenShortcut in
             handleShortcutItem(shortcut: newHomeScreenShortcut)
@@ -229,6 +231,8 @@ struct SplitView: View {
     }
 
     private func willEnterForeground() {
+        handleShortcutItem(shortcut: quickActionsManager.homeScreenShortcut)
+
         Task {
             // We need to write in Task instead of async let to avoid being cancelled too early
             Task {
@@ -356,6 +360,8 @@ struct SplitView: View {
             mainViewState.isShowingSearch = true
         case .support:
             openURL(URLConstants.chatbot.url)
+        case .contactCard:
+            mainViewState.isShowingContactCard = true
         }
 
         matomo.track(eventWithCategory: .homeScreenShortcuts, name: shortcut.rawValue)
