@@ -110,6 +110,7 @@ struct ComposeMessageHeaderView: View {
         in draft: Draft
     ) throws {
         guard !draft.isInvalidated,
+              draft.isManagedByRealm,
               let liveDraft = draft.thaw(),
               let realm = liveDraft.realm else {
             throw MailError.draftNotFound
