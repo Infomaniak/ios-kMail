@@ -1,0 +1,5 @@
+- Aggiungi i pass supportati dagli allegati email direttamente ad Apple Wallet.
+- Apri la tua scheda contatto con una nuova scorciatoia nella schermata Home.
+- Il download e l’anteprima degli allegati gestiscono meglio gli errori.
+- Le richieste di autenticazione a due fattori compaiono prima.
+- La modifica dei destinatari delle bozze e le anteprime dei messaggi sono più affidabili.

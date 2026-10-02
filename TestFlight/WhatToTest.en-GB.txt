@@ -1,2 +1,5 @@
-- Offline search is more reliable for conversations with emoji reactions.
-- Drafts save and send more reliably when synchronization requests overlap.
+- Add supported passes from email attachments directly to Apple Wallet.
+- Open your contact card from a new home screen shortcut.
+- Attachment downloads and previews handle errors more reliably.
+- Two-factor authentication prompts appear sooner.
+- Draft recipient updates and message previews are more reliable.

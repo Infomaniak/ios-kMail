@@ -1,0 +1,5 @@
+- Fügen Sie unterstützte Pässe aus E-Mail-Anhängen direkt zu Apple Wallet hinzu.
+- Öffnen Sie Ihre Kontaktkarte über einen neuen Schnellzugriff auf dem Home-Bildschirm.
+- Downloads und Vorschauen von Anhängen gehen zuverlässiger mit Fehlern um.
+- Aufforderungen zur Zwei-Faktor-Authentifizierung erscheinen schneller.
+- Empfänger in Entwürfen lassen sich zuverlässiger bearbeiten und Nachrichtenvorschauen funktionieren zuverlässiger.
