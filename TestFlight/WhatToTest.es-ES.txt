@@ -1,0 +1,5 @@
+- Añade pases compatibles desde los archivos adjuntos del correo directamente a Apple Wallet.
+- Abre tu tarjeta de contacto con un nuevo acceso directo en la pantalla de inicio.
+- La descarga y la vista previa de los archivos adjuntos gestionan mejor los errores.
+- Las solicitudes de autenticación de dos factores aparecen antes.
+- La edición de destinatarios en borradores y las vistas previas de mensajes son más fiables.

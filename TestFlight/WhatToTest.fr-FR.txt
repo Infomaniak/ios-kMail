@@ -1,2 +1,5 @@
-- La recherche hors ligne est plus fiable pour les conversations contenant des réactions emoji.
-- L’enregistrement et l’envoi des brouillons sont plus fiables lorsque plusieurs synchronisations se chevauchent.
+- Ajoutez directement à Apple Wallet les cartes compatibles reçues en pièce jointe.
+- Ouvrez votre fiche de contact depuis un nouveau raccourci de l’écran d’accueil.
+- Le téléchargement et l’aperçu des pièces jointes gèrent mieux les erreurs.
+- Les demandes d’authentification à deux facteurs s’affichent plus rapidement.
+- La modification des destinataires des brouillons et l’aperçu des messages sont plus fiables.
