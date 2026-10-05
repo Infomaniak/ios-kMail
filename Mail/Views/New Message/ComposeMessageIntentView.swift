@@ -103,15 +103,17 @@ struct ComposeMessageIntentView: View, IntentViewable {
         var maybeMessageReply: MessageReply?
         switch composeMessageIntent.type {
         case .new:
-            draftToWrite = Draft(localUUID: UUID().uuidString)
+            draftToWrite = Draft(localUUID: UUID().uuidString, ackRequest: UserDefaults.shared.acknowledgement)
         case .existing(let existingDraftLocalUUID):
             draftToWrite = mailboxManager.draft(localUuid: existingDraftLocalUUID)
         case .existingRemote(let messageUid):
             draftToWrite = Draft(messageUid: messageUid)
         case .mailTo(let mailToURLComponents):
             draftToWrite = Draft.mailTo(urlComponents: mailToURLComponents)
+            draftToWrite?.ackRequest = UserDefaults.shared.acknowledgement
         case .writeTo(let recipient):
             draftToWrite = Draft.writing(to: recipient)
+            draftToWrite?.ackRequest = UserDefaults.shared.acknowledgement
         case .reply(let messageUid, let replyMode, let euriaReply):
             if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
                 let messageReply = MessageReply(
@@ -125,6 +127,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     currentMailboxEmail: mailboxManager.mailbox.email,
                     aliases: mailboxManager.mailbox.aliases.toArray()
                 )
+                draftToWrite?.ackRequest = UserDefaults.shared.acknowledgement
             }
         case .followUp(let messageUid):
             if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
@@ -135,6 +138,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     currentMailboxEmail: mailboxManager.mailbox.email,
                     aliases: mailboxManager.mailbox.aliases.toArray()
                 )
+                draftToWrite?.ackRequest = UserDefaults.shared.acknowledgement
             }
         }
 
