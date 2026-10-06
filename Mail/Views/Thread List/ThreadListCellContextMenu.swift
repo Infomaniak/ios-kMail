@@ -36,6 +36,7 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsProvider: ActionsProvider
@@ -152,6 +153,8 @@ struct ThreadListCellContextMenu: ViewModifier {
                     reportedMessages: blockSenderState.messages,
                     origin: listActionOrigin
                 )
+                .environment(\.currentUser, currentUser)
+                .environmentObject(mailboxManager)
             }
             .mailCustomAlert(
                 item: $reportedForDisplayProblemMessage
