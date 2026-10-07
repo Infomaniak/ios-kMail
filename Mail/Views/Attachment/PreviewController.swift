@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import PDFKit
 import QuickLook
 import SwiftUI
@@ -38,6 +39,15 @@ struct PreviewController: View {
         #if targetEnvironment(macCatalyst)
         if isPDF {
             PDFPreviewView(url: url)
+                .toolbar {
+                    ToolbarItem {
+                        Button(action: {
+                            PDFPreviewView.printPDF(from: url)
+                        }, label: {
+                            Label(MailResourcesStrings.Localizable.actionPrint, systemImage: "printer")
+                        })
+                    }
+                }
         } else {
             QuickLookPreviewController(url: url)
         }
@@ -99,6 +109,18 @@ private struct PDFPreviewView: UIViewRepresentable {
     func updateUIView(_ pdfView: PDFView, context: Context) {
         guard pdfView.document?.documentURL != url else { return }
         pdfView.document = PDFDocument(url: url)
+    }
+
+    static func printPDF(from url: URL) {
+        let printInfo = UIPrintInfo(dictionary: nil)
+        printInfo.outputType = .general
+        printInfo.jobName = url.lastPathComponent
+
+        let printController = UIPrintInteractionController.shared
+        printController.printInfo = printInfo
+        printController.printingItem = url
+
+        printController.present(animated: true, completionHandler: nil)
     }
 }
 #endif
