@@ -71,10 +71,8 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
     }
 
-    func mailTemplate() async throws -> [MailTemplate] {
-        try await Task {
-            MailTemplate.mocks
-        }.value
+    func mailTemplate(mailbox: Mailbox) async throws -> [MailTemplate] {
+        try await perform(request: authenticatedRequest(.template(mailbox: mailbox.hostingId, mailboxName: mailbox.mailbox)))
     }
 
     @discardableResult
