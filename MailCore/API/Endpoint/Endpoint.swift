@@ -159,6 +159,16 @@ public extension Endpoint {
         return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/signatures")
     }
 
+    static func template(mailbox: Int, mailboxName: String, perPage: Int = 9999) -> Endpoint {
+        return .base.appending(
+            path: "/securedProxy/1/mail_hostings/\(mailbox)/mailboxes/\(mailboxName)/email-snippets",
+            queryItems: [
+                URLQueryItem(name: "with", value: "preview,content"),
+                URLQueryItem(name: "per_page", value: "\(perPage)")
+            ]
+        )
+    }
+
     static func updateSignature(hostingId: Int, mailboxName: String) -> Endpoint {
         return .signatures(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/set_defaults")
     }

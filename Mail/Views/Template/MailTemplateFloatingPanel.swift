@@ -62,7 +62,7 @@ struct MailTemplateListView: View {
     let draft: Draft
 
     @State private var templates: [MailTemplate] = []
-    @State private var previewTexts: [Int: String] = [:]
+    @State private var previewTexts: [String: String] = [:]
 
     var body: some View {
         NavigationStack {
@@ -104,9 +104,9 @@ struct MailTemplateListView: View {
         }
         .task {
             do {
-                templates = try await mailboxManager.apiFetcher.mailTemplate()
+                templates = try await mailboxManager.apiFetcher.mailTemplate(mailbox: mailboxManager.mailbox)
                 for template in templates {
-                    let extractedText = try? await SwiftSoupUtils(fromHTML: template.body).extractText()
+                    let extractedText = try? await SwiftSoupUtils(fromHTML: template.content).extractText()
                     previewTexts[template.id] = extractedText ?? MailResourcesStrings.Localizable.noBodyDescription
                 }
             } catch {
@@ -124,13 +124,13 @@ struct TemplatePreviewView: View {
 
     var body: some View {
         List {
-            if !template.body.isEmpty {
+            if !template.content.isEmpty {
                 MessageBodyContentView(
                     displayContentBlockedActionView: .constant(false),
                     initialContentLoading: .constant(false),
                     presentableBody: PresentableBody(
-                        body: MailCore.Body(value: ["content": template.body, "type": "html"]),
-                        compactBody: template.body,
+                        body: MailCore.Body(value: ["content": template.content, "type": "html"]),
+                        compactBody: template.content,
                         quotes: []
                     ),
                     blockRemoteContent: false,
@@ -149,7 +149,7 @@ struct TemplatePreviewView: View {
                 Task {
                     do {
                         try await editorBox.editor?.webView
-                            .evaluateJavaScript(.insertHTMLAtCaret(template.body))
+                            .evaluateJavaScript(.insertHTMLAtCaret(template.content))
                     } catch {
                         // handle error
                     }
