@@ -104,6 +104,10 @@ tuist test # Or via Xcode Test Navigator
 - **Concurrency:** Use `async/await` and structured concurrency. `RefreshActor` for background sync.
 - **Realm migrations:** Any schema-affecting change to a Realm `Object` or `EmbeddedObject` must increment the matching schema version in `MailCore/Cache/MailboxManager/MailboxManager.swift`, `MailCore/Cache/MailboxInfosManager/MailboxInfosManager.swift`, or `MailCore/Cache/ContactManager/ContactManager.swift`. Update the relevant migration block when existing data needs migration.
 - **Formatting:** SwiftFormat excludes `DerivedData`, `Derived`, `Tuist`, `Project.swift`.
+- **Icons & Images — prioritize assets over SF Symbols:**
+  - Always check and use project assets via `MailResourcesAsset` first (e.g. `MailResourcesAsset.printText`).
+  - Fall back to SF Symbols (`Image(systemName: "...")`) only when no matching asset exists in the catalog.
+  - Never use raw asset string literals (e.g. `Image("print")`).
 
 ### Testing
 

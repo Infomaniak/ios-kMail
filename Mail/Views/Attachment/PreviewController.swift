@@ -41,11 +41,12 @@ struct PreviewController: View {
             PDFPreviewView(url: url)
                 .toolbar {
                     ToolbarItem {
-                        Button(action: {
+                        Button {
                             PDFPreviewView.printPDF(from: url)
-                        }, label: {
-                            Label(MailResourcesStrings.Localizable.actionPrint, systemImage: "printer")
-                        })
+                        } label: {
+                            MailResourcesAsset.printText.swiftUIImage
+                        }
+                        .accessibilityLabel(MailResourcesStrings.Localizable.actionPrint)
                     }
                 }
         } else {
