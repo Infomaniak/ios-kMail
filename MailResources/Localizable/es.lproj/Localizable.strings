@@ -1316,6 +1316,9 @@
 /* loco:67a9f9906c6c8012a50b7782 */
 "otherOrganisation" = "Otros";
 
+/* loco:6a841baa8198b32fb703edc2 */
+"pasteAdjustStyleAction" = "Pega y adapta el estilo";
+
 /* loco:62c424189aacc248962d6224 */
 "pickerNoSelection" = "Sin selección";
 
