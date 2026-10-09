@@ -212,6 +212,15 @@ function findTextMixCandidate(
     targetContrastRatio,
     endpointChannel
 ) {
+    const endpointContrastRatio = relativeLuminancesToContrastRatio(
+        endpointChannel,
+        backgroundLuminance
+    );
+
+    if (endpointContrastRatio < targetContrastRatio) {
+        return null;
+    }
+
     let lowerMixAmount = 0;
     let upperMixAmount = 1;
 
@@ -270,6 +279,14 @@ function findLeastMixedTextColor(
         targetContrastRatio,
         LINEAR_WHITE_CHANNEL
     );
+
+    if (blackCandidate === null) {
+        return whiteCandidate?.linearRgb ?? null;
+    }
+
+    if (whiteCandidate === null) {
+        return blackCandidate.linearRgb;
+    }
 
     return whiteCandidate.mixAmount < blackCandidate.mixAmount
         ? whiteCandidate.linearRgb
@@ -526,7 +543,7 @@ function getOpaqueTextAndBackgroundRgb(element, getStyleForElement) {
 
 function collectEmailTextColorChanges(getStyleForElement, result) {
     const textColorChanges = [];
-    const elements = document.body.querySelectorAll("*");
+    const elements = [document.body, ...document.body.querySelectorAll("*")];
 
     for (const element of elements) {
         if (!isTextContrastCandidate(element)) { continue; }
