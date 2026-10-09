@@ -79,6 +79,11 @@ const TEXT_COLOR_PROPERTIES = [
     "-webkit-text-fill-color"
 ];
 
+const EMAIL_DOM_BUDGET = {
+    maxElements: 5000,
+    maxDepth: 100
+};
+
 function srgbChannelToLinearChannel(srgbChannel) {
     const normalizedChannel = srgbChannel / SRGB_LINEARIZATION.maxChannelValue;
 
@@ -414,6 +419,39 @@ function applyTrackedEmailBackgroundColor(element, color) {
     emailContrastStyleHistory.set(element, [savedProperty]);
 }
 
+function isEmailDomWithinBudget() {
+    const body = document.body;
+    let element = body.firstElementChild;
+    let depth = 1;
+    let count = 0;
+
+    while (element) {
+        count++;
+        if (count > EMAIL_DOM_BUDGET.maxElements || depth > EMAIL_DOM_BUDGET.maxDepth) {
+            return false;
+        }
+
+        if (element.firstElementChild) {
+            element = element.firstElementChild;
+            depth++;
+            continue;
+        }
+
+        while (element !== body && !element.nextElementSibling) {
+            element = element.parentElement;
+            depth--;
+        }
+
+        if (element === body) {
+            break;
+        }
+
+        element = element.nextElementSibling;
+    }
+
+    return true;
+}
+
 function applyEmailDarkModeContrast() {
     restoreEmailContrastStyles();
 
@@ -424,6 +462,11 @@ function applyEmailDarkModeContrast() {
     }
 
     const getStyleForElement = createCachedStyleGetter();
+
+    if (!isEmailDomWithinBudget()) {
+        result.budgetExceeded = true;
+        return result;
+    }
 
     darkenLightNeutralEmailBackgrounds(getStyleForElement, result);
 
