@@ -182,7 +182,7 @@ final class WebViewController: UIViewController {
         guard isEmailContrastEnabled else { return }
 
         try await webView.evaluateJavaScript(
-            "fixEmailContrast()",
+            "applyEmailDarkModeContrast()",
             in: nil,
             in: WebViewModel.contrastContentWorld
         )
