@@ -51,13 +51,14 @@ struct PreloadingView: View {
             VStack(spacing: IKPadding.large) {
                 MailResourcesAsset.splashscreenMail.swiftUIImage
                     .frame(maxWidth: 204)
-                    .padding(.top, -28)
+                    .padding(.top, -54)
                     .alignmentGuide(.splashScreenIconAlignment) { d in d[VerticalAlignment.center] }
 
                 ProgressView()
                     .progressViewStyle(.circular)
             }
         }
+        .ignoresSafeArea()
         .safeAreaInset(edge: .bottom) {
             MailResourcesAsset.splashscreenInfomaniak.swiftUIImage
                 .frame(width: 178)
