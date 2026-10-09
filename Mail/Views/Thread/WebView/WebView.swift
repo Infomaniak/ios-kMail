@@ -96,6 +96,23 @@ final class WebViewController: UIViewController {
         widthSubject.send(size.width)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle,
+              hasFinishedLoading else {
+            return
+        }
+
+        Task { @MainActor in
+            do {
+                try await applyEmailContrastIfNeeded()
+            } catch {
+                SentrySDK.capture(error: error)
+            }
+        }
+    }
+
     #if targetEnvironment(macCatalyst)
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
