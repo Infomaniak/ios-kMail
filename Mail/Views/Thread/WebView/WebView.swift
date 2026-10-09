@@ -20,6 +20,7 @@ import Combine
 import InfomaniakDI
 import MailCore
 import MailResources
+import Sentry
 import SwiftUI
 import WebKit
 
@@ -106,6 +107,23 @@ final class WebViewController: UIViewController {
             .sink { [weak self] in
                 self?.handleContentLoaded()
             }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle,
+              isDocumentReady else {
+            return
+        }
+
+        Task { @MainActor in
+            do {
+                try await applyEmailContrastIfNeeded()
+            } catch {
+                SentrySDK.capture(error: error)
+            }
+        }
     }
 
     override func viewDidLayoutSubviews() {
