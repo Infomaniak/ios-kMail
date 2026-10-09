@@ -74,6 +74,7 @@ struct MessageBodyContentView: View {
                     WebView(
                         webView: model.webView,
                         messageUid: messageUid,
+                        isEmailContrastEnabled: model.isEmailContrastEnabled,
                         mentionMenuContent: $mentionMenuContent
                     ) {
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
