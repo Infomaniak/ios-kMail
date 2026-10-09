@@ -108,7 +108,6 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     private func loadContrastScript() {
-        // TODO: Remove this guard if remove toggle on theme settings
         guard theme == .auto else { return }
 
         guard let source = MailResourcesResources.bundle.load(
