@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "branch" : "fix/onboarding-display-on-iphone-duo",
-        "revision" : "37711080001ddcc49b466d7c67779dca14982c53"
+        "revision" : "73057f3484a081f322a720a11b1c32741d26b63c",
+        "version" : "1.5.0"
       }
     },
     {
