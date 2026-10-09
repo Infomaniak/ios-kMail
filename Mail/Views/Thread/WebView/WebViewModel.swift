@@ -35,6 +35,10 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var initialContentLoading = true
     private var contentLoadingSubscriber: AnyCancellable?
 
+    private(set) var isEmailContrastEnabled = false
+
+    static let contrastContentWorld = WKContentWorld.world(name: "kMailEmailContrast")
+
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
@@ -66,6 +70,8 @@ final class WebViewModel: NSObject, ObservableObject {
         self.init()
         self.theme = theme
         self.aliases = aliases
+
+        loadContrastScript()
     }
 
     override init() {
@@ -99,6 +105,29 @@ final class WebViewModel: NSObject, ObservableObject {
 
         let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
         return loadResult
+    }
+
+    private func loadContrastScript() {
+        // TODO: Remove this guard if remove toggle on theme settings
+        guard theme == .auto else { return }
+
+        guard let source = MailResourcesResources.bundle.load(
+            filename: "fixEmailContrast",
+            withExtension: "js"
+        ) else {
+            SentrySDK.capture(message: "Unable to load fixEmailContrast.js")
+            return
+        }
+
+        let script = WKUserScript(
+            source: source,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: true,
+            in: Self.contrastContentWorld
+        )
+
+        webView.configuration.userContentController.addUserScript(script)
+        isEmailContrastEnabled = true
     }
 
     private func formatSubBodyContent(subBodies: List<SubBody>) -> String {
