@@ -1,0 +1,3 @@
+.import_loco_api
+MailTests/Env.swift
+MailUITests/Env.swift
