@@ -31,5 +31,5 @@ jobs:
       - name: Setup
         run: tuist install && tuist generate
       - name: UITest
-        run: tuist test Mail-Workspace --device "iPhone 17 Pro" --test-targets "MailUITests/MailUITests" --no-selective-testing --clean
+        run: tuist test Mail-Workspace --device "${{ vars.LATEST_IPHONE_SIMULATOR }}" --test-targets "MailUITests/MailUITests" --no-selective-testing --clean
 
