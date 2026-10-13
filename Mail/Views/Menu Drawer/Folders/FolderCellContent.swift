@@ -37,6 +37,7 @@ struct FolderCellContent: View {
 
     @State private var currentFolder: Folder?
 
+    @ModalState private var parentFolder: Folder?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     let frozenFolder: Folder
@@ -95,6 +96,17 @@ struct FolderCellContent: View {
             if frozenFolder.role == nil && cellType != .move {
                 Button {
                     @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .createFolder, name: "fromFolder")
+                    parentFolder = frozenFolder
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
+                    } icon: {
+                        MailResourcesAsset.folderAdd.swiftUIImage
+                    }
+                }
+                Button {
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .manageFolder, name: "rename")
                     currentFolder = frozenFolder
                 } label: {
@@ -131,6 +143,9 @@ struct FolderCellContent: View {
         }
         .mailCustomAlert(item: $currentFolder) { folder in
             CreateFolderView(mode: .modify(modifiedFolder: folder))
+        }
+        .mailCustomAlert(item: $parentFolder) { folder in
+            CreateFolderView(mode: .create, parentFolder: folder)
         }
         .mailCustomAlert(item: $destructiveAlert) { item in
             DestructiveActionAlertView(destructiveAlert: item)
