@@ -91,7 +91,6 @@ struct NavigationDrawer: View {
                 navigationDrawerState.close()
             }
             .gesture(dragGestureForRootViewSize(rootViewSizeProxy.size))
-            .statusBarHidden(navigationDrawerState.isOpen)
             .onChange(of: navigationDrawerState.isOpen) { isOpen in
                 if !isOpen {
                     offsetWidth = 0
