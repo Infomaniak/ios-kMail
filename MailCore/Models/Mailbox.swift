@@ -64,6 +64,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isPrimary: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var isSpamFilter: Bool
+    @Persisted public var useExternalMailGateway = false
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
     @Persisted public var isPartOfKSuite: Bool
@@ -109,6 +110,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isPrimary
         case isLocked
         case isSpamFilter
+        case useExternalMailGateway
         case isLimited
         case isFree
         case isKSuiteEssential = "isKsuiteEssential"
@@ -171,6 +173,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
+        useExternalMailGateway = try container.decodeIfPresent(Bool.self, forKey: .useExternalMailGateway) ?? false
         isLimited = try container.decodeIfPresent(Bool.self, forKey: .isLimited) ?? false
         isFree = try container.decodeIfPresent(Bool.self, forKey: .isFree) ?? false
         isKSuiteEssential = try container.decodeIfPresent(Bool.self, forKey: .isKSuiteEssential) ?? false
