@@ -36,7 +36,7 @@ ios-kMail/
 │   └── ViewModel/               #   Shared view models
 ├── MailCoreUI/                  # Shared UI components framework (Reactions, RecipientChip, ViewModifiers, etc.)
 ├── MailResources/               # Assets, localized strings, entitlements, HTML/CSS/JS templates, Lottie animations
-├── MailTests/                   # Unit & integration tests (XCTest)
+├── MailTests/                   # Unit & integration tests (Swift Testing; legacy XCTest)
 ├── MailUITests/                 # UI automation tests
 ├── MailShareExtension/          # Share extension target
 ├── MailNotificationServiceExtension/   # Silent push processing
@@ -111,8 +111,8 @@ tuist test # Or via Xcode Test Navigator
 
 ### Testing
 
-- **Unit tests:** `MailTests/` — XCTest-based.
-- **New unit tests:** Prefer Swift Testing (`@Suite`, `@Test`, `#expect`) over XCTest.
+- **Unit tests:** `MailTests/` — Swift Testing, with existing XCTest tests retained as legacy.
+- **New unit tests:** Use Swift Testing (`@Suite`, `@Test`, `#expect`). Reserve XCTest for existing legacy tests or UI automation.
 - **UI tests:** `MailUITests/` — XCTest UI automation.
 - **Setup:** Duplicate `MailTests/Env.sample.swift` → `MailTests/Env.swift` and fill in `token`, `userId`, `mailboxId`, `mailboxUuid`. For UI tests, also set `testAccountEmail` and `testAccountPassword`.
 - **Run:** `tuist test` or Xcode Test Navigator.

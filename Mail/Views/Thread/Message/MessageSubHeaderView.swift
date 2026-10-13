@@ -97,7 +97,7 @@ struct MessageSubHeaderView: View {
            message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
             if mailboxManager.mailbox.isSpamFilter {
                 return .moveInSpam
-            } else {
+            } else if !mailboxManager.mailbox.useExternalMailGateway {
                 return .enableSpamFilter
             }
         }
