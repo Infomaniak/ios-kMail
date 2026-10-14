@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -31,6 +32,8 @@ extension View {
 }
 
 struct ThreadListBottomBarModifier: ViewModifier {
+    @Environment(\.ikFloatingActionButtonPlacement) private var fabPlacement
+
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsProvider: ActionsProvider
@@ -43,11 +46,13 @@ struct ThreadListBottomBarModifier: ViewModifier {
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var isBottomBarVisible: Bool {
-        return multipleSelectionViewModel.isEnabled
+        return multipleSelectionViewModel.isEnabled || fabPlacement == .toolbar
     }
 
     private var isShowingBottomBarItems: Bool {
-        if #available(iOS 18.0, *) {
+        if fabPlacement == .toolbar {
+            return multipleSelectionViewModel.isEnabled
+        } else if #available(iOS 18.0, *) {
             return true
         } else {
             return isBottomBarVisible

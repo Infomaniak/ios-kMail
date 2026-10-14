@@ -19,14 +19,19 @@
 import DesignSystem
 import IKSnackbar
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct ExtendedFAB: View {
+    @Environment(\.ikFloatingActionButtonPlacement) private var placement
+
     /// Trigger a sensory feedback each time the value changes
     @State private var didTapButton = false
+    @State private var snackBarInset: CGFloat = 0
 
     let title: String
     let icon: MailResourcesImages
@@ -45,29 +50,49 @@ struct ExtendedFAB: View {
                 action()
             }
         } label: {
-            HStack(spacing: 0) {
-                icon
-                    .iconSize(.medium)
+            switch placement {
+            case .floating:
+                HStack(spacing: 0) {
+                    icon
+                        .iconSize(.medium)
 
-                Text(title)
-                    .lineLimit(1)
-                    .padding(.leading, value: .mini)
-                    .frame(width: isExtended ? nil : 0)
-                    .clipped()
+                    Text(title)
+                        .lineLimit(1)
+                        .padding(.leading, value: .mini)
+                        .frame(width: isExtended ? nil : 0)
+                        .clipped()
+                }
+            case .toolbar:
+                Label(title, asset: icon.swiftUIImage)
+                    .labelStyle(.iconOnly)
             }
         }
-        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended, isInactive: inactiveReason != nil))
+        .accessibilityLabel(title)
         .ikSensoryFeedback(.impact(weight: .heavy), trigger: didTapButton)
+        .snackBarAware(
+            inset: placement == .floating ? snackBarInset : 0,
+            removeOnDisappear: UserDefaults.shared.autoAdvance != .listOfThread
+        )
+        .overlay {
+            ViewGeometry(key: ViewHeightKey.self, property: \.size.height)
+        }
+        .onPreferenceChange(ViewHeightKey.self) { value in
+            // Core UI adds a bottom padding below the floating button
+            snackBarInset = value + IKPadding.medium
+        }
     }
 }
 
 #Preview {
-    ExtendedFAB(
-        title: MailResourcesStrings.Localizable.buttonNewMessage,
-        icon: MailResourcesAsset.pencil,
-        isExtended: true,
-        inactiveReason: nil
-    ) {
-        /* Preview */
-    }
+    List {}
+        .ikFloatingActionButton(style: .ikFloatingActionButton(isExtended: true)) {
+            ExtendedFAB(
+                title: MailResourcesStrings.Localizable.buttonNewMessage,
+                icon: MailResourcesAsset.pencil,
+                isExtended: true,
+                inactiveReason: nil
+            ) {
+                /* Preview */
+            }
+        }
 }

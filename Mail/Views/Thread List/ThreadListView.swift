@@ -76,6 +76,15 @@ struct ThreadListView: View {
         return Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox
     }
 
+    private var isFABExtended: Bool {
+        return scrollObserver.scrollDirection != .bottom
+    }
+
+    private var fabInactiveReason: String? {
+        guard viewModel.mailboxManager.mailbox.permissions?.canSendEmails == false else { return nil }
+        return MailResourcesStrings.Localizable.snackbarAdminDisabledMessageSending
+    }
+
     private var selection: Binding<Thread?>? {
         return Binding(get: {
             mainViewState.selectedThread
@@ -168,7 +177,7 @@ struct ThreadListView: View {
                         LoadMoreButton(currentFolder: viewModel.frozenFolder)
                     }
 
-                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
+                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : IKPadding.medium)
                 }
                 .actionsContextMenu(
                     originFolder: viewModel.frozenFolder,
@@ -214,17 +223,22 @@ struct ThreadListView: View {
         }
         .threadListTopBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .threadListBottomBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
-        .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
-                              icon: MailResourcesAsset.pencilPlain,
-                              title: MailResourcesStrings.Localizable.buttonNewMessage,
-                              isExtended: scrollObserver.scrollDirection != .bottom,
-                              inactiveReason: viewModel.mailboxManager.mailbox.permissions?
-                                  .canSendEmails == false ? MailResourcesStrings.Localizable
-                                  .snackbarAdminDisabledMessageSending : nil) {
-            @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
+        .ikFloatingActionButton(
+            isPresented: !multipleSelectionViewModel.isEnabled,
+            style: .ikFloatingActionButton(isExtended: isFABExtended, isInactive: fabInactiveReason != nil)
+        ) {
+            ExtendedFAB(
+                title: MailResourcesStrings.Localizable.buttonNewMessage,
+                icon: MailResourcesAsset.pencilPlain,
+                isExtended: isFABExtended,
+                inactiveReason: fabInactiveReason
+            ) {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
+                mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
+            }
         }
+        .ignoresSafeArea(.keyboard)
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
