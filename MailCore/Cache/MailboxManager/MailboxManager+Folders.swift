@@ -121,8 +121,10 @@ public extension MailboxManager {
         let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
         try writeTransaction { writableRealm in
             writableRealm.add(folder)
-            if let parent {
-                parent.fresh(using: writableRealm)?.children.insert(folder)
+            if let liveParent = parent?.fresh(using: writableRealm) {
+                liveParent.children.insert(folder)
+                liveParent.hasSubFolders = true
+                liveParent.isExpanded = true
             }
         }
 
@@ -132,9 +134,13 @@ public extension MailboxManager {
 
     func deleteFolder(folder: Folder) async throws {
         try await apiFetcher.delete(mailbox: mailbox, folder: folder)
-        guard let liveFolder = folder.thaw() else { return }
         try writeTransaction { writableRealm in
+            guard let liveFolder = folder.fresh(using: writableRealm) else { return }
+            let parent = liveFolder.parent
             writableRealm.delete(liveFolder)
+            if let parent {
+                parent.hasSubFolders = hasSubFolders(folder: parent)
+            }
         }
     }
 

@@ -38,6 +38,7 @@ struct CreateFolderView: View {
     @FocusState private var isFocused
 
     private let mode: Mode
+    private let parentFolder: Folder?
 
     private var isButtonEnabled: Bool {
         return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
@@ -83,8 +84,9 @@ struct CreateFolderView: View {
         }
     }
 
-    init(mode: Mode) {
+    init(mode: Mode, parentFolder: Folder? = nil) {
         self.mode = mode
+        self.parentFolder = parentFolder
     }
 
     var body: some View {
@@ -120,7 +122,7 @@ struct CreateFolderView: View {
                     switch mode {
                     case .create:
                         matomo.track(eventWithCategory: .createFolder, name: "confirm")
-                        _ = try await mailboxManager.createFolder(name: folderName, parent: nil)
+                        _ = try await mailboxManager.createFolder(name: folderName, parent: parentFolder)
 
                     case .move(let moveHandler):
                         let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
@@ -168,8 +170,11 @@ struct CreateFolderView: View {
 
     private func folderAlreadyExistsWith(name: String) -> Bool {
         let foldersWithSameName = mailboxManager.transactionExecutor.fetchResults(ofType: Folder.self) { elements in
+            if let parentFolder {
+                return elements.where { $0.parents.remoteId == parentFolder.remoteId && $0.name == name }
+            }
             // swiftlint:disable:next empty_count
-            elements.where { $0.parents.count == 0 && $0.name == name }
+            return elements.where { $0.parents.count == 0 && $0.name == name }
         }
 
         return !foldersWithSameName.isEmpty
