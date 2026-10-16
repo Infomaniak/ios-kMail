@@ -1,5 +1,4 @@
-- Ajoutez directement à Apple Wallet les cartes compatibles reçues en pièce jointe.
-- Ouvrez votre fiche de contact depuis un nouveau raccourci de l’écran d’accueil.
-- Le téléchargement et l’aperçu des pièces jointes gèrent mieux les erreurs.
-- Les demandes d’authentification à deux facteurs s’affichent plus rapidement.
-- La modification des destinataires des brouillons et l’aperçu des messages sont plus fiables.
+- Créez des sous-dossiers pour organiser plus facilement votre boîte mail.
+- Le design a été amélioré pour iPhone Duo.
+- La gestion des spams est plus claire pour les boîtes mail utilisant une passerelle externe.
+- L’écran de lancement et les écrans d’accueil s’affichent plus uniformément.
