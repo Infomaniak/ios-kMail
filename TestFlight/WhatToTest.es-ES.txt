@@ -1,5 +1,4 @@
-- Añade pases compatibles desde los archivos adjuntos del correo directamente a Apple Wallet.
-- Abre tu tarjeta de contacto con un nuevo acceso directo en la pantalla de inicio.
-- La descarga y la vista previa de los archivos adjuntos gestionan mejor los errores.
-- Las solicitudes de autenticación de dos factores aparecen antes.
-- La edición de destinatarios en borradores y las vistas previas de mensajes son más fiables.
+- Crea subcarpetas para organizar tu buzón más fácilmente.
+- Diseño mejorado para iPhone Duo.
+- La gestión del correo no deseado es más clara en los buzones que usan una pasarela de correo externa.
+- La pantalla de inicio y las pantallas de bienvenida se muestran de forma más uniforme.
