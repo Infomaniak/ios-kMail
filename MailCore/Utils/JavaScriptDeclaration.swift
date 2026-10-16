@@ -32,6 +32,7 @@ public enum UserScript: String {
     case insertMention
     case mentionCommon
     case editorMentionPointerEventHandler
+    case insertHTMLAtCaret
 }
 
 public enum JavaScriptDeclaration {
@@ -41,6 +42,7 @@ public enum JavaScriptDeclaration {
     case insertMention(String, String, String)
     case setScaleCompensation(CGFloat)
     case setContentSize(CGFloat)
+    case insertHTMLAtCaret(String)
 
     public var invocation: String {
         switch self {
@@ -65,6 +67,12 @@ public enum JavaScriptDeclaration {
             return "setScaleCompensation(\(factor))"
         case .setContentSize(let size):
             return "setContentSize(\(size))"
+        case .insertHTMLAtCaret(let html):
+            guard let data = try? JSONSerialization.data(withJSONObject: [html]),
+                  let jsonArray = String(data: data, encoding: .utf8) else {
+                return "insertHTMLAtCaret('')"
+            }
+            return "insertHTMLAtCaret(\(jsonArray)[0])"
         }
     }
 }
