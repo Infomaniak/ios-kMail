@@ -28,6 +28,7 @@ final class WebViewController: UIViewController {
     let messageUid: String
     let openURL: OpenURLAction
     let webView: WKWebView
+    let isEmailContrastEnabled: Bool
     let onWebKitProcessTerminated: (() -> Void)?
 
     private let widthSubject = PassthroughSubject<Double, Never>()
@@ -45,10 +46,17 @@ final class WebViewController: UIViewController {
     private var scrollLockObservations = [NSKeyValueObservation]()
     #endif
 
-    init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
+    init(
+        messageUid: String,
+        openURL: OpenURLAction,
+        webView: WKWebView,
+        isEmailContrastEnabled: Bool,
+        onWebKitProcessTerminated: (() -> Void)?
+    ) {
         self.messageUid = messageUid
         self.openURL = openURL
         self.webView = webView
+        self.isEmailContrastEnabled = isEmailContrastEnabled
         self.onWebKitProcessTerminated = onWebKitProcessTerminated
 
         super.init(nibName: nil, bundle: nil)
@@ -86,6 +94,23 @@ final class WebViewController: UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         widthSubject.send(size.width)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle,
+              hasFinishedLoading else {
+            return
+        }
+
+        Task { @MainActor in
+            do {
+                try await applyEmailContrastIfNeeded()
+            } catch {
+                SentrySDK.capture(error: error)
+            }
+        }
     }
 
     #if targetEnvironment(macCatalyst)
@@ -130,6 +155,16 @@ final class WebViewController: UIViewController {
         if width <= 0 {
             reportNullSize(givenWidth: width, fromWidthSubscriber: fromWidthSubscriber)
         }
+    }
+
+    private func applyEmailContrastIfNeeded() async throws {
+        guard isEmailContrastEnabled else { return }
+
+        try await webView.evaluateJavaScript(
+            "applyEmailDarkModeContrast()",
+            in: nil,
+            in: WebViewModel.contrastContentWorld
+        )
     }
 
     private func reportNullSize(givenWidth: CGFloat, fromWidthSubscriber: Bool) {
@@ -260,6 +295,7 @@ extension WebViewController: WKNavigationDelegate {
 
             try await webView.evaluateJavaScript(.removeAllProperties)
             try await normalizeMessageWidth(webViewWidth: webView.frame.width)
+            try await applyEmailContrastIfNeeded()
         }
     }
 
@@ -311,6 +347,7 @@ struct WebView: UIViewControllerRepresentable {
 
     let webView: WKWebView
     let messageUid: String
+    let isEmailContrastEnabled: Bool
 
     @Binding var mentionMenuContent: MentionMenuContent?
 
@@ -321,6 +358,7 @@ struct WebView: UIViewControllerRepresentable {
             messageUid: messageUid,
             openURL: openURL,
             webView: webView,
+            isEmailContrastEnabled: isEmailContrastEnabled,
             onWebKitProcessTerminated: onWebKitProcessTerminated
         )
     }
