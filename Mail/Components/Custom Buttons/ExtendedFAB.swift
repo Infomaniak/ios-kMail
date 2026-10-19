@@ -73,12 +73,11 @@ struct ExtendedFAB: View {
             inset: placement == .floating ? snackBarInset : 0,
             removeOnDisappear: UserDefaults.shared.autoAdvance != .listOfThread
         )
-        .overlay {
-            ViewGeometry(key: ViewHeightKey.self, property: \.size.height)
-        }
-        .onPreferenceChange(ViewHeightKey.self) { value in
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.size.height
+        } action: { height in
             // Core UI adds a bottom padding below the floating button
-            snackBarInset = value + IKPadding.medium
+            snackBarInset = height + IKPadding.medium
         }
     }
 }
