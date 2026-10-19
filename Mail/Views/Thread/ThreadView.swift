@@ -48,7 +48,12 @@ struct ThreadView: View {
             VStack(spacing: IKPadding.mini) {
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(thread.formattedSubject)
-                        .threadTitle()
+                        .threadTitle { titlePosition in
+                            if #available(iOS 26.0, *) {
+                                navigationTitleOpacity = 1 - titlePosition.offsetProgress
+                            }
+                            displayNavigationTitle = titlePosition.isFullyBellowNavigationBar
+                        }
                         .opacity(navigationTitleOpacity)
 
                     ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
@@ -68,12 +73,6 @@ struct ThreadView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { titlePosition in
-            if #available(iOS 26.0, *) {
-                navigationTitleOpacity = 1 - titlePosition.offsetProgress
-            }
-            displayNavigationTitle = titlePosition.isFullyBellowNavigationBar
-        }
         .onAppear {
             @InjectService var matomo: MatomoUtils
             matomo.trackThreadInfo(of: thread)

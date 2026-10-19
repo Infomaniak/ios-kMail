@@ -64,43 +64,46 @@ struct NavigationDrawer: View {
     @GestureState private var isDragGestureActive = false
 
     @State private var offsetWidth: CGFloat = 0
+    @State private var rootViewSize: CGSize = .zero
 
     var body: some View {
-        GeometryReader { rootViewSizeProxy in
-            ZStack {
-                Color.black
-                    .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        track(eventName: "closeByTap")
-                        navigationDrawerState.close()
-                    }
+        ZStack {
+            Color.black
+                .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    track(eventName: "closeByTap")
+                    navigationDrawerState.close()
+                }
 
-                GeometryReader { geometryProxy in
-                    HStack {
-                        MenuDrawerView()
-                            .frame(maxWidth: Self.maxWidth)
-                            .padding(.trailing, Self.trailingPadding)
-                            .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
-                        Spacer()
-                    }
-                }
+            HStack {
+                MenuDrawerView()
+                    .frame(maxWidth: Self.maxWidth)
+                    .padding(.trailing, Self.trailingPadding)
+                    .offset(x: navigationDrawerState.isOpen ? offsetWidth : -rootViewSize.width)
+                Spacer()
             }
-            .accessibilityAction(.escape) {
-                track(eventName: "closeByAccessibility")
-                navigationDrawerState.close()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .onGeometryChange(for: CGSize.self) { proxy in
+            proxy.size
+        } action: { size in
+            rootViewSize = size
+        }
+        .accessibilityAction(.escape) {
+            track(eventName: "closeByAccessibility")
+            navigationDrawerState.close()
+        }
+        .gesture(dragGestureForRootViewSize(rootViewSize))
+        .onChange(of: navigationDrawerState.isOpen) { isOpen in
+            if !isOpen {
+                offsetWidth = 0
             }
-            .gesture(dragGestureForRootViewSize(rootViewSizeProxy.size))
-            .onChange(of: navigationDrawerState.isOpen) { isOpen in
-                if !isOpen {
+        }
+        .onChange(of: isDragGestureActive) { newIsDragGestureActive in
+            if !newIsDragGestureActive && navigationDrawerState.isOpen {
+                withAnimation {
                     offsetWidth = 0
-                }
-            }
-            .onChange(of: isDragGestureActive) { newIsDragGestureActive in
-                if !newIsDragGestureActive && navigationDrawerState.isOpen {
-                    withAnimation {
-                        offsetWidth = 0
-                    }
                 }
             }
         }

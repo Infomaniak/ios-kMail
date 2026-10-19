@@ -116,6 +116,8 @@ struct ThreadListTopBarModifier: ViewModifier {
 struct LegacyThreadListTopBarModifier: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    @State private var availableWidth: CGFloat = 0
+
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
@@ -128,63 +130,64 @@ struct LegacyThreadListTopBarModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        GeometryReader { geometry in
-            content
-                .navigationBarThreadListStyle()
-                .toolbar {
-                    ToolbarItemGroup(placement: .topBarLeading) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(MailResourcesStrings.Localizable.buttonCancel, role: .cancel) {
-                                @InjectService var matomo: MatomoUtils
-                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                                multipleSelectionViewModel.disable()
-                            }
-                        } else {
-                            if isCompactWindow {
-                                MenuDrawerButton()
-                            }
-
-                            Text(viewModel.frozenFolder.localizedName)
-                                .textStyle(.header1)
-                                .frame(maxWidth: maxTextWidth(geometry), alignment: .leading)
+        content
+            .navigationBarThreadListStyle()
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(MailResourcesStrings.Localizable.buttonCancel, role: .cancel) {
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: .multiSelection, name: "cancel")
+                            multipleSelectionViewModel.disable()
                         }
-                    }
-
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(selectAllButtonTitle) {
-                                withAnimation(.default.speed(2)) {
-                                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                }
-                            }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                        } else {
-                            SearchButton()
-
-                            AccountButton()
+                    } else {
+                        if isCompactWindow {
+                            MenuDrawerButton()
                         }
+
+                        Text(viewModel.frozenFolder.localizedName)
+                            .textStyle(.header1)
+                            .frame(maxWidth: maxTextWidth, alignment: .leading)
                     }
                 }
-                .navigationTitle(
-                    multipleSelectionViewModel.isEnabled
-                        ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                        : ""
-                )
-                .navigationBarTitleDisplayMode(.inline)
-        }
+
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(selectAllButtonTitle) {
+                            withAnimation(.default.speed(2)) {
+                                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                            }
+                        }
+                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                    } else {
+                        SearchButton()
+
+                        AccountButton()
+                    }
+                }
+            }
+            .navigationTitle(
+                multipleSelectionViewModel.isEnabled
+                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                    : ""
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing
+            } action: { width in
+                availableWidth = width
+            }
     }
 
-    private func maxTextWidth(_ proxy: GeometryProxy) -> CGFloat {
+    private var maxTextWidth: CGFloat {
         guard isCompactWindow else {
             return 215
         }
-
-        let safeAreaHorizontalInsets = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
 
         let toolbarIconSize: CGFloat = 24
         let toolbarIconPadding: CGFloat = 16
         let toolbarIconsSpace = toolbarIconSize * 3 + (toolbarIconPadding * 5)
 
-        return max(0, proxy.size.width - safeAreaHorizontalInsets - toolbarIconsSpace)
+        return max(0, availableWidth - toolbarIconsSpace)
     }
 }
