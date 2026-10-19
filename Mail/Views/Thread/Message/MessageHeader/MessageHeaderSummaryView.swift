@@ -42,7 +42,6 @@ struct MessageHeaderSummaryView: View {
     @ModalState private var noReplyAlert: NoReplyAlertState?
 
     @State private var replyOrReplyAllMessage: Message?
-    // periphery:ignore - Used in body
     @State private var euriaMessage: Message?
 
     @Binding var isMessageExpanded: Bool

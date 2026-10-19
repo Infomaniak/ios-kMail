@@ -32,7 +32,6 @@ enum ReactionSelectionType: Identifiable, Hashable {
 
 struct ReactionsDetailsView: View {
     @State private var selectedReaction: ReactionSelectionType?
-    // periphery:ignore - Used in body
     @State private var currentDetent = PresentationDetent.medium
 
     private let reactions: [UIReaction]

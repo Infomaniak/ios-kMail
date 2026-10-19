@@ -33,7 +33,6 @@ struct UnavailableMailboxesView: View {
 
     @Environment(\.openURL) private var openURL
 
-    // periphery:ignore - Used in body
     @State private var presentedSwitchAccountUser: UserProfile?
     @State private var currentUser: UserProfile?
 
