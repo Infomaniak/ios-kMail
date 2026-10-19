@@ -44,13 +44,4 @@ public enum Constants {
         name: "Swiftlint",
         basedOnDependencyAnalysis: false
     )
-
-    public static let stripSymbolsScript = TargetScript.post(
-        path: "scripts/strip_symbols.sh",
-        name: "Strip Symbols (Release)",
-        inputPaths: [
-            "${DWARF_DSYM_FOLDER_PATH}/${EXECUTABLE_NAME}.app.dSYM/Contents/Resources/DWARF/${EXECUTABLE_NAME}"
-        ],
-        basedOnDependencyAnalysis: false
-    )
 }

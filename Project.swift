@@ -38,8 +38,7 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
             ],
             entitlements: "MailResources/Mail.entitlements",
             scripts: [
-                Constants.swiftlintScript,
-                Constants.stripSymbolsScript
+                Constants.swiftlintScript
             ],
             dependencies: [
                 .target(name: "MailCore"),
