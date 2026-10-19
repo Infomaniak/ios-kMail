@@ -40,7 +40,6 @@ struct MessageView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var threadViewState: ThreadViewState
 
-    // periphery:ignore - Used in body
     @State private var displayContentBlockedActionView = false
     @State private var initialContentLoading = true
 

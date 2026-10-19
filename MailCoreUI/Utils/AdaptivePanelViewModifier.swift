@@ -43,7 +43,6 @@ public enum AdaptivePanelStyle {
 }
 
 struct NativePanelView<Item: Identifiable, PanelContent: View>: View {
-    // periphery:ignore - Used in body
     @State private var selection: PresentationDetent = .medium
 
     let item: Item
