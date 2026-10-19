@@ -100,7 +100,8 @@ struct SettingsAccountManagementView: View {
             .padding(value: .medium)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsAccountManagementTitle, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsAccountManagementTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $presentedAccountDeletionToken) { userToken in
             DeleteAccountView(token: userToken, delegate: delegate)
         }

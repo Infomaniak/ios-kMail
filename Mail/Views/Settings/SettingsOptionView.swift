@@ -131,7 +131,8 @@ struct SettingsOptionView<OptionEnum, Content>: View where OptionEnum: CaseItera
             .environment(\.defaultMinListRowHeight, 1)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(title, displayMode: .inline)
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard let excludedKeyPaths else { return }
             let excludedValues = excludedKeyPaths.map { UserDefaults.shared[keyPath: $0] }

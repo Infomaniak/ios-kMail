@@ -58,7 +58,8 @@ struct SettingsThreadDensityOptionView: View {
         .onDisappear {
             UserDefaults.shared.threadDensity = selectedValue
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "ThreadDensity"])
     }
