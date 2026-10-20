@@ -204,8 +204,7 @@ struct LargeToolbarModifier: ViewModifier {
                 .sheetViewStyle()
             }
             .mailFloatingPanel(item: $blockSendersList,
-                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle)
-            { blockSenderState in
+                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
                 BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: reportOrigin)
             }
             .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
