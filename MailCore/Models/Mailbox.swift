@@ -99,6 +99,15 @@ public class Mailbox: Object, Codable, Identifiable {
         return LocalPack(mailbox: self)
     }
 
+    public var canShareMailLink: Bool {
+        switch pack {
+        case .kSuiteFree, .myKSuiteFree, .starterPack:
+            return false
+        default:
+            return true
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case uuid
         case email
