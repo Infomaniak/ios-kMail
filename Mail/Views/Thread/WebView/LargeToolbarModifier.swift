@@ -43,7 +43,6 @@ struct LargeToolbarModifier: ViewModifier {
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
-    @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messageToProcessWithEuria: Message?
@@ -86,7 +85,6 @@ struct LargeToolbarModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -103,7 +101,6 @@ struct LargeToolbarModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -120,7 +117,6 @@ struct LargeToolbarModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -137,7 +133,6 @@ struct LargeToolbarModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -209,7 +204,8 @@ struct LargeToolbarModifier: ViewModifier {
                 .sheetViewStyle()
             }
             .mailFloatingPanel(item: $blockSendersList,
-                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+                               title: MailResourcesStrings.Localizable.blockAnExpeditorTitle)
+            { blockSenderState in
                 BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: reportOrigin)
             }
             .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
@@ -235,11 +231,6 @@ struct LargeToolbarModifier: ViewModifier {
             }
             .mailCustomAlert(item: $noReplyAlert) { state in
                 NoReplyAlertView(action: state.action)
-            }
-            .sheet(item: $shareMailLink) { shareMailLinkResult in
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
             }
             .snoozedFloatingPanel(
                 messages: messagesToSnooze,
@@ -284,11 +275,15 @@ struct LargeToolbarModifier: ViewModifier {
         ToolbarItem(id: "thread.other", placement: .secondaryAction) {
             ControlGroup {
                 ForEach(otherActions) { action in
-                    Button { didTap(action: action) } label: {
-                        Label(action.title, asset: action.icon)
+                    if action == .shareMailLink {
+                        shareMailLinkButton
+                    } else {
+                        Button { didTap(action: action) } label: {
+                            Label(action.title, asset: action.icon)
+                        }
+                        .tint(getOtherActionTint(action: action))
+                        .accessibilityLabel(getOtherItemAccessibilityLabel(action: action))
                     }
-                    .tint(getOtherActionTint(action: action))
-                    .accessibilityLabel(getOtherItemAccessibilityLabel(action: action))
                 }
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
@@ -311,9 +306,7 @@ struct LargeToolbarModifier: ViewModifier {
         .defaultCustomization(.hidden)
 
         ToolbarItem(id: "thread.other.shareMailLink", placement: .secondaryAction) {
-            Button { didTap(action: .shareMailLink) } label: {
-                Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
-            }
+            shareMailLinkButton
         }
         .defaultCustomization(.hidden)
 
@@ -495,6 +488,31 @@ struct LargeToolbarModifier: ViewModifier {
         }
     }
 
+    @ViewBuilder
+    private var shareMailLinkButton: some View {
+        if let message = frozenMessages.last, canShareMailLink {
+            ShareLink(
+                item: LazyMailShareLink(message: message, mailboxManager: mailboxManager),
+                preview: SharePreview(Action.shareMailLink.title)
+            ) {
+                Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
+            }
+        } else {
+            Button { didTap(action: .shareMailLink) } label: {
+                Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
+            }
+        }
+    }
+
+    private var canShareMailLink: Bool {
+        switch mailboxManager.mailbox.pack {
+        case .kSuiteFree, .myKSuiteFree, .starterPack:
+            return false
+        default:
+            return true
+        }
+    }
+
     private func didTap(action: Action) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
@@ -506,7 +524,7 @@ struct LargeToolbarModifier: ViewModifier {
             origin = replyOrigin
         case .blockList, .spam, .nonSpam, .phishing:
             origin = reportOrigin
-        case .showEuriaActions, .saveThreadInkDrive, .markAsRead, .markAsUnread, .star, .unstar:
+        case .showEuriaActions, .saveThreadInkDrive, .markAsRead, .markAsUnread, .star, .unstar, .shareMailLink:
             origin = otherOrigin
         case .archive, .moveToInbox, .openMovePanel, .snooze, .delete:
             origin = moveOrigin
