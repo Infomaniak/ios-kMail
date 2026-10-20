@@ -177,40 +177,23 @@ struct MenuDrawerView: View {
 }
 
 struct AppVersionView: View {
-    @State private var archiveURL: IdentifiableURL?
-    @State private var isCreatingArchive = false
+    @State private var shareRealmArchive = false
 
     var body: some View {
-        Text(Constants.appVersionLabel)
-            .textStyle(.labelSecondary)
-            .onTapGesture(count: 5) {
-                createRealmArchive()
+        if shareRealmArchive {
+            ShareLink(
+                item: LazyRealmArchive(),
+                preview: SharePreview(Constants.appVersionLabel)
+            ) {
+                Text(Constants.appVersionLabel)
+                    .textStyle(.labelSecondary)
             }
-            .sheet(item: $archiveURL) { archiveURL in
-                ActivityView(activityItems: [archiveURL.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
-                    .onDisappear {
-                        try? FileManager.default.removeItem(at: archiveURL.url)
-                    }
-            }
-    }
-
-    private func createRealmArchive() {
-        guard !isCreatingArchive else { return }
-        isCreatingArchive = true
-
-        Task {
-            defer {
-                isCreatingArchive = false
-            }
-
-            do {
-                archiveURL = try await IdentifiableURL(url: RealmDebugArchiveBuilder().createArchive())
-            } catch {
-                @InjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-            }
+        } else {
+            Text(Constants.appVersionLabel)
+                .textStyle(.labelSecondary)
+                .onTapGesture(count: 5) {
+                    shareRealmArchive = true
+                }
         }
     }
 }
