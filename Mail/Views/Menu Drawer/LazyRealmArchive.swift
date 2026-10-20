@@ -21,9 +21,13 @@ import Foundation
 import MailCore
 
 struct LazyRealmArchive: Transferable {
+    let onArchiveCreated: (URL) -> Void
+
     static var transferRepresentation: some TransferRepresentation {
-        ProxyRepresentation { _ async throws -> URL in
-            return try await RealmDebugArchiveBuilder().createArchive()
+        ProxyRepresentation { (item: LazyRealmArchive) async throws -> URL in
+            let url = try await RealmDebugArchiveBuilder().createArchive()
+            item.onArchiveCreated(url)
+            return url
         }
     }
 }

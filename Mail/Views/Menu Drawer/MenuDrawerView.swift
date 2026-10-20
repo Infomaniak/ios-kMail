@@ -180,12 +180,28 @@ struct MenuDrawerView: View {
 }
 
 struct AppVersionView: View {
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
     @State private var shareRealmArchive = false
+    @State private var archiveURLs = [URL]()
 
     var body: some View {
+        content
+            .onChange(of: navigationDrawerState.isOpen) { isOpen in
+                guard !isOpen else { return }
+                shareRealmArchive = false
+                archiveURLs.forEach { try? FileManager.default.removeItem(at: $0) }
+                archiveURLs.removeAll()
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
         if shareRealmArchive {
             ShareLink(
-                item: LazyRealmArchive(),
+                item: LazyRealmArchive { url in
+                    Task { @MainActor in archiveURLs.append(url) }
+                },
                 preview: SharePreview(Constants.appVersionLabel)
             ) {
                 Text(Constants.appVersionLabel)
