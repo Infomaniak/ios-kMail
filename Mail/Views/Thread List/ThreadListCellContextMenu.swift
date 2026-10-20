@@ -47,7 +47,6 @@ struct ThreadListCellContextMenu: ViewModifier {
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
-    @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
 
@@ -66,7 +65,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload
         )
@@ -82,7 +80,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload
         )
@@ -125,13 +122,23 @@ struct ThreadListCellContextMenu: ViewModifier {
                     }
 
                     ForEach(listActions) { action in
-                        ContextMenuActionButtonView(
-                            action: action,
-                            role: isDestructiveAction(action, of: myThread),
-                            thread: myThread,
-                            disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
-                            onClick: performAction
-                        )
+                        if action == .shareMailLink, mailboxManager.mailbox.canShareMailLink,
+                           let message = myThread.messages.last {
+                            ShareLink(
+                                item: LazyMailShareLink(message: message, mailboxManager: mailboxManager),
+                                preview: SharePreview(action.title)
+                            ) {
+                                Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
+                            }
+                        } else {
+                            ContextMenuActionButtonView(
+                                action: action,
+                                role: isDestructiveAction(action, of: myThread),
+                                thread: myThread,
+                                disabled: Self.sendEmailActions.contains(action) && !actionsManager.canSendEmails,
+                                onClick: performAction
+                            )
+                        }
                     }
                 }
             }
@@ -174,11 +181,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             }
             .mailCustomAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
-            }
-            .sheet(item: $shareMailLink) { shareMailLinkResult in
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
             }
             .snoozedFloatingPanel(
                 messages: messagesToSnooze,

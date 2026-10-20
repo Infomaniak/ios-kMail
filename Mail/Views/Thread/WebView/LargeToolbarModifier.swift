@@ -490,7 +490,7 @@ struct LargeToolbarModifier: ViewModifier {
 
     @ViewBuilder
     private var shareMailLinkButton: some View {
-        if let message = frozenMessages.last, canShareMailLink {
+        if let message = frozenMessages.last, mailboxManager.mailbox.canShareMailLink {
             ShareLink(
                 item: LazyMailShareLink(message: message, mailboxManager: mailboxManager),
                 preview: SharePreview(Action.shareMailLink.title)
@@ -501,15 +501,6 @@ struct LargeToolbarModifier: ViewModifier {
             Button { didTap(action: .shareMailLink) } label: {
                 Label(Action.shareMailLink.title, asset: Action.shareMailLink.icon)
             }
-        }
-    }
-
-    private var canShareMailLink: Bool {
-        switch mailboxManager.mailbox.pack {
-        case .kSuiteFree, .myKSuiteFree, .starterPack:
-            return false
-        default:
-            return true
         }
     }
 
