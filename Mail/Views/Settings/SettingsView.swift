@@ -281,7 +281,8 @@ struct SettingsView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
         .task {

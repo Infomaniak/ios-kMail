@@ -67,7 +67,8 @@ struct SendSettingsView: View {
             )
         }
         .listStyle(.plain)
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsSendTitle, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsSendTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Send"])
     }

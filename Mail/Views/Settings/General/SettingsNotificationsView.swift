@@ -100,7 +100,8 @@ struct SettingsNotificationsView: View {
         }
         .backButtonDisplayMode(.minimal)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications)
+        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: notificationsEnabled) { enabled in
             if !enabled {
                 subscribedTopics = []

@@ -100,7 +100,7 @@ struct EncryptionPasswordView: View {
 
                             RoundedRectangle(cornerRadius: IKRadius.small)
                                 .stroke(lineWidth: 1)
-                                .foregroundColor(MailResourcesAsset.textFieldBorder.swiftUIColor)
+                                .foregroundStyle(MailResourcesAsset.textFieldBorder.swiftUIColor)
                         }
                     }
 

@@ -57,8 +57,8 @@ struct AddLinkView: View {
 
                 TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
                     .keyboardType(.URL)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
                     .textContentType(.URL)
             }
             .textFieldStyle(.roundedBorder)

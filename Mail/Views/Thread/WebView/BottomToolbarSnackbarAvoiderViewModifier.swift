@@ -29,11 +29,10 @@ struct BottomToolbarSnackBarAvoider: ViewModifier {
     func body(content: Content) -> some View {
         if UserDefaults.shared.autoAdvance != .listOfThread {
             content
-                .overlay {
-                    ViewGeometry(key: BottomToolbarHeightKey.self, property: \.size.height)
-                }
-                .onPreferenceChange(BottomToolbarHeightKey.self) { value in
-                    avoider.addAvoider(inset: value + IKPadding.mini)
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { height in
+                    avoider.addAvoider(inset: height + IKPadding.mini)
                 }
         } else {
             content

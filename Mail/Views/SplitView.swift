@@ -90,7 +90,10 @@ struct SplitView: View {
             } else {
                 NavigationSplitView(columnVisibility: $splitViewManager.columnVisibility) {
                     MenuDrawerView()
-                        .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
+                        .toolbar(
+                            navigationDrawerState.useNativeToolbar && !isCompactWindow ? .visible : .hidden,
+                            for: .navigationBar
+                        )
                 } content: {
                     ThreadListManagerView()
                 } detail: {

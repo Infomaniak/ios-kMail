@@ -22,11 +22,6 @@ struct TitlePosition: Equatable {
     let isFullyBellowNavigationBar: Bool
     let offsetProgress: Double
 
-    init() {
-        isFullyBellowNavigationBar = false
-        offsetProgress = 0
-    }
-
     init(proxy: GeometryProxy) {
         let globalFrame = proxy.frame(in: .global)
         let localFrame = proxy.frame(in: .named("scrollView"))
@@ -38,32 +33,25 @@ struct TitlePosition: Equatable {
     }
 }
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue = TitlePosition()
-
-    static func reduce(value: inout TitlePosition, nextValue: () -> TitlePosition) {
-        // No need to implement it
-    }
-}
-
 extension View {
-    func threadTitle() -> some View {
-        modifier(ThreadTitleModifier())
+    func threadTitle(onPositionChange: @escaping (TitlePosition) -> Void) -> some View {
+        modifier(ThreadTitleModifier(onPositionChange: onPositionChange))
     }
 }
 
 struct ThreadTitleModifier: ViewModifier {
+    let onPositionChange: (TitlePosition) -> Void
+
     func body(content: Content) -> some View {
         content
             .textStyle(.header2)
             .multilineTextAlignment(.leading)
             .lineSpacing(8)
             .padding(.top, value: .mini)
-            .overlay {
-                GeometryReader { proxy in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self, value: TitlePosition(proxy: proxy))
-                }
+            .onGeometryChange(for: TitlePosition.self) { proxy in
+                TitlePosition(proxy: proxy)
+            } action: { titlePosition in
+                onPositionChange(titlePosition)
             }
     }
 }

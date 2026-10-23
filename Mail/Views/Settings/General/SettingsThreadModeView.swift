@@ -63,7 +63,8 @@ struct SettingsThreadModeView: View {
         }
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle, displayMode: .inline)
+        .navigationTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .mailCustomAlert(item: $threadModeSettingUpdate) { threadModeUpdate in
             VStack(alignment: .leading, spacing: 24) {
                 Text(MailResourcesStrings.Localizable.settingsThreadModeWarningTitle(threadModeUpdate.newSetting.title))

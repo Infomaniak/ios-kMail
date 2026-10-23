@@ -84,7 +84,7 @@ struct EncryptionButton: View {
                 }
             }
         }
-        .foregroundColor(draft.encrypted ? Self.encryptionEnabledForeground : MailResourcesAsset.textSecondaryColor.swiftUIColor)
+        .foregroundStyle(draft.encrypted ? Self.encryptionEnabledForeground : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
             guard draft.encrypted else { return }
             let recipientsCount = await loadRecipientsAutoEncryptIfNeeded()

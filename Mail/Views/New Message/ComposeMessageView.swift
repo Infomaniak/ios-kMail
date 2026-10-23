@@ -70,16 +70,6 @@ enum NewMessageAlertType {
     case attachmentsReminder(handler: () -> Void)
 }
 
-struct EditorPositionPreferenceKey: PreferenceKey {
-    static var defaultValue: CGRect {
-        return CGRect()
-    }
-
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-        value = nextValue()
-    }
-}
-
 class EditorBox {
     weak var editor: RichHTMLEditorView?
 }
@@ -226,17 +216,10 @@ struct ComposeMessageView: View {
                         messageReply: messageReply
                     )
                     .environmentObject(attachmentsManager)
-                    .overlay {
-                        GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: EditorPositionPreferenceKey.self,
-                                value: geometry.frame(in: .global)
-                            )
-                        }
-                        .onPreferenceChange(EditorPositionPreferenceKey.self) { value in
-                            editorFrame = value
-                        }
-                        .hidden()
+                    .onGeometryChange(for: CGRect.self) { proxy in
+                        proxy.frame(in: .global)
+                    } action: { frame in
+                        editorFrame = frame
                     }
                 }
             }

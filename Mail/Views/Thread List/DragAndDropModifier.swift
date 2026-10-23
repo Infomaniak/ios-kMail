@@ -19,7 +19,6 @@
 import MailCore
 import SwiftUI
 
-@available(macCatalyst 16.0, iOS 16.0, *)
 struct DraggedThread: Transferable, Codable {
     let threadIds: [String]
 
@@ -47,7 +46,7 @@ struct DropThreadViewModifier: ViewModifier {
     let enabled: Bool
 
     func body(content: Content) -> some View {
-        if #available(macCatalyst 16.0, iOS 16.0, *), enabled {
+        if enabled {
             content
                 .contentShape(Rectangle())
                 .dropDestination(for: DraggedThread.self) { draggedThreads, _ in
@@ -95,7 +94,7 @@ struct DraggableThreadViewModifier: ViewModifier {
     let onSuccess: () -> Void
 
     func body(content: Content) -> some View {
-        if #available(macCatalyst 16.0, iOS 16.0, *), enabled {
+        if enabled {
             content
                 .onReceive(NotificationCenter.default.publisher(for: .dropThreadSuccess)) { _ in
                     onSuccess()
