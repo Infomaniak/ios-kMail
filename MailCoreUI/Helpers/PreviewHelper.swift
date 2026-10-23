@@ -159,6 +159,14 @@ public enum PreviewHelper {
         disposition: .attachment
     )
 
+    public static var sampleUIAttachment: UIAttachment {
+        UIAttachment(
+            attachment: sampleAttachment,
+            messageUid: "preview",
+            localURL: sampleAttachment.getLocalURL(mailboxManager: sampleMailboxManager)
+        )
+    }
+
     public static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", local: nil, remote: nil)
 
     public static let sampleUser = UserProfile(

@@ -20,19 +20,28 @@ import Combine
 import Foundation
 import InfomaniakCore
 import MailCore
+import MailCoreUI
 import PhotosUI
 import SwiftUI
 
 @MainActor final class AttachmentsManager: ObservableObject {
     /// Async attachment operations
     private let worker: AttachmentsManagerWorker
+    private let mailboxManager: MailboxManager
+    private let draftLocalUUID: String
 
     /// Something to debounce content will change updates
     private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
     private var contentWillChangeObserver: AnyCancellable?
 
-    var liveAttachments: [Attachment] {
-        worker.liveAttachments
+    var attachments: [UIAttachment] {
+        worker.liveAttachments.map {
+            UIAttachment(
+                attachment: $0,
+                draftLocalUUID: draftLocalUUID,
+                localURL: $0.getLocalURL(mailboxManager: mailboxManager)
+            )
+        }
     }
 
     var allAttachmentsUploaded: Bool {
@@ -42,6 +51,8 @@ import SwiftUI
     var globalError: MailError?
 
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
+        self.draftLocalUUID = draftLocalUUID
+        self.mailboxManager = mailboxManager
         // Debouncing objectWillChange helps a lot scaling with numerous attachments
         worker = AttachmentsManagerWorker(draftLocalUUID: draftLocalUUID, mailboxManager: mailboxManager)
 
@@ -66,9 +77,39 @@ import SwiftUI
         worker.attachmentUploadTaskOrFinishedTask(for: uuid)
     }
 
-    func removeAttachment(_ attachmentUUID: String) {
+    func removeAttachment(_ attachment: UIAttachment) {
+        guard let model = cachedAttachment(for: attachment) else {
+            globalError = .resourceError
+            objectWillChange.send()
+            return
+        }
+        removeAttachment(model.uuid)
+    }
+
+    private func removeAttachment(_ attachmentUUID: String) {
         Task {
             await worker.removeAttachment(attachmentUUID)
+        }
+    }
+
+    func removeInlineAttachment(contentId: String) {
+        guard let attachment = worker.liveAttachments.first(where: { $0.contentId == contentId }) else { return }
+        removeAttachment(attachment.uuid)
+    }
+
+    func saveAttachmentLocally(_ attachment: UIAttachment) async throws -> URL {
+        guard let model = cachedAttachment(for: attachment) else {
+            throw MailError.resourceError
+        }
+        let frozenModel = model.freezeIfNeeded()
+        let localURL = frozenModel.getLocalURL(mailboxManager: mailboxManager)
+        try await mailboxManager.saveAttachmentLocally(attachment: frozenModel, progressObserver: nil)
+        return localURL
+    }
+
+    private func cachedAttachment(for attachment: UIAttachment) -> Attachment? {
+        return worker.liveAttachments.first {
+            UIAttachment.id(for: $0, draftLocalUUID: draftLocalUUID) == attachment.id
         }
     }
 

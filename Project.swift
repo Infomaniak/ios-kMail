@@ -104,6 +104,7 @@ let project = Project(name: "Mail",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),
                                       .target(name: "MailCore"),
+                                      .target(name: "MailCoreUI"),
                                       .target(name: "MailResources"),
                                       .external(name: "DeviceAssociation"),
                                       .external(name: "InfomaniakCoreDB"),
