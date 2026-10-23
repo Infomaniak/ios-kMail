@@ -54,7 +54,6 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
-    @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
     @ModalState private var messageToProcessWithEuria: Message?
@@ -77,7 +76,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -95,7 +93,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestBlockSendersList: $blockSendersList,
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink,
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,
             messageToProcessWithEuria: $messageToProcessWithEuria
@@ -174,11 +171,6 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .mailCustomAlert(item: $noReplyAlert) { state in
             NoReplyAlertView(action: state.action)
-        }
-        .sheet(item: $shareMailLink) { shareMailLinkResult in
-            ActivityView(activityItems: [shareMailLinkResult.url])
-                .ignoresSafeArea(edges: [.bottom])
-                .presentationDetents([.medium, .large])
         }
         .snoozedFloatingPanel(
             messages: messagesToSnooze,

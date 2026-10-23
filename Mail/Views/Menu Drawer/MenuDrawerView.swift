@@ -180,40 +180,39 @@ struct MenuDrawerView: View {
 }
 
 struct AppVersionView: View {
-    @State private var archiveURL: IdentifiableURL?
-    @State private var isCreatingArchive = false
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
+    @State private var shareRealmArchive = false
+    @State private var archiveURLs = [URL]()
 
     var body: some View {
-        Text(Constants.appVersionLabel)
-            .textStyle(.labelSecondary)
-            .onTapGesture(count: 5) {
-                createRealmArchive()
-            }
-            .sheet(item: $archiveURL) { archiveURL in
-                ActivityView(activityItems: [archiveURL.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
-                    .onDisappear {
-                        try? FileManager.default.removeItem(at: archiveURL.url)
-                    }
+        content
+            .onChange(of: navigationDrawerState.isOpen) { isOpen in
+                guard !isOpen else { return }
+                shareRealmArchive = false
+                archiveURLs.forEach { try? FileManager.default.removeItem(at: $0) }
+                archiveURLs.removeAll()
             }
     }
 
-    private func createRealmArchive() {
-        guard !isCreatingArchive else { return }
-        isCreatingArchive = true
-
-        Task {
-            defer {
-                isCreatingArchive = false
+    @ViewBuilder
+    private var content: some View {
+        if shareRealmArchive {
+            ShareLink(
+                item: LazyRealmArchive { url in
+                    Task { @MainActor in archiveURLs.append(url) }
+                },
+                preview: SharePreview(Constants.appVersionLabel)
+            ) {
+                Text(Constants.appVersionLabel)
+                    .textStyle(.labelSecondary)
             }
-
-            do {
-                archiveURL = try await IdentifiableURL(url: RealmDebugArchiveBuilder().createArchive())
-            } catch {
-                @InjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-            }
+        } else {
+            Text(Constants.appVersionLabel)
+                .textStyle(.labelSecondary)
+                .onTapGesture(count: 5) {
+                    shareRealmArchive = true
+                }
         }
     }
 }
