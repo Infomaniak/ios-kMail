@@ -46,7 +46,7 @@ struct AttachmentPreview: View {
     @State private var previewURL: URL?
 
     let attachment: UIAttachment
-    var download: (() async throws -> Void)?
+    var download: (() async throws -> URL)?
 
     var body: some View {
         NavigationStack {
@@ -149,9 +149,9 @@ struct AttachmentPreview: View {
         }
 
         do {
-            try await download?()
+            let downloadedURL = try await download?()
             try Task.checkCancellation()
-            previewURL = attachment.availableLocalURL
+            previewURL = downloadedURL ?? attachment.availableLocalURL
         } catch is CancellationError {
             return
         } catch {

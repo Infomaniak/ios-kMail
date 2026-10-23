@@ -97,11 +97,14 @@ import SwiftUI
         removeAttachment(attachment.uuid)
     }
 
-    func saveAttachmentLocally(_ attachment: UIAttachment) async throws {
+    func saveAttachmentLocally(_ attachment: UIAttachment) async throws -> URL {
         guard let model = cachedAttachment(for: attachment) else {
             throw MailError.resourceError
         }
-        try await mailboxManager.saveAttachmentLocally(attachment: model.freezeIfNeeded(), progressObserver: nil)
+        let frozenModel = model.freezeIfNeeded()
+        let localURL = frozenModel.getLocalURL(mailboxManager: mailboxManager)
+        try await mailboxManager.saveAttachmentLocally(attachment: frozenModel, progressObserver: nil)
+        return localURL
     }
 
     private func cachedAttachment(for attachment: UIAttachment) -> Attachment? {

@@ -69,7 +69,7 @@ struct AttachmentUploadCell: View {
         }
         .sheet(item: $previewedAttachment) { attachment in
             AttachmentPreview(attachment: attachment) {
-                try await attachmentsManager.saveAttachmentLocally(attachment)
+                return try await attachmentsManager.saveAttachmentLocally(attachment)
             }
             .pagePresentationSizing()
         }

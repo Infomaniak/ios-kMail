@@ -114,6 +114,39 @@ struct UIAttachmentTests {
         #expect(snapshot.availableLocalURL == temporaryURL)
     }
 
+    @Test("Upload completion keeps the resolved download URL when opening a stale snapshot")
+    func staleSnapshotUsesResolvedDownloadURL() throws {
+        let accessor = MailCoreRealmAccessor(realmConfiguration: Realm.Configuration(inMemoryIdentifier: UUID().uuidString))
+        let executor = TransactionExecutor(realmAccessible: accessor)
+        defer { try? executor.writeTransaction { $0.deleteAll() } }
+        let message = Message()
+        message.uid = "123@folder"
+        message.folderId = UUID().uuidString
+        message.attachments.append(makeAttachment())
+        try executor.writeTransaction { $0.add(message) }
+
+        let attachment = try #require(executor.fetchObject(ofType: Message.self, forPrimaryKey: message.uid)?.attachments.first)
+        let staleSnapshot = UIAttachment(
+            attachment: attachment,
+            draftLocalUUID: "draft",
+            localURL: attachment.getLocalURL(userId: 1, mailboxId: 2)
+        )
+
+        let uploadedAttachment = makeAttachment()
+        uploadedAttachment.uuid = attachment.uuid
+        uploadedAttachment.partId = "uploaded-part"
+        uploadedAttachment.temporaryLocalUrl = "/uploaded/temporary/document.pdf"
+        try executor.writeTransaction { _ in
+            attachment.update(with: uploadedAttachment)
+        }
+        let frozenAttachment = attachment.freezeIfNeeded()
+        let resolvedURL = frozenAttachment.getLocalURL(userId: 1, mailboxId: 2)
+
+        #expect(staleSnapshot.temporaryLocalURL == nil)
+        #expect(frozenAttachment.temporaryLocalUrl == "/uploaded/temporary/document.pdf")
+        #expect(resolvedURL != staleSnapshot.localURL)
+    }
+
     private func makeAttachment(mimeType: String = "application/pdf", name: String = "document.pdf") -> MailCore.Attachment {
         MailCore.Attachment(partId: "1", mimeType: mimeType, size: 42, name: name, disposition: .attachment)
     }
