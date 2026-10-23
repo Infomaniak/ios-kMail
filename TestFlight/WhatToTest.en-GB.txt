@@ -1,4 +1,1 @@
-- Create subfolders to organize your mailbox more easily.
-- Improved design for iPhone Duo.
-- Spam handling is clearer for mailboxes using an external mail gateway.
-- The launch screen and onboarding screens display more consistently.
+- Attachment previews now open more reliably after an attachment is downloaded.
