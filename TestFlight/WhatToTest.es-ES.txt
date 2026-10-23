@@ -1,4 +1,1 @@
-- Crea subcarpetas para organizar tu buzón más fácilmente.
-- Diseño mejorado para iPhone Duo.
-- La gestión del correo no deseado es más clara en los buzones que usan una pasarela de correo externa.
-- La pantalla de inicio y las pantallas de bienvenida se muestran de forma más uniforme.
+- Ahora puedes abrir las vistas previas de los archivos adjuntos con mayor fiabilidad después de descargarlos.

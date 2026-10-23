@@ -1,4 +1,1 @@
-- Créez des sous-dossiers pour organiser plus facilement votre boîte mail.
-- Le design a été amélioré pour iPhone Duo.
-- La gestion des spams est plus claire pour les boîtes mail utilisant une passerelle externe.
-- L’écran de lancement et les écrans d’accueil s’affichent plus uniformément.
+- L’aperçu des pièces jointes s’ouvre désormais plus facilement après leur téléchargement.

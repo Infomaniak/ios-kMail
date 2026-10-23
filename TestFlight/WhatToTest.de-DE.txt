@@ -1,4 +1,1 @@
-- Erstellen Sie Unterordner, um Ihr Postfach einfacher zu organisieren.
-- Verbessertes Design für iPhone Duo.
-- Die Spam-Verwaltung ist bei Postfächern mit einem externen Mail-Gateway übersichtlicher.
-- Der Startbildschirm und die Einführungsbildschirme werden einheitlicher angezeigt.
+- Vorschauen von Anhängen lassen sich nach dem Herunterladen jetzt zuverlässiger öffnen.

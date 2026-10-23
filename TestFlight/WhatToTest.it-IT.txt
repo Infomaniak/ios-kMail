@@ -1,4 +1,1 @@
-- Crea sottocartelle per organizzare più facilmente la tua casella di posta.
-- Design migliorato per iPhone Duo.
-- La gestione dello spam è più chiara per le caselle di posta che usano un gateway email esterno.
-- La schermata di avvio e quelle di benvenuto vengono visualizzate in modo più uniforme.
+- Ora puoi aprire le anteprime degli allegati in modo più affidabile dopo averli scaricati.
