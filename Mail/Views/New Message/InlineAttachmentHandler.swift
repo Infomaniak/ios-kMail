@@ -43,9 +43,7 @@ final class InlineAttachmentHandler: NSObject, WKScriptMessageHandler {
 
             Task { @MainActor in
                 for cid in arrayWithoutPrefix {
-                    if let attachment = attachmentsManager.liveAttachments.first(where: { $0.contentId == cid }) {
-                        attachmentsManager.removeAttachment(attachment.uuid)
-                    }
+                    attachmentsManager.removeInlineAttachment(contentId: cid)
                 }
             }
         } catch {

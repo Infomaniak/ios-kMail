@@ -50,25 +50,13 @@ public struct AttachmentView<Content: View>: View {
     }
 
     public init(
-        attachment: Attachment,
+        attachment: UIAttachment,
         downloadProgress: Double = 0,
         accessory: @escaping () -> Content? = { EmptyView() }
     ) {
         title = attachment.name
         subtitle = attachment.size.formatted(.defaultByteCount)
         icon = attachment.icon
-        self.downloadProgress = downloadProgress
-        self.accessory = accessory
-    }
-
-    public init(
-        swissTransferFile: File,
-        downloadProgress: Double = 0,
-        accessory: @escaping () -> Content? = { EmptyView() }
-    ) {
-        title = swissTransferFile.name
-        subtitle = swissTransferFile.size.formatted(.defaultByteCount)
-        icon = swissTransferFile.icon
         self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
@@ -107,5 +95,5 @@ public struct AttachmentView<Content: View>: View {
 }
 
 #Preview {
-    AttachmentView(title: "title", subtitle: "24ko", icon: PreviewHelper.sampleAttachment.icon)
+    AttachmentView(attachment: PreviewHelper.sampleUIAttachment)
 }

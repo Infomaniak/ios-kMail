@@ -17,26 +17,25 @@
  */
 
 import DesignSystem
+import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakCoreUIKit
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import RealmSwift
 import Sentry
 import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentPreview: View {
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
-
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(wrappedValue: nil, context: ContextKeys.attachmentDownload) private var downloadedAttachmentURL: IdentifiableURL?
     @ModalState(
@@ -44,20 +43,17 @@ struct AttachmentPreview: View {
         context: ContextKeys.attachmentDownload
     ) private var downloadedAttachmentURLForMac: IdentifiableURL?
 
-    @ObservedRealmObject var attachment: MailCore.Attachment
+    @State private var previewURL: URL?
+
+    let attachment: UIAttachment
+    var download: (() async throws -> Void)?
 
     var body: some View {
         NavigationStack {
             Group {
-                if FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
+                if let previewURL {
                     PreviewController(
-                        url: attachment.getLocalURL(mailboxManager: mailboxManager),
-                        mimeType: attachment.mimeType
-                    )
-                } else if let temporaryLocalUrl = attachment.temporaryLocalUrl,
-                          FileManager.default.fileExists(atPath: temporaryLocalUrl) {
-                    PreviewController(
-                        url: URL(fileURLWithPath: temporaryLocalUrl),
+                        url: previewURL,
                         mimeType: attachment.mimeType
                     )
                 } else {
@@ -73,8 +69,9 @@ struct AttachmentPreview: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
+                        guard let previewURL else { return }
                         matomo.track(eventWithCategory: .message, name: "share")
-                        downloadedAttachmentURL = IdentifiableURL(url: attachment.getLocalURL(mailboxManager: mailboxManager))
+                        downloadedAttachmentURL = IdentifiableURL(url: previewURL)
                     } label: {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonShare)
@@ -87,6 +84,7 @@ struct AttachmentPreview: View {
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
+                    .disabled(previewURL == nil)
                     .sheet(item: $downloadedAttachmentURL) { downloadedAttachmentURL in
                         ActivityView(activityItems: [downloadedAttachmentURL.url])
                             .ignoresSafeArea(edges: [.bottom])
@@ -95,9 +93,9 @@ struct AttachmentPreview: View {
 
                     if platformDetector.isMac {
                         Button {
+                            guard let previewURL else { return }
                             matomo.track(eventWithCategory: .message, name: "download")
-                            downloadedAttachmentURLForMac = IdentifiableURL(url: attachment
-                                .getLocalURL(mailboxManager: mailboxManager))
+                            downloadedAttachmentURLForMac = IdentifiableURL(url: previewURL)
                         } label: {
                             Label {
                                 Text(MailResourcesStrings.Localizable.buttonDownload)
@@ -110,6 +108,7 @@ struct AttachmentPreview: View {
                             }
                             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }
+                        .disabled(previewURL == nil)
                         .sheet(item: $downloadedAttachmentURLForMac) { downloadedAttachmentURLForMac in
                             DocumentPicker(pickerType: .exportContent([downloadedAttachmentURLForMac.url]))
                         }
@@ -119,9 +118,9 @@ struct AttachmentPreview: View {
 
                     if !platformDetector.isMac {
                         Button {
-                            let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
+                            guard let previewURL else { return }
                             do {
-                                try DeeplinkService().shareFileToKdrive(attachmentURL)
+                                try DeeplinkService().shareFilesToKdrive([previewURL])
                             } catch {
                                 SentrySDK.capture(error: error)
                             }
@@ -135,9 +134,30 @@ struct AttachmentPreview: View {
                             }
                             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }
+                        .disabled(previewURL == nil)
                     }
                 }
             }
+        }
+        .task(id: attachment, downloadAttachmentIfNeeded)
+    }
+
+    private func downloadAttachmentIfNeeded() async {
+        if let localPreviewURL = attachment.availableLocalURL {
+            previewURL = localPreviewURL
+            return
+        }
+
+        do {
+            try await download?()
+            try Task.checkCancellation()
+            previewURL = attachment.availableLocalURL
+        } catch is CancellationError {
+            return
+        } catch {
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            dismiss()
         }
     }
 }
@@ -153,7 +173,6 @@ public extension View {
 }
 
 #Preview {
-    AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+    AttachmentPreview(attachment: PreviewHelper.sampleUIAttachment)
         .pagePresentationSizing()
 }

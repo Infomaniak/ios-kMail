@@ -19,15 +19,15 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailCoreUI
 import MailResources
-import RealmSwift
 import SwiftUI
 
 struct AttachmentsHeaderView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
-    private var notInlinedAttachments: [Attachment] {
-        attachmentsManager.liveAttachments.filter { !$0.isInline }
+    private var notInlinedAttachments: [UIAttachment] {
+        attachmentsManager.attachments.filter { !$0.isInline }
     }
 
     var body: some View {
@@ -40,8 +40,7 @@ struct AttachmentsHeaderView: View {
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
                                 attachment: attachment
                             ) { attachmentRemoved in
-                                guard !attachmentRemoved.isInvalidated else { return }
-                                attachmentsManager.removeAttachment(attachmentRemoved.uuid)
+                                attachmentsManager.removeAttachment(attachmentRemoved)
                             }
                         }
                     }
