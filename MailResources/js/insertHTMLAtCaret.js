@@ -34,29 +34,19 @@ function insertHTMLAtCaret(html) {
     const editor = getEditor();
     if (!editor) return false;
 
-    let range = lastKnownRange;
-    if (!range || !editor.contains(range.commonAncestorContainer)) {
-        range = document.createRange();
+    editor.focus();
+
+    const selection = window.getSelection();
+    if (lastKnownRange && editor.contains(lastKnownRange.commonAncestorContainer)) {
+        selection.removeAllRanges();
+        selection.addRange(lastKnownRange);
+    } else {
+        const range = document.createRange();
         range.selectNodeContents(editor);
         range.collapse(true);
-    }
-
-    range.deleteContents();
-
-    const fragment = range.createContextualFragment(html);
-    const lastNode = fragment.lastChild;
-    range.insertNode(fragment);
-
-    if (lastNode) {
-        const newRange = document.createRange();
-        newRange.setStartAfter(lastNode);
-        newRange.collapse(true);
-
-        const selection = window.getSelection();
         selection.removeAllRanges();
-        selection.addRange(newRange);
-        lastKnownRange = newRange.cloneRange();
+        selection.addRange(range);
     }
 
-    return true;
+    return document.execCommand('insertHTML', false, html);
 }

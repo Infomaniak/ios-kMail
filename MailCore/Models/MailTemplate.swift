@@ -25,15 +25,9 @@ public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var title: String
     @Persisted public var preview: String
     @Persisted public var content: String
-    @Persisted public var attachments: List<Attachment>
-    @Persisted public var date = Date()
 
     public var displayName: String {
         title.isEmpty ? MailResourcesStrings.Localizable.unnamedModel : title
-    }
-
-    public var inlineImages: [Attachment] {
-        attachments.filter { $0.disposition == .inline }
     }
 
     override public init() {}
@@ -41,16 +35,12 @@ public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
     public convenience init(id: String,
                             title: String,
                             preview: String,
-                            content: String,
-                            attachments: [Attachment] = [],
-                            date: Date = Date()) {
+                            content: String) {
         self.init()
         self.id = id
         self.title = title
         self.preview = preview
         self.content = content
-        self.attachments = attachments.toRealmList()
-        self.date = date
     }
 
     private enum CodingKeys: String, CodingKey {
