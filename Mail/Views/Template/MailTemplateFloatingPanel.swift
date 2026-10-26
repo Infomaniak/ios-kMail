@@ -147,11 +147,12 @@ struct TemplatePreviewView: View {
                 MessageBodyContentView(
                     displayContentBlockedActionView: .constant(false),
                     initialContentLoading: .constant(false),
-                    presentableBody: PresentableBody(
-                        body: MailCore.Body(value: ["content": template.content, "type": "html"]),
-                        compactBody: template.content,
-                        quotes: []
-                    ),
+                    presentableBody: {
+                        let body = MailCore.Body()
+                        body.value = template.content
+                        body.type = .textHtml
+                        return PresentableBody(body: body, compactBody: template.content, quotes: [])
+                    }(),
                     blockRemoteContent: false,
                     messageUid: "template_\(template.id)",
                     messageTheme: .auto,
