@@ -28,7 +28,7 @@ extension View {
     func mailTemplateFloatingPanel(
         isPresented: Binding<Bool>,
         editorBox: EditorBox,
-        draft: Draft,
+        draft: Draft
     ) -> some View {
         modifier(
             MailTemplateFloatingPanel(
@@ -103,17 +103,34 @@ struct MailTemplateListView: View {
             }
         }
         .task {
-            do {
-                templates = try await mailboxManager.apiFetcher.mailTemplate(mailbox: mailboxManager.mailbox)
-                for template in templates {
-                    let extractedText = try? await SwiftSoupUtils(fromHTML: template.content).extractText()
-                    previewTexts[template.id] = extractedText ?? MailResourcesStrings.Localizable.noBodyDescription
-                }
-            } catch {
-                // handle error
+            guard let fetchedTemplates = try? await mailboxManager.apiFetcher.mailTemplate(mailbox: mailboxManager.mailbox) else {
+                return
             }
+            templates = fetchedTemplates
+            let sources = fetchedTemplates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) }
+            previewTexts = await Self.previewTexts(for: sources)
         }
     }
+
+    @concurrent
+    private static func previewTexts(for sources: [TemplatePreviewSource]) async -> [String: String] {
+        var texts = [String: String]()
+        for source in sources {
+            if !source.preview.isEmpty {
+                texts[source.id] = source.preview
+            } else {
+                let extracted = try? await SwiftSoupUtils(fromHTML: source.content).extractText()
+                texts[source.id] = extracted ?? MailResourcesStrings.Localizable.noBodyDescription
+            }
+        }
+        return texts
+    }
+}
+
+private struct TemplatePreviewSource {
+    let id: String
+    let preview: String
+    let content: String
 }
 
 struct TemplatePreviewView: View {
@@ -121,6 +138,8 @@ struct TemplatePreviewView: View {
     let editorBox: EditorBox
     let draft: Draft
     let dismissParent: () -> Void
+
+    @State private var isInserting = false
 
     var body: some View {
         List {
@@ -146,25 +165,9 @@ struct TemplatePreviewView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.aiButtonInsert) {
-                Task {
-                    do {
-                        try await editorBox.editor?.webView
-                            .evaluateJavaScript(.insertHTMLAtCaret(template.content))
-                    } catch {
-                        // handle error
-                    }
-                }
-
-                if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
-                    try? realm.write {
-                        if liveDraft.subject.isEmpty {
-                            liveDraft.subject = template.title
-                        }
-                    }
-                }
-
-                dismissParent()
+                Task { await insertTemplate() }
             }
+            .disabled(isInserting)
             .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
             .controlSize(.large)
@@ -185,5 +188,38 @@ struct TemplatePreviewView: View {
         }
         .navigationTitle(template.displayName)
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func insertTemplate() async {
+        guard !isInserting else { return }
+        isInserting = true
+        defer { isInserting = false }
+
+        guard let webView = editorBox.editor?.webView else { return }
+
+        do {
+            let html = try await Self.cleanedHTML(from: template.content)
+
+            let result = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html))
+            guard result as? Bool == true else { return }
+
+            if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
+                try? realm.write {
+                    if liveDraft.subject.isEmpty {
+                        liveDraft.subject = template.title
+                    }
+                }
+            }
+
+            dismissParent()
+        } catch {
+            // handle error
+        }
+    }
+
+    @concurrent
+    private static func cleanedHTML(from html: String) async throws -> String {
+        let cleaned = try await SwiftSoupUtils(fromHTML: html).cleanBody()
+        return try cleaned.body()?.html() ?? ""
     }
 }
