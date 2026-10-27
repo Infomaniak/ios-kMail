@@ -190,8 +190,7 @@ struct AppVersionView: View {
             .onChange(of: navigationDrawerState.isOpen) { isOpen in
                 guard !isOpen else { return }
                 shareRealmArchive = false
-                archiveURLs.forEach { try? FileManager.default.removeItem(at: $0) }
-                archiveURLs.removeAll()
+                cleanArchiveURLs()
             }
     }
 
@@ -200,7 +199,10 @@ struct AppVersionView: View {
         if shareRealmArchive {
             ShareLink(
                 item: LazyRealmArchive { url in
-                    Task { @MainActor in archiveURLs.append(url) }
+                    Task { @MainActor in
+                        cleanArchiveURLs()
+                        archiveURLs.append(url)
+                    }
                 },
                 preview: SharePreview(Constants.appVersionLabel)
             ) {
@@ -214,6 +216,11 @@ struct AppVersionView: View {
                     shareRealmArchive = true
                 }
         }
+    }
+
+    private func cleanArchiveURLs() {
+        archiveURLs.forEach { try? FileManager.default.removeItem(at: $0) }
+        archiveURLs.removeAll()
     }
 }
 
