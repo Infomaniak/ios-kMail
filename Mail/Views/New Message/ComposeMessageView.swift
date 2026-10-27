@@ -110,6 +110,8 @@ struct ComposeMessageView: View {
     @State private var mentionSuggestions = [Recipient]()
     @State private var editorBox = EditorBox()
 
+    @State private var templates: [MailTemplate] = []
+
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
@@ -213,6 +215,7 @@ struct ComposeMessageView: View {
                         selectedText: $selectedText,
                         mentionQuery: $mentionQuery,
                         isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
+                        hasTemplates: !templates.isEmpty,
                         draft: draft,
                         aliases: aliases,
                         editorBox: editorBox,
@@ -296,6 +299,7 @@ struct ComposeMessageView: View {
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                         isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
+                        hasTemplates: !templates.isEmpty,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText
@@ -342,6 +346,18 @@ struct ComposeMessageView: View {
             } catch {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
+            }
+        }
+        .task {
+            do {
+                templates = try await mailboxManager.apiFetcher.mailTemplate(
+                    mailbox: mailboxManager.mailbox
+                )
+            } catch {
+                guard !Task.isCancelled else { return }
+                snackbarPresenter.show(
+                    message: MailResourcesStrings.Localizable.unableLoadTemplate
+                )
             }
         }
         .task(id: mentionQuery) {
@@ -409,7 +425,12 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
-        .mailTemplateFloatingPanel(isPresented: $isShowingMailTemplatePanel, editorBox: editorBox, draft: draft)
+        .mailTemplateFloatingPanel(
+            isPresented: $isShowingMailTemplatePanel,
+            editorBox: editorBox,
+            draft: draft,
+            templates: templates
+        )
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
@@ -545,7 +566,7 @@ struct ComposeMessageView: View {
         } else {
             dismissMessageView()
 
-            if !platformDetector.isMac && !platformDetector.isRunningUITests {
+            if !platformDetector.isMac, !platformDetector.isRunningUITests {
                 // We should implement a proper router to avoid doing this
                 DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
                     mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery

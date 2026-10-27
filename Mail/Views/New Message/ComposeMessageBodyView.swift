@@ -49,6 +49,7 @@ struct ComposeMessageBodyView: View {
     @Binding var mentionQuery: String
     @Binding var isShowingMailTemplatePanel: Bool
 
+    let hasTemplates: Bool
     let draft: Draft
     let aliases: [String]
     let editorBox: EditorBox
@@ -81,7 +82,8 @@ struct ComposeMessageBodyView: View {
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingAI: $isShowingAI,
                 isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
-                textAttributes: textAttributes
+                textAttributes: textAttributes,
+                hasTemplates: hasTemplates
             )
             .onJavaScriptFunctionFail(perform: reportJavaScriptError)
             .mailCustomAlert(isPresented: $isShowingLinkAlert) {
@@ -208,6 +210,7 @@ struct ComposeMessageBodyView: View {
         selectedText: .constant(""),
         mentionQuery: .constant(""),
         isShowingMailTemplatePanel: .constant(false),
+        hasTemplates: false,
         draft: draft,
         aliases: [],
         editorBox: EditorBox(),
