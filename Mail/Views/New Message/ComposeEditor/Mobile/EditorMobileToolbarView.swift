@@ -47,6 +47,7 @@ struct EditorMobileToolbarView: View {
     @Binding var isShowingEncryptStatePanel: Bool
     @Binding var isShowingMailTemplatePanel: Bool
 
+    let hasTemplates: Bool
     let draft: Draft
     let isEditorFocused: Bool
     let selectedText: String
@@ -65,6 +66,7 @@ struct EditorMobileToolbarView: View {
                     isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
+                    hasTemplates: hasTemplates,
                     draft: draft,
                     isEditorFocused: isEditorFocused
                 )
@@ -101,6 +103,7 @@ struct EditorMobileToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingMailTemplatePanel: .constant(false),
+        hasTemplates: false,
         draft: Draft(),
         isEditorFocused: true,
         selectedText: ""

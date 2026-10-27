@@ -35,6 +35,7 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingEncryptStatePanel: Bool
     @Binding var isShowingMailTemplatePanel: Bool
 
+    let hasTemplates: Bool
     let draft: Draft
     let isEditorFocused: Bool
 
@@ -45,7 +46,9 @@ struct MobileMainToolbarView: View {
             availableOptions.append(.ai)
         }
 
-        availableOptions.append(.mailTemplate)
+        if hasTemplates {
+            availableOptions.append(.mailTemplate)
+        }
 
         return availableOptions
     }
@@ -155,6 +158,7 @@ struct MobileMainToolbarView: View {
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         isShowingMailTemplatePanel: .constant(false),
+        hasTemplates: false,
         draft: Draft(),
         isEditorFocused: true
     )

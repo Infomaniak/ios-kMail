@@ -29,13 +29,15 @@ extension View {
     func mailTemplateFloatingPanel(
         isPresented: Binding<Bool>,
         editorBox: EditorBox,
-        draft: Draft
+        draft: Draft,
+        templates: [MailTemplate]
     ) -> some View {
         modifier(
             MailTemplateFloatingPanel(
                 isShowingFloatingPanel: isPresented,
                 editorBox: editorBox,
-                draft: draft
+                draft: draft,
+                templates: templates
             )
         )
     }
@@ -45,24 +47,23 @@ struct MailTemplateFloatingPanel: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
     let editorBox: EditorBox
     let draft: Draft
+    let templates: [MailTemplate]
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                MailTemplateListView(editorBox: editorBox, draft: draft)
+                MailTemplateListView(editorBox: editorBox, draft: draft, templates: templates)
             }
     }
 }
 
 struct MailTemplateListView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @Environment(\.dismiss) private var dismiss
 
     let editorBox: EditorBox
     let draft: Draft
+    let templates: [MailTemplate]
 
-    @State private var templates: [MailTemplate] = []
     @State private var previewTexts: [String: String] = [:]
 
     var body: some View {
@@ -104,13 +105,7 @@ struct MailTemplateListView: View {
             }
         }
         .task {
-            guard let fetchedTemplates = try? await mailboxManager.apiFetcher.mailTemplate(mailbox: mailboxManager.mailbox) else {
-                @InjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
-                return
-            }
-            templates = fetchedTemplates
-            let sources = fetchedTemplates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) }
+            let sources = templates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) }
             previewTexts = await Self.previewTexts(for: sources)
         }
     }
