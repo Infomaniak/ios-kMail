@@ -1928,6 +1928,12 @@
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Papirkurv";
 
+/* loco:6adf754a03248745a6026642 */
+"unableInsertTemplate" = "Det går ikke an å sette inn malen";
+
+/* loco:6adf7581517a2b19840b88e4 */
+"unableLoadTemplate" = "Det går ikke an å laste inn malene";
+
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Opphev blokkering";
 
