@@ -1928,6 +1928,12 @@
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Papperskorg";
 
+/* loco:6adf754a03248745a6026642 */
+"unableInsertTemplate" = "Det går inte att infoga mallen";
+
+/* loco:6adf7581517a2b19840b88e4 */
+"unableLoadTemplate" = "Det går inte att ladda mallarna";
+
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Avblockera";
 

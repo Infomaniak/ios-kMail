@@ -1928,6 +1928,12 @@
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Lixo";
 
+/* loco:6adf754a03248745a6026642 */
+"unableInsertTemplate" = "Não foi possível inserir o modelo";
+
+/* loco:6adf7581517a2b19840b88e4 */
+"unableLoadTemplate" = "Não foi possível carregar os modelos";
+
 /* loco:67dbdfcf19fc5774b1030c72 */
 "unblockButton" = "Desbloquear";
 
