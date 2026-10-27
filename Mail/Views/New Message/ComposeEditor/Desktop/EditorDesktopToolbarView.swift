@@ -35,6 +35,8 @@ struct EditorDesktopToolbarView: View {
 
     @ObservedObject var textAttributes: TextAttributes
 
+    let hasTemplates: Bool
+
     private let extras: [EditorToolbarAction] = [
         .addFile,
         .link
@@ -53,7 +55,11 @@ struct EditorDesktopToolbarView: View {
     ]
 
     private var allItems: [[EditorToolbarAction]] {
-        var mainItems = [extras, textFormats, textItems, [.mailTemplate]]
+        var mainItems = [extras, textFormats, textItems]
+
+        if hasTemplates {
+            mainItems.append([.mailTemplate])
+        }
 
         mailboxManager.featureFlagsManager.feature(.aiMailComposer, on: {
             mainItems.insert([.ai], at: 0)
