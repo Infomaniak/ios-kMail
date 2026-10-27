@@ -18,6 +18,7 @@
 
 import DesignSystem
 import Foundation
+import IKSnackbar
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -104,6 +105,8 @@ struct MailTemplateListView: View {
         }
         .task {
             guard let fetchedTemplates = try? await mailboxManager.apiFetcher.mailTemplate(mailbox: mailboxManager.mailbox) else {
+                @InjectService var snackbarPresenter: IKSnackBarPresentable
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
                 return
             }
             templates = fetchedTemplates
@@ -214,7 +217,8 @@ struct TemplatePreviewView: View {
 
             dismissParent()
         } catch {
-            // handle error
+            @InjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableInsertTemplate)
         }
     }
 
