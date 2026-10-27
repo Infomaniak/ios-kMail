@@ -37,8 +37,6 @@ struct AttachmentPreview: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @ModalState(
         wrappedValue: nil,
         context: ContextKeys.attachmentDownload
@@ -69,7 +67,7 @@ struct AttachmentPreview: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    ShareLink(item: attachment.getLocalURL(mailboxManager: mailboxManager)) {
+                    ShareLink(item: previewURL ?? URL(fileURLWithPath: "")) {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonShare)
                                 .font(MailTextStyle.labelSecondary.font)
