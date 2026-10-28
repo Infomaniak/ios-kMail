@@ -58,7 +58,7 @@ extension WebViewModel {
         } else {
             try head?.append("<meta name=\"viewport\" content=\"\(Constants.viewportContent)\">")
         }
-        try head?.append(style)
+        try head?.prepend(style)
     }
 
     /// Wraps the message body in a div
