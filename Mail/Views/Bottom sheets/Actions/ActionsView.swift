@@ -209,11 +209,25 @@ struct MessageActionView: View {
         return .none
     }
 
+    private var shareLinkMessage: Message? {
+        guard action == .shareMailLink, badgeType == .none else { return nil }
+        return targetMessages.first?.freezeIfNeeded()
+    }
+
     var body: some View {
-        Button(action: didTapButton) {
-            ActionButtonLabel(action: action, badgeType: badgeType)
+        if let shareLinkMessage {
+            ShareLink(
+                item: LazyMailShareLink(message: shareLinkMessage, mailboxManager: mailboxManager),
+                preview: SharePreview(action.title)
+            ) {
+                ActionButtonLabel(action: action, badgeType: badgeType)
+            }
+        } else {
+            Button(action: didTapButton) {
+                ActionButtonLabel(action: action, badgeType: badgeType)
+            }
+            .accessibilityIdentifier(action.accessibilityIdentifier)
         }
-        .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 
     private func didTapButton() {

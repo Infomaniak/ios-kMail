@@ -37,7 +37,6 @@ struct AttachmentPreview: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
 
-    @ModalState(wrappedValue: nil, context: ContextKeys.attachmentDownload) private var downloadedAttachmentURL: IdentifiableURL?
     @ModalState(
         wrappedValue: nil,
         context: ContextKeys.attachmentDownload
@@ -68,11 +67,7 @@ struct AttachmentPreview: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Button {
-                        guard let previewURL else { return }
-                        matomo.track(eventWithCategory: .message, name: "share")
-                        downloadedAttachmentURL = IdentifiableURL(url: previewURL)
-                    } label: {
+                    ShareLink(item: previewURL ?? URL(fileURLWithPath: "")) {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonShare)
                                 .font(MailTextStyle.labelSecondary.font)
@@ -85,11 +80,6 @@ struct AttachmentPreview: View {
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                     .disabled(previewURL == nil)
-                    .sheet(item: $downloadedAttachmentURL) { downloadedAttachmentURL in
-                        ActivityView(activityItems: [downloadedAttachmentURL.url])
-                            .ignoresSafeArea(edges: [.bottom])
-                            .presentationDetents([.medium, .large])
-                    }
 
                     if platformDetector.isMac {
                         Button {
