@@ -19,6 +19,7 @@
 import DesignSystem
 import Foundation
 import IKSnackbar
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -190,6 +191,10 @@ struct TemplatePreviewView: View {
     private func selectTemplate() {
         guard !isSelectingTemplate else { return }
         isSelectingTemplate = true
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .mailTemplateSheet, name: "insert")
+
         Task {
             await onTemplateSelected(template)
             isSelectingTemplate = false
