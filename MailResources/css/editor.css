@@ -10,6 +10,11 @@ body {
     margin: 16px;
 }
 
+#swift-rich-html-editor img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
 @media (prefers-color-scheme: dark) {
     html {
         background-color: #101010;
