@@ -111,8 +111,7 @@ struct MailTemplateListView: View {
             }
         }
         .task(id: templates.count) {
-            let sources = Array(templates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) })
-            previewTexts = await Self.previewTexts(for: sources)
+            previewTexts = await Self.previewTexts(for: Array(templates.map { $0.freeze() }))
         }
         .task {
             do {
@@ -125,7 +124,7 @@ struct MailTemplateListView: View {
     }
 
     @concurrent
-    private static func previewTexts(for sources: [TemplatePreviewSource]) async -> [String: String] {
+    private static func previewTexts(for sources: [MailTemplate]) async -> [String: String] {
         var texts = [String: String]()
         for source in sources {
             if !source.preview.isEmpty {
@@ -137,12 +136,6 @@ struct MailTemplateListView: View {
         }
         return texts
     }
-}
-
-private struct TemplatePreviewSource {
-    let id: String
-    let preview: String
-    let content: String
 }
 
 struct TemplatePreviewView: View {
