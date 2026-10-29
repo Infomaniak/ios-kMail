@@ -170,18 +170,6 @@ struct TemplatePreviewView: View {
             .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
             .controlSize(.large)
-            .ikButtonTheme(
-                IKButtonTheme(
-                    primary: DefaultPreferences.accentColor.primary.swiftUIColor,
-                    secondary: DefaultPreferences.accentColor.secondary.swiftUIColor,
-                    tertiary: Color.gray,
-                    disabledPrimary: Color.gray,
-                    disabledSecondary: Color.white,
-                    error: Color.red,
-                    smallFont: .body,
-                    mediumFont: .headline
-                )
-            )
             .padding(.horizontal, IKPadding.large)
             .padding(.bottom, IKPadding.mini)
         }
