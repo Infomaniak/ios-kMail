@@ -35,7 +35,7 @@ extension View {
         mailboxManager: MailboxManager
     ) -> some View {
         modifier(
-            MailTemplateFloatingPanel(
+            MailTemplateFloatingPanelModifier(
                 isShowingFloatingPanel: isPresented,
                 editorBox: editorBox,
                 draft: draft,
@@ -45,7 +45,7 @@ extension View {
     }
 }
 
-struct MailTemplateFloatingPanel: ViewModifier {
+struct MailTemplateFloatingPanelModifier: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
     let editorBox: EditorBox
     let draft: Draft
