@@ -33,7 +33,9 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingMailPremiumPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
+    @Binding var isShowingMailTemplatePanel: Bool
 
+    let hasTemplates: Bool
     let draft: Draft
     let isEditorFocused: Bool
 
@@ -42,6 +44,10 @@ struct MobileMainToolbarView: View {
 
         if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer) {
             availableOptions.append(.ai)
+        }
+
+        if hasTemplates {
+            availableOptions.append(.mailTemplate)
         }
 
         return availableOptions
@@ -83,6 +89,10 @@ struct MobileMainToolbarView: View {
                 AIToolbarButton {
                     performToolbarAction(action)
                 }
+            case .mailTemplate:
+                MailTemplateButton {
+                    isShowingMailTemplatePanel = true
+                }
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
@@ -118,7 +128,7 @@ struct MobileMainToolbarView: View {
             }
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
-        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
+        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption, .mailTemplate:
             break
         }
     }
@@ -141,6 +151,8 @@ struct MobileMainToolbarView: View {
         isShowingMyKSuitePanel: .constant(false),
         isShowingMailPremiumPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
+        isShowingMailTemplatePanel: .constant(false),
+        hasTemplates: false,
         draft: Draft(),
         isEditorFocused: true
     )
