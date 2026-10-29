@@ -24,6 +24,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
 extension View {
@@ -31,14 +32,14 @@ extension View {
         isPresented: Binding<Bool>,
         editorBox: EditorBox,
         draft: Draft,
-        templates: [MailTemplate]
+        mailboxManager: MailboxManager
     ) -> some View {
         modifier(
             MailTemplateFloatingPanel(
                 isShowingFloatingPanel: isPresented,
                 editorBox: editorBox,
                 draft: draft,
-                templates: templates
+                mailboxManager: mailboxManager
             )
         )
     }
@@ -48,24 +49,34 @@ struct MailTemplateFloatingPanel: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
     let editorBox: EditorBox
     let draft: Draft
-    let templates: [MailTemplate]
+    let mailboxManager: MailboxManager
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                MailTemplateListView(editorBox: editorBox, draft: draft, templates: templates)
+                MailTemplateListView(editorBox: editorBox, draft: draft, mailboxManager: mailboxManager)
             }
     }
 }
 
 struct MailTemplateListView: View {
     @Environment(\.dismiss) private var dismiss
+    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
+
+    @ObservedResults(MailTemplate.self) private var templates
 
     let editorBox: EditorBox
     let draft: Draft
-    let templates: [MailTemplate]
+    let mailboxManager: MailboxManager
 
     @State private var previewTexts: [String: String] = [:]
+
+    init(editorBox: EditorBox, draft: Draft, mailboxManager: MailboxManager) {
+        self.editorBox = editorBox
+        self.draft = draft
+        self.mailboxManager = mailboxManager
+        _templates = ObservedResults(MailTemplate.self, configuration: mailboxManager.realmConfiguration)
+    }
 
     var body: some View {
         NavigationStack {
@@ -99,9 +110,17 @@ struct MailTemplateListView: View {
                 }
             }
         }
-        .task {
-            let sources = templates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) }
+        .task(id: templates.count) {
+            let sources = Array(templates.map { TemplatePreviewSource(id: $0.id, preview: $0.preview, content: $0.content) })
             previewTexts = await Self.previewTexts(for: sources)
+        }
+        .task {
+            do {
+                try await mailboxManager.refreshTemplates()
+            } catch {
+                guard !Task.isCancelled else { return }
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
+            }
         }
     }
 

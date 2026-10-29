@@ -110,7 +110,7 @@ struct ComposeMessageView: View {
     @State private var mentionSuggestions = [Recipient]()
     @State private var editorBox = EditorBox()
 
-    @State private var templates: [MailTemplate] = []
+    @ObservedResults(MailTemplate.self) private var templates
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -180,6 +180,7 @@ struct ComposeMessageView: View {
         ))
 
         self.mailboxManager = mailboxManager
+        _templates = ObservedResults(MailTemplate.self, configuration: mailboxManager.realmConfiguration)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
@@ -348,18 +349,6 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .task {
-            do {
-                templates = try await mailboxManager.apiFetcher.mailTemplate(
-                    mailbox: mailboxManager.mailbox
-                )
-            } catch {
-                guard !Task.isCancelled else { return }
-                snackbarPresenter.show(
-                    message: MailResourcesStrings.Localizable.unableLoadTemplate
-                )
-            }
-        }
         .task(id: mentionQuery) {
             try? await Task.sleep(for: .milliseconds(200))
             guard !mentionQuery.isEmpty else {
@@ -429,7 +418,7 @@ struct ComposeMessageView: View {
             isPresented: $isShowingMailTemplatePanel,
             editorBox: editorBox,
             draft: draft,
-            templates: templates
+            mailboxManager: mailboxManager
         )
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
