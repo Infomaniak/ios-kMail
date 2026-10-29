@@ -126,7 +126,7 @@ struct MailTemplateListView: View {
         var texts = [String: String]()
         for source in sources {
             if !source.preview.isEmpty {
-                texts[source.id] = source.preview
+                texts[source.id] = SwiftSoupUtils.decodeHTMLEntities(source.preview)
             } else {
                 let extracted = try? await SwiftSoupUtils(fromHTML: source.content).extractText()
                 texts[source.id] = extracted ?? MailResourcesStrings.Localizable.noBodyDescription
