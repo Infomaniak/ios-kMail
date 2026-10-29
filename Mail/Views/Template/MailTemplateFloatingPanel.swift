@@ -142,18 +142,25 @@ struct TemplatePreviewView: View {
 
     @State private var isSelectingTemplate = false
 
+    private let presentableBody: PresentableBody
+
+    init(template: MailTemplate, onTemplateSelected: @escaping (MailTemplate) async -> Void) {
+        self.template = template
+        self.onTemplateSelected = onTemplateSelected
+
+        let body = MailCore.Body()
+        body.value = template.content
+        body.type = .textHtml
+        presentableBody = PresentableBody(body: body, compactBody: template.content, quotes: [])
+    }
+
     var body: some View {
         List {
             if !template.content.isEmpty {
                 MessageBodyContentView(
                     displayContentBlockedActionView: .constant(false),
                     initialContentLoading: .constant(false),
-                    presentableBody: {
-                        let body = MailCore.Body()
-                        body.value = template.content
-                        body.type = .textHtml
-                        return PresentableBody(body: body, compactBody: template.content, quotes: [])
-                    }(),
+                    presentableBody: presentableBody,
                     blockRemoteContent: false,
                     messageUid: "template_\(template.id)",
                     messageTheme: .auto,
