@@ -90,14 +90,8 @@ struct MobileMainToolbarView: View {
                     performToolbarAction(action)
                 }
             case .mailTemplate:
-                Button {
+                MailTemplateButton {
                     isShowingMailTemplatePanel = true
-                } label: {
-                    action.icon.swiftUIImage
-                        .iconSize(MobileToolbarButtonStyle.iconSize)
-                        .padding(IKPadding.mini)
-                        .foregroundStyle(MailTextStyle.body.color)
-                        .accessibilityLabel(action.accessibilityLabel)
                 }
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
