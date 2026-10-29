@@ -112,6 +112,8 @@ enum EditorToolbarAction: Identifiable {
             return "importFromCamera"
         case .link:
             return "addLink"
+        case .mailTemplate:
+            return "mailTemplate"
         default:
             return nil
         }
