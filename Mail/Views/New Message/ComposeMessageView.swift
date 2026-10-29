@@ -416,10 +416,10 @@ struct ComposeMessageView: View {
         }
         .mailTemplateFloatingPanel(
             isPresented: $isShowingMailTemplatePanel,
-            editorBox: editorBox,
-            draft: draft,
             mailboxManager: mailboxManager
-        )
+        ) { template in
+            await insertTemplate(template)
+        }
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
@@ -512,6 +512,36 @@ struct ComposeMessageView: View {
         }
 
         dismissMessageView()
+    }
+
+    @MainActor
+    private func insertTemplate(_ template: MailTemplate) async {
+        guard let webView = editorBox.editor?.webView else { return }
+
+        do {
+            let html = try await Self.cleanedHTML(from: template.content)
+
+            let result = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html))
+            guard result as? Bool == true else { return }
+
+            if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
+                try? realm.write {
+                    if liveDraft.subject.isEmpty {
+                        liveDraft.subject = template.title
+                    }
+                }
+            }
+
+            isShowingMailTemplatePanel = false
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableInsertTemplate)
+        }
+    }
+
+    @concurrent
+    private static func cleanedHTML(from html: String) async throws -> String {
+        let cleaned = try await SwiftSoupUtils(fromHTML: html).cleanBody()
+        return try cleaned.body()?.html() ?? ""
     }
 
     private func trySendingMessage(skipSubjectCheck: Bool = false, skipAttachmentsCheck: Bool = false) {
