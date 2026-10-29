@@ -22,6 +22,7 @@ import IKSnackbar
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
@@ -93,14 +94,8 @@ struct MailTemplateListView: View {
             .navigationTitle(MailResourcesStrings.Localizable.modelsTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    if #available(iOS 26.0, *) {
-                        Button(role: .close, action: dismiss.callAsFunction)
-                    } else {
-                        Button(action: dismiss.callAsFunction) {
-                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                        }
-                    }
+                ToolbarItem(placement: .topBarLeading) {
+                    ToolbarCloseButton(dismissAction: dismiss)
                 }
             }
         }
