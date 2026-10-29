@@ -30,16 +30,14 @@ import SwiftUI
 extension View {
     func mailTemplateFloatingPanel(
         isPresented: Binding<Bool>,
-        editorBox: EditorBox,
-        draft: Draft,
-        mailboxManager: MailboxManager
+        mailboxManager: MailboxManager,
+        onTemplateSelected: @escaping (MailTemplate) async -> Void
     ) -> some View {
         modifier(
             MailTemplateFloatingPanelModifier(
                 isShowingFloatingPanel: isPresented,
-                editorBox: editorBox,
-                draft: draft,
-                mailboxManager: mailboxManager
+                mailboxManager: mailboxManager,
+                onTemplateSelected: onTemplateSelected
             )
         )
     }
@@ -47,14 +45,16 @@ extension View {
 
 struct MailTemplateFloatingPanelModifier: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
-    let editorBox: EditorBox
-    let draft: Draft
     let mailboxManager: MailboxManager
+    let onTemplateSelected: (MailTemplate) async -> Void
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isShowingFloatingPanel) {
-                MailTemplateListView(editorBox: editorBox, draft: draft, mailboxManager: mailboxManager)
+                MailTemplateListView(
+                    mailboxManager: mailboxManager,
+                    onTemplateSelected: onTemplateSelected
+                )
             }
     }
 }
@@ -65,16 +65,14 @@ struct MailTemplateListView: View {
 
     @ObservedResults(MailTemplate.self) private var templates
 
-    let editorBox: EditorBox
-    let draft: Draft
     let mailboxManager: MailboxManager
+    let onTemplateSelected: (MailTemplate) async -> Void
 
     @State private var previewTexts: [String: String] = [:]
 
-    init(editorBox: EditorBox, draft: Draft, mailboxManager: MailboxManager) {
-        self.editorBox = editorBox
-        self.draft = draft
+    init(mailboxManager: MailboxManager, onTemplateSelected: @escaping (MailTemplate) async -> Void) {
         self.mailboxManager = mailboxManager
+        self.onTemplateSelected = onTemplateSelected
         _templates = ObservedResults(MailTemplate.self, configuration: mailboxManager.realmConfiguration)
     }
 
@@ -83,7 +81,7 @@ struct MailTemplateListView: View {
             List {
                 ForEach(templates) { template in
                     NavigationLink {
-                        TemplatePreviewView(template: template, editorBox: editorBox, draft: draft) { dismiss() }
+                        TemplatePreviewView(template: template, onTemplateSelected: onTemplateSelected)
                     } label: {
                         VStack(alignment: .leading, spacing: IKPadding.micro) {
                             Text(template.displayName)
@@ -140,11 +138,9 @@ struct MailTemplateListView: View {
 
 struct TemplatePreviewView: View {
     let template: MailTemplate
-    let editorBox: EditorBox
-    let draft: Draft
-    let dismissParent: () -> Void
+    let onTemplateSelected: (MailTemplate) async -> Void
 
-    @State private var isInserting = false
+    @State private var isSelectingTemplate = false
 
     var body: some View {
         List {
@@ -171,9 +167,9 @@ struct TemplatePreviewView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.aiButtonInsert) {
-                Task { await insertTemplate() }
+                selectTemplate()
             }
-            .disabled(isInserting)
+            .disabled(isSelectingTemplate)
             .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
             .controlSize(.large)
@@ -184,37 +180,12 @@ struct TemplatePreviewView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func insertTemplate() async {
-        guard !isInserting else { return }
-        isInserting = true
-        defer { isInserting = false }
-
-        guard let webView = editorBox.editor?.webView else { return }
-
-        do {
-            let html = try await Self.cleanedHTML(from: template.content)
-
-            let result = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html))
-            guard result as? Bool == true else { return }
-
-            if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
-                try? realm.write {
-                    if liveDraft.subject.isEmpty {
-                        liveDraft.subject = template.title
-                    }
-                }
-            }
-
-            dismissParent()
-        } catch {
-            @InjectService var snackbarPresenter: IKSnackBarPresentable
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableInsertTemplate)
+    private func selectTemplate() {
+        guard !isSelectingTemplate else { return }
+        isSelectingTemplate = true
+        Task {
+            await onTemplateSelected(template)
+            isSelectingTemplate = false
         }
-    }
-
-    @concurrent
-    private static func cleanedHTML(from html: String) async throws -> String {
-        let cleaned = try await SwiftSoupUtils(fromHTML: html).cleanBody()
-        return try cleaned.body()?.html() ?? ""
     }
 }
