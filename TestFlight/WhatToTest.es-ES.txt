@@ -1,1 +1,3 @@
-- Ahora puedes abrir las vistas previas de los archivos adjuntos con mayor fiabilidad después de descargarlos.
+- Compartir mensajes y archivos adjuntos ahora es más fiable.
+- Los correos respetan mejor su formato original y se ven más como los diseñó el remitente.
+- Los avatares se muestran de forma más uniforme en toda la app.
