@@ -1,1 +1,3 @@
-- Attachment previews now open more reliably after an attachment is downloaded.
+- Sharing messages and attachments is now more reliable.
+- Emails better respect their original formatting and look closer to how the sender designed them.
+- Avatars display more consistently throughout the app.

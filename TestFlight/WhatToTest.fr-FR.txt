@@ -1,1 +1,3 @@
-- L’aperçu des pièces jointes s’ouvre désormais plus facilement après leur téléchargement.
+- Le partage des messages et des pièces jointes est désormais plus fiable.
+- Les e-mails respectent mieux leur mise en forme d’origine et s’affichent plus fidèlement à la présentation prévue par l’expéditeur.
+- Les avatars s’affichent de manière plus homogène dans toute l’app.
