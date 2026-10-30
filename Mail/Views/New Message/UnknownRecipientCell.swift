@@ -27,7 +27,8 @@ struct UnknownRecipientCell: View {
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            IconAvatarView(type: .unknownRecipient, size: 40)
+            IconAvatarView(type: .unknownRecipient)
+                .frame(width: 40, height: 40)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading) {

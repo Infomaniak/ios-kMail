@@ -32,9 +32,9 @@ struct SelectedMailboxView: View {
         HStack(spacing: IKPadding.mini) {
             AvatarView(
                 mailboxManager: selectedMailboxManager,
-                contactConfiguration: .user(user: selectedUser),
-                size: 40
+                contactConfiguration: .user(user: selectedUser)
             )
+            .frame(width: 40, height: 40)
             Text(selectedMailboxManager.mailbox.email)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)

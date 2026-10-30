@@ -38,7 +38,8 @@ struct ThreadCellAvatarCheckboxView: View {
                     avatarTapped?()
                 } label: {
                     ZStack {
-                        AvatarView(mailboxManager: mailboxManager, contactConfiguration: contactConfiguration, size: 40)
+                        AvatarView(mailboxManager: mailboxManager, contactConfiguration: contactConfiguration)
+                            .frame(width: 40, height: 40)
                             .opacity(isSelected ? 0 : 1)
                         CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                             .opacity(isSelected ? 1 : 0)

@@ -41,9 +41,9 @@ struct AttendeeAvatarView: View {
     var body: some View {
         AvatarView(
             mailboxManager: mailboxManager,
-            contactConfiguration: .contact(contact: cachedContact),
-            size: 32 + UIConstants.avatarBorderLineWidth
+            contactConfiguration: .contact(contact: cachedContact)
         )
+        .frame(width: 32 + UIConstants.avatarBorderLineWidth, height: 32 + UIConstants.avatarBorderLineWidth)
         .overlay {
             Circle()
                 .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)

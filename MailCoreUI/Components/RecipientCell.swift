@@ -95,9 +95,9 @@ public struct RecipientCell: View {
         HStack(spacing: IKPadding.mini) {
             AvatarView(
                 mailboxManager: mailboxManager,
-                contactConfiguration: avatarConfiguration,
-                size: avatarSize
+                contactConfiguration: avatarConfiguration
             )
+            .frame(width: avatarSize, height: avatarSize)
             .accessibilityHidden(true)
 
             if title.isEmpty || title == subtitle {
