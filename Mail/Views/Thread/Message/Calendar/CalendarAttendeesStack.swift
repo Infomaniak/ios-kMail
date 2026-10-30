@@ -45,9 +45,9 @@ struct CalendarAttendeesStack: View {
                 InitialsView(
                     initials: "+\(hiddenAttendees)",
                     backgroundColor: MailResourcesAsset.textSecondaryColor.swiftUIColor,
-                    foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
-                    size: 32 + UIConstants.avatarBorderLineWidth
+                    foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
                 )
+                .frame(width: 32 + UIConstants.avatarBorderLineWidth, height: 32 + UIConstants.avatarBorderLineWidth)
                 .overlay {
                     Circle()
                         .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)

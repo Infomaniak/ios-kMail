@@ -26,32 +26,22 @@ import SwiftUI
 extension AvatarView: Equatable {
     public static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
         return lhs.mailboxManager == rhs.mailboxManager
-            && lhs.size == rhs.size
             && lhs.contactConfiguration.id == rhs.contactConfiguration.id
     }
 }
 
-/// A view that displays an avatar linked to a Contact.
 public struct AvatarView: View {
-    /// A view model for async loading of contacts
     @ObservedObject private var viewModel: AvatarViewModel
 
-    /// Optional as this view can be displayed from a context without a mailboxManager available
     private let mailboxManager: MailboxManager?
-
-    /// The size of the avatar view
-    private let size: CGFloat
-
-    /// The configuration associated to this view
     private let contactConfiguration: ContactConfiguration
 
     private var displayablePerson: CommonContact {
         viewModel.displayablePerson
     }
 
-    public init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
+    public init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration) {
         self.mailboxManager = mailboxManager
-        self.size = size
         self.contactConfiguration = contactConfiguration
 
         // We use an ObservedObject instead of a StateObject because SwiftUI doesn't want to respect Equatable
@@ -61,15 +51,15 @@ public struct AvatarView: View {
     public var body: some View {
         Group {
             if case .emptyContact = contactConfiguration {
-                IconAvatarView(type: .unknownRecipient, size: size)
+                IconAvatarView(type: .unknownRecipient)
             } else if case .addressBook = contactConfiguration {
-                IconAvatarView(type: .addressBook, size: size)
+                IconAvatarView(type: .addressBook)
             } else if case .groupContact = contactConfiguration {
-                IconAvatarView(type: .groupRecipients, size: size)
+                IconAvatarView(type: .groupRecipients)
             } else if let avatarImageRequest = getAvatarImageRequest() {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
-                        AvatarImage(image: image, size: size)
+                        AvatarImage(image: image)
                     } else {
                         initialsView
                     }
@@ -81,12 +71,11 @@ public struct AvatarView: View {
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
     }
 
-    var initialsView: some View {
+    private var initialsView: some View {
         InitialsView(
             initials: displayablePerson.formatted(style: .initials),
             backgroundColor: displayablePerson.color,
-            foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
-            size: size
+            foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
         )
     }
 

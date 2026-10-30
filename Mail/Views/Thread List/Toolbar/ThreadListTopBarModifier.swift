@@ -163,6 +163,7 @@ struct LegacyThreadListTopBarModifier: ViewModifier {
                         SearchButton()
 
                         AccountButton()
+                            .frame(width: 30, height: 30)
                     }
                 }
             }

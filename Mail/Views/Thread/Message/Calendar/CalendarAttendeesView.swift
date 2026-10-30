@@ -73,9 +73,9 @@ struct CalendarAttendeesView: View {
                         HStack(spacing: IKPadding.mini) {
                             AvatarView(
                                 mailboxManager: mailboxManager,
-                                contactConfiguration: .contact(contact: organizerContact),
-                                size: 32
+                                contactConfiguration: .contact(contact: organizerContact)
                             )
+                            .frame(width: 32, height: 32)
 
                             Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizerContact.fullName))
                                 .textStyle(.body)

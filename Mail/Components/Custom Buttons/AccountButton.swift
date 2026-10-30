@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -35,8 +36,7 @@ struct AccountButton: View {
     @State private var isShowingNewAccountListView = false
 
     var body: some View {
-        AvatarView(mailboxManager: mailboxManager,
-                   contactConfiguration: .user(user: currentUser.value))
+        AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: currentUser.value))
             .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
             .onTapGesture {
                 isShowingNewAccountListView = true

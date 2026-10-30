@@ -65,9 +65,9 @@ struct MessageHeaderSummaryView: View {
                                 associatedBimi: message.bimi,
                                 contextUser: currentUser.value,
                                 contextMailboxManager: mailboxManager
-                            ),
-                            size: 40
+                            )
                         )
+                        .frame(width: 40, height: 40)
                     }
                     .environmentObject(mailboxManager)
                     .environment(\.currentUser, currentUser)

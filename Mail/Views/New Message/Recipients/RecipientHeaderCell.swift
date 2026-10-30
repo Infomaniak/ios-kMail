@@ -111,9 +111,9 @@ struct RecipientHeaderCell: View {
         guard let renderedImage = ImageRenderer(
             content: AvatarView(
                 mailboxManager: mailboxManager,
-                contactConfiguration: avatarConfiguration,
-                size: Self.defaultAvatarSize
+                contactConfiguration: avatarConfiguration
             )
+            .frame(width: Self.defaultAvatarSize, height: Self.defaultAvatarSize)
         )
         .uiImage else { return }
         iconImage = Image(uiImage: renderedImage)

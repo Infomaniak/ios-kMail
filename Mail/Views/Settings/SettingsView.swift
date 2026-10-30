@@ -81,9 +81,9 @@ struct SettingsView: View {
                                 ) {
                                     AvatarView(
                                         mailboxManager: mailboxManager,
-                                        contactConfiguration: .user(user: currentUser.value),
-                                        size: 24
+                                        contactConfiguration: .user(user: currentUser.value)
                                     )
+                                    .frame(width: 24, height: 24)
                                 }
                             }
 

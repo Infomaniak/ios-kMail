@@ -199,11 +199,12 @@ struct MessageBodyContentView: View {
             }
         }
 
+        let avatarSize = platformDetector.isMac ? 28 : RecipientHeaderCell.defaultAvatarSize
         let renderer = ImageRenderer(content: AvatarView(
             mailboxManager: mailboxManager,
-            contactConfiguration: avatarConfiguration,
-            size: platformDetector.isMac ? 28 : RecipientHeaderCell.defaultAvatarSize
-        ))
+            contactConfiguration: avatarConfiguration
+        )
+        .frame(width: avatarSize, height: avatarSize))
         return renderer.uiImage?.withRenderingMode(.alwaysOriginal)
     }
 

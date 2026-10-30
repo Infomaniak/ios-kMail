@@ -40,33 +40,29 @@ public struct IconAvatarView: View {
     }
 
     let type: IconType
-    let size: CGFloat
 
-    private var iconSize: CGFloat {
-        return size - 2 * IKPadding.mini
-    }
-
-    public init(type: IconType, size: CGFloat) {
+    public init(type: IconType) {
         self.type = type
-        self.size = size
     }
 
     public var body: some View {
         Circle()
-            .fill(Color.accentColor)
-            .frame(width: size, height: size)
+            .fill(.tint)
             .overlay {
                 type.icon
                     .resizable()
+                    .scaledToFit()
                     .foregroundStyle(MailResourcesAsset.backgroundColor)
-                    .frame(width: iconSize, height: iconSize)
+                    .padding(value: .mini)
             }
     }
 }
 
 #Preview {
     HStack {
-        IconAvatarView(type: .unknownRecipient, size: 40)
-        IconAvatarView(type: .groupRecipients, size: 40)
+        IconAvatarView(type: .unknownRecipient)
+            .frame(width: 40, height: 40)
+        IconAvatarView(type: .groupRecipients)
+            .frame(width: 40, height: 40)
     }
 }
