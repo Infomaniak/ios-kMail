@@ -65,7 +65,6 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
 }
 
 extension ContactConfiguration {
-    /// A stable key to be used with NSCache
     var cacheKey: NSNumber {
         return NSNumber(value: id)
     }
