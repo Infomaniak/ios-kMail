@@ -49,6 +49,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     public let featureFlagsManager: FeatureFlagsManageable
     public let featureAvailableProvider: FeatureAvailableProvider
+    public let scheduledAbsenceProvider: ScheduledAbsenceProvider
 
     enum ErrorDomain: Error {
         case missingFolder
@@ -86,6 +87,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         self.contactManager = contactManager
         featureFlagsManager = FeatureFlagsManager(mailboxUUID: mailbox.uuid, apiFetcher: apiFetcher)
         featureAvailableProvider = FeatureAvailableService(featureFlagManageable: featureFlagsManager)
+        scheduledAbsenceProvider = ScheduledAbsenceProvider(apiFetcher: apiFetcher, featureFlagsManager: featureFlagsManager)
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
