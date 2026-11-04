@@ -1,5 +1,5 @@
 {
-  "originHash" : "1cadf04dae776fadea7461f7c42f1bda3fbac2336267b2968fff3f1570c557a4",
+  "originHash" : "a8b2ca68ba9bc8660cd588cb7dd296cc39c8ea7553f64b7921170562493bb52c",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
-        "revision" : "1c1e8423b1a3ae90584f8a9f3f333c32db179c58",
-        "version" : "3.3.0"
+        "revision" : "5a774910f618ef31f26d27c1afbaab76209af7f3",
+        "version" : "3.3.1"
       }
     },
     {
