@@ -27,6 +27,7 @@ import SwiftUI
 
 struct RecipientHeaderCell: View {
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.displayScale) private var displayScale
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -38,6 +39,7 @@ struct RecipientHeaderCell: View {
     let recipient: Recipient
     var highlight: String?
     var bimi: Bimi?
+    var hasScheduledAbsence = false
 
     private var avatarConfiguration: ContactConfiguration {
         ContactConfiguration.correspondent(
@@ -69,21 +71,19 @@ struct RecipientHeaderCell: View {
                     .textStyle(.bodySecondary)
             }
 
-            if !platformDetector.isMac {
-                if let loadedImage {
-                    loadedImage
-                        .resizable()
-                        .frame(maxWidth: Self.defaultAvatarSize)
-                } else if let iconImage {
-                    iconImage
-                }
+            if !platformDetector.isMac, let avatarImage = loadedImage ?? iconImage {
+                avatarImage
             }
         }
-        .task {
+        .task(id: hasScheduledAbsence) {
             if let imageRequest = getAvatarImageRequest() {
                 let task = ImagePipeline.shared.imageTask(with: imageRequest)
                 guard let uiImage = try? await task.image else { return }
-                loadedImage = Image(uiImage: uiImage)
+                loadedImage = renderAvatar(
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .frame(width: Self.defaultAvatarSize, height: Self.defaultAvatarSize)
+                )
             }
             await getIconImage()
         }
@@ -108,14 +108,19 @@ struct RecipientHeaderCell: View {
     }
 
     private func getIconImage() async {
-        guard let renderedImage = ImageRenderer(
-            content: AvatarView(
+        iconImage = renderAvatar(
+            AvatarView(
                 mailboxManager: mailboxManager,
                 contactConfiguration: avatarConfiguration
             )
             .frame(width: Self.defaultAvatarSize, height: Self.defaultAvatarSize)
         )
-        .uiImage else { return }
-        iconImage = Image(uiImage: renderedImage)
+    }
+
+    /// Menus only display images: the avatar (and its absence badge) is rendered as one.
+    private func renderAvatar(_ avatar: some View) -> Image? {
+        let renderer = ImageRenderer(content: avatar.scheduledAbsenceAvatarBadge(isVisible: hasScheduledAbsence))
+        renderer.scale = displayScale
+        return renderer.uiImage.map { Image(uiImage: $0) }
     }
 }
