@@ -1385,6 +1385,39 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Planlegg sending";
 
+/* loco:6aeb758a76d1c2775f0456e4 */
+"scheduledAbsenceBannerOngoingMultiple" = "%d mottakere er fraværende.";
+
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@: fravær pågår, tilbake %2$@";
+
+/* loco:6aeb7588688ec9bfad0a2ac2 */
+"scheduledAbsenceBannerUpcomingMultiple" = "%d mottakere er snart fraværende.";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@: kommende fravær, fra %2$@ til %3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Fravær pågår, tilbake %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Kommende fravær, fra %1$@ til %2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "Fra %1$@ til %2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Fraværsmelding";
+
+/* loco:6aeb75890d8011f295090a1b */
+"scheduledAbsenceRecipientsTitle" = "%d fraværende mottakere";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Se datoer";
+
+/* loco:6aeb75899e1a131f94069f83 */
+"scheduledAbsenceUpcomingRecipientsTitle" = "%d mottakere snart fraværende";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Denne e-posten vil bli sendt denne datoen: %@";
 
