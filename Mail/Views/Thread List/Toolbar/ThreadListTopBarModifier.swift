@@ -81,7 +81,14 @@ struct ThreadListTopBarModifier: ViewModifier {
 
                     ToolbarItem(placement: .topBarTrailing) { SearchButton() }
                     ToolbarSpacer(.fixed, placement: .topBarTrailing)
-                    ToolbarItem(placement: .topBarTrailing) { AccountButton() }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if #available(iOS 27.0, *) {
+                            AccountButton()
+                        } else {
+                            AccountButton()
+                                .frame(width: 36, height: 36)
+                        }
+                    }
                 }
             }
             .toolbar {
