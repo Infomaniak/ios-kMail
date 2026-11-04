@@ -26,6 +26,8 @@ import MailCoreUI
 import SwiftUI
 
 struct ContactActionsMenuView<Content: View>: View {
+    @Environment(\.scheduledAbsenceDescriptions) private var scheduledAbsenceDescriptions
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
@@ -42,10 +44,18 @@ struct ContactActionsMenuView<Content: View>: View {
         }
     }
 
+    private var scheduledAbsenceDescription: String? {
+        return scheduledAbsenceDescriptions[recipient.email.lowercased()]
+    }
+
     var body: some View {
         Menu {
             Section {
-                RecipientHeaderCell(recipient: recipient, bimi: bimi)
+                RecipientHeaderCell(recipient: recipient, bimi: bimi, hasScheduledAbsence: scheduledAbsenceDescription != nil)
+
+                if let scheduledAbsenceDescription {
+                    Text(scheduledAbsenceDescription)
+                }
             }
             Section {
                 ForEach(actions) { action in

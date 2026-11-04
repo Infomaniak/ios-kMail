@@ -33,6 +33,7 @@ struct MessageHeaderSummaryView: View {
 
     @Environment(\.isMessageInteractive) private var isMessageInteractive
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.scheduledAbsenceDescriptions) private var scheduledAbsenceDescriptions
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -68,6 +69,7 @@ struct MessageHeaderSummaryView: View {
                             )
                         )
                         .frame(width: 40, height: 40)
+                        .scheduledAbsenceAvatarBadge(isVisible: scheduledAbsenceDescriptions[recipient.email.lowercased()] != nil)
                     }
                     .environmentObject(mailboxManager)
                     .environment(\.currentUser, currentUser)
