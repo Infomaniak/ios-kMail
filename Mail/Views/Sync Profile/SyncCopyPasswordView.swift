@@ -25,6 +25,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SyncCopyPasswordView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -106,7 +107,13 @@ struct SyncCopyPasswordView: View {
 
     func copyPassword() {
         guard let applicationPassword else { return }
-        UIPasteboard.general.string = applicationPassword
+        UIPasteboard.general.setItems(
+            [[UTType.utf8PlainText.identifier: applicationPassword]],
+            options: [
+                .localOnly: true,
+                .expirationDate: Date().addingTimeInterval(5 * 60)
+            ]
+        )
 
         @InjectService var snackbarPresenter: IKSnackBarPresentable
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
