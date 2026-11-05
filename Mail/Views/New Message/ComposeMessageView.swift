@@ -112,6 +112,7 @@ struct ComposeMessageView: View {
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
     @StateObject private var textAttributes = TextAttributes()
+    @StateObject private var scheduledAbsenceViewModel: ComposeScheduledAbsenceViewModel
 
     @FocusState private var focusedField: ComposeViewFieldType?
 
@@ -185,11 +186,15 @@ struct ComposeMessageView: View {
             draft: draft,
             isReplying: messageReply?.isReplying == true
         ))
+
+        _scheduledAbsenceViewModel = StateObject(wrappedValue: ComposeScheduledAbsenceViewModel(mailboxManager: mailboxManager))
     }
 
     // MARK: - View
 
     var body: some View {
+        let scheduledAbsenceRequest = ComposeScheduledAbsenceRequest(draft: draft)
+
         ScrollView {
             VStack(spacing: 0) {
                 ComposeMessageHeaderView(
@@ -201,6 +206,11 @@ struct ComposeMessageView: View {
                 .environment(\.draftEncryption, draft.encrypted ?
                     .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :
                     .none)
+                .environment(\.scheduledAbsenceDescriptions, scheduledAbsenceViewModel.chipDescriptionsByEmail)
+                .environmentObject(scheduledAbsenceViewModel)
+                .task(id: scheduledAbsenceRequest) {
+                    await scheduledAbsenceViewModel.update(scheduledAbsenceRequest)
+                }
 
                 if isShowingEditor {
                     ComposeMessageBodyView(
