@@ -1385,6 +1385,27 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Προγραμματισμός αποστολής";
 
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@: απουσία σε εξέλιξη, επιστροφή στις %2$@";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@: επερχόμενη απουσία, από %2$@ έως %3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Απουσία σε εξέλιξη, επιστροφή στις %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Επερχόμενη απουσία, από %1$@ έως %2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "Από %1$@ έως %2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Μήνυμα απουσίας";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Προβολή ημερομηνιών";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Αυτό το email θα σταλεί στις: %@";
 
