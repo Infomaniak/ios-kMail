@@ -1385,6 +1385,39 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Schemalägg sändning";
 
+/* loco:6aeb758a76d1c2775f0456e4 */
+"scheduledAbsenceBannerOngoingMultiple" = "%d mottagare är frånvarande.";
+
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@: frånvaro pågår, tillbaka %2$@";
+
+/* loco:6aeb7588688ec9bfad0a2ac2 */
+"scheduledAbsenceBannerUpcomingMultiple" = "%d mottagare är snart frånvarande.";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@: kommande frånvaro, från %2$@ till %3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Frånvaro pågår, tillbaka %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Kommande frånvaro, från %1$@ till %2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "Från %1$@ till %2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Frånvaromeddelande";
+
+/* loco:6aeb75890d8011f295090a1b */
+"scheduledAbsenceRecipientsTitle" = "%d frånvarande mottagare";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Visa datum";
+
+/* loco:6aeb75899e1a131f94069f83 */
+"scheduledAbsenceUpcomingRecipientsTitle" = "%d mottagare snart frånvarande";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Detta e-postmeddelande kommer att skickas detta datum: %@";
 
