@@ -34,7 +34,22 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var navigationTitleOpacity = 1.0
 
+    @StateObject private var scheduledAbsenceViewModel = ThreadScheduledAbsenceViewModel()
+
     @ObservedRealmObject var thread: Thread
+
+    /// Evaluated on every render (e.g. while scrolling): keep it cheap and skip it when there is nothing to check.
+    private var scheduledAbsenceAutoReplyCheckKey: ThreadScheduledAbsenceAutoReplyCheckKey? {
+        guard let summary = scheduledAbsenceViewModel.summary else { return nil }
+        return ThreadScheduledAbsenceAutoReplyCheckKey(
+            summary: summary,
+            loadedBodiesCount: thread.messages.where { $0.body != nil }.count
+        )
+    }
+
+    private var isShowingSnoozedHeader: Bool {
+        thread.isSnoozed && thread.snoozeEndDate != nil
+    }
 
     private var externalTag: DisplayExternalRecipientStatus.State {
         thread.displayExternalRecipientState(
@@ -60,6 +75,15 @@ struct ThreadView: View {
                 }
                 .padding(.horizontal, value: .medium)
 
+                if let summary = scheduledAbsenceViewModel.summary {
+                    ScheduledAbsenceHeaderView(
+                        summary: summary,
+                        showBottomSeparator: !isShowingSnoozedHeader,
+                        isAutoReplyAlreadyDisplayed: scheduledAbsenceViewModel.isAutoReplyAlreadyDisplayed,
+                        displayName: scheduledAbsenceViewModel.displayName(for:)
+                    )
+                }
+
                 if thread.isSnoozed, let snoozeEndDate = thread.snoozeEndDate {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
@@ -69,7 +93,24 @@ struct ThreadView: View {
                     messages: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).toArray(),
                     mailboxManager: mailboxManager
                 )
+                .environment(\.scheduledAbsenceDescriptions, scheduledAbsenceViewModel.descriptionsByEmail)
             }
+        }
+        .task(id: "\(thread.uid)-\(thread.messages.count)") {
+            guard mailboxManager.featureFlagsManager.isEnabled(.scheduledAbsence) else { return }
+            let recipients = thread.scheduledAbsenceRecipients(
+                isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction),
+                currentMailboxEmail: mailboxManager.mailbox.email
+            )
+            await scheduledAbsenceViewModel.fetchAbsences(
+                threadUid: thread.uid,
+                recipients: recipients,
+                mailboxManager: mailboxManager
+            )
+        }
+        .task(id: scheduledAbsenceAutoReplyCheckKey) {
+            guard scheduledAbsenceAutoReplyCheckKey != nil else { return }
+            await scheduledAbsenceViewModel.hideActionIfAutoReplyIsDisplayed(in: thread.messages.toArray())
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")

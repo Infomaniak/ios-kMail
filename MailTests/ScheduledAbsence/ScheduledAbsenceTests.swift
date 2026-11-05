@@ -249,6 +249,18 @@ struct ScheduledAbsenceSummaryTests {
         #expect(summary.bannerText { _ in "Alice" }.contains("Alice"))
     }
 
+    @Test func autoReplyMatchingIgnoresCaseWhitespaceAndSignature() async {
+        let absence = ScheduledAbsence(uuid: "1", autoReplyContent: "  I am  away\nuntil Friday. ")
+        let signature = "<div class=\"\(Constants.signatureHTMLClass)\">Alice</div>"
+
+        #expect(await absence.isAutoReplyDisplayed(in: [.init(
+            content: "<p>i am away</p> UNTIL friday.\(signature)",
+            isHTML: true
+        )]))
+        #expect(await absence.isAutoReplyDisplayed(in: [.init(content: "I am away until Friday.", isHTML: false)]))
+        #expect(await !absence.isAutoReplyDisplayed(in: [.init(content: "I am away until Friday. Thanks", isHTML: false)]))
+    }
+
     @Test func multipleKeepsOneAbsencePerRecipientInOrder() throws {
         let secondOngoing = ScheduledAbsenceFixtures.entry(start: "2026-05-05T08:00:00Z", end: "2026-05-05T18:00:00Z")
         let summary = try #require(ScheduledAbsenceSummary(
@@ -554,5 +566,79 @@ struct ComposeScheduledAbsenceTests {
         #expect(viewModel.displayName(for: "b@x.com") == "Bob")
         #expect(viewModel.displayName(for: "c@x.com") == "Carol")
         #expect(viewModel.displayName(for: "d@x.com") == "d@x.com")
+    }
+}
+
+@MainActor
+@Suite("ThreadScheduledAbsenceViewModel")
+struct ThreadScheduledAbsenceViewModelTests {
+    private let now = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+    private let ongoing = ScheduledAbsenceFixtures.entry(
+        uuid: "ongoing",
+        start: "2026-05-04T00:00:00Z",
+        end: "2026-05-09T00:00:00Z",
+        fullday: true,
+        autoReplyContent: "Away"
+    )
+    private let recipients = [ScheduledAbsenceRecipient(email: "a@x.com", name: "Alice")]
+
+    private func message(uid: String, body content: String?) -> Message {
+        let message = Message()
+        message.uid = uid
+        if let content {
+            let body = Body()
+            body.type = .textPlain
+            body.value = content
+            message.body = body
+        }
+        return message
+    }
+
+    private func viewModelWithOngoingAbsence(threadUid: String = "thread") -> ThreadScheduledAbsenceViewModel {
+        let viewModel = ThreadScheduledAbsenceViewModel()
+        viewModel.resetIfNeeded(threadUid: threadUid, recipients: recipients)
+        viewModel.update(absencesByEmail: ["a@x.com": [ongoing]], orderedEmails: ["a@x.com"], now: now)
+        return viewModel
+    }
+
+    @Test func hidesActionWhenALoadedBodyIsTheAutoReply() async {
+        let viewModel = viewModelWithOngoingAbsence()
+
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Hello"), message(uid: "2", body: nil)])
+        #expect(viewModel.isAutoReplyAlreadyDisplayed == false)
+
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Hello"), message(uid: "2", body: " away ")])
+        #expect(viewModel.isAutoReplyAlreadyDisplayed == true)
+    }
+
+    @Test func doesNotCheckAlreadyCheckedMessagesAgain() async {
+        let viewModel = viewModelWithOngoingAbsence()
+
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Hello")])
+        // Same uid: the body was already compared and is not checked again.
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Away")])
+        #expect(viewModel.isAutoReplyAlreadyDisplayed == false)
+    }
+
+    @Test func refetchingTheSameAbsenceKeepsTheActionHidden() async {
+        let viewModel = viewModelWithOngoingAbsence()
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Away")])
+
+        viewModel.resetIfNeeded(threadUid: "thread", recipients: recipients)
+        viewModel.update(absencesByEmail: ["a@x.com": [ongoing]], orderedEmails: ["a@x.com"], now: now)
+
+        #expect(viewModel.isAutoReplyAlreadyDisplayed == true)
+    }
+
+    @Test func switchingThreadResetsTheState() async {
+        let viewModel = viewModelWithOngoingAbsence(threadUid: "thread1")
+        await viewModel.hideActionIfAutoReplyIsDisplayed(in: [message(uid: "1", body: "Away")])
+
+        viewModel.resetIfNeeded(threadUid: "thread2", recipients: recipients)
+        #expect(viewModel.summary == nil)
+        #expect(viewModel.descriptionsByEmail.isEmpty)
+
+        viewModel.update(absencesByEmail: ["a@x.com": [ongoing]], orderedEmails: ["a@x.com"], now: now)
+        #expect(viewModel.isAutoReplyAlreadyDisplayed == false)
     }
 }
