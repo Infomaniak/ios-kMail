@@ -1385,6 +1385,27 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Ajasta lähetys";
 
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@: poissa, palaa %2$@";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@: tuleva poissaolo %2$@–%3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Poissa, palaa %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Tuleva poissaolo %1$@–%2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "%1$@–%2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Poissaoloviesti";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Näytä päivämäärät";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Tämä sähköposti lähetetään tänä päivämääränä: %@";
 

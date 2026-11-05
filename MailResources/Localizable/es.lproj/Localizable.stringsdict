@@ -130,6 +130,70 @@ Al denunciar a nosotros estos mensajes, pueden ayudar a acelerar la detección d
 Las denuncias serán remitidas a nuestro equipo de seguridad, que las analizará y tomará medidas. Los correos electrónicos también se moverán automáticamente a su carpeta de spam.</string>
       </dict>
     </dict>
+    <key>scheduledAbsenceBannerOngoingMultiple</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d destinatario está ausente.</string>
+        <key>other</key>
+        <string>%d destinatarios están ausentes.</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceBannerUpcomingMultiple</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d destinatario estará ausente pronto.</string>
+        <key>other</key>
+        <string>%d destinatarios estarán ausentes pronto.</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceRecipientsTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d destinatario ausente</string>
+        <key>other</key>
+        <string>%d destinatarios ausentes</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceUpcomingRecipientsTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d destinatario ausente pronto</string>
+        <key>other</key>
+        <string>%d destinatarios ausentes pronto</string>
+      </dict>
+    </dict>
     <key>scheduleDeleteConfirmAlertDescription</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
