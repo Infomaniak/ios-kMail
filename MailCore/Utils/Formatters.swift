@@ -87,6 +87,26 @@ public extension Date {
     }
 }
 
+public extension Date {
+    /// Formats with `base`, adding the year only when the date is not in the same year as `now`.
+    struct YearIfNeededFormatStyle: Foundation.FormatStyle {
+        private let base: Date.FormatStyle
+        private let now: Date
+
+        init(base: Date.FormatStyle, now: Date) {
+            self.base = base
+            self.now = now
+        }
+
+        public func format(_ value: Date) -> String {
+            var calendar = base.calendar
+            calendar.timeZone = base.timeZone
+            let isSameYear = calendar.isDate(value, equalTo: now, toGranularity: .year)
+            return value.formatted(isSameYear ? base : base.year())
+        }
+    }
+}
+
 public extension FormatStyle where Self == Date.FormatStyle {
     static var calendarDateFull: Date.FormatStyle {
         return .dateTime.weekday(.wide).day().month(.wide).year()
@@ -106,6 +126,10 @@ public extension FormatStyle where Self == Date.FormatStyle {
 
     static func thread(_ style: Date.ThreadFormatStyle.Style) -> Date.ThreadFormatStyle {
         return .init(style: style)
+    }
+
+    static func yearIfNeeded(_ base: Date.FormatStyle, now: Date = .now) -> Date.YearIfNeededFormatStyle {
+        return .init(base: base, now: now)
     }
 
     static var messageHeader: Date.FormatStyle {
