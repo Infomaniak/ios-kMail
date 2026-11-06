@@ -1,3 +1,1 @@
-- Sharing messages and attachments is now more reliable.
-- Emails better respect their original formatting and look closer to how the sender designed them.
-- Avatars display more consistently throughout the app.
+- Your avatar in the toolbar is displayed correctly again on iOS 26.
