@@ -1,3 +1,1 @@
-- La condivisione di messaggi e allegati è ora più affidabile.
-- Le e-mail rispettano meglio la formattazione originale e appaiono più fedeli a come le ha create il mittente.
-- Gli avatar vengono visualizzati in modo più uniforme in tutta l’app.
+- Il tuo avatar nella barra degli strumenti viene di nuovo visualizzato correttamente su iOS 26.

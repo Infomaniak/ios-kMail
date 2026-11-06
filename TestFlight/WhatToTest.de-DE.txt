@@ -1,3 +1,1 @@
-- Das Teilen von Nachrichten und Anhängen funktioniert jetzt zuverlässiger.
-- E-Mails behalten ihre ursprüngliche Formatierung besser bei und sehen eher so aus, wie der Absender sie gestaltet hat.
-- Avatare werden in der gesamten App einheitlicher angezeigt.
+- Dein Avatar in der Symbolleiste wird unter iOS 26 wieder korrekt angezeigt.
