@@ -100,6 +100,8 @@ struct ComposeMessageView: View {
 
     @State private var isShowingEncryptStatePanel = false
 
+    @State private var isShowingMailTemplatePanel = false
+
     @State private var editorFrame: CGRect?
 
     @State private var selectedText = ""
@@ -107,6 +109,8 @@ struct ComposeMessageView: View {
     @State private var mentionQuery = ""
     @State private var mentionSuggestions = [Recipient]()
     @State private var editorBox = EditorBox()
+
+    @ObservedResults(MailTemplate.self) private var templates
 
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -176,6 +180,7 @@ struct ComposeMessageView: View {
         ))
 
         self.mailboxManager = mailboxManager
+        _templates = ObservedResults(MailTemplate.self, configuration: mailboxManager.realmConfiguration)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
@@ -210,6 +215,8 @@ struct ComposeMessageView: View {
                         isShowingAI: $aiModel.isShowingPrompt,
                         selectedText: $selectedText,
                         mentionQuery: $mentionQuery,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
+                        hasTemplates: !templates.isEmpty,
                         draft: draft,
                         aliases: aliases,
                         editorBox: editorBox,
@@ -292,6 +299,8 @@ struct ComposeMessageView: View {
                         isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                         isShowingMailPremiumPanel: $isShowingMailPremiumPanel,
                         isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
+                        isShowingMailTemplatePanel: $isShowingMailTemplatePanel,
+                        hasTemplates: !templates.isEmpty,
                         draft: draft,
                         isEditorFocused: focusedField == .editor,
                         selectedText: selectedText
@@ -405,6 +414,12 @@ struct ComposeMessageView: View {
                 kSuiteUpgradeAction: handleKSuiteUpgradeCallback
             )
         }
+        .mailTemplateFloatingPanel(
+            isPresented: $isShowingMailTemplatePanel,
+            mailboxManager: mailboxManager
+        ) { template in
+            await insertTemplate(template)
+        }
         .mailCustomAlert(item: $isShowingAlert) { alert in
             switch alert.type {
             case .emptySubject(let handler):
@@ -499,6 +514,36 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
+    @MainActor
+    private func insertTemplate(_ template: MailTemplate) async {
+        guard let webView = editorBox.editor?.webView else { return }
+
+        do {
+            let html = try await Self.cleanedHTML(from: template.content)
+
+            let result = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html))
+            guard result as? Bool == true else { return }
+
+            if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
+                try? realm.write {
+                    if liveDraft.subject.isEmpty {
+                        liveDraft.subject = template.title
+                    }
+                }
+            }
+
+            isShowingMailTemplatePanel = false
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableInsertTemplate)
+        }
+    }
+
+    @concurrent
+    private static func cleanedHTML(from html: String) async throws -> String {
+        let cleaned = try await SwiftSoupUtils(fromHTML: html).cleanBody()
+        return try cleaned.body()?.html() ?? ""
+    }
+
     private func trySendingMessage(skipSubjectCheck: Bool = false, skipAttachmentsCheck: Bool = false) {
         if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
             isShowingEncryptStatePanel = true
@@ -540,7 +585,7 @@ struct ComposeMessageView: View {
         } else {
             dismissMessageView()
 
-            if !platformDetector.isMac && !platformDetector.isRunningUITests {
+            if !platformDetector.isMac, !platformDetector.isRunningUITests {
                 // We should implement a proper router to avoid doing this
                 DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
                     mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
