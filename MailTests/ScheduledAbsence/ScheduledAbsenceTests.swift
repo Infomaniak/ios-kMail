@@ -179,3 +179,121 @@ struct ScheduledAbsenceEndpointTests {
         #expect(attendees == ["alice@example.com", "bob@example.com"])
     }
 }
+
+@Suite("ScheduledAbsenceFormatting")
+struct ScheduledAbsenceFormattingTests {
+    @Test func fulldayEndsTheDayBeforeInUTC() {
+        let occurrence = ScheduledAbsenceFixtures.entry(
+            start: "2026-05-04T00:00:00+00:00",
+            end: "2026-05-09T00:00:00+00:00",
+            fullday: true
+        ).occurrence
+
+        #expect(occurrence.lastDisplayedDate == occurrence.end.addingTimeInterval(-1))
+    }
+
+    @Test func nonFulldayKeepsEnd() {
+        let occurrence = ScheduledAbsenceFixtures.entry(
+            start: "2026-05-04T12:00:00+00:00",
+            end: "2026-05-08T12:00:00+00:00"
+        ).occurrence
+
+        #expect(occurrence.lastDisplayedDate == occurrence.end)
+    }
+
+    @Test func nonFulldayEndingAtLocalMidnightDisplaysPreviousDay() throws {
+        let start = ScheduledAbsenceFixtures.date("2026-05-04T12:00:00Z")
+        let end = try #require(Calendar.current.date(byAdding: .day, value: 5, to: Calendar.current.startOfDay(for: start)))
+        let occurrence = ScheduledAbsenceOccurrence(start: start, end: end, fullday: false)
+
+        #expect(occurrence.lastDisplayedDate < end)
+        #expect(Calendar.current.isDate(occurrence.lastDisplayedDate, inSameDayAs: end.addingTimeInterval(-3600)))
+    }
+}
+
+@Suite("ScheduledAbsenceSummary")
+struct ScheduledAbsenceSummaryTests {
+    private let now = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+    private let ongoing = ScheduledAbsenceFixtures.entry(
+        start: "2026-05-04T00:00:00Z",
+        end: "2026-05-09T00:00:00Z",
+        fullday: true,
+        autoReplyContent: "Away"
+    )
+    private let upcoming = ScheduledAbsenceFixtures.entry(start: "2026-05-07T08:00:00Z", end: "2026-05-07T18:00:00Z")
+    private let past = ScheduledAbsenceFixtures.entry(start: "2026-05-01T08:00:00Z", end: "2026-05-02T08:00:00Z")
+
+    @Test func emptyWhenNoCurrentOrFutureAbsence() {
+        #expect(ScheduledAbsenceSummary(absencesByEmail: ["a@x.com": [past]], orderedEmails: ["a@x.com"], now: now) == nil)
+    }
+
+    @Test func ongoingWinsOverUpcoming() throws {
+        let summary = try #require(ScheduledAbsenceSummary(
+            absencesByEmail: ["a@x.com": [upcoming], "b@x.com": [ongoing]],
+            orderedEmails: ["A@x.com", "b@x.com"],
+            now: now
+        ))
+        #expect(summary.state == .ongoing)
+        #expect(summary.singleItem == .init(email: "b@x.com", entry: ongoing))
+        #expect(summary.actionTitle != nil)
+    }
+
+    @Test func upcomingSingleWithoutAutoReplyHasNoAction() throws {
+        let summary = try #require(
+            ScheduledAbsenceSummary(absencesByEmail: ["a@x.com": [upcoming]], orderedEmails: ["a@x.com"], now: now)
+        )
+        #expect(summary.state == .upcoming)
+        #expect(summary.singleItem == .init(email: "a@x.com", entry: upcoming))
+        #expect(summary.actionTitle == nil)
+        #expect(summary.bannerText { _ in "Alice" }.contains("Alice"))
+    }
+
+    @Test func multipleKeepsOneAbsencePerRecipientInOrder() throws {
+        let secondOngoing = ScheduledAbsenceFixtures.entry(start: "2026-05-05T08:00:00Z", end: "2026-05-05T18:00:00Z")
+        let summary = try #require(ScheduledAbsenceSummary(
+            absencesByEmail: ["a@x.com": [ongoing, upcoming], "b@x.com": [secondOngoing]],
+            orderedEmails: ["b@x.com", "a@x.com", "a@x.com"],
+            now: now
+        ))
+        #expect(summary.state == .ongoing)
+        #expect(summary.items == [
+            .init(email: "b@x.com", entry: secondOngoing),
+            .init(email: "a@x.com", entry: ongoing)
+        ])
+        #expect(summary.singleItem == nil)
+    }
+
+    @Test func keepsFirstUpcomingAbsenceOfSameRecipient() throws {
+        let otherUpcoming = ScheduledAbsenceFixtures.entry(start: "2026-05-06T08:00:00Z", end: "2026-05-06T18:00:00Z")
+        let summary = try #require(ScheduledAbsenceSummary(
+            absencesByEmail: ["a@x.com": [upcoming, otherUpcoming]],
+            orderedEmails: ["a@x.com"],
+            now: now
+        ))
+        #expect(summary.singleItem == .init(email: "a@x.com", entry: otherUpcoming))
+    }
+
+    @Test func mergesChainedAbsencesOfSameRecipient() throws {
+        let first = ScheduledAbsenceFixtures.entry(start: "2026-05-04T00:00:00Z", end: "2026-05-06T00:00:00Z", fullday: true)
+        let second = ScheduledAbsenceFixtures.entry(start: "2026-05-06T00:00:00Z", end: "2026-05-09T00:00:00Z", fullday: true)
+        let later = ScheduledAbsenceFixtures.entry(start: "2026-05-12T00:00:00Z", end: "2026-05-14T00:00:00Z", fullday: true)
+        let summary = ScheduledAbsenceSummary(
+            absencesByEmail: ["a@x.com": [later, second, first]],
+            orderedEmails: ["a@x.com"],
+            now: now
+        )
+
+        let item = try #require(summary?.singleItem)
+        #expect(item.entry.absence == first.absence)
+        #expect(item.entry.occurrence.start == first.occurrence.start)
+        #expect(item.entry.occurrence.end == second.occurrence.end)
+    }
+
+    @Test func descriptionsKeepOneAbsencePerRecipient() {
+        let descriptions = ScheduledAbsenceSummary.descriptionsByEmail(
+            absencesByEmail: ["A@x.com": [upcoming, ongoing], "b@x.com": [past]],
+            now: now
+        )
+        #expect(descriptions == ["a@x.com": ongoing.occurrence.chipDescription(now: now)])
+    }
+}
