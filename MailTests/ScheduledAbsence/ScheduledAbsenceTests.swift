@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+@testable import Infomaniak_Mail
 @testable import MailCore
 import Testing
 
@@ -459,5 +460,99 @@ struct ScheduledAbsenceProviderTests {
         let results = await [first, second]
         #expect(results == [["a@x.com": [absence]], ["a@x.com": [absence]]])
         #expect(fetcher.requestedEmails == [["a@x.com"]])
+    }
+}
+
+@MainActor
+@Suite("ComposeScheduledAbsence")
+struct ComposeScheduledAbsenceTests {
+    private let scheduleDate = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+    private let absence = ScheduledAbsenceFixtures.entry(start: "2026-05-06T08:00:00Z", end: "2026-05-06T18:00:00Z")
+
+    private func makeDraft(to: [Recipient], cc: [Recipient] = [], bcc: [Recipient] = []) -> Draft {
+        let draft = Draft()
+        draft.to.append(objectsIn: to)
+        draft.cc.append(objectsIn: cc)
+        draft.bcc.append(objectsIn: bcc)
+        draft.scheduleDate = scheduleDate
+        return draft
+    }
+
+    private func makeViewModel(
+        fetcher: ScheduledAbsenceProviderTests.MockFetcher,
+        contactNames: [String: String] = [:]
+    ) -> ComposeScheduledAbsenceViewModel {
+        let provider = ScheduledAbsenceProvider(
+            apiFetcher: fetcher,
+            featureFlagsManager: ScheduledAbsenceProviderTests.MockFeatureFlags(enabled: true)
+        )
+        return ComposeScheduledAbsenceViewModel(provider: provider, debounceDuration: .zero) { contactNames[$0] }
+    }
+
+    @Test func requestDedupesAndCapsRecipients() {
+        let draft = makeDraft(
+            to: [Recipient(email: "A@x.com", name: "Alice"), Recipient(email: "", name: "")],
+            cc: [Recipient(email: "a@x.com", name: ""), Recipient(email: "b@x.com", name: "")],
+            bcc: (0 ..< 30).map { Recipient(email: "user\($0)@x.com", name: "") }
+        )
+
+        let request = ComposeScheduledAbsenceRequest(draft: draft)
+        #expect(request.recipients.count == ScheduledAbsenceProvider.maxEmails)
+        #expect(Array(request.recipients.prefix(3).map(\.email)) == ["a@x.com", "b@x.com", "user0@x.com"])
+        #expect(request.recipients.first?.name == "Alice")
+        #expect(request.scheduleDate == scheduleDate)
+    }
+
+    @Test func updateComputesSummaryAndDescriptions() async {
+        let fetcher = ScheduledAbsenceProviderTests.MockFetcher()
+        fetcher.response = ["a@x.com": [absence]]
+        let viewModel = makeViewModel(fetcher: fetcher)
+
+        await viewModel.update(ComposeScheduledAbsenceRequest(draft: makeDraft(to: [Recipient(email: "A@x.com", name: "")])))
+        #expect(viewModel.summary?.singleItem?.email == "a@x.com")
+        #expect(viewModel.chipDescriptionsByEmail == ["a@x.com": absence.occurrence.chipDescription(now: scheduleDate)])
+
+        await viewModel.update(ComposeScheduledAbsenceRequest(draft: makeDraft(to: [])))
+        #expect(viewModel.summary == nil)
+        #expect(viewModel.chipDescriptionsByEmail.isEmpty)
+        #expect(fetcher.requestedEmails.count == 1)
+    }
+
+    @Test func removedRecipientIsPrunedBeforeFetching() async {
+        let fetcher = ScheduledAbsenceProviderTests.MockFetcher()
+        fetcher.response = ["a@x.com": [absence], "b@x.com": [absence]]
+        let viewModel = makeViewModel(fetcher: fetcher)
+        let alice = Recipient(email: "a@x.com", name: "")
+        let bob = Recipient(email: "b@x.com", name: "")
+
+        await viewModel.update(ComposeScheduledAbsenceRequest(draft: makeDraft(to: [alice, bob])))
+        #expect(viewModel.summary?.items.count == 2)
+
+        // The cancelled update never applies a fetch result: only the immediate pruning is visible
+        fetcher.shouldFail = true
+        let request = ComposeScheduledAbsenceRequest(draft: makeDraft(to: [bob]))
+        let task = Task { await viewModel.update(request) }
+        task.cancel()
+        await task.value
+
+        #expect(viewModel.summary?.singleItem?.email == "b@x.com")
+        #expect(Array(viewModel.chipDescriptionsByEmail.keys) == ["b@x.com"])
+    }
+
+    @Test func displayNamePrefersDraftNameThenContactName() async {
+        let fetcher = ScheduledAbsenceProviderTests.MockFetcher()
+        let viewModel = makeViewModel(fetcher: fetcher, contactNames: ["b@x.com": "Bob", "c@x.com": "Carol"])
+        let draft = makeDraft(to: [
+            Recipient(email: "a@x.com", name: "Alice"),
+            Recipient(email: "b@x.com", name: ""),
+            Recipient(email: "c@x.com", name: "C@x.com"),
+            Recipient(email: "d@x.com", name: "")
+        ])
+        await viewModel.update(ComposeScheduledAbsenceRequest(draft: draft))
+
+        #expect(viewModel.displayName(for: "a@x.com") == "Alice")
+        #expect(viewModel.displayName(for: "b@x.com") == "Bob")
+        #expect(viewModel.displayName(for: "c@x.com") == "Carol")
+        #expect(viewModel.displayName(for: "d@x.com") == "d@x.com")
     }
 }

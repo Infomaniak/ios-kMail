@@ -26,6 +26,7 @@ import SwiftUI
 
 struct RecipientChip: View {
     @Environment(\.draftEncryption) private var draftEncryption: DraftEncryption
+    @Environment(\.scheduledAbsenceDescriptions) private var scheduledAbsenceDescriptions
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -43,10 +44,18 @@ struct RecipientChip: View {
         }
     }
 
+    private var scheduledAbsenceDescription: String? {
+        return scheduledAbsenceDescriptions[recipient.email.lowercased()]
+    }
+
     var body: some View {
         Menu {
             Section {
-                RecipientHeaderCell(recipient: recipient)
+                RecipientHeaderCell(recipient: recipient, hasScheduledAbsence: scheduledAbsenceDescription != nil)
+
+                if let scheduledAbsenceDescription {
+                    Text(scheduledAbsenceDescription)
+                }
             }
             Section {
                 Button {
@@ -87,4 +96,7 @@ struct RecipientChip: View {
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
+    .environment(\.scheduledAbsenceDescriptions, [
+        PreviewHelper.sampleRecipient1.email: PreviewHelper.sampleScheduledAbsenceEntry1.occurrence.chipDescription(now: Date())
+    ])
 }
