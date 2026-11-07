@@ -34,6 +34,7 @@ public enum FeatureFlag: String, Codable {
     case mailTranslateEmail = "mail-translate-email"
     case mailReplyWithEuria = "mail-reply-with-euria"
     case mailComposeMention = "mail-composer-uses-mentions"
+    case scheduledAbsence = "calendar-scheduled-absence"
     case unknown
 
     public init(from decoder: Decoder) throws {

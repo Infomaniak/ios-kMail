@@ -255,6 +255,18 @@ public extension Endpoint {
         )
     }
 
+    static func activeScheduledAbsences(emails: [String], from: Date, to: Date) -> Endpoint {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        formatter.timeZone = .current
+
+        var queryItems = emails.map { URLQueryItem(name: "attendees[]", value: $0) }
+        queryItems.append(URLQueryItem(name: "from", value: formatter.string(from: from)))
+        queryItems.append(URLQueryItem(name: "to", value: formatter.string(from: to)))
+
+        return .base.appending(path: "/pim/scheduled-absence/active", queryItems: queryItems)
+    }
+
     static func messageSeen(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/seen")
     }

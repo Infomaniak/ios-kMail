@@ -1385,6 +1385,39 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Programmer l’envoi";
 
+/* loco:6aeb758a76d1c2775f0456e4 */
+"scheduledAbsenceBannerOngoingMultiple" = "%d destinataires sont absents.";
+
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@ : absence en cours, de retour le %2$@";
+
+/* loco:6aeb7588688ec9bfad0a2ac2 */
+"scheduledAbsenceBannerUpcomingMultiple" = "%d destinataires seront bientôt absents.";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@ : absence à venir, du %2$@ au %3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Absence en cours, de retour le %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Absence à venir, du %1$@ au %2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "Du %1$@ au %2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Message d’absence";
+
+/* loco:6aeb75890d8011f295090a1b */
+"scheduledAbsenceRecipientsTitle" = "%d destinataires absents";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Voir les dates";
+
+/* loco:6aeb75899e1a131f94069f83 */
+"scheduledAbsenceUpcomingRecipientsTitle" = "%d destinataires bientôt absents";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Cet e-mail sera envoyé à cette date : %@";
 

@@ -22,7 +22,7 @@ import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
 public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchable & MailApiCommonFetchable &
-    MailApiExtendedFetchable & MailApiSnoozeFetchable & MailApiSyncProfileFetchable
+    MailApiExtendedFetchable & MailApiScheduledAbsenceFetchable & MailApiSnoozeFetchable & MailApiSyncProfileFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable: ApiFetcher {
@@ -199,6 +199,11 @@ public protocol MailApiCalendarFetchable {
     func replyToCalendarEventAndUpdateCalendar(event: CalendarEvent, reply: AttendeeState) async throws -> Bool
 
     func importICSEventToCalendar(attachment: Attachment) async throws -> CalendarUpdatedEventResponse
+}
+
+public protocol MailApiScheduledAbsenceFetchable {
+    /// Active scheduled absences of the given users between `from` and `to`, keyed by lowercased email.
+    func activeScheduledAbsences(emails: [String], from: Date, to: Date) async throws -> [String: [ScheduledAbsenceEntry]]
 }
 
 public protocol MailApiSnoozeFetchable {

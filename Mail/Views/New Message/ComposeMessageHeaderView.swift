@@ -24,6 +24,7 @@ import SwiftUI
 
 struct ComposeMessageHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var scheduledAbsenceViewModel: ComposeScheduledAbsenceViewModel
 
     @State private var showRecipientsFields = false
 
@@ -98,6 +99,15 @@ struct ComposeMessageHeaderView: View {
                 type: .subject
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
+
+            if autocompletionType == nil && scheduledAbsenceViewModel.summary.mode != nil {
+                ScheduledAbsenceHeaderView(
+                    summary: scheduledAbsenceViewModel.summary,
+                    showTopSeparator: false,
+                    showBottomSeparator: true,
+                    displayName: scheduledAbsenceViewModel.displayName(for:)
+                )
+            }
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
@@ -125,4 +135,5 @@ struct ComposeMessageHeaderView: View {
 #Preview {
     ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(ComposeScheduledAbsenceViewModel(mailboxManager: PreviewHelper.sampleMailboxManager))
 }
