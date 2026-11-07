@@ -297,3 +297,167 @@ struct ScheduledAbsenceSummaryTests {
         #expect(descriptions == ["a@x.com": ongoing.occurrence.chipDescription(now: now)])
     }
 }
+
+@Suite("ScheduledAbsenceProvider")
+struct ScheduledAbsenceProviderTests {
+    final class MockFetcher: MailApiScheduledAbsenceFetchable, @unchecked Sendable {
+        private let lock = NSLock()
+        private var _requestedEmails = [[String]]()
+        var response = [String: [ScheduledAbsenceEntry]]()
+        var shouldFail = false
+        var gate: (@Sendable () async -> Void)?
+
+        var requestedEmails: [[String]] {
+            lock.withLock { _requestedEmails }
+        }
+
+        func activeScheduledAbsences(emails: [String], from: Date, to: Date) async throws -> [String: [ScheduledAbsenceEntry]] {
+            lock.withLock { _requestedEmails.append(emails) }
+            await gate?()
+            if shouldFail {
+                throw MailError.unknownError
+            }
+            return response.filter { emails.contains($0.key) }
+        }
+    }
+
+    struct MockFeatureFlags: FeatureFlagsManageable {
+        let enabled: Bool
+
+        func isEnabled(_ feature: FeatureFlag) -> Bool {
+            return enabled
+        }
+
+        func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?) {}
+
+        func fetchFlags() async throws {}
+    }
+
+    final class Clock: @unchecked Sendable {
+        var now = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+    }
+
+    private let absence = ScheduledAbsenceFixtures.entry(start: "2026-05-06T08:00:00Z", end: "2026-05-06T18:00:00Z")
+
+    private func makeProvider(fetcher: MockFetcher, enabled: Bool = true, clock: Clock = Clock()) -> ScheduledAbsenceProvider {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return ScheduledAbsenceProvider(
+            apiFetcher: fetcher,
+            featureFlagsManager: MockFeatureFlags(enabled: enabled),
+            calendar: calendar
+        ) {
+            clock.now
+        }
+    }
+
+    @Test func returnsEmptyWhenFeatureDisabled() async {
+        let fetcher = MockFetcher()
+        let provider = makeProvider(fetcher: fetcher, enabled: false)
+
+        #expect(await provider.absences(for: ["a@x.com"]).isEmpty)
+        #expect(await provider.absences(for: ["a@x.com"], at: .now).isEmpty)
+        #expect(fetcher.requestedEmails.isEmpty)
+    }
+
+    @Test func batchesDedupesAndCaches() async {
+        let fetcher = MockFetcher()
+        fetcher.response = ["a@x.com": [absence]]
+        let provider = makeProvider(fetcher: fetcher)
+
+        let result = await provider.absences(for: ["A@x.com", "a@x.com", "b@x.com"])
+        #expect(result == ["a@x.com": [absence]])
+        #expect(fetcher.requestedEmails == [["a@x.com", "b@x.com"]])
+
+        _ = await provider.absences(for: ["a@x.com", "b@x.com", "c@x.com"])
+        #expect(fetcher.requestedEmails.last == ["c@x.com"])
+    }
+
+    @Test func limitsToMaxEmails() async {
+        let fetcher = MockFetcher()
+        let provider = makeProvider(fetcher: fetcher)
+
+        _ = await provider.absences(for: (0 ..< 30).map { "user\($0)@x.com" })
+        #expect(fetcher.requestedEmails.first?.count == ScheduledAbsenceProvider.maxEmails)
+    }
+
+    @Test func refetchesAfterTTL() async {
+        let fetcher = MockFetcher()
+        let clock = Clock()
+        let provider = makeProvider(fetcher: fetcher, clock: clock)
+
+        _ = await provider.absences(for: ["a@x.com"])
+        clock.now = clock.now.addingTimeInterval(60)
+        _ = await provider.absences(for: ["a@x.com"])
+        #expect(fetcher.requestedEmails.count == 1)
+
+        clock.now = clock.now.addingTimeInterval(ScheduledAbsenceProvider.cacheTTL)
+        _ = await provider.absences(for: ["a@x.com"])
+        #expect(fetcher.requestedEmails.count == 2)
+    }
+
+    @Test func refetchesWithinTTLWhenWindowNotCovered() async {
+        let fetcher = MockFetcher()
+        let clock = Clock()
+        clock.now = ScheduledAbsenceFixtures.date("2026-05-05T23:55:00Z")
+        let provider = makeProvider(fetcher: fetcher, clock: clock)
+
+        _ = await provider.absences(for: ["a@x.com"])
+        clock.now = clock.now.addingTimeInterval(10 * 60)
+        _ = await provider.absences(for: ["a@x.com"])
+
+        #expect(fetcher.requestedEmails.count == 2)
+    }
+
+    @Test func swallowsErrorsAndRetriesAfterDelay() async {
+        let fetcher = MockFetcher()
+        fetcher.shouldFail = true
+        let clock = Clock()
+        let provider = makeProvider(fetcher: fetcher, clock: clock)
+
+        #expect(await provider.absences(for: ["a@x.com"]).isEmpty)
+        #expect(await provider.absences(for: ["a@x.com"]).isEmpty)
+        #expect(fetcher.requestedEmails.count == 1)
+
+        fetcher.shouldFail = false
+        fetcher.response = ["a@x.com": [absence]]
+        clock.now = clock.now.addingTimeInterval(ScheduledAbsenceProvider.failureRetryDelay)
+        #expect(await provider.absences(for: ["a@x.com"]) == ["a@x.com": [absence]])
+        #expect(fetcher.requestedEmails.count == 2)
+    }
+
+    @Test func bypassesCacheForScheduledDate() async {
+        let fetcher = MockFetcher()
+        fetcher.response = ["a@x.com": [absence]]
+        let provider = makeProvider(fetcher: fetcher)
+
+        _ = await provider.absences(for: ["a@x.com"])
+        let from = ScheduledAbsenceFixtures.date("2026-05-06T00:00:00Z")
+        let result = await provider.absences(for: ["a@x.com"], at: from)
+
+        #expect(result == ["a@x.com": [absence]])
+        #expect(fetcher.requestedEmails.count == 2)
+    }
+
+    @Test func sharesInFlightRequestForConcurrentLookups() async throws {
+        let fetcher = MockFetcher()
+        fetcher.response = ["a@x.com": [absence]]
+        let (stream, continuation) = AsyncStream<Void>.makeStream()
+        fetcher.gate = {
+            for await _ in stream {
+                break
+            }
+        }
+        let provider = makeProvider(fetcher: fetcher)
+
+        async let first = provider.absences(for: ["a@x.com"])
+        async let second = provider.absences(for: ["a@x.com"])
+        // Leave time to the second lookup to start a duplicate request if requests weren't shared
+        try await Task.sleep(nanoseconds: 200_000_000)
+        continuation.finish()
+
+        let results = await [first, second]
+        #expect(results == [["a@x.com": [absence]], ["a@x.com": [absence]]])
+        #expect(fetcher.requestedEmails == [["a@x.com"]])
+    }
+}
