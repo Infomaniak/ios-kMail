@@ -205,32 +205,39 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func createAccount(token: ApiToken) async throws -> (ApiFetcher, [Mailbox]) {
-        let apiFetcher = MailApiFetcher(token: token, delegate: self)
+        do {
+            let apiFetcher = MailApiFetcher(token: token, delegate: self)
 
-        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+            attachDeviceToApiToken(token, apiFetcher: apiFetcher)
 
-        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
+            let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
-        let mailboxesResponse = try await apiFetcher.mailboxes()
-        guard !mailboxesResponse.isEmpty else {
-            throw MailError.noMailbox
+            let mailboxesResponse = try await apiFetcher.mailboxes()
+            guard !mailboxesResponse.isEmpty else {
+                throw MailError.noMailbox
+            }
+
+            matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
+
+            try await addAccount(token: token)
+
+            async let _ = fetchExtras(
+                hasFreeMailbox: mailboxesResponse.contains { $0.isFree },
+                apiFetcher: apiFetcher,
+                userId: user.id
+            )
+
+            await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
+
+            await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
+
+            return (apiFetcher, mailboxesResponse)
+        } catch {
+            removeTokenAndAccountFor(userId: token.userId)
+            revokeApiToken(token)
+
+            throw error
         }
-
-        matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
-
-        try await addAccount(token: token)
-
-        async let _ = fetchExtras(
-            hasFreeMailbox: mailboxesResponse.contains { $0.isFree },
-            apiFetcher: apiFetcher,
-            userId: user.id
-        )
-
-        await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
-
-        await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-
-        return (apiFetcher, mailboxesResponse)
     }
 
     public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async {
@@ -371,11 +378,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             self.setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
             SentryDebug.switchMailboxBreadcrumb(mailboxObjectId: newMailbox.objectId)
 
-            guard let mailboxManager = getMailboxManager(for: newMailbox) else {
-                return
-            }
-
-            guard mailboxManager.getFolder(with: .inbox)?.cursor == nil else {
+            guard let mailboxManager = getMailboxManager(for: newMailbox),
+                  mailboxManager.getFolder(with: .inbox)?.cursor == nil else {
                 return
             }
 
@@ -456,7 +460,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         guard let removedToken else { return }
 
-        networkLoginService.deleteApiToken(token: removedToken) { result in
+        revokeApiToken(removedToken)
+    }
+
+    private func revokeApiToken(_ token: ApiToken) {
+        networkLoginService.deleteApiToken(token: token) { result in
             guard case .failure(let error) = result else { return }
             self.logError(.failedToDeleteAPIToken(wrapping: error))
             Logger.general.error("Failed to delete api token: \(error.localizedDescription)")
