@@ -42,29 +42,35 @@ public enum JavaScriptDeclaration {
     case setScaleCompensation(CGFloat)
     case setContentSize(CGFloat)
 
-    public var invocation: String {
+    public var functionBody: String {
+        switch self {
+        case .normalizeMessageWidth:
+            return "normalizeMessageWidth(width, messageUid);"
+        case .removeAllProperties:
+            return "removeAllProperties();"
+        case .documentReadyState:
+            return "return document.readyState;"
+        case .insertMention:
+            return "insertMention(email, name, query);"
+        case .setScaleCompensation:
+            return "setScaleCompensation(factor);"
+        case .setContentSize:
+            return "setContentSize(size);"
+        }
+    }
+
+    public var arguments: [String: Any] {
         switch self {
         case .normalizeMessageWidth(let width, let messageUid):
-            return "normalizeMessageWidth(\(width), '\(messageUid)')"
-        case .removeAllProperties:
-            return "removeAllProperties()"
-        case .documentReadyState:
-            return "document.readyState"
+            return ["width": Double(width), "messageUid": messageUid]
+        case .removeAllProperties, .documentReadyState:
+            return [:]
         case .insertMention(let email, let name, let query):
-            let escapedEmail = email
-                .replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "'", with: "\\'")
-            let escapedName = name
-                .replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "'", with: "\\'")
-            let escapedQuery = query
-                .replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "'", with: "\\'")
-            return "insertMention('\(escapedEmail)', '\(escapedName)', '\(escapedQuery)')"
+            return ["email": email, "name": name, "query": query]
         case .setScaleCompensation(let factor):
-            return "setScaleCompensation(\(factor))"
+            return ["factor": Double(factor)]
         case .setContentSize(let size):
-            return "setContentSize(\(size))"
+            return ["size": Double(size)]
         }
     }
 }
@@ -81,7 +87,12 @@ public extension WKWebView {
 
     @discardableResult
     func evaluateJavaScript(_ declaration: JavaScriptDeclaration) async throws -> Any? {
-        return try await evaluateJavaScript(declaration.invocation)
+        return try await callAsyncJavaScript(
+            declaration.functionBody,
+            arguments: declaration.arguments,
+            in: nil,
+            contentWorld: .page
+        )
     }
 }
 
