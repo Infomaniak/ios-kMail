@@ -34,7 +34,13 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var navigationTitleOpacity = 1.0
 
+    @State private var scheduledAbsenceSummary: ScheduledAbsenceSummary?
+
     @ObservedRealmObject var thread: Thread
+
+    private var isShowingSnoozedHeader: Bool {
+        thread.isSnoozed && thread.snoozeEndDate != nil
+    }
 
     private var externalTag: DisplayExternalRecipientStatus.State {
         thread.displayExternalRecipientState(
@@ -60,6 +66,14 @@ struct ThreadView: View {
                 }
                 .padding(.horizontal, value: .medium)
 
+                if let scheduledAbsenceSummary {
+                    ScheduledAbsenceHeaderView(
+                        summary: scheduledAbsenceSummary,
+                        showTopSeparator: true,
+                        showBottomSeparator: !isShowingSnoozedHeader
+                    )
+                }
+
                 if thread.isSnoozed, let snoozeEndDate = thread.snoozeEndDate {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
@@ -69,7 +83,14 @@ struct ThreadView: View {
                     messages: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).toArray(),
                     mailboxManager: mailboxManager
                 )
+                .environment(\.scheduledAbsenceDescriptions, scheduledAbsenceSummary?.descriptionsByEmail ?? [:])
             }
+        }
+        .task(id: "\(thread.uid)-\(thread.messages.count)") {
+            await fetchScheduledAbsences()
+        }
+        .onChange(of: thread.uid) { _ in
+            scheduledAbsenceSummary = nil
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
@@ -88,6 +109,21 @@ struct ThreadView: View {
         .threadViewToolbar(frozenThread: thread.freezeIfNeeded())
         .id(thread.id)
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
+    }
+
+    private func fetchScheduledAbsences() async {
+        guard mailboxManager.featureFlagsManager.isEnabled(.scheduledAbsence) else { return }
+
+        let recipients = thread.scheduledAbsenceRecipients(
+            isEmojiReactionAvailable: mailboxManager.featureAvailableProvider.isAvailable(.emojiReaction),
+            currentMailboxEmail: mailboxManager.mailbox.email
+        )
+        let emails = recipients.map(\.email)
+        let now = Date()
+        guard let absences = try? await mailboxManager.apiFetcher.activeScheduledAbsences(emails: emails, startingAt: now),
+              !Task.isCancelled else { return }
+
+        scheduledAbsenceSummary = ScheduledAbsenceSummary(absencesByEmail: absences, orderedRecipients: recipients, now: now)
     }
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
