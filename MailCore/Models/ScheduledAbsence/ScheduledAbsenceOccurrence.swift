@@ -46,6 +46,18 @@ public struct ScheduledAbsenceOccurrence: Decodable, Sendable, Hashable {
         return .past
     }
 
+    func localStart(timeZone: TimeZone = .current) -> Date {
+        guard fullday, let utcTimeZone = TimeZone(identifier: "UTC") else { return start }
+
+        var utcCalendar = Calendar(identifier: .gregorian)
+        utcCalendar.timeZone = utcTimeZone
+        var localCalendar = Calendar(identifier: .gregorian)
+        localCalendar.timeZone = timeZone
+
+        let components = utcCalendar.dateComponents([.year, .month, .day], from: start)
+        return localCalendar.date(from: components) ?? start
+    }
+
     private func referenceDate(for now: Date, timeZone: TimeZone) -> Date {
         guard fullday, let utcTimeZone = TimeZone(identifier: "UTC") else { return now }
 

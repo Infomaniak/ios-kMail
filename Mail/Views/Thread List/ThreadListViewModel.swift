@@ -53,11 +53,7 @@ extension Thread {
             guard let timeInterval = Double(rawKey) else { return "" }
             let referenceDate = Date(timeIntervalSince1970: timeInterval)
 
-            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
-            if !Calendar.current.isDate(referenceDate, equalTo: .now, toGranularity: .year) {
-                formatStyle = formatStyle.year()
-            }
-            return referenceDate.formatted(formatStyle).capitalized
+            return referenceDate.formatted(.yearIfNeeded(.dateTime.month(.wide))).capitalized
         }
 
         public var title: String {
