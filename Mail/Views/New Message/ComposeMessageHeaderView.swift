@@ -26,6 +26,7 @@ struct ComposeMessageHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var showRecipientsFields = false
+    @State private var scheduledAbsenceSummary: ScheduledAbsenceSummary?
 
     @ObservedRealmObject var draft: Draft
 
@@ -40,6 +41,14 @@ struct ComposeMessageHeaderView: View {
 
     private var isRecipientLimitExceeded: Bool {
         return totalRecipients > 99
+    }
+
+    private var scheduledAbsenceRecipients: [ScheduledAbsenceRecipient] {
+        return ScheduledAbsenceLookup.recipients(
+            draft.allRecipients
+                .filter { !$0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
+                .map { ScheduledAbsenceRecipient(email: $0.email, name: $0.name) }
+        )
     }
 
     var body: some View {
@@ -98,9 +107,42 @@ struct ComposeMessageHeaderView: View {
                 type: .subject
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
+
+            if autocompletionType == nil, let scheduledAbsenceSummary {
+                ScheduledAbsenceHeaderView(
+                    summary: scheduledAbsenceSummary,
+                    showTopSeparator: false,
+                    showBottomSeparator: true
+                )
+            }
+        }
+        .environment(\.scheduledAbsenceDescriptions, scheduledAbsenceSummary?.descriptionsByEmail ?? [:])
+        .task(id: "\(scheduledAbsenceRecipients.map(\.email))-\(String(describing: draft.scheduleDate))") {
+            await fetchScheduledAbsences()
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
+        }
+    }
+
+    private func fetchScheduledAbsences() async {
+        guard mailboxManager.featureFlagsManager.isEnabled(.scheduledAbsence) else { return }
+
+        let recipients = scheduledAbsenceRecipients
+        let emails = recipients.map(\.email)
+        let now = draft.scheduleDate ?? Date()
+        guard !emails.isEmpty else {
+            scheduledAbsenceSummary = nil
+            return
+        }
+
+        guard await (try? Task.sleep(for: .milliseconds(300))) != nil else { return }
+
+        let absences = try? await mailboxManager.apiFetcher.activeScheduledAbsences(emails: emails, startingAt: now)
+        guard !Task.isCancelled else { return }
+
+        scheduledAbsenceSummary = absences.map {
+            ScheduledAbsenceSummary(absencesByEmail: $0, orderedRecipients: recipients, now: now)
         }
     }
 
