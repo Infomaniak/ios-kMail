@@ -32,6 +32,7 @@ public enum UserScript: String {
     case insertMention
     case mentionCommon
     case editorMentionPointerEventHandler
+    case insertHTMLAtCaret
 }
 
 public enum JavaScriptDeclaration {
@@ -41,6 +42,7 @@ public enum JavaScriptDeclaration {
     case insertMention(String, String, String)
     case setScaleCompensation(CGFloat)
     case setContentSize(CGFloat)
+    case insertHTMLAtCaret(String)
 
     public var functionBody: String {
         switch self {
@@ -56,6 +58,8 @@ public enum JavaScriptDeclaration {
             return "setScaleCompensation(factor);"
         case .setContentSize:
             return "setContentSize(size);"
+        case .insertHTMLAtCaret:
+            return "insertHTMLAtCaret(html);"
         }
     }
 
@@ -71,6 +75,8 @@ public enum JavaScriptDeclaration {
             return ["factor": Double(factor)]
         case .setContentSize(let size):
             return ["size": Double(size)]
+        case .insertHTMLAtCaret(let html):
+            return ["html": html]
         }
     }
 }

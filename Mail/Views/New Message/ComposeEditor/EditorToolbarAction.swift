@@ -37,6 +37,7 @@ enum EditorToolbarAction: Identifiable {
     case addPhoto
     case takePhoto
     case encryption
+    case mailTemplate
 
     var id: Self {
         self
@@ -72,6 +73,8 @@ enum EditorToolbarAction: Identifiable {
             return MailResourcesAsset.cancelFormat
         case .encryption:
             return MailResourcesAsset.lockSquare
+        case .mailTemplate:
+            return MailResourcesAsset.models
         }
     }
 
@@ -109,6 +112,8 @@ enum EditorToolbarAction: Identifiable {
             return "importFromCamera"
         case .link:
             return "addLink"
+        case .mailTemplate:
+            return "mailTemplate"
         default:
             return nil
         }
@@ -144,6 +149,8 @@ enum EditorToolbarAction: Identifiable {
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         case .encryption:
             return MailResourcesStrings.Localizable.encryptedStatePanelTitle
+        case .mailTemplate:
+            return MailResourcesStrings.Localizable.contentDescriptionButtonModel
         }
     }
 
@@ -163,7 +170,7 @@ enum EditorToolbarAction: Identifiable {
             return KeyboardShortcut("K", modifiers: [.command, .shift])
         case .addFile:
             return KeyboardShortcut("P", modifiers: [.command, .shift])
-        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat, .encryption:
+        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat, .encryption, .mailTemplate:
             return nil
         }
     }
@@ -183,7 +190,7 @@ enum EditorToolbarAction: Identifiable {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat, .encryption:
+        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat, .encryption, .mailTemplate:
             return false
         }
     }
@@ -193,7 +200,8 @@ enum EditorToolbarAction: Identifiable {
         textAttributes: TextAttributes,
         isShowingLinkAlert: Binding<Bool>,
         isShowingFileSelection: Binding<Bool>,
-        isShowingAI: Binding<Bool>
+        isShowingAI: Binding<Bool>,
+        isShowingMailTemplatePanel: Binding<Bool>
     ) {
         switch self {
         case .bold:
@@ -217,6 +225,8 @@ enum EditorToolbarAction: Identifiable {
             isShowingFileSelection.wrappedValue = true
         case .ai:
             isShowingAI.wrappedValue = true
+        case .mailTemplate:
+            isShowingMailTemplatePanel.wrappedValue = true
         default:
             return
         }

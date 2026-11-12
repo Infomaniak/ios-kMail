@@ -198,6 +198,9 @@ struct SplitView: View {
             await fetchFolders()
         }
         .task(id: mailboxManager.mailboxObjectId) {
+            try? await mailboxManager.refreshTemplates()
+        }
+        .task(id: mailboxManager.mailboxObjectId) {
             try? await mailboxManager.featureFlagsManager.fetchFlags()
         }
         .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
