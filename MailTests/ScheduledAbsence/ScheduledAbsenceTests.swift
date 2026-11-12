@@ -326,3 +326,72 @@ struct ScheduledAbsenceSummaryTests {
         ])
     }
 }
+
+@Suite("ScheduledAbsenceLookup")
+struct ScheduledAbsenceLookupTests {
+    final class MockFetcher: MailApiScheduledAbsenceFetchable, @unchecked Sendable {
+        private let lock = NSLock()
+        private var _requests = [(emails: [String], from: Date, to: Date)]()
+        var response = [String: [ScheduledAbsenceEntry]]()
+        var shouldFail = false
+
+        var requestedEmails: [[String]] {
+            lock.withLock { _requests.map(\.emails) }
+        }
+
+        var requestedWindows: [(from: Date, to: Date)] {
+            lock.withLock { _requests.map { ($0.from, $0.to) } }
+        }
+
+        func activeScheduledAbsences(emails: [String], from: Date, to: Date) async throws -> [String: [ScheduledAbsenceEntry]] {
+            lock.withLock { _requests.append((emails, from, to)) }
+            if shouldFail {
+                throw MailError.unknownError
+            }
+            return emails.reduce(into: [String: [ScheduledAbsenceEntry]]()) { result, email in
+                result[email] = response[email] ?? []
+            }
+        }
+    }
+
+    private let absence = ScheduledAbsenceFixtures.entry(start: "2026-05-06T08:00:00Z", end: "2026-05-06T18:00:00Z")
+
+    @Test func windowEndsAtEndOfLookAheadDay() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Europe/Zurich"))
+        let date = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+
+        let window = ScheduledAbsenceLookup.window(startingAt: date, calendar: calendar)
+
+        #expect(window.from == date)
+        #expect(window.to == ScheduledAbsenceFixtures.date("2026-05-08T21:59:59Z"))
+    }
+
+    @Test func recipientsAreDedupedNamedAndLimited() {
+        let candidates = [
+            ScheduledAbsenceRecipient(email: "A@x.com", name: ""),
+            ScheduledAbsenceRecipient(email: "", name: "Nobody"),
+            ScheduledAbsenceRecipient(email: "a@x.com", name: "Alice"),
+            ScheduledAbsenceRecipient(email: "a@x.com", name: "Other")
+        ] + (0 ..< 30).map { ScheduledAbsenceRecipient(email: "user\($0)@x.com", name: "") }
+
+        let recipients = ScheduledAbsenceLookup.recipients(candidates)
+
+        #expect(recipients.count == ScheduledAbsenceLookup.maxEmails)
+        #expect(recipients.first == ScheduledAbsenceRecipient(email: "a@x.com", name: "Alice"))
+        #expect(recipients.dropFirst().first?.email == "user0@x.com")
+    }
+
+    @Test func requestsWindowAndDropsRecipientsWithoutAbsence() async throws {
+        let fetcher = MockFetcher()
+        fetcher.response = ["a@x.com": [absence]]
+        let date = ScheduledAbsenceFixtures.date("2026-05-05T12:00:00Z")
+
+        let result = try await fetcher.activeScheduledAbsences(emails: ["a@x.com", "b@x.com"], startingAt: date)
+
+        #expect(result == ["a@x.com": [absence]])
+        #expect(fetcher.requestedEmails == [["a@x.com", "b@x.com"]])
+        #expect(fetcher.requestedWindows.first?.from == date)
+        #expect(fetcher.requestedWindows.first?.to == ScheduledAbsenceLookup.window(startingAt: date).to)
+    }
+}
