@@ -66,7 +66,7 @@ final class ProxyBody: Codable {
         }
 
         let items = subBody.flatMap { item in
-            [item.realmObject()] + item.body.allSubBodies
+            [item.realmObject()] + (item.body?.allSubBodies ?? [])
         }
         return items
     }
@@ -131,7 +131,7 @@ public final class SubBody: BodyContent {
 }
 
 final class ProxySubBody: Codable {
-    var body: ProxyBody
+    var body: ProxyBody?
 
     var name: String?
     var type: String?
@@ -143,11 +143,11 @@ final class ProxySubBody: Codable {
 
     func realmObject() -> SubBody {
         // truncate message if needed
-        let truncatedValue = body.value?.truncatedForRealmIfNeeded
+        let truncatedValue = body?.value?.truncatedForRealmIfNeeded
 
         let subBody = SubBody()
         subBody.value = truncatedValue
-        subBody.type = body.type
+        subBody.type = body?.type
         subBody.name = name
         subBody.subBodyType = type
         subBody.date = date
@@ -171,7 +171,7 @@ final class ProxySubBody: Codable {
 
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        body = try values.decode(ProxyBody.self, forKey: .body)
+        body = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
 
         name = try values.decodeIfPresent(String.self, forKey: .name)
         type = try values.decodeIfPresent(String.self, forKey: .type)
