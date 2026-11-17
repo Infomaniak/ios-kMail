@@ -30,11 +30,20 @@ public final class DraftManager {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
-    @MainActor public var openDraftCount = 0
+    @MainActor private var openDraftLocalUUIDs = [String]()
     @MainActor private var currentSyncTask: Task<Void, Never>?
 
     /// Used by DI only
     public init() {}
+
+    @MainActor public func didOpenDraft(localUUID: String) {
+        openDraftLocalUUIDs.append(localUUID)
+    }
+
+    @MainActor public func didCloseDraft(localUUID: String) {
+        guard let index = openDraftLocalUUIDs.firstIndex(of: localUUID) else { return }
+        openDraftLocalUUIDs.remove(at: index)
+    }
 
     public enum ErrorDomain: Error {
         case draftNotFound
@@ -50,7 +59,11 @@ public final class DraftManager {
         changeFolderAction: ((Folder) -> Void)? = nil,
         kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
     ) async {
-        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+        let openDraftLocalUUIDs = await Set(openDraftLocalUUIDs)
+        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded().filter { draft in
+            guard openDraftLocalUUIDs.contains(draft.localUUID) else { return true }
+            return draft.action != .initialSave && draft.action != .save
+        }
 
         var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
         backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sync") {
@@ -352,7 +365,7 @@ public final class DraftManager {
     @discardableResult
     private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
         guard await draftShouldBeSaved(draft: draft, mailboxManager: mailboxManager) else {
-            if await openDraftCount == 0 {
+            if await !openDraftLocalUUIDs.contains(draft.localUUID) {
                 deleteEmptyDraft(draft: draft, for: mailboxManager)
             }
             return false
