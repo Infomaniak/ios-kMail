@@ -69,6 +69,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     public let mailboxManager: MailboxManager
 
     public init(mailboxManager: MailboxManager, selectedFolder: Folder) {
+        assert(selectedFolder.realm == nil || selectedFolder.isFrozen, "The selected folder must be unmanaged or frozen")
         self.mailboxManager = mailboxManager
         self.selectedFolder = selectedFolder
     }
