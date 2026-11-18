@@ -120,6 +120,7 @@ struct ComposeMessageView: View {
     private let messageReply: MessageReply?
     private let mailboxManager: MailboxManager
     private let htmlAttachments: [HTMLAttachable]
+    private let draftLocalUUID: String
 
     private var canSendEmails: Bool {
         mailboxManager.mailbox.permissions?.canSendEmails ?? true
@@ -166,6 +167,7 @@ struct ComposeMessageView: View {
     ) {
         self.messageReply = messageReply
         self.htmlAttachments = htmlAttachments
+        draftLocalUUID = draft.localUUID
 
         _draft = ObservedRealmObject(wrappedValue: draft)
 
@@ -362,7 +364,7 @@ struct ComposeMessageView: View {
             mentionSuggestions = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
         }
         .onAppear {
-            draftManager.openDraftCount += 1
+            draftManager.didOpenDraft(localUUID: draftLocalUUID)
             attachmentsManager.importAttachments(
                 attachments: initialAttachments,
                 draft: draft,
@@ -385,7 +387,7 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.openDraftCount -= 1
+            draftManager.didCloseDraft(localUUID: draftLocalUUID)
 
             guard !platformDetector.isMac && !Bundle.main.isExtension else {
                 return
