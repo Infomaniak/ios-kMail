@@ -364,7 +364,6 @@ struct ComposeMessageView: View {
             mentionSuggestions = mergedContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
         }
         .onAppear {
-            draftManager.didOpenDraft(localUUID: draftLocalUUID)
             attachmentsManager.importAttachments(
                 attachments: initialAttachments,
                 draft: draft,

@@ -133,13 +133,16 @@ struct ComposeMessageIntentView: View, IntentViewable {
         }
 
         if let draftToWrite {
+            @InjectService var draftManager: DraftManager
             let draftLocalUUID = draftToWrite.localUUID
+            draftManager.didOpenDraft(localUUID: draftLocalUUID)
             writeDraftToRealm(mailboxManager, draft: draftToWrite)
 
             Task { @MainActor [maybeMessageReply] in
                 guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID),
                       let mainViewState = await getMainViewState(mailboxManager: mailboxManager)
                 else {
+                    draftManager.didCloseDraft(localUUID: draftLocalUUID)
                     dismiss()
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                     return
