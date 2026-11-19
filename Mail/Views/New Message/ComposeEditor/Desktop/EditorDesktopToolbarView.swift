@@ -31,8 +31,11 @@ struct EditorDesktopToolbarView: View {
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingAI: Bool
+    @Binding var isShowingMailTemplatePanel: Bool
 
     @ObservedObject var textAttributes: TextAttributes
+
+    let hasTemplates: Bool
 
     private let extras: [EditorToolbarAction] = [
         .addFile,
@@ -54,6 +57,10 @@ struct EditorDesktopToolbarView: View {
     private var allItems: [[EditorToolbarAction]] {
         var mainItems = [extras, textFormats, textItems]
 
+        if hasTemplates {
+            mainItems.append([.mailTemplate])
+        }
+
         mailboxManager.featureFlagsManager.feature(.aiMailComposer, on: {
             mainItems.insert([.ai], at: 0)
         }, off: nil)
@@ -71,7 +78,8 @@ struct EditorDesktopToolbarView: View {
                                 textAttributes: textAttributes,
                                 isShowingLinkAlert: $isShowingLinkAlert,
                                 isShowingFileSelection: $isShowingFileSelection,
-                                isShowingAI: $isShowingAI
+                                isShowingAI: $isShowingAI,
+                                isShowingMailTemplatePanel: $isShowingMailTemplatePanel
                             )
                         } label: {
                             item.icon.swiftUIImage
