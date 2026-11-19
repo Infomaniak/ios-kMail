@@ -41,13 +41,14 @@ struct MailDraftOpenIntent: OpenIntent {
         }
 
         @InjectService var mainViewStateStore: MainViewStateStore
-        guard let initialFolder = mailboxManager.getFolder(with: .draft) ?? mailboxManager.getFolder(with: .inbox) else {
+        let initialFolder = (mailboxManager.getFolder(with: .draft) ?? mailboxManager.getFolder(with: .inbox))
+        guard let initialFrozenFolder = initialFolder?.freezeIfNeeded() else {
             throw MailError.localMessageNotFound
         }
 
         let intentMainViewState = await mainViewStateStore.getOrCreateMainViewState(
             for: mailboxManager,
-            initialFolder: initialFolder
+            initialFolder: initialFrozenFolder
         )
 
         Task { @MainActor in
