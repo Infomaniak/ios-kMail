@@ -53,22 +53,36 @@ class ThreadListHeaderFolderObserver: ObservableObject {
                       let lastUpdate = updatedFolder.lastUpdate else {
                     return
                 }
+                let newLastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: lastUpdate)
                 Task { @MainActor in
-                    withAnimation {
-                        self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: lastUpdate)
-                    }
+                    self?.update(lastUpdateText: newLastUpdateText)
                 }
             }
 
         folderObservation = folder.observe(keyPaths: [\Folder.lastUpdate, \Folder.unreadCount], on: .main) { [weak self] change in
             switch change {
             case .change(let folder, _):
-                withAnimation {
-                    self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
-                    self?.unreadCount = folder.unreadCount
-                }
+                self?.update(
+                    lastUpdateText: ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate),
+                    unreadCount: folder.unreadCount
+                )
             default:
                 break
+            }
+        }
+    }
+
+    private func update(lastUpdateText newLastUpdateText: String?, unreadCount newUnreadCount: Int? = nil) {
+        let lastUpdateTextChanged = newLastUpdateText != lastUpdateText
+        let unreadCountChanged = newUnreadCount != nil && newUnreadCount != unreadCount
+        guard lastUpdateTextChanged || unreadCountChanged else { return }
+
+        withAnimation {
+            if lastUpdateTextChanged {
+                lastUpdateText = newLastUpdateText
+            }
+            if unreadCountChanged, let newUnreadCount {
+                unreadCount = newUnreadCount
             }
         }
     }

@@ -31,6 +31,7 @@ public final class ServerStatusManager: ObservableObject {
     public nonisolated init() {}
 
     private func setServerAvailable(_ serverAvailable: Bool) {
+        guard self.serverAvailable != serverAvailable else { return }
         self.serverAvailable = serverAvailable
     }
 
