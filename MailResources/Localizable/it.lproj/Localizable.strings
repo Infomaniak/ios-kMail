@@ -1385,6 +1385,27 @@
 /* loco:6723a3818bedb42b0805f613 */
 "scheduleSendingTitle" = "Pianifica l’invio";
 
+/* loco:6aeb757b76d1c2775f0456e2 */
+"scheduledAbsenceBannerOngoingSingle" = "%1$@: assenza in corso, di ritorno il %2$@";
+
+/* loco:6aeb758fe625ce6f2a058a0f */
+"scheduledAbsenceBannerUpcomingSingle" = "%1$@: assenza prevista, dal %2$@ al %3$@";
+
+/* loco:6aeb758938d5fd3fac090052 */
+"scheduledAbsenceChipOngoing" = "Assenza in corso, di ritorno il %@";
+
+/* loco:6aeb7589729420806e080432 */
+"scheduledAbsenceChipUpcoming" = "Assenza prevista, dal %1$@ al %2$@";
+
+/* loco:6aeb75881511794d57071c4b */
+"scheduledAbsenceDateRange" = "Dal %1$@ al %2$@";
+
+/* loco:6aeb7589e625ce6f2a058a0d */
+"scheduledAbsenceMessageButton" = "Messaggio di assenza";
+
+/* loco:6aeb758a8747e1c3a705af38 */
+"scheduledAbsenceSeeDatesButton" = "Vedi le date";
+
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Questa email verrà inviata in questa data: %@";
 
