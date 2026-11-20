@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Algorithms
 import Foundation
 import InfomaniakCore
 
@@ -253,6 +254,18 @@ public extension Endpoint {
             path: "/securedProxy/1/mail_hostings/mailboxes/exist",
             queryItems: queryItems
         )
+    }
+
+    static func activeScheduledAbsences(emails: [String], from: Date, to: Date) -> Endpoint {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        formatter.timeZone = .current
+
+        var queryItems = emails.map { $0.lowercased() }.uniqued().map { URLQueryItem(name: "attendees[]", value: $0) }
+        queryItems.append(URLQueryItem(name: "from", value: formatter.string(from: from)))
+        queryItems.append(URLQueryItem(name: "to", value: formatter.string(from: to)))
+
+        return .base.appending(path: "/pim/scheduled-absence/active", queryItems: queryItems)
     }
 
     static func messageSeen(uuid: String) -> Endpoint {
