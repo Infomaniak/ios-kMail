@@ -1,1 +1,4 @@
-- Il tuo avatar nella barra degli strumenti viene di nuovo visualizzato correttamente su iOS 26.
+- La tua bozza non viene più persa né svuotata quando torni nell’app mentre scrivi un messaggio.
+- L’elenco dei messaggi è più fluido e non si blocca più durante gli aggiornamenti.
+- Alcuni messaggi che non potevano essere visualizzati ora si aprono correttamente.
+- L’apertura di un messaggio o di una bozza da Comandi Rapidi è più affidabile.
