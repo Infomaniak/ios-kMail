@@ -29,71 +29,57 @@ import RealmSwift
 import SwiftUI
 
 class ThreadListHeaderFolderObserver: ObservableObject {
-    private let timer = Timer.publish(
-        every: 60, // second
-        on: .main,
-        in: .common
-    ).autoconnect()
-    private var timerObservation: AnyCancellable?
     private var folderObservation: NotificationToken?
 
-    @Published private(set) var lastUpdateText: String?
+    @Published private(set) var lastUpdate: Date?
     @Published private(set) var unreadCount: Int
 
     init(folder: Folder) {
         assert(folder.isFrozen, "Folder should always be frozen")
 
-        lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+        lastUpdate = folder.lastUpdate
         unreadCount = folder.unreadCount
-
-        timerObservation = timer
-            .receive(on: DispatchQueue.global(qos: .default))
-            .sink { [weak self] _ in
-                guard let updatedFolder = folder.thaw(),
-                      let lastUpdate = updatedFolder.lastUpdate else {
-                    return
-                }
-                let newLastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: lastUpdate)
-                Task { @MainActor in
-                    self?.update(lastUpdateText: newLastUpdateText)
-                }
-            }
 
         folderObservation = folder.observe(keyPaths: [\Folder.lastUpdate, \Folder.unreadCount], on: .main) { [weak self] change in
             switch change {
             case .change(let folder, _):
-                self?.update(
-                    lastUpdateText: ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate),
-                    unreadCount: folder.unreadCount
-                )
+                self?.update(lastUpdate: folder.lastUpdate, unreadCount: folder.unreadCount)
             default:
                 break
             }
         }
     }
 
-    private func update(lastUpdateText newLastUpdateText: String?, unreadCount newUnreadCount: Int? = nil) {
-        let lastUpdateTextChanged = newLastUpdateText != lastUpdateText
-        let unreadCountChanged = newUnreadCount != nil && newUnreadCount != unreadCount
-        guard lastUpdateTextChanged || unreadCountChanged else { return }
+    private func update(lastUpdate newLastUpdate: Date?, unreadCount newUnreadCount: Int) {
+        let lastUpdateChanged = newLastUpdate != lastUpdate
+        let unreadCountChanged = newUnreadCount != unreadCount
+        guard lastUpdateChanged || unreadCountChanged else { return }
 
         withAnimation {
-            if lastUpdateTextChanged {
-                lastUpdateText = newLastUpdateText
+            if lastUpdateChanged {
+                lastUpdate = newLastUpdate
             }
-            if unreadCountChanged, let newUnreadCount {
+            if unreadCountChanged {
                 unreadCount = newUnreadCount
             }
         }
     }
+}
 
-    static func formatLastUpdate(date: Date?) -> String? {
-        var dateToUse = date
-        if let interval = date?.timeIntervalSinceNow, interval > -60 {
-            // Last update less than 60 seconds ago
-            dateToUse = Date()
+private struct LastUpdateText: View {
+    let lastUpdate: Date
+
+    var body: some View {
+        TimelineView(.periodic(from: lastUpdate.addingTimeInterval(60), by: 60)) { _ in
+            Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(formattedLastUpdate))
+                .textStyle(.bodySmallSecondary)
         }
-        return dateToUse?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
+    }
+
+    private var formattedLastUpdate: String {
+        // Last update less than 60 seconds ago
+        let dateToUse = lastUpdate.timeIntervalSinceNow > -60 ? Date() : lastUpdate
+        return dateToUse.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
     }
 }
 
@@ -158,9 +144,8 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else if let lastUpdateText = folderObserver.lastUpdateText {
-                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.bodySmallSecondary)
+                } else if let lastUpdate = folderObserver.lastUpdate {
+                    LastUpdateText(lastUpdate: lastUpdate)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
