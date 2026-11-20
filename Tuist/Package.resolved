@@ -1,4 +1,5 @@
 {
+  "originHash" : "b30a53a76c2cf8323d9e90a9d225d3dbe66f4d3bdb095766d453eaa5c69cf6f1",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -23,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LottieFiles/dotlottie-ios",
       "state" : {
-        "revision" : "ddc69d0ae3a90894b15b5a925c73232ff1d94307",
-        "version" : "0.16.9"
+        "revision" : "7f2f4ad577202a417cd84f5e956b9ce3f0a8f182",
+        "version" : "0.18.0"
       }
     },
     {
@@ -257,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
-        "version" : "1.7.5"
+        "revision" : "88754449ab766a739610b660e117762115fabc9c",
+        "version" : "1.7.6"
       }
     },
     {

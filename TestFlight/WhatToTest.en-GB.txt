@@ -1,1 +1,4 @@
-- Your avatar in the toolbar is displayed correctly again on iOS 26.
+- Your draft is no longer lost or emptied when you return to the app while writing a message.
+- The message list is smoother and no longer freezes during updates.
+- Some messages that could not be displayed now open correctly.
+- Opening a message or draft from Shortcuts is more reliable.

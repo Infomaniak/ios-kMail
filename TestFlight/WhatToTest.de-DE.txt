@@ -1,1 +1,4 @@
-- Dein Avatar in der Symbolleiste wird unter iOS 26 wieder korrekt angezeigt.
+- Dein Entwurf geht nicht mehr verloren und wird nicht mehr geleert, wenn du während des Schreibens zur App zurückkehrst.
+- Die Nachrichtenliste läuft flüssiger und friert bei Aktualisierungen nicht mehr ein.
+- Einige Nachrichten, die nicht angezeigt werden konnten, werden jetzt korrekt geöffnet.
+- Das Öffnen einer Nachricht oder eines Entwurfs über Kurzbefehle ist zuverlässiger.

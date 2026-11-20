@@ -1,1 +1,4 @@
-- Votre avatar dans la barre d’outils s’affiche à nouveau correctement sous iOS 26.
+- Votre brouillon n’est plus perdu ni vidé lorsque vous revenez dans l’app pendant la rédaction d’un message.
+- La liste des messages est plus fluide et ne se fige plus pendant les mises à jour.
+- Certains messages qui ne pouvaient pas s’afficher s’ouvrent désormais correctement.
+- L’ouverture d’un message ou d’un brouillon depuis Raccourcis est plus fiable.

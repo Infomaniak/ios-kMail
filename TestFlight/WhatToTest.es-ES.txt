@@ -1,1 +1,4 @@
-- Tu avatar en la barra de herramientas vuelve a mostrarse correctamente en iOS 26.
+- Tu borrador ya no se pierde ni se vacía al volver a la app mientras escribes un mensaje.
+- La lista de mensajes es más fluida y ya no se bloquea durante las actualizaciones.
+- Algunos mensajes que no se podían mostrar ahora se abren correctamente.
+- Abrir un mensaje o un borrador desde Atajos es más fiable.
