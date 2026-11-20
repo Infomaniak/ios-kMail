@@ -29,57 +29,57 @@ import RealmSwift
 import SwiftUI
 
 class ThreadListHeaderFolderObserver: ObservableObject {
-    private let timer = Timer.publish(
-        every: 60, // second
-        on: .main,
-        in: .common
-    ).autoconnect()
-    private var timerObservation: AnyCancellable?
     private var folderObservation: NotificationToken?
 
-    @Published private(set) var lastUpdateText: String?
+    @Published private(set) var lastUpdate: Date?
     @Published private(set) var unreadCount: Int
 
     init(folder: Folder) {
         assert(folder.isFrozen, "Folder should always be frozen")
 
-        lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+        lastUpdate = folder.lastUpdate
         unreadCount = folder.unreadCount
-
-        timerObservation = timer
-            .receive(on: DispatchQueue.global(qos: .default))
-            .sink { [weak self] _ in
-                guard let updatedFolder = folder.thaw(),
-                      let lastUpdate = updatedFolder.lastUpdate else {
-                    return
-                }
-                Task { @MainActor in
-                    withAnimation {
-                        self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: lastUpdate)
-                    }
-                }
-            }
 
         folderObservation = folder.observe(keyPaths: [\Folder.lastUpdate, \Folder.unreadCount], on: .main) { [weak self] change in
             switch change {
             case .change(let folder, _):
-                withAnimation {
-                    self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
-                    self?.unreadCount = folder.unreadCount
-                }
+                self?.update(lastUpdate: folder.lastUpdate, unreadCount: folder.unreadCount)
             default:
                 break
             }
         }
     }
 
-    static func formatLastUpdate(date: Date?) -> String? {
-        var dateToUse = date
-        if let interval = date?.timeIntervalSinceNow, interval > -60 {
-            // Last update less than 60 seconds ago
-            dateToUse = Date()
+    private func update(lastUpdate newLastUpdate: Date?, unreadCount newUnreadCount: Int) {
+        let lastUpdateChanged = newLastUpdate != lastUpdate
+        let unreadCountChanged = newUnreadCount != unreadCount
+        guard lastUpdateChanged || unreadCountChanged else { return }
+
+        withAnimation {
+            if lastUpdateChanged {
+                lastUpdate = newLastUpdate
+            }
+            if unreadCountChanged {
+                unreadCount = newUnreadCount
+            }
         }
-        return dateToUse?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
+    }
+}
+
+private struct LastUpdateText: View {
+    let lastUpdate: Date
+
+    var body: some View {
+        TimelineView(.periodic(from: lastUpdate.addingTimeInterval(60), by: 60)) { _ in
+            Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(formattedLastUpdate))
+                .textStyle(.bodySmallSecondary)
+        }
+    }
+
+    private var formattedLastUpdate: String {
+        // Last update less than 60 seconds ago
+        let dateToUse = lastUpdate.timeIntervalSinceNow > -60 ? Date() : lastUpdate
+        return dateToUse.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
     }
 }
 
@@ -144,9 +144,8 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else if let lastUpdateText = folderObserver.lastUpdateText {
-                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.bodySmallSecondary)
+                } else if let lastUpdate = folderObserver.lastUpdate {
+                    LastUpdateText(lastUpdate: lastUpdate)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
