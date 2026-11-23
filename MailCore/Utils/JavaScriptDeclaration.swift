@@ -59,7 +59,7 @@ public enum JavaScriptDeclaration {
         case .setContentSize:
             return "setContentSize(size);"
         case .insertHTMLAtCaret:
-            return "insertHTMLAtCaret(html);"
+            return "return insertHTMLAtCaret(html);"
         }
     }
 
