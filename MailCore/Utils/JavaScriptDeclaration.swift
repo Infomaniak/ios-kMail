@@ -56,7 +56,7 @@ public enum JavaScriptDeclaration {
         case .insertMention:
             return "insertMention(email, name, query);"
         case .insertHTMLAtCaret:
-            return "insertHTMLAtCaret(html);"
+            return "return insertHTMLAtCaret(html);"
         }
     }
 
