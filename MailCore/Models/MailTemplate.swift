@@ -29,39 +29,4 @@ public final class MailTemplate: Object, Codable, ObjectKeyIdentifiable {
     public var displayName: String {
         title.isEmpty ? MailResourcesStrings.Localizable.unnamedModel : title
     }
-
-    override public init() {}
-
-    public convenience init(id: String,
-                            title: String,
-                            preview: String,
-                            content: String) {
-        self.init()
-        self.id = id
-        self.title = title
-        self.preview = preview
-        self.content = content
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case id, title, preview, content
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        title = try container.decode(String.self, forKey: .title)
-        preview = try container.decode(String.self, forKey: .preview)
-        content = try container.decode(String.self, forKey: .content)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(title, forKey: .title)
-        try container.encode(preview, forKey: .preview)
-        try container.encode(content, forKey: .content)
-    }
 }
