@@ -26,15 +26,8 @@ public extension MailboxManager {
         let templates = try await apiFetcher.mailTemplate(mailbox: mailbox)
 
         try? writeTransaction { writableRealm in
-            let existingTemplates = Array(writableRealm.objects(MailTemplate.self))
-
-            let templatesToAdd = templates.filter { !existingTemplates.contains($0) }
-            let templatesToUpdate = templates.filter { existingTemplates.contains($0) }
-            let templatesToDelete = Set(existingTemplates.filter { !templates.contains($0) })
-
-            writableRealm.add(templatesToUpdate, update: .modified)
-            writableRealm.delete(templatesToDelete)
-            writableRealm.add(templatesToAdd, update: .modified)
+            writableRealm.delete(writableRealm.objects(MailTemplate.self))
+            writableRealm.add(templates, update: .modified)
         }
     }
 }
