@@ -69,8 +69,6 @@ struct MailTemplateListView: View {
     let mailboxManager: MailboxManager
     let onTemplateSelected: (MailTemplate) async -> Void
 
-    @State private var previewTexts: [String: String] = [:]
-
     init(mailboxManager: MailboxManager, onTemplateSelected: @escaping (MailTemplate) async -> Void) {
         self.mailboxManager = mailboxManager
         self.onTemplateSelected = onTemplateSelected
@@ -89,8 +87,8 @@ struct MailTemplateListView: View {
                                 .font(MailTextStyle.header2.font)
                                 .foregroundStyle(MailTextStyle.header2.color)
 
-                            if let previewBody = previewTexts[template.id], !previewBody.isEmpty {
-                                Text(previewBody)
+                            if !template.preview.isEmpty {
+                                Text(SwiftSoupUtils.decodeHTMLEntities(template.preview))
                                     .font(MailTextStyle.bodyMediumTertiary.font)
                                     .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
                                     .lineLimit(1)
@@ -109,9 +107,6 @@ struct MailTemplateListView: View {
                 }
             }
         }
-        .task(id: templates.count) {
-            previewTexts = await Self.previewTexts(for: Array(templates.map { $0.freeze() }))
-        }
         .task {
             do {
                 try await mailboxManager.refreshTemplates()
@@ -120,20 +115,6 @@ struct MailTemplateListView: View {
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
             }
         }
-    }
-
-    @concurrent
-    private static func previewTexts(for sources: [MailTemplate]) async -> [String: String] {
-        var texts = [String: String]()
-        for source in sources {
-            if !source.preview.isEmpty {
-                texts[source.id] = SwiftSoupUtils.decodeHTMLEntities(source.preview)
-            } else {
-                let extracted = try? await SwiftSoupUtils(fromHTML: source.content).extractText()
-                texts[source.id] = extracted ?? MailResourcesStrings.Localizable.noBodyDescription
-            }
-        }
-        return texts
     }
 }
 
