@@ -76,9 +76,7 @@ struct MailTemplateListView: View {
         NavigationStack {
             List {
                 ForEach(templates) { template in
-                    NavigationLink {
-                        TemplatePreviewView(template: template, onTemplateSelected: onTemplateSelected)
-                    } label: {
+                    NavigationLink(value: template) {
                         VStack(alignment: .leading, spacing: IKPadding.micro) {
                             Text(template.displayName)
                                 .font(MailTextStyle.header2.font)
@@ -94,6 +92,12 @@ struct MailTemplateListView: View {
                 }
             }
             .listStyle(.plain)
+            .navigationDestination(for: MailTemplate.self) { template in
+                TemplatePreviewView(
+                    template: template,
+                    onTemplateSelected: onTemplateSelected
+                )
+            }
             .navigationTitle(MailResourcesStrings.Localizable.modelsTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
