@@ -55,11 +55,12 @@ struct EditorDesktopToolbarView: View {
     ]
 
     private var allItems: [[EditorToolbarAction]] {
-        var mainItems = [extras, textFormats, textItems]
-
+        var extras = extras
         if hasTemplates {
-            mainItems.append([.mailTemplate])
+            extras.insert(.mailTemplate, at: 0)
         }
+
+        var mainItems = [extras, textFormats, textItems]
 
         mailboxManager.featureFlagsManager.feature(.aiMailComposer, on: {
             mainItems.insert([.ai], at: 0)
