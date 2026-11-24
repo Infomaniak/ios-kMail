@@ -71,8 +71,14 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
     }
 
-    func mailTemplate(mailbox: Mailbox) async throws -> [MailTemplate] {
-        try await perform(request: authenticatedRequest(.template(mailbox: mailbox.hostingId, mailboxName: mailbox.mailbox)))
+    func mailTemplate(mailbox: Mailbox, page: Int) async throws -> ValidApiResponse<[MailTemplate]> {
+        try await perform(
+            request: authenticatedRequest(.template(
+                mailbox: mailbox.hostingId,
+                mailboxName: mailbox.mailbox,
+                page: page
+            ))
+        ).validApiResponse
     }
 
     @discardableResult

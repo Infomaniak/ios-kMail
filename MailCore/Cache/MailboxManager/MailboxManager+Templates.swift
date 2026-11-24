@@ -19,11 +19,35 @@
 import Foundation
 import RealmSwift
 
-// MARK: - Templates
+private enum TemplatePaginationError: Error {
+    case invalidPageInfo
+}
 
 public extension MailboxManager {
+    @MainActor
     func refreshTemplates() async throws {
-        let templates = try await apiFetcher.mailTemplate(mailbox: mailbox)
+        var templates: [MailTemplate] = []
+        var page = 0
+        var totalPages = 1
+
+        while page < totalPages {
+            try Task.checkCancellation()
+            page += 1
+            let response = try await apiFetcher.mailTemplate(mailbox: mailbox, page: page)
+
+            guard let currentPage = response.page,
+                  let pages = response.pages,
+                  currentPage == page,
+                  pages >= 0,
+                  currentPage <= max(pages, 1),
+                  pages != 0 || response.data.isEmpty else {
+                throw TemplatePaginationError.invalidPageInfo
+            }
+
+            templates.append(contentsOf: response.data)
+            totalPages = pages
+        }
+        try Task.checkCancellation()
 
         try? writeTransaction { writableRealm in
             writableRealm.delete(writableRealm.objects(MailTemplate.self))
