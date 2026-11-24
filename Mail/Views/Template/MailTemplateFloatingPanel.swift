@@ -92,6 +92,9 @@ struct MailTemplateListView: View {
                     }
                 }
             }
+            .refreshable {
+                await refreshTemplates()
+            }
             .listStyle(.plain)
             .navigationDestination(for: MailTemplate.self) { template in
                 TemplatePreviewView(
@@ -108,14 +111,18 @@ struct MailTemplateListView: View {
             }
         }
         .task {
-            do {
-                try await mailboxManager.refreshTemplates()
-            } catch {
-                guard !Task.isCancelled else { return }
-
-                @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
-            }
+            await refreshTemplates()
+        }
+    }
+    
+    private func refreshTemplates() async{
+        do {
+            try await mailboxManager.refreshTemplates()
+        } catch {
+            guard !Task.isCancelled else { return }
+            
+            @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
         }
     }
 }
