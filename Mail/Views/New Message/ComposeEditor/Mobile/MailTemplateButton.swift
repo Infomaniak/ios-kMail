@@ -29,10 +29,9 @@ struct MailTemplateButton: View {
         Button(action: action) {
             EditorToolbarAction.mailTemplate.icon.swiftUIImage
                 .iconSize(MobileToolbarButtonStyle.iconSize)
-                .padding(IKPadding.mini)
-                .foregroundStyle(MailTextStyle.body.color)
                 .accessibilityLabel(EditorToolbarAction.mailTemplate.accessibilityLabel)
         }
+        .buttonStyle(.mobileToolbar(isActivated: false))
     }
 }
 
