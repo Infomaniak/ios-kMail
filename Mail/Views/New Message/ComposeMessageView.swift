@@ -521,8 +521,8 @@ struct ComposeMessageView: View {
         do {
             let html = try await Self.cleanedHTML(from: template.content)
 
-            let result = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html))
-            guard result as? Bool == true else { return }
+            let didInsertHTML = try await webView.evaluateJavaScript(.insertHTMLAtCaret(html)) as? Bool
+            guard didInsertHTML as? Bool == true else { return }
 
             if let liveDraft = draft.thaw(), let realm = liveDraft.realm {
                 try? realm.write {
