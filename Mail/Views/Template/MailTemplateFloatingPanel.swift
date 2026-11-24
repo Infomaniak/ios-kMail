@@ -17,10 +17,7 @@
  */
 
 import DesignSystem
-import Foundation
 import IKSnackbar
-import InfomaniakCoreCommonUI
-import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -114,71 +111,6 @@ struct MailTemplateListView: View {
                 guard !Task.isCancelled else { return }
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
             }
-        }
-    }
-}
-
-struct TemplatePreviewView: View {
-    let template: MailTemplate
-    let onTemplateSelected: (MailTemplate) async -> Void
-
-    @State private var isSelectingTemplate = false
-
-    private let presentableBody: PresentableBody
-
-    init(template: MailTemplate, onTemplateSelected: @escaping (MailTemplate) async -> Void) {
-        self.template = template
-        self.onTemplateSelected = onTemplateSelected
-
-        let body = MailCore.Body()
-        body.value = template.content
-        body.type = .textHtml
-        presentableBody = PresentableBody(body: body, compactBody: template.content, quotes: [])
-    }
-
-    var body: some View {
-        List {
-            if !template.content.isEmpty {
-                MessageBodyContentView(
-                    displayContentBlockedActionView: .constant(false),
-                    initialContentLoading: .constant(false),
-                    presentableBody: presentableBody,
-                    blockRemoteContent: false,
-                    messageUid: "template_\(template.id)",
-                    messageTheme: .auto,
-                    mailboxAliases: []
-                )
-                .listRowSeparator(.hidden)
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-            }
-        }
-        .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .safeAreaInset(edge: .bottom) {
-            Button(MailResourcesStrings.Localizable.aiButtonInsert) {
-                selectTemplate()
-            }
-            .disabled(isSelectingTemplate)
-            .buttonStyle(.ikBorderedProminent)
-            .ikButtonFullWidth(true)
-            .controlSize(.large)
-            .padding(.horizontal, IKPadding.large)
-            .padding(.bottom, IKPadding.mini)
-        }
-        .navigationTitle(template.displayName)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func selectTemplate() {
-        guard !isSelectingTemplate else { return }
-        isSelectingTemplate = true
-
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .mailTemplateSheet, name: "insert")
-
-        Task {
-            await onTemplateSelected(template)
-            isSelectingTemplate = false
         }
     }
 }
