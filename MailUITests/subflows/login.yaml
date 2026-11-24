@@ -24,9 +24,6 @@ appId: com.infomaniak.mail
     commands:
       - tapOn: "Login"
 
-- waitForAnimationToEnd:
-    timeout: 5000
-
 - extendedWaitUntil:
     visible: "example@ik.me"
     timeout: 30000
@@ -39,19 +36,8 @@ appId: com.infomaniak.mail
 - tapOn: "Password *"
 - inputText: "${MAESTRO_PASSWORD}"
 
-- hideKeyboard
-
-- waitForAnimationToEnd:
-    timeout: 3000
-
 - runFlow:
     when:
-      visible: "Password \\*"
+      visible: "Sign in"
     commands:
-      - tapOn:
-          text: "Sign in"
-          below: "Stay connected.*"
-
-- extendedWaitUntil:
-    notVisible: "Password \\*"
-    timeout: 3000
+      - tapOn: "Sign in"

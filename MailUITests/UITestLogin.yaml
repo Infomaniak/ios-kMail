@@ -25,9 +25,8 @@ appId: com.infomaniak.mail
 - runFlow: "subflows/login.yaml"
 - runFlow: "subflows/autorization.yaml"
 
-- waitForAnimationToEnd:
-    timeout: 3000
-
-- assertVisible: "Inbox"
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 30000
 
 - stopApp

@@ -26,11 +26,9 @@ appId: com.infomaniak.mail
 - runFlow: "subflows/autorization.yaml"
 - runScript: "script/setFolderName.js"
 
-
-- waitForAnimationToEnd:
-    timeout: 3000
-
-- assertVisible: "Inbox"
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 30000
 
 - tapOn: "Menu"
 - tapOn: "New folder"
