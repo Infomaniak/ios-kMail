@@ -88,7 +88,7 @@ struct MailTemplateListView: View {
                                 .foregroundStyle(MailTextStyle.header2.color)
 
                             if !template.preview.isEmpty {
-                                Text(SwiftSoupUtils.decodeHTMLEntities(template.preview))
+                                Text(template.preview)
                                     .font(MailTextStyle.bodyMediumTertiary.font)
                                     .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
                                     .lineLimit(1)
