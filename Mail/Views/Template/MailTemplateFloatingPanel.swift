@@ -81,12 +81,14 @@ struct MailTemplateListView: View {
                                 .font(MailTextStyle.header2.font)
                                 .foregroundStyle(MailTextStyle.header2.color)
 
-                            Text(!template.preview.isEmpty
-                                ? template.preview
-                                : MailResourcesStrings.Localizable.noBodyDescription)
-                                .font(MailTextStyle.bodyMediumTertiary.font)
-                                .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
-                                .lineLimit(1)
+                            Text(
+                                template.preview.isEmpty
+                                    ? MailResourcesStrings.Localizable.noBodyDescription
+                                    : template.preview
+                            )
+                            .font(MailTextStyle.bodyMediumTertiary.font)
+                            .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
+                            .lineLimit(1)
                         }
                         .padding(.vertical, IKPadding.micro)
                     }
@@ -114,13 +116,13 @@ struct MailTemplateListView: View {
             await refreshTemplates()
         }
     }
-    
-    private func refreshTemplates() async{
+
+    private func refreshTemplates() async {
         do {
             try await mailboxManager.refreshTemplates()
         } catch {
             guard !Task.isCancelled else { return }
-            
+
             @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
         }
