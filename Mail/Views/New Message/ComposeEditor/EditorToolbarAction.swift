@@ -74,7 +74,7 @@ enum EditorToolbarAction: Identifiable {
         case .encryption:
             return MailResourcesAsset.lockSquare
         case .mailTemplate:
-            return MailResourcesAsset.models
+            return MailResourcesAsset.paperPencil
         }
     }
 
