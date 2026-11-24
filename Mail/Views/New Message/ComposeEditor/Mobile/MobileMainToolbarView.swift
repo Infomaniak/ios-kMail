@@ -42,12 +42,12 @@ struct MobileMainToolbarView: View {
     private var leadingActions: [EditorToolbarAction] {
         var availableOptions: [EditorToolbarAction] = [.editText, .addAttachment]
 
-        if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer) {
-            availableOptions.append(.ai)
-        }
-
         if hasTemplates {
             availableOptions.append(.mailTemplate)
+        }
+
+        if mailboxManager.featureFlagsManager.isEnabled(.aiMailComposer) {
+            availableOptions.append(.ai)
         }
 
         return availableOptions
