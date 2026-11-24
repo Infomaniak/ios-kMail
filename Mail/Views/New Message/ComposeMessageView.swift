@@ -182,7 +182,6 @@ struct ComposeMessageView: View {
         ))
 
         self.mailboxManager = mailboxManager
-        _templates = ObservedResults(MailTemplate.self, configuration: mailboxManager.realmConfiguration)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
