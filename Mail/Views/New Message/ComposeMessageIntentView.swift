@@ -68,6 +68,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                         .navigationBarTitleDisplayMode(.inline)
                         .environmentObject(resolvedIntent.mailboxManager)
                         .environmentObject(resolvedIntent.mainViewState)
+                        .environment(\.realmConfiguration, resolvedIntent.mailboxManager.realmConfiguration)
                         .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.currentUser))
                     } else {
                         ComposeMessageProgressView()
