@@ -59,7 +59,6 @@ struct MailTemplateFloatingPanelModifier: ViewModifier {
 
 struct MailTemplateListView: View {
     @Environment(\.dismiss) private var dismiss
-    @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @ObservedResults(MailTemplate.self) private var templates
 
@@ -111,6 +110,8 @@ struct MailTemplateListView: View {
                 try await mailboxManager.refreshTemplates()
             } catch {
                 guard !Task.isCancelled else { return }
+                
+                @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
             }
         }
