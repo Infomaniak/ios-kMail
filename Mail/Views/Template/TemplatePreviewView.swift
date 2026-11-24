@@ -43,7 +43,7 @@ struct TemplatePreviewView: View {
     }
 
     var body: some View {
-        List {
+        ScrollView {
             if !template.content.isEmpty {
                 MessageBodyContentView(
                     displayContentBlockedActionView: .constant(false),
@@ -54,11 +54,8 @@ struct TemplatePreviewView: View {
                     messageTheme: .auto,
                     mailboxAliases: []
                 )
-                .listRowSeparator(.hidden)
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
             }
         }
-        .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.aiButtonInsert) {
@@ -72,7 +69,6 @@ struct TemplatePreviewView: View {
             .padding(.bottom, IKPadding.mini)
         }
         .navigationTitle(template.displayName)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func selectTemplate() {
