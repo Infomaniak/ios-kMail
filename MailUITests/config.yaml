@@ -38,4 +38,4 @@ executionOrder:
   continueOnFailure: false
   flowsOrder:
     - UITestLogin
-    
+    - UITestCreateFolder
