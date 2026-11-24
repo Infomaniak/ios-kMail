@@ -81,7 +81,9 @@ struct MailTemplateListView: View {
                                 .font(MailTextStyle.header2.font)
                                 .foregroundStyle(MailTextStyle.header2.color)
 
-                            Text(!template.preview.isEmpty ? template.preview : MailResourcesStrings.Localizable.noBodyDescription)
+                            Text(!template.preview.isEmpty
+                                ? template.preview
+                                : MailResourcesStrings.Localizable.noBodyDescription)
                                 .font(MailTextStyle.bodyMediumTertiary.font)
                                 .foregroundStyle(MailTextStyle.bodyMediumTertiary.color)
                                 .lineLimit(1)
@@ -110,7 +112,7 @@ struct MailTemplateListView: View {
                 try await mailboxManager.refreshTemplates()
             } catch {
                 guard !Task.isCancelled else { return }
-                
+
                 @LazyInjectService var snackbarPresenter: IKSnackBarPresentable
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.unableLoadTemplate)
             }
