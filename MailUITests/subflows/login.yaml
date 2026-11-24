@@ -1,0 +1,57 @@
+#
+# Infomaniak SwissTransfer - iOS App
+# Copyright (C) 2026 Infomaniak Network SA
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+appId: com.infomaniak.mail
+---
+- runFlow:
+    when:
+      visible: "Login"
+    commands:
+      - tapOn: "Login"
+
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- extendedWaitUntil:
+    visible: "example@ik.me"
+    timeout: 30000
+- tapOn: "example@ik.me"
+- inputText: "${MAESTRO_USER}"
+
+- extendedWaitUntil:
+    visible: "Password *"
+    timeout: 30000
+- tapOn: "Password *"
+- inputText: "${MAESTRO_PASSWORD}"
+
+- hideKeyboard
+
+- waitForAnimationToEnd:
+    timeout: 3000
+
+- runFlow:
+    when:
+      visible: "Password \\*"
+    commands:
+      - tapOn:
+          text: "Sign in"
+          below: "Stay connected.*"
+
+- extendedWaitUntil:
+    notVisible: "Password \\*"
+    timeout: 3000
