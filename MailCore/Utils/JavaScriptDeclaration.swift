@@ -35,42 +35,41 @@ public enum UserScript: String {
 }
 
 public enum JavaScriptDeclaration {
-    case normalizeMessageWidth(CGFloat, String)
+    case normalizeMessage(
+        width: CGFloat,
+        messageUid: String,
+        contentSize: CGFloat,
+        scaleCompensation: CGFloat,
+        shouldRemoveAllProperties: Bool
+    )
     case removeAllProperties
-    case documentReadyState
     case insertMention(String, String, String)
-    case setScaleCompensation(CGFloat)
-    case setContentSize(CGFloat)
 
     public var functionBody: String {
         switch self {
-        case .normalizeMessageWidth:
-            return "normalizeMessageWidth(width, messageUid);"
+        case .normalizeMessage:
+            return "return normalizeMessage(width, messageUid, contentSize, scaleCompensation, shouldRemoveAllProperties);"
         case .removeAllProperties:
             return "removeAllProperties();"
-        case .documentReadyState:
-            return "return document.readyState;"
         case .insertMention:
             return "insertMention(email, name, query);"
-        case .setScaleCompensation:
-            return "setScaleCompensation(factor);"
-        case .setContentSize:
-            return "setContentSize(size);"
         }
     }
 
     public var arguments: [String: Any] {
         switch self {
-        case .normalizeMessageWidth(let width, let messageUid):
-            return ["width": Double(width), "messageUid": messageUid]
-        case .removeAllProperties, .documentReadyState:
+        case .normalizeMessage(let width, let messageUid, let contentSize, let scaleCompensation, let shouldRemove):
+            return [
+                "width": Double(width),
+                "messageUid": messageUid,
+                "contentSize": Double(contentSize),
+                "scaleCompensation": Double(scaleCompensation),
+                "shouldRemoveAllProperties": shouldRemove
+            ]
+        case .removeAllProperties:
             return [:]
         case .insertMention(let email, let name, let query):
             return ["email": email, "name": name, "query": query]
-        case .setScaleCompensation(let factor):
-            return ["factor": Double(factor)]
-        case .setContentSize(let size):
-            return ["size": Double(size)]
         }
     }
 }

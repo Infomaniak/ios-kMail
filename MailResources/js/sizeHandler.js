@@ -19,6 +19,7 @@
 // We need to call the function as quickly as possible to obtain the webview size
 document.addEventListener('DOMContentLoaded', () => {
     listenToSizeChanges();
+    window.webkit.messageHandlers.documentReady.postMessage(true);
 });
 
 function listenToSizeChanges() {

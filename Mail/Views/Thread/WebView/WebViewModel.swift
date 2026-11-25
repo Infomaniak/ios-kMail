@@ -31,6 +31,8 @@ final class WebViewModel: NSObject, ObservableObject {
 
     @Published var tappedMention: TappedMention?
 
+    let documentReady = PassthroughSubject<Void, Never>()
+
     /// Only true the first time the content loads, then false. Eg. when loading subsequent images.
     @Published var initialContentLoading = true
     private var contentLoadingSubscriber: AnyCancellable?

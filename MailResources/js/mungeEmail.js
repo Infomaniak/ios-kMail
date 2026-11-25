@@ -65,6 +65,23 @@ function setContentSize(size) {
 }
 
 /**
+ * Apply the display preferences then normalize the width of the mail displayed
+ * @param width Width of the webview
+ * @param messageUid Id of the displayed mail
+ * @param contentSize Base font size, ignored if <= 0
+ * @param scaleCompensation Text scaling compensation factor, ignored if <= 0
+ * @param shouldRemoveAllProperties Remove the CSS properties breaking the layout before normalizing
+ */
+function normalizeMessage(width, messageUid, contentSize, scaleCompensation, shouldRemoveAllProperties) {
+    if (shouldRemoveAllProperties) {
+        removeAllProperties();
+    }
+    setScaleCompensation(scaleCompensation);
+    setContentSize(contentSize);
+    return normalizeMessageWidth(width, messageUid);
+}
+
+/**
  * Normalize the width of the mail displayed
  * @param webViewWidth Width of the webview
  * @param messageUid Id of the displayed mail
