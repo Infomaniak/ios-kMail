@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Nombre de la carpeta";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Hemos mejorado la forma en que se muestran tus correos electrónicos para que la lectura resulte más cómoda. Puedes desactivar esta función en Ajustes > Apariencia > Tema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Modo oscuro mejorado";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Elige una fecha y hora";
 

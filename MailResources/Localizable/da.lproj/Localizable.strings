@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Navn på mappen";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Vi har forbedret visningen af dine e-mails for at give dig en mere behagelig læseoplevelse. Du kan deaktivere denne funktion under Indstillinger > Udseende > Tema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Forbedret mørk tilstand";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Vælg en dato og et tidspunkt";
 

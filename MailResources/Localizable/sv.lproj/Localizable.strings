@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Mappens namn";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Vi har förbättrat hur dina e-postmeddelanden visas för att ge dig en bekvämare läsupplevelse. Du kan stänga av den här funktionen under Inställningar > Utseende > Tema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Förbättrat mörkt läge";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Välj datum och tid";
 

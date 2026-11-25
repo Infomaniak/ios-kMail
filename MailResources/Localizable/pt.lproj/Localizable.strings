@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Nome da pasta";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Melhorámos a forma como os seus e-mails são apresentados, para uma experiência de leitura mais confortável. Pode desativar esta funcionalidade em Definições > Aparência > Tema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Modo Escuro melhorado";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Escolher uma data e hora";
 
