@@ -31,6 +31,7 @@ final class WebViewController: UIViewController {
 
     private let widthSubject = PassthroughSubject<Double, Never>()
     private var widthSubscriber: AnyCancellable?
+    private var normalizeTask: Task<Void, Never>?
 
     private var hasFinishedLoading = false
 
@@ -75,9 +76,13 @@ final class WebViewController: UIViewController {
 
         widthSubscriber = widthSubject
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .removeDuplicates()
             .sink { [weak self] newWidth in
-                Task {
-                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
+                guard let self else { return }
+
+                normalizeTask?.cancel()
+                normalizeTask = Task {
+                    try? await self.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
                 }
             }
     }
@@ -121,10 +126,12 @@ final class WebViewController: UIViewController {
         #if targetEnvironment(macCatalyst)
         let scaleCompensation = 100.0 / 77.0
         try await webView.evaluateJavaScript(.setScaleCompensation(scaleCompensation))
+        try Task.checkCancellation()
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
         #else
         let font = UIFont.preferredFont(forTextStyle: .body)
         try await webView.evaluateJavaScript(.setContentSize(font.pointSize))
+        try Task.checkCancellation()
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
         #endif
     }
