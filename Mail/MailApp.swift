@@ -19,6 +19,7 @@
 import InfomaniakDI
 import MailCore
 import OSLog
+import TipKit
 import SwiftUI
 import UIKit
 
@@ -35,6 +36,14 @@ struct MailApp: App {
         Logging.resetAppForUITestsIfNeeded()
         Logger.general.info("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         refreshAppBackgroundTask.register()
+        
+        if #available(iOS 17.0, *) {
+            do {
+                try Tips.configure()
+            } catch {
+                Logger.general.error("TipKit configuration failed: \(error.localizedDescription)")
+            }
+        }
     }
 
     var body: some Scene {

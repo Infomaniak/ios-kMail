@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import TipKit
 import MailCoreUI
 import MailResources
 import Nuke
@@ -32,6 +33,7 @@ struct MessageBodyContentView: View {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -46,6 +48,7 @@ struct MessageBodyContentView: View {
     private let presentableBody: PresentableBody?
     private let blockRemoteContent: Bool
     private let messageUid: String
+    private let messageTheme: MessageTheme
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
@@ -63,6 +66,7 @@ struct MessageBodyContentView: View {
         self.presentableBody = presentableBody
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
+        self.messageTheme = messageTheme
 
         _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, aliases: mailboxAliases))
     }
@@ -71,6 +75,13 @@ struct MessageBodyContentView: View {
         ZStack {
             VStack {
                 if let presentableBody, presentableBody.body != nil {
+                    if #available(iOS 17.0, *),
+                       colorScheme == .dark,
+                       !model.initialContentLoading,
+                       case .auto = messageTheme {
+                        TipView(MailDarkModeTip())
+                    }
+                    
                     WebView(
                         webView: model.webView,
                         messageUid: messageUid,
