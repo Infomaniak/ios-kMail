@@ -101,13 +101,13 @@ struct ThreadListCell: View {
         if multipleSelectionViewModel.isEnabled {
             multipleSelectionViewModel.toggleSelection(of: thread)
         } else {
-            if thread.shouldPresentAsDraft {
+            if thread.shouldPresentAsDraft && !thread.hasDraftsSending {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
                     composeMessageIntent: $mainViewState.composeMessageIntent
                 )
-            } else {
+            } else if !thread.shouldPresentAsDraft {
                 splitViewManager.adaptToProminentThreadView()
 
                 viewModel.onTapCell(thread: thread)
