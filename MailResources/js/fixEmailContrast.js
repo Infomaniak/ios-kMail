@@ -489,8 +489,8 @@ function applyEmailDarkModeContrast() {
 
     const textColorChanges = collectEmailTextColorChanges(getStyleForElement, result);
 
-    for (const { element, color } of textColorChanges) {
-        applyTrackedEmailTextColor(element, color);
+    for (const { element, color, shouldApplyTextFillColor } of textColorChanges) {
+        applyTrackedEmailTextColor(element, color, shouldApplyTextFillColor);
         result.corrected++;
     }
 
@@ -529,15 +529,17 @@ function getOpaqueTextAndBackgroundRgb(element, getStyleForElement) {
 
     if (computedStyle.visibility !== "visible") { return null; }
 
-    const textColorString = computedStyle.getPropertyValue("-webkit-text-fill-color") || computedStyle.color;
-    const textColor = parseCommaSeparatedRgbColor(textColorString);
+    const computedColor = computedStyle.color;
+    const computedTextFillColor = computedStyle.getPropertyValue("-webkit-text-fill-color") || computedColor;
+    const textColor = parseCommaSeparatedRgbColor(computedTextFillColor);
     const backgroundRgb = findOpaqueBackgroundRgb(element, getStyleForElement);
 
     if (!textColor || textColor.alpha !== 1 || !backgroundRgb) { return null; }
 
     return {
         foregroundRgb: textColor.rgb,
-        backgroundRgb
+        backgroundRgb,
+        shouldApplyTextFillColor: computedTextFillColor !== computedColor
     };
 }
 
@@ -568,26 +570,21 @@ function collectEmailTextColorChanges(getStyleForElement, result) {
 
         textColorChanges.push({
             element,
-            color: `rgb(${correctedRgb.join(", ")})`
+            color: `rgb(${correctedRgb.join(", ")})`,
+            shouldApplyTextFillColor: textAndBackgroundRgb.shouldApplyTextFillColor
         });
     }
 
     return textColorChanges;
 }
 
-function applyTrackedEmailTextColor(element, color) {
-    const savedProperties = TEXT_COLOR_PROPERTIES.map(propertyName => {
-        const savedProperty = {
-            name: propertyName,
-            value: element.style.getPropertyValue(propertyName),
-            priority: element.style.getPropertyPriority(propertyName),
-            appliedValue: color
-        };
-
-        element.style.setProperty(propertyName, color, "important");
-
-        return savedProperty;
-    });
+function applyTrackedEmailTextColor(element, color, shouldApplyTextFillColor) {
+    const savedProperties = [
+        createTrackedTextProperty(element, "color", color),
+        ...(shouldApplyTextFillColor
+            ? [createTrackedTextProperty(element, "-webkit-text-fill-color", color)]
+            : [])
+    ];
 
     const previouslySavedProperties = emailContrastStyleHistory.get(element) || [];
 
@@ -595,4 +592,17 @@ function applyTrackedEmailTextColor(element, color) {
         ...previouslySavedProperties,
         ...savedProperties
     ]);
+}
+
+function createTrackedTextProperty(element, propertyName, color) {
+    const savedProperty = {
+        name: propertyName,
+        value: element.style.getPropertyValue(propertyName),
+        priority: element.style.getPropertyPriority(propertyName),
+        appliedValue: color
+    };
+
+    element.style.setProperty(propertyName, color, "important");
+
+    return savedProperty;
 }
