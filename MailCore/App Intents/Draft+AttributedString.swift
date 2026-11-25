@@ -17,51 +17,26 @@
  */
 
 import Foundation
+import SwiftSoup
 
 extension AttributedString {
-    init?(body: Body?) {
+    static func bodyToIndexableAttributedString(body: Body?) -> AttributedString? {
         guard let body, let value = body.value else { return nil }
         switch body.type {
         case .textPlain:
-            self = AttributedString(value)
+            return AttributedString(value)
         case .textHtml, nil:
-            guard let htmlAttributedString = AttributedString(htmlString: value, shouldSanitize: false) else {
-                return nil
-            }
-
-            self = htmlAttributedString
+            return htmlBodyToIndexableAttributedString(htmlBody: value)
         }
     }
 
-    init?(htmlString: String, shouldSanitize: Bool) {
-        if shouldSanitize {
-            guard let document = try? SwiftSoupUtils(fromHTML: htmlString).syncCleanBody(),
-                  let body = document.body(),
-                  let sanitizedHTML = try? body.outerHtml()
-            else {
-                return nil
-            }
-            self.init(htmlString: sanitizedHTML)
-        } else {
-            self.init(htmlString: htmlString)
-        }
-    }
-
-    private init?(htmlString: String) {
-        let data = Data(htmlString.utf8)
-
-        guard let attributedString = try? NSAttributedString(
-            data: data,
-            options: [
-                .documentType: NSAttributedString.DocumentType.html,
-                .characterEncoding: String.Encoding.utf8.rawValue
-            ],
-            documentAttributes: nil
-        ) else {
+    static func htmlBodyToIndexableAttributedString(htmlBody: String) -> AttributedString? {
+        // No cleaning needed: text() only collects text nodes, script and style contents are data nodes.
+        guard let body = try? SwiftSoup.parse(htmlBody).body(),
+              let bodyText = try? body.text() else {
             return nil
         }
-
-        self.init(attributedString)
+        return AttributedString(bodyText)
     }
 
     var htmlString: String? {
