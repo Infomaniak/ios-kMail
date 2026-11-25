@@ -21,14 +21,17 @@ import Foundation
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct TemplatePreviewView: View {
-    let template: MailTemplate
-    let onTemplateSelected: (MailTemplate) async -> Void
+    @Environment(\.dismiss) private var dismiss
 
     @State private var isSelectingTemplate = false
+
+    let template: MailTemplate
+    let onTemplateSelected: (MailTemplate) async -> Void
 
     private let presentableBody: PresentableBody
 
@@ -56,6 +59,7 @@ struct TemplatePreviewView: View {
                 )
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.aiButtonInsert) {

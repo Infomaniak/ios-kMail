@@ -92,12 +92,15 @@ struct MailTemplateListView: View {
                         }
                         .padding(.vertical, IKPadding.micro)
                     }
+                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
                 }
             }
             .refreshable {
                 await refreshTemplates()
             }
             .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .navigationDestination(for: MailTemplate.self) { template in
                 TemplatePreviewView(
                     template: template,
@@ -107,7 +110,7 @@ struct MailTemplateListView: View {
             .navigationTitle(MailResourcesStrings.Localizable.modelsTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     ToolbarCloseButton(dismissAction: dismiss)
                 }
             }

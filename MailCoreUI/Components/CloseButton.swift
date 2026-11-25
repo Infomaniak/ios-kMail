@@ -34,7 +34,7 @@ public struct ToolbarCloseButton: View {
 
     public var body: some View {
         if #available(iOS 26.0, *) {
-            Button(role: .cancel, action: dismissHandler)
+            Button(role: .close, action: dismissHandler)
                 .keyboardShortcut(.cancelAction)
         } else {
             Button(action: dismissHandler) {
