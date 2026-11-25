@@ -26,8 +26,6 @@ import MailResources
 import SwiftUI
 
 struct TemplatePreviewView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var isSelectingTemplate = false
 
     let template: MailTemplate
