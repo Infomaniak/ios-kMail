@@ -118,8 +118,4 @@ public extension SwiftSoupUtils {
     enum SwiftSoupError: Error {
         case elementNotFound
     }
-
-    static func decodeHTMLEntities(_ string: String) -> String {
-        (try? Parser.unescapeEntities(string, false)) ?? string
-    }
 }
