@@ -27,6 +27,7 @@ final class WebViewController: UIViewController {
     let messageUid: String
     let openURL: OpenURLAction
     let webView: WKWebView
+    let isEmailContrastEnabled: Bool
     let onWebKitProcessTerminated: (() -> Void)?
 
     private let documentReady: AnyPublisher<Void, Never>
@@ -60,12 +61,14 @@ final class WebViewController: UIViewController {
         openURL: OpenURLAction,
         webView: WKWebView,
         documentReady: AnyPublisher<Void, Never>,
+        isEmailContrastEnabled: Bool,
         onWebKitProcessTerminated: (() -> Void)?
     ) {
         self.messageUid = messageUid
         self.openURL = openURL
         self.webView = webView
         self.documentReady = documentReady
+        self.isEmailContrastEnabled = isEmailContrastEnabled
         self.onWebKitProcessTerminated = onWebKitProcessTerminated
 
         super.init(nibName: nil, bundle: nil)
@@ -103,6 +106,19 @@ final class WebViewController: UIViewController {
             .sink { [weak self] in
                 self?.handleContentLoaded()
             }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle,
+              isDocumentReady else {
+            return
+        }
+
+        Task { @MainActor in
+            try? await applyEmailContrastIfNeeded()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -161,7 +177,7 @@ final class WebViewController: UIViewController {
         #endif
 
         normalizeTask?.cancel()
-        normalizeTask = Task { [webView, messageUid] in
+        normalizeTask = Task { [weak self, webView, messageUid] in
             _ = try? await webView.evaluateJavaScript(.normalizeMessage(
                 width: width,
                 messageUid: messageUid,
@@ -169,7 +185,15 @@ final class WebViewController: UIViewController {
                 scaleCompensation: scaleCompensation,
                 shouldRemoveAllProperties: shouldRemoveAllProperties
             ))
+            if shouldRemoveAllProperties {
+                try? await self?.applyEmailContrastIfNeeded()
+            }
         }
+    }
+
+    private func applyEmailContrastIfNeeded() async throws {
+        guard isEmailContrastEnabled else { return }
+        try await webView.evaluateJavaScript(.applyEmailDarkModeContrast)
     }
 
     func presentMentionMenuIfNeeded(_ content: MentionMenuContent) {
@@ -330,6 +354,7 @@ struct WebView: UIViewControllerRepresentable {
     let webView: WKWebView
     let messageUid: String
     let documentReady: AnyPublisher<Void, Never>
+    let isEmailContrastEnabled: Bool
 
     @Binding var mentionMenuContent: MentionMenuContent?
 
@@ -341,6 +366,7 @@ struct WebView: UIViewControllerRepresentable {
             openURL: openURL,
             webView: webView,
             documentReady: documentReady,
+            isEmailContrastEnabled: isEmailContrastEnabled,
             onWebKitProcessTerminated: onWebKitProcessTerminated
         )
     }

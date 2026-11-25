@@ -40,8 +40,12 @@ final class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
-    var theme: MessageTheme = .auto
-    var aliases: [String] = []
+    let theme: MessageTheme
+    let aliases: [String]
+
+    var isEmailContrastEnabled: Bool {
+        theme == .auto
+    }
 
     lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme, aliases: aliases))
 
@@ -64,13 +68,10 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorParsingBody
     }
 
-    convenience init(theme: MessageTheme, aliases: [String]) {
-        self.init()
+    init(theme: MessageTheme, aliases: [String]) {
         self.theme = theme
         self.aliases = aliases
-    }
 
-    override init() {
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
@@ -131,6 +132,9 @@ final class WebViewModel: NSObject, ObservableObject {
         #if DEBUG
         scripts.insert(.captureLog, at: 0)
         #endif
+        if isEmailContrastEnabled {
+            scripts.append(.fixEmailContrast)
+        }
 
         for script in scripts {
             webView.loadUserScript(script)

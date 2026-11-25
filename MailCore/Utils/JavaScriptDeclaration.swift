@@ -24,6 +24,7 @@ public enum UserScript: String {
     case javaScriptBridge
     case sizeHandler
     case fixEmailStyle
+    case fixEmailContrast
     case captureLog
     case observeInlineAttachmentsDeletion
     case observeMention
@@ -46,6 +47,7 @@ public enum JavaScriptDeclaration {
     case removeAllProperties
     case insertMention(String, String, String)
     case insertHTMLAtCaret(String)
+    case applyEmailDarkModeContrast
 
     public var functionBody: String {
         switch self {
@@ -57,6 +59,8 @@ public enum JavaScriptDeclaration {
             return "insertMention(email, name, query);"
         case .insertHTMLAtCaret:
             return "return insertHTMLAtCaret(html);"
+        case .applyEmailDarkModeContrast:
+            return "applyEmailDarkModeContrast();"
         }
     }
 
@@ -70,7 +74,7 @@ public enum JavaScriptDeclaration {
                 "scaleCompensation": Double(scaleCompensation),
                 "shouldRemoveAllProperties": shouldRemove
             ]
-        case .removeAllProperties:
+        case .removeAllProperties, .applyEmailDarkModeContrast:
             return [:]
         case .insertMention(let email, let name, let query):
             return ["email": email, "name": name, "query": query]
