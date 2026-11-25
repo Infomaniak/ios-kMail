@@ -36,7 +36,7 @@ struct MessageBodyView: View {
     let messageUid: String
 
     private var messageTheme: MessageTheme {
-        if UserDefaults.shared.shouldAdaptMailToDarkMode && !threadViewState.forcedLightModes.contains(messageUid) {
+        if UserDefaults.shared.isMailDarkModeEnabled && !threadViewState.forcedLightModes.contains(messageUid) {
             .auto
         } else {
             .light
