@@ -19,8 +19,8 @@
 import InfomaniakDI
 import MailCore
 import OSLog
-import TipKit
 import SwiftUI
+import TipKit
 import UIKit
 
 @main
@@ -36,7 +36,7 @@ struct MailApp: App {
         Logging.resetAppForUITestsIfNeeded()
         Logger.general.info("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         refreshAppBackgroundTask.register()
-        
+
         if #available(iOS 17.0, *) {
             do {
                 try Tips.configure()

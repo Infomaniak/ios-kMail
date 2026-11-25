@@ -368,7 +368,7 @@ public extension UserDefaults {
             set(newValue.timeIntervalSince1970, forKey: key(.lastCustomSnoozeDate))
         }
     }
-    
+
     var isMailDarkModeEnabled: Bool {
         get {
             if object(forKey: key(.isMailDarkModeEnabled)) == nil {

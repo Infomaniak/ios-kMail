@@ -16,18 +16,19 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
-import TipKit
 import MailCoreUI
 import MailResources
 import Nuke
 import RealmSwift
 import SwiftSoup
 import SwiftUI
+import TipKit
 
 struct MessageBodyContentView: View {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
@@ -74,14 +75,15 @@ struct MessageBodyContentView: View {
     var body: some View {
         ZStack {
             VStack {
+                if #available(iOS 17.0, *),
+                   colorScheme == .dark,
+                   !model.initialContentLoading,
+                   case .auto = messageTheme {
+                    TipView(MailDarkModeTip())
+                        .padding(.bottom, IKPadding.micro)
+                }
+
                 if let presentableBody, presentableBody.body != nil {
-                    if #available(iOS 17.0, *),
-                       colorScheme == .dark,
-                       !model.initialContentLoading,
-                       case .auto = messageTheme {
-                        TipView(MailDarkModeTip())
-                    }
-                    
                     WebView(
                         webView: model.webView,
                         messageUid: messageUid,
