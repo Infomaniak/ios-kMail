@@ -37,15 +37,15 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var initialContentLoading = true
     private var contentLoadingSubscriber: AnyCancellable?
 
-    private(set) var isEmailContrastEnabled = false
-
-    static let contrastContentWorld = WKContentWorld.world(name: "kMailEmailContrast")
-
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
-    var theme: MessageTheme = .auto
-    var aliases: [String] = []
+    let theme: MessageTheme
+    let aliases: [String]
+
+    var isEmailContrastEnabled: Bool {
+        theme == .auto
+    }
 
     lazy var style = MessageWebViewUtils.loadAndFormatCSS(for: .message(theme: theme, aliases: aliases))
 
@@ -68,15 +68,10 @@ final class WebViewModel: NSObject, ObservableObject {
         case errorParsingBody
     }
 
-    convenience init(theme: MessageTheme, aliases: [String]) {
-        self.init()
+    init(theme: MessageTheme, aliases: [String]) {
         self.theme = theme
         self.aliases = aliases
 
-        loadContrastScript()
-    }
-
-    override init() {
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
@@ -109,28 +104,6 @@ final class WebViewModel: NSObject, ObservableObject {
         return loadResult
     }
 
-    private func loadContrastScript() {
-        guard theme == .auto else { return }
-
-        guard let source = MailResourcesResources.bundle.load(
-            filename: "fixEmailContrast",
-            withExtension: "js"
-        ) else {
-            SentrySDK.capture(message: "Unable to load fixEmailContrast.js")
-            return
-        }
-
-        let script = WKUserScript(
-            source: source,
-            injectionTime: .atDocumentEnd,
-            forMainFrameOnly: true,
-            in: Self.contrastContentWorld
-        )
-
-        webView.configuration.userContentController.addUserScript(script)
-        isEmailContrastEnabled = true
-    }
-
     private func formatSubBodyContent(subBodies: List<SubBody>) -> String {
         let subBodiesContent = subBodies.reduce("") {
             var partialResult = $0
@@ -159,6 +132,9 @@ final class WebViewModel: NSObject, ObservableObject {
         #if DEBUG
         scripts.insert(.captureLog, at: 0)
         #endif
+        if isEmailContrastEnabled {
+            scripts.append(.fixEmailContrast)
+        }
 
         for script in scripts {
             webView.loadUserScript(script)

@@ -20,7 +20,6 @@ import Combine
 import InfomaniakDI
 import MailCore
 import MailResources
-import Sentry
 import SwiftUI
 import WebKit
 
@@ -118,11 +117,7 @@ final class WebViewController: UIViewController {
         }
 
         Task { @MainActor in
-            do {
-                try await applyEmailContrastIfNeeded()
-            } catch {
-                SentrySDK.capture(error: error)
-            }
+            try? await applyEmailContrastIfNeeded()
         }
     }
 
@@ -198,12 +193,7 @@ final class WebViewController: UIViewController {
 
     private func applyEmailContrastIfNeeded() async throws {
         guard isEmailContrastEnabled else { return }
-
-        try await webView.evaluateJavaScript(
-            "applyEmailDarkModeContrast()",
-            in: nil,
-            in: WebViewModel.contrastContentWorld
-        )
+        try await webView.evaluateJavaScript(.applyEmailDarkModeContrast)
     }
 
     func presentMentionMenuIfNeeded(_ content: MentionMenuContent) {
