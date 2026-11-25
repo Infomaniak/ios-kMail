@@ -16,17 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 import TipKit
 
 @available(iOS 17.0, *)
 struct MailDarkModeTip: Tip {
     var title: Text {
-        Text(verbatim: "Vos mails en mode sombre")
+        Text(verbatim: MailResourcesStrings.Localizable.darkModeTipKitTitle)
     }
 
     var message: Text? {
-        Text(verbatim: "Vous pouvez désactiver le mode sombre des mails dans Paramètres > Apparence > Thème.")
+        Text(verbatim: MailResourcesStrings.Localizable.darkModeTipKitDescription)
     }
 
     var image: Image? {
