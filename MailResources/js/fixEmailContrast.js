@@ -43,7 +43,7 @@ const RELATIVE_LUMINANCE_WEIGHTS = {
 const CONTRAST_LUMINANCE_OFFSET = 0.05;
 
 const TEXT_CONTRAST_SETTINGS = {
-    preferredContrastRatio: 7,
+    preferredContrastRatio: 4.5,
     darkBackgroundMaxLuminance: 0.1,
     minimumLightTextLuminance: 0.65,
     binarySearchIterations: 24
@@ -183,10 +183,7 @@ function lightenTextForDarkBackground(
 
     const targetTextLuminance = Math.min(
         LINEAR_WHITE_CHANNEL,
-        Math.max(
-            TEXT_CONTRAST_SETTINGS.minimumLightTextLuminance,
-            requiredTextLuminance
-        )
+        requiredTextLuminance
     );
 
     if (foregroundLuminance >= targetTextLuminance) { return null; }
