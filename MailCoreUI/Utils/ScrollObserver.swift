@@ -42,8 +42,8 @@ public final class ScrollObserver: ObservableObject {
 
         subscriber = scrollView.publisher(for: \.contentOffset)
             .throttle(for: .milliseconds(100), scheduler: DispatchQueue.main, latest: true)
-            .sink { newValue in
-                self.scrollViewDidScroll(offset: newValue.y)
+            .sink { [weak self] newValue in
+                self?.scrollViewDidScroll(offset: newValue.y)
             }
         self.scrollView = scrollView
     }
