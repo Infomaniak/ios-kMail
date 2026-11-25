@@ -16,8 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# LIST OF TESTS : 
-# - testMoveAction
+# LIST OF TESTS :
 # - testSaveMessage
 # - testSearchBar
 # - testSendMessageToDraftWithAttachment
@@ -38,3 +37,4 @@ executionOrder:
     - UITestDisplayThread
     - UITestSwitchFolder
     - UITestSearchBar
+    - UITestMoveAction
