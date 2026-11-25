@@ -85,6 +85,8 @@ final class WebViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+
+        guard size.width > 0, view.window?.windowScene?.activationState == .foregroundActive else { return }
         widthSubject.send(size.width)
     }
 
