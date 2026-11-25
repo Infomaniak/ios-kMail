@@ -23,9 +23,7 @@
 # - testSaveMessage
 # - testSearchBar
 # - testSendMessageToDraftWithAttachment
-# - testSendNewMessage
 # - testSwitchFolder
-# - testUndoDeleteAction
 
 
 platform:
@@ -37,4 +35,6 @@ executionOrder:
   flowsOrder:
     - UITestLogin
     - UITestCreateFolder
+    - UITestSendNewMessage
     - UITestDeleteSwipeAction
+    - UITestUndoDeleteAction

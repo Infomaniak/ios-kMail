@@ -24,10 +24,13 @@ appId: com.infomaniak.mail
 - runFlow: "subflows/onboarding.yaml"
 - runFlow: "subflows/login.yaml"
 - runFlow: "subflows/autorization.yaml"
+- runScript: "script/setMailSubject.js"
 
 - extendedWaitUntil:
     visible: "Inbox"
     timeout: 30000
+
+- runFlow: "subflows/newMessage.yaml"
 
 - runFlow: "subflows/deleteMail.yaml"
 
