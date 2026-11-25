@@ -21,8 +21,6 @@
 # - testSaveMessage
 # - testSearchBar
 # - testSendMessageToDraftWithAttachment
-# - testSwitchFolder
-
 
 platform:
   ios:
@@ -38,3 +36,4 @@ executionOrder:
     - UITestUndoDeleteAction
     - UITestMoreSwipeAction
     - UITestDisplayThread
+    - UITestSwitchFolder
