@@ -17,8 +17,6 @@
 #
 
 # LIST OF TESTS : 
-# - testCreateFolder
-# - testDeleteSwipeAction
 # - testDisplayThread
 # - testMoreSwipeAction
 # - testMoveAction
@@ -39,3 +37,4 @@ executionOrder:
   flowsOrder:
     - UITestLogin
     - UITestCreateFolder
+    - UITestDeleteSwipeAction
