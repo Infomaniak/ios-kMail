@@ -37,3 +37,4 @@ executionOrder:
     - UITestMoreSwipeAction
     - UITestDisplayThread
     - UITestSwitchFolder
+    - UITestSearchBar
