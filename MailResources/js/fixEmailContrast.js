@@ -129,17 +129,20 @@ function relativeLuminancesToContrastRatio(relativeLuminanceA, relativeLuminance
     );
 }
 
-function findCorrectedTextRgb(foregroundRgb, backgroundRgb) {
+function findCorrectedTextRgb(foregroundRgb, backgroundRgb, useNormalContrast) {
     const foregroundLinearRgb = foregroundRgb.map(srgbChannelToLinearChannel);
     const backgroundLinearRgb = backgroundRgb.map(srgbChannelToLinearChannel);
 
     const foregroundLuminance = linearRgbToRelativeLuminance(foregroundLinearRgb);
     const backgroundLuminance = linearRgbToRelativeLuminance(backgroundLinearRgb);
 
-    const targetContrastRatio = getTargetTextContrastRatio(backgroundLuminance);
-    const currentContrastRatio = relativeLuminancesToContrastRatio(foregroundLuminance, backgroundLuminance);
+    const preferredRatio = useNormalContrast ? TEXT_CONTRAST_SETTINGS.preferredContrastRatio : 4.5;
 
-    if (currentContrastRatio >= targetContrastRatio) { return null; }
+    const targetContrastRatio = getTargetTextContrastRatio(backgroundLuminance, preferredRatio);
+    const currentContrastRatio = relativeLuminancesToContrastRatio(foregroundLuminance, backgroundLuminance);
+    const correctionThreshold = useNormalContrast ? targetContrastRatio : 3;
+
+    if (currentContrastRatio >= correctionThreshold) { return null; }
 
     const correctedLinearRgb =
         backgroundLuminance <= TEXT_CONTRAST_SETTINGS.darkBackgroundMaxLuminance
@@ -160,12 +163,12 @@ function findCorrectedTextRgb(foregroundRgb, backgroundRgb) {
         : correctedLinearRgb.map(linearChannelToSrgbChannel);
 }
 
-function getTargetTextContrastRatio(backgroundLuminance) {
+function getTargetTextContrastRatio(backgroundLuminance, preferredRatio) {
     const blackContrastRatio = relativeLuminancesToContrastRatio(LINEAR_BLACK_CHANNEL, backgroundLuminance);
     const whiteContrastRatio = relativeLuminancesToContrastRatio(LINEAR_WHITE_CHANNEL, backgroundLuminance);
     const maximumContrastRatio = Math.max(blackContrastRatio, whiteContrastRatio);
 
-    return Math.min(TEXT_CONTRAST_SETTINGS.preferredContrastRatio, maximumContrastRatio);
+    return Math.min(preferredRatio, maximumContrastRatio);
 }
 
 function lightenTextForDarkBackground(
@@ -353,7 +356,9 @@ function findOpaqueBackgroundRgb(element, getStyleForElement) {
         const backgroundColor = parseCommaSeparatedRgbColor(computedStyle.backgroundColor);
 
         if (!backgroundColor) { return null; }
-        if (backgroundColor.alpha === 1) { return backgroundColor.rgb; }
+        if (backgroundColor.alpha === 1) {
+            return { rgb: backgroundColor.rgb, element: currentElement };
+        }
         if (backgroundColor.alpha !== 0) { return null; }
     }
     return null;
@@ -532,13 +537,18 @@ function getOpaqueTextAndBackgroundRgb(element, getStyleForElement) {
     const computedColor = computedStyle.color;
     const computedTextFillColor = computedStyle.getPropertyValue("-webkit-text-fill-color") || computedColor;
     const textColor = parseCommaSeparatedRgbColor(computedTextFillColor);
-    const backgroundRgb = findOpaqueBackgroundRgb(element, getStyleForElement);
+    const background = findOpaqueBackgroundRgb(element, getStyleForElement);
 
-    if (!textColor || textColor.alpha !== 1 || !backgroundRgb) { return null; }
+    if (!textColor || textColor.alpha !== 1 || !background) { return null; }
+
+    const backgroundWasDarkened = (
+        emailContrastStyleHistory.get(background.element) || []
+    ).some(property => property.name === "background-color");
 
     return {
         foregroundRgb: textColor.rgb,
-        backgroundRgb,
+        backgroundRgb: background.rgb,
+        useNormalContrast: backgroundWasDarkened || background.element === document.documentElement,
         shouldApplyTextFillColor: computedTextFillColor !== computedColor
     };
 }
@@ -561,7 +571,8 @@ function collectEmailTextColorChanges(getStyleForElement, result) {
 
         const correctedRgb = findCorrectedTextRgb(
             textAndBackgroundRgb.foregroundRgb,
-            textAndBackgroundRgb.backgroundRgb
+            textAndBackgroundRgb.backgroundRgb,
+            textAndBackgroundRgb.useNormalContrast
         );
 
         if (correctedRgb === null) {
