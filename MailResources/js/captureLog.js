@@ -20,6 +20,9 @@ function captureLog(message) {
     window.webkit.messageHandlers.log.postMessage(message);
 }
 
+// Toggle flag to log what happens in the WebView
+window.isLoggingEnabled = false;
+
 window.console.log = captureLog;
 window.console.info = captureLog;
 window.console.error = captureLog;

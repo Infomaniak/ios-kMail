@@ -20,7 +20,6 @@ import Combine
 import InfomaniakDI
 import MailCore
 import MailResources
-import Sentry
 import SwiftUI
 import WebKit
 
@@ -30,10 +29,16 @@ final class WebViewController: UIViewController {
     let webView: WKWebView
     let onWebKitProcessTerminated: (() -> Void)?
 
-    private let widthSubject = PassthroughSubject<Double, Never>()
-    private var widthSubscriber: AnyCancellable?
+    private let documentReady: AnyPublisher<Void, Never>
+    private var documentReadySubscriber: AnyCancellable?
 
-    private var hasFinishedLoading = false
+    private let normalizationRequest = PassthroughSubject<Void, Never>()
+    private var normalizationSubscriber: AnyCancellable?
+    private var normalizeTask: Task<Void, Never>?
+
+    private var isDocumentReady = false
+    private var shouldRemoveAllProperties = false
+    private var lastNormalizedWidth: CGFloat?
 
     private var mentionMenuAnchor: UIButton?
     private var lastPresentedMentionID: UUID?
@@ -45,10 +50,22 @@ final class WebViewController: UIViewController {
     private var scrollLockObservations = [NSKeyValueObservation]()
     #endif
 
-    init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
+    private var isSceneActive: Bool {
+        guard let windowScene = view.window?.windowScene else { return true }
+        return windowScene.activationState == .foregroundActive
+    }
+
+    init(
+        messageUid: String,
+        openURL: OpenURLAction,
+        webView: WKWebView,
+        documentReady: AnyPublisher<Void, Never>,
+        onWebKitProcessTerminated: (() -> Void)?
+    ) {
         self.messageUid = messageUid
         self.openURL = openURL
         self.webView = webView
+        self.documentReady = documentReady
         self.onWebKitProcessTerminated = onWebKitProcessTerminated
 
         super.init(nibName: nil, bundle: nil)
@@ -74,26 +91,28 @@ final class WebViewController: UIViewController {
 
         setUpWebView(webView)
 
-        widthSubscriber = widthSubject
+        normalizationSubscriber = normalizationRequest
+            .merge(with: NotificationCenter.default.publisher(for: UIScene.didActivateNotification).map { _ in })
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { [weak self] newWidth in
-                Task {
-                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth), fromWidthSubscriber: true)
-                }
+            .sink { [weak self] in
+                self?.normalizeIfNeeded()
+            }
+
+        documentReadySubscriber = documentReady
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.handleContentLoaded()
             }
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        widthSubject.send(size.width)
-    }
-
-    #if targetEnvironment(macCatalyst)
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        normalizationRequest.send()
+
+        #if targetEnvironment(macCatalyst)
         updateScrollLock(webView.scrollView)
+        #endif
     }
-    #endif
 
     private func setUpWebView(_ webView: WKWebView) {
         webView.navigationDelegate = self
@@ -114,34 +133,42 @@ final class WebViewController: UIViewController {
         #endif
     }
 
-    private func normalizeMessageWidth(webViewWidth width: CGFloat, fromWidthSubscriber: Bool = false) async throws {
-        guard hasFinishedLoading else { return }
-        #if targetEnvironment(macCatalyst)
-        let scaleCompensation = 100.0 / 77.0
-        try await webView.evaluateJavaScript(.setScaleCompensation(scaleCompensation))
-        try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
-        #else
-        let font = UIFont.preferredFont(forTextStyle: .body)
-        try await webView.evaluateJavaScript(.setContentSize(font.pointSize))
-        try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
-        #endif
-
-        // Sometimes we have a width equals to zero, we want to understand what happens in this case
-        if width <= 0 {
-            reportNullSize(givenWidth: width, fromWidthSubscriber: fromWidthSubscriber)
-        }
+    private func handleContentLoaded() {
+        isDocumentReady = true
+        shouldRemoveAllProperties = true
+        normalizeIfNeeded()
     }
 
-    private func reportNullSize(givenWidth: CGFloat, fromWidthSubscriber: Bool) {
-        SentrySDK.capture(message: "Munge Mail: Width is equal to 0.") { [self] scope in
-            scope.setLevel(.warning)
-            scope.setTags(["messageUid": messageUid])
-            scope.setExtras([
-                "givenWidth": givenWidth,
-                "frameWidth": view.frame.width,
-                "frameHeight": view.frame.height,
-                "fromWidthSubscriber": fromWidthSubscriber
-            ])
+    private func normalizeIfNeeded() {
+        let width = view.bounds.width
+        guard isDocumentReady,
+              isSceneActive,
+              width > 0,
+              width != lastNormalizedWidth || shouldRemoveAllProperties else {
+            return
+        }
+
+        lastNormalizedWidth = width
+        let shouldRemoveAllProperties = shouldRemoveAllProperties
+        self.shouldRemoveAllProperties = false
+
+        #if targetEnvironment(macCatalyst)
+        let contentSize: CGFloat = 0
+        let scaleCompensation = 100.0 / 77.0
+        #else
+        let contentSize = UIFont.preferredFont(forTextStyle: .body).pointSize
+        let scaleCompensation: CGFloat = 0
+        #endif
+
+        normalizeTask?.cancel()
+        normalizeTask = Task { [webView, messageUid] in
+            _ = try? await webView.evaluateJavaScript(.normalizeMessage(
+                width: width,
+                messageUid: messageUid,
+                contentSize: contentSize,
+                scaleCompensation: scaleCompensation,
+                shouldRemoveAllProperties: shouldRemoveAllProperties
+            ))
         }
     }
 
@@ -251,16 +278,7 @@ extension WebViewController {
 
 extension WebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        Task { @MainActor in
-            // Fix CSS properties and adapt the mail to the screen size once the resources are loaded
-            let readyState = try await webView.evaluateJavaScript(.documentReadyState) as? String
-            guard readyState == "complete" else { return }
-
-            hasFinishedLoading = true
-
-            try await webView.evaluateJavaScript(.removeAllProperties)
-            try await normalizeMessageWidth(webViewWidth: webView.frame.width)
-        }
+        handleContentLoaded()
     }
 
     func webView(
@@ -311,6 +329,7 @@ struct WebView: UIViewControllerRepresentable {
 
     let webView: WKWebView
     let messageUid: String
+    let documentReady: AnyPublisher<Void, Never>
 
     @Binding var mentionMenuContent: MentionMenuContent?
 
@@ -321,6 +340,7 @@ struct WebView: UIViewControllerRepresentable {
             messageUid: messageUid,
             openURL: openURL,
             webView: webView,
+            documentReady: documentReady,
             onWebKitProcessTerminated: onWebKitProcessTerminated
         )
     }

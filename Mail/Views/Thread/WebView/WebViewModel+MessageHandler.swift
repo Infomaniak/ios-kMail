@@ -25,7 +25,7 @@ import WebKit
 
 extension WebViewModel: WKScriptMessageHandler {
     enum JavaScriptMessageTopic: String, CaseIterable {
-        case log, sizeChanged, overScroll, error, mentionClicked
+        case log, sizeChanged, overScroll, error, mentionClicked, documentReady
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -41,6 +41,8 @@ extension WebViewModel: WKScriptMessageHandler {
             sendJavaScriptError(message)
         case .mentionClicked:
             handleMentionClicked(message)
+        case .documentReady:
+            documentReady.send()
         }
     }
 

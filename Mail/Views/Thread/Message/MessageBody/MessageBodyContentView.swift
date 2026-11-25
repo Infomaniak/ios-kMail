@@ -74,6 +74,7 @@ struct MessageBodyContentView: View {
                     WebView(
                         webView: model.webView,
                         messageUid: messageUid,
+                        documentReady: model.documentReady.eraseToAnyPublisher(),
                         mentionMenuContent: $mentionMenuContent
                     ) {
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
