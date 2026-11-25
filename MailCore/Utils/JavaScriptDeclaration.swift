@@ -32,6 +32,7 @@ public enum UserScript: String {
     case insertMention
     case mentionCommon
     case editorMentionPointerEventHandler
+    case insertHTMLAtCaret
 }
 
 public enum JavaScriptDeclaration {
@@ -44,6 +45,7 @@ public enum JavaScriptDeclaration {
     )
     case removeAllProperties
     case insertMention(String, String, String)
+    case insertHTMLAtCaret(String)
 
     public var functionBody: String {
         switch self {
@@ -53,6 +55,8 @@ public enum JavaScriptDeclaration {
             return "removeAllProperties();"
         case .insertMention:
             return "insertMention(email, name, query);"
+        case .insertHTMLAtCaret:
+            return "return insertHTMLAtCaret(html);"
         }
     }
 
@@ -70,6 +74,8 @@ public enum JavaScriptDeclaration {
             return [:]
         case .insertMention(let email, let name, let query):
             return ["email": email, "name": name, "query": query]
+        case .insertHTMLAtCaret(let html):
+            return ["html": html]
         }
     }
 }
