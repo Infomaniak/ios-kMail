@@ -17,8 +17,6 @@
 #
 
 # LIST OF TESTS : 
-# - testDisplayThread
-# - testMoreSwipeAction
 # - testMoveAction
 # - testSaveMessage
 # - testSearchBar
@@ -39,3 +37,4 @@ executionOrder:
     - UITestDeleteSwipeAction
     - UITestUndoDeleteAction
     - UITestMoreSwipeAction
+    - UITestDisplayThread
