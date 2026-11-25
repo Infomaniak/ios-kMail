@@ -32,11 +32,13 @@ final class WebViewController: UIViewController {
     private let documentReady: AnyPublisher<Void, Never>
     private var documentReadySubscriber: AnyCancellable?
 
-    private let widthSubject = PassthroughSubject<Double, Never>()
-    private var widthSubscriber: AnyCancellable?
+    private let normalizationRequest = PassthroughSubject<Void, Never>()
+    private var normalizationSubscriber: AnyCancellable?
     private var normalizeTask: Task<Void, Never>?
 
     private var isDocumentReady = false
+    private var shouldRemoveAllProperties = false
+    private var lastNormalizedWidth: CGFloat?
 
     private var mentionMenuAnchor: UIButton?
     private var lastPresentedMentionID: UUID?
@@ -47,6 +49,11 @@ final class WebViewController: UIViewController {
 
     private var scrollLockObservations = [NSKeyValueObservation]()
     #endif
+
+    private var isSceneActive: Bool {
+        guard let windowScene = view.window?.windowScene else { return true }
+        return windowScene.activationState == .foregroundActive
+    }
 
     init(
         messageUid: String,
@@ -84,11 +91,11 @@ final class WebViewController: UIViewController {
 
         setUpWebView(webView)
 
-        widthSubscriber = widthSubject
+        normalizationSubscriber = normalizationRequest
+            .merge(with: NotificationCenter.default.publisher(for: UIScene.didActivateNotification).map { _ in })
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] newWidth in
-                self?.scheduleNormalization(width: CGFloat(newWidth), shouldRemoveAllProperties: false)
+            .sink { [weak self] in
+                self?.normalizeIfNeeded()
             }
 
         documentReadySubscriber = documentReady
@@ -98,19 +105,14 @@ final class WebViewController: UIViewController {
             }
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        guard size.width > 0, view.window?.windowScene?.activationState == .foregroundActive else { return }
-        widthSubject.send(size.width)
-    }
-
-    #if targetEnvironment(macCatalyst)
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        normalizationRequest.send()
+
+        #if targetEnvironment(macCatalyst)
         updateScrollLock(webView.scrollView)
+        #endif
     }
-    #endif
 
     private func setUpWebView(_ webView: WKWebView) {
         webView.navigationDelegate = self
@@ -133,11 +135,22 @@ final class WebViewController: UIViewController {
 
     private func handleContentLoaded() {
         isDocumentReady = true
-        scheduleNormalization(width: view.bounds.width, shouldRemoveAllProperties: true)
+        shouldRemoveAllProperties = true
+        normalizeIfNeeded()
     }
 
-    private func scheduleNormalization(width: CGFloat, shouldRemoveAllProperties: Bool) {
-        guard isDocumentReady else { return }
+    private func normalizeIfNeeded() {
+        let width = view.bounds.width
+        guard isDocumentReady,
+              isSceneActive,
+              width > 0,
+              width != lastNormalizedWidth || shouldRemoveAllProperties else {
+            return
+        }
+
+        lastNormalizedWidth = width
+        let shouldRemoveAllProperties = shouldRemoveAllProperties
+        self.shouldRemoveAllProperties = false
 
         #if targetEnvironment(macCatalyst)
         let contentSize: CGFloat = 0
