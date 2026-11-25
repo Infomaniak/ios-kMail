@@ -20,7 +20,6 @@ import Combine
 import InfomaniakDI
 import MailCore
 import MailResources
-import Sentry
 import SwiftUI
 import WebKit
 
@@ -78,7 +77,7 @@ final class WebViewController: UIViewController {
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newWidth in
                 Task {
-                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth), fromWidthSubscriber: true)
+                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
                 }
             }
     }
@@ -116,8 +115,9 @@ final class WebViewController: UIViewController {
         #endif
     }
 
-    private func normalizeMessageWidth(webViewWidth width: CGFloat, fromWidthSubscriber: Bool = false) async throws {
+    private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
         guard hasFinishedLoading else { return }
+
         #if targetEnvironment(macCatalyst)
         let scaleCompensation = 100.0 / 77.0
         try await webView.evaluateJavaScript(.setScaleCompensation(scaleCompensation))
@@ -127,24 +127,6 @@ final class WebViewController: UIViewController {
         try await webView.evaluateJavaScript(.setContentSize(font.pointSize))
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
         #endif
-
-        // Sometimes we have a width equals to zero, we want to understand what happens in this case
-        if width <= 0 {
-            reportNullSize(givenWidth: width, fromWidthSubscriber: fromWidthSubscriber)
-        }
-    }
-
-    private func reportNullSize(givenWidth: CGFloat, fromWidthSubscriber: Bool) {
-        SentrySDK.capture(message: "Munge Mail: Width is equal to 0.") { [self] scope in
-            scope.setLevel(.warning)
-            scope.setTags(["messageUid": messageUid])
-            scope.setExtras([
-                "givenWidth": givenWidth,
-                "frameWidth": view.frame.width,
-                "frameHeight": view.frame.height,
-                "fromWidthSubscriber": fromWidthSubscriber
-            ])
-        }
     }
 
     func presentMentionMenuIfNeeded(_ content: MentionMenuContent) {
@@ -261,7 +243,7 @@ extension WebViewController: WKNavigationDelegate {
             hasFinishedLoading = true
 
             try await webView.evaluateJavaScript(.removeAllProperties)
-            try await normalizeMessageWidth(webViewWidth: webView.frame.width)
+            try await normalizeMessageWidth(webViewWidth: view.bounds.width)
         }
     }
 
