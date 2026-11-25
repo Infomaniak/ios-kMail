@@ -39,7 +39,9 @@ function removeFromInlineStyle(properties) {
             const propertyValue = element.style[property.name];
             if (shouldRemovePropertyForGivenValue(property, propertyValue)) {
                 element.style[property.name] = null;
-                console.info(`[FIX_EMAIL_STYLE] Remove property ${property.name} from inline style.`);
+                if (window.isLoggingEnabled) {
+                    console.info(`[FIX_EMAIL_STYLE] Remove property ${property.name} from inline style.`);
+                }
             }
         }
     }
@@ -52,7 +54,9 @@ function removeFromStylesheets(properties) {
             removePropertiesForAllCSSRules(properties, styleSheet);
         } catch (error) {
             // The stylesheet cannot be modified
-            console.error(`[FIX_EMAIL_STYLE] Error while modifying stylesheet: ${error}`);
+            if (window.isLoggingEnabled) {
+                console.error(`[FIX_EMAIL_STYLE] Error while modifying stylesheet: ${error}`);
+            }
         }
     }
 }
@@ -65,7 +69,7 @@ function removePropertiesForAllCSSRules(properties, styleSheet) {
             const propertyValue = styleSheet.cssRules[j].style[property.name];
             if (shouldRemovePropertyForGivenValue(property, propertyValue)) {
                 const removedValue = styleSheet.cssRules[j].style?.removeProperty(property.name);
-                if (removedValue) {
+                if (removedValue && window.isLoggingEnabled) {
                     console.info(`[FIX_EMAIL_STYLE] Remove property ${property.name} from style tag.`);
                 }
             }

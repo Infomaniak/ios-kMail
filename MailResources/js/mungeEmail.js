@@ -45,9 +45,9 @@ let actionsLog = {};
 function setScaleCompensation(factor) {
     if (factor > 0) {
         PREFERENCES.scaleCompensation = factor;
-        logInfo(`scaleCompensation set to ${PREFERENCES.scaleCompensation}.`);
+        logInfo(() => `scaleCompensation set to ${PREFERENCES.scaleCompensation}.`);
     } else {
-        logInfo(`Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`);
+        logInfo(() => `Invalid value for scaleCompensation, keeping previous value ${PREFERENCES.scaleCompensation}.`);
     }
 }
 
@@ -58,9 +58,9 @@ function setScaleCompensation(factor) {
 function setContentSize(size) {
     if (size > 0) {
         PREFERENCES.contentSize = size;
-        logInfo(`contentSize set to ${PREFERENCES.contentSize}.`);
+        logInfo(() => `contentSize set to ${PREFERENCES.contentSize}.`);
     } else {
-        logInfo(`Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`);
+        logInfo(() => `Invalid value for contentSize, keeping previous value ${PREFERENCES.contentSize}.`);
     }
 }
 
@@ -89,15 +89,15 @@ function normalizeMessageWidth(webViewWidth, messageUid) {
  */
 function normalizeElementWidths(elements, webViewWidth, messageUid) {
     const documentWidth = document.body.offsetWidth;
-    logInfo(`Starts to normalize elements. Document width: ${documentWidth}. WebView width: ${webViewWidth}.`);
+    logInfo(() => `Starts to normalize elements. Document width: ${documentWidth}. WebView width: ${webViewWidth}.`);
 
     for (const element of elements) {
-        logInfo(`Current element: ${elementDebugName(element)}.`);
+        logInfo(() => `Current element: ${elementDebugName(element)}.`);
 
         // If the script has already been run, we can undo the changes we've made and start again from scratch
         let currentActionsLog = getActionsLog(element, messageUid);
         if (PREFERENCES.undoPreviousChanges && currentActionsLog.length > 0) {
-            logInfo('We need to undo changes from a previous run.');
+            logInfo(() => 'We need to undo changes from a previous run.');
             undoActions(currentActionsLog);
         }
 
@@ -105,7 +105,7 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
         const originalZoom = element.style.zoom;
         if (originalZoom) {
             element.style.zoom = 1;
-            logInfo(`Initial zoom reset to 1. Old zoom: ${originalZoom}.`);
+            logInfo(() => `Initial zoom reset to 1. Old zoom: ${originalZoom}.`);
         }
 
         const originalWidth = element.style.width;
@@ -129,12 +129,12 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
             }
 
             const newZoom = documentWidth / element.scrollWidth;
-            logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
+            logInfo(() => `Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
             element.style.zoom = newZoom * PREFERENCES.scaleCompensation;
         }
 
         if (document.documentElement.scrollWidth > document.documentElement.clientWidth) {
-            logInfo(`After zooming the mail it can still scroll: found clientWidth / scrollWidth -> ${document.documentElement.clientWidth} / ${document.documentElement.scrollWidth}`);
+            logInfo(() => `After zooming the mail it can still scroll: found clientWidth / scrollWidth -> ${document.documentElement.clientWidth} / ${document.documentElement.scrollWidth}`);
             reportOverScroll(document.documentElement.clientWidth, document.documentElement.scrollWidth, messageUid);
         }
     }
@@ -149,10 +149,10 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
  */
 function transformContent(element, documentWidth, elementWidth, messageUid) {
     if (elementWidth <= documentWidth) {
-        logInfo(`Element doesn't need to be transformed. Current size: ${elementWidth}, DocumentWidth: ${documentWidth}.`);
+        logInfo(() => `Element doesn't need to be transformed. Current size: ${elementWidth}, DocumentWidth: ${documentWidth}.`);
         return;
     }
-    logInfo(`Element will be transformed.`);
+    logInfo(() => `Element will be transformed.`);
 
     let newWidth = elementWidth;
     let isTransformationDone = false;
@@ -169,7 +169,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
             logTransformation('munge div[style] and textarea[style]', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
-                logInfo('Munging div[style] and textarea[style] is enough.');
+                logInfo(() => 'Munging div[style] and textarea[style] is enough.');
             }
         }
     }
@@ -183,7 +183,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
             logTransformation('munge img', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
-                logInfo('Munging img is enough.');
+                logInfo(() => 'Munging img is enough.');
             }
         }
     }
@@ -199,7 +199,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
             logTransformation('munge table', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
-                logInfo('Munging table is enough.');
+                logInfo(() => 'Munging table is enough.');
             }
         }
     }
@@ -216,17 +216,17 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
 
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
-                logInfo('Munging td is enough.');
+                logInfo(() => 'Munging td is enough.');
             } else if (newWidth === beforeTransformationWidth) {
                 // This transform did not improve things, and it is somewhat risky.
                 // Back it out, since it's the last transform and we gained nothing.
                 undoActions(tmpActionsLog);
-                logInfo('Munging td did not improve things, we undo these actions.');
+                logInfo(() => 'Munging td did not improve things, we undo these actions.');
             } else {
                 // The transform WAS effective (although not 100%).
                 // Copy the temporary action log entries over as normal.
                 currentActionsLog.push(...tmpActionsLog);
-                logInfo('Munging td is not enough but is effective.');
+                logInfo(() => 'Munging td is not enough but is effective.');
             }
         }
     }
@@ -235,7 +235,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
     // We figure that in those cases, the benefits outweight the risk of rendering artifacts.
     const transformationRatio = (elementWidth - newWidth) / (elementWidth - documentWidth);
     if (!isTransformationDone && transformationRatio > PREFERENCES.minimumEffectiveRatio) {
-        logInfo('Transforms deemed effective enough.');
+        logInfo(() => 'Transforms deemed effective enough.');
         isTransformationDone = true;
     }
 
@@ -244,14 +244,14 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
         // (except the width->maxWidth change, which is not particularly destructive)
         undoActions(currentActionsLog);
         if (currentActionsLog.length > 0) {
-            logInfo(`All mungers failed, we will reverse ${currentActionsLog.length} changes.`);
+            logInfo(() => `All mungers failed, we will reverse ${currentActionsLog.length} changes.`);
         } else {
-            logInfo(`No mungers applied, width is still too wide.`);
+            logInfo(() => `No mungers applied, width is still too wide.`);
         }
         return;
     }
 
-    logInfo(`Mungers succeeded. We did ${currentActionsLog.length} changes.`);
+    logInfo(() => `Mungers succeeded. We did ${currentActionsLog.length} changes.`);
 }
 
 /**
@@ -386,12 +386,13 @@ function getActionsLog(element, messageUid) {
 
 // Logger
 
-function logInfo(text) {
-    console.info(`[MUNGER_LOG] ${text}`);
+function logInfo(buildMessage) {
+    if (!window.isLoggingEnabled) { return; }
+    console.info(`[MUNGER_LOG] ${buildMessage()}`);
 }
 
 function logTransformation(action, element, elementWidth, newWidth, documentWidth) {
-    logInfo(`Ran ${action} on ${elementDebugName(element)}. OldWidth=${elementWidth}, NewWidth=${newWidth}, DocWidth=${documentWidth}.`);
+    logInfo(() => `Ran ${action} on ${elementDebugName(element)}. OldWidth=${elementWidth}, NewWidth=${newWidth}, DocWidth=${documentWidth}.`);
 }
 
 function elementDebugName(element) {
