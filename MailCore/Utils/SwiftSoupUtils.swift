@@ -35,10 +35,6 @@ public struct SwiftSoupUtils {
 
     @concurrent
     public func cleanBody() async throws -> Document {
-        return try syncCleanBody()
-    }
-
-    public func syncCleanBody() throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: nil, bodyWhitelist: .extendedBodyWhitelist).clean(document)
         try unwrapDoubleBody(of: cleanedDocument)
 

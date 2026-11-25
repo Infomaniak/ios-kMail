@@ -162,7 +162,7 @@ extension MailDraftEntity {
         cc = draft.cc.map { IntentPerson(recipient: $0) }
         bcc = draft.bcc.map { IntentPerson(recipient: $0) }
         subject = draft.subject
-        body = AttributedString.htmlBodyToRawText(htmlBody: draft.body)
+        body = AttributedString.htmlBodyToIndexableAttributedString(htmlBody: draft.body)
         attachments = []
         account = MailAccountEntity(mailbox: mailbox)
     }

@@ -17,21 +17,22 @@
  */
 
 import Foundation
+import SwiftSoup
 
 extension AttributedString {
-    static func bodyToRawText(body: Body?) -> AttributedString? {
+    static func bodyToIndexableAttributedString(body: Body?) -> AttributedString? {
         guard let body, let value = body.value else { return nil }
         switch body.type {
         case .textPlain:
             return AttributedString(value)
         case .textHtml, nil:
-            return htmlBodyToRawText(htmlBody: value)
+            return htmlBodyToIndexableAttributedString(htmlBody: value)
         }
     }
 
-    static func htmlBodyToRawText(htmlBody: String) -> AttributedString? {
-        guard let document = try? SwiftSoupUtils(fromHTML: htmlBody).syncCleanBody(),
-              let body = document.body(),
+    static func htmlBodyToIndexableAttributedString(htmlBody: String) -> AttributedString? {
+        // No cleaning needed: text() only collects text nodes, script and style contents are data nodes.
+        guard let body = try? SwiftSoup.parse(htmlBody).body(),
               let bodyText = try? body.text() else {
             return nil
         }
