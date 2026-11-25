@@ -28,11 +28,17 @@ struct ThreadCellHeaderView: View, Equatable {
     let prominentMessageCount: Bool
     let displayDate: DisplayDate
     let showDraftPrefix: Bool
+    let showSendingPrefix: Bool
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             HStack(spacing: IKPadding.mini) {
-                if showDraftPrefix {
+                if showSendingPrefix {
+                    Text(MailResourcesStrings.Localizable.messageIsSending)
+                        .textStyle(.bodySmallItalicSecondary)
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                } else if showDraftPrefix {
                     Text("\(MailResourcesStrings.Localizable.draftPrefix)")
                         .textStyle(.bodyMediumError)
                         .lineLimit(1)

@@ -182,7 +182,8 @@ struct ThreadCell: View {
                     messageCount: thread.displayMessages(isEmojiReactionAvailable: isEmojiReactionAvailable).count,
                     prominentMessageCount: thread.hasUnseenMessages,
                     displayDate: thread.displayDate,
-                    showDraftPrefix: thread.hasDrafts
+                    showDraftPrefix: thread.hasDrafts,
+                    showSendingPrefix: thread.hasDraftsSending
                 )
 
                 ThreadCellBodyView(
