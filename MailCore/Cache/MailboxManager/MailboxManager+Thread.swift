@@ -144,7 +144,7 @@ public extension MailboxManager {
 
         if folder.role == .inbox {
             guard !Task.isCancelled else { return }
-            try await unsnoozeThreadsWithNewMessage(in: folder)
+            await unsnoozeThreadsWithNewMessage(in: folder)
         }
     }
 
@@ -220,6 +220,10 @@ public extension MailboxManager {
             }
 
             refreshFolderThreads(threadUids: impactedThreadUids, folder: freshFolder)
+        }
+
+        if folder.role == .sent, direction == .future {
+            await unsnoozeThreadsWithNewMessage(in: folder, newShortUids: nextUids)
         }
 
         return true
@@ -549,34 +553,51 @@ public extension MailboxManager {
 
     // MARK: - Handle snoozed threads
 
-    private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
-        guard UserDefaults.shared.threadMode == .conversation else { return }
+    private func unsnoozeThreadsWithNewMessage(in folder: Folder, newShortUids: [String] = []) async {
+        guard !Task.isCancelled, UserDefaults.shared.threadMode == .conversation else { return }
 
-        let frozenThreadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
-            partial.where { thread in
-                let isInFolder = thread.folderId == folder.remoteId
-                let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
-                let isLastMessageFromFolderNotSnoozed = !thread.isLastMessageFromFolderSnoozed
+        let isSent = folder.role == .sent
+        let messages: [Message]
+        if isSent {
+            let sentUids = newShortUids.map { computeLongMessageUid(shortUid: $0, in: folder) }
+            let sentMessages = fetchResults(ofType: Message.self) { $0.where { $0.uid.in(sentUids) } }
+            let repliedMessageIds = Set(sentMessages
+                .filter { !$0.isDraft && !$0.scheduled && !$0.isReaction }
+                .flatMap { $0.inReplyTo?.parseMessageIds() ?? [] })
+            guard !repliedMessageIds.isEmpty else { return }
 
-                return isInFolder && isSnoozed && isLastMessageFromFolderNotSnoozed
+            let snoozedMessages = fetchResults(ofType: Message.self) { partial in
+                partial.where { $0.snoozeState == .snoozed && $0.snoozeUuid != nil && $0.snoozeEndDate != nil }
+                    .filter("messageId IN %@", Array(repliedMessageIds))
+            }.freeze()
+            messages = Array(snoozedMessages)
+        } else {
+            let frozenThreadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
+                partial.where { thread in
+                    let isInFolder = thread.folderId == folder.remoteId
+                    let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
+                    let isLastMessageFromFolderNotSnoozed = !thread.isLastMessageFromFolderSnoozed
+
+                    return isInFolder && isSnoozed && isLastMessageFromFolderNotSnoozed
+                }
+            }.freeze()
+            messages = frozenThreadsToUnsnooze.compactMap { thread in
+                guard thread.lastMessageFromFolder?.isSnoozed == false else { return nil }
+                return thread.messages.last(where: \.isSnoozed)
             }
-        }.freeze()
+        }
+        guard !messages.isEmpty else { return }
 
-        guard !frozenThreadsToUnsnooze.isEmpty else { return }
-
-        let unsnoozedMessages: [String] = await Array(frozenThreadsToUnsnooze).concurrentCompactMap(
+        let unsnoozedMessages: [String] = await messages.concurrentCompactMap(
             customConcurrency: Self.maxParallelUnsnooze
-        ) { thread in
-            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }),
-                  thread.lastMessageFromFolder?.isSnoozed == false else {
-                return nil
-            }
-
+        ) { message in
             do {
-                try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
-                return lastMessageSnoozed.uid
+                try await self.apiFetcher.deleteSnooze(message: message, mailbox: self.mailbox)
+                return message.uid
             } catch let error as MailApiError where error == .apiMessageNotSnoozed || error == .apiObjectNotFound {
-                self.manuallyUnsnoozeThreadInRealm(thread: thread)
+                if let thread = message.originalThread {
+                    self.manuallyUnsnoozeThreadInRealm(thread: thread)
+                }
                 return nil
             } catch {
                 SentryDebug.captureManuallyUnsnoozeError(error: error)
