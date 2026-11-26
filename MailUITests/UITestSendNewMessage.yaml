@@ -25,6 +25,7 @@ appId: com.infomaniak.mail
 - runFlow: "subflows/login.yaml"
 - runFlow: "subflows/autorization.yaml"
 - runScript: "script/setMailSubject.js"
+- runScript: "script/setMailBody.js"
 
 - extendedWaitUntil:
     visible: "Inbox"
@@ -35,6 +36,17 @@ appId: com.infomaniak.mail
 - extendedWaitUntil:
     visible: ${output.subject}
     timeout: 30000
+
+- tapOn: ${output.subject}
+
+- extendedWaitUntil:
+    visible: ${".*" + output.body + ".*"}
+    timeout: 10000
+
+- tapOn:
+    id: "BackButton"
+
+- runFlow: "subflows/deleteMail.yaml"
 
 - stopApp
 
