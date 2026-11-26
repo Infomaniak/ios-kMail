@@ -18,6 +18,10 @@
 
 appId: com.infomaniak.mail
 ---
+- extendedWaitUntil:
+    visible: "Allow the app to access your contacts"
+    timeout: 10000
+
 - repeat:
     times: 2
     commands:
