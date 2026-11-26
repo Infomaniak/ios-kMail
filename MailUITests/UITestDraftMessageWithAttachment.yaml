@@ -50,7 +50,7 @@ appId: com.infomaniak.mail
 
 - assertVisible: "image-file"
 
-- tapOn: "Cancel"
+- tapOn: "Close"
 
 - runFlow: "subflows/deleteMail.yaml"
 

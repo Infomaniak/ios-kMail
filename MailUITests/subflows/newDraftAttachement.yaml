@@ -47,7 +47,7 @@ appId: com.infomaniak.mail
 - tapOn: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
 - inputText:  "${output.body}\n"
 
-- tapOn: "Cancel"
+- tapOn: "Close"
 
 - runFlow:
     when:

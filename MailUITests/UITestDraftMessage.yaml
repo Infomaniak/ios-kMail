@@ -48,7 +48,7 @@ appId: com.infomaniak.mail
     visible: ${".*" + output.body + ".*"}
     timeout: 10000
 
-- tapOn: "Cancel"
+- tapOn: "Close"
 
 - runFlow: "subflows/deleteMail.yaml"
 

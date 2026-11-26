@@ -19,7 +19,7 @@
 appId: com.infomaniak.mail
 ---
 - extendedWaitUntil:
-    visible: "Allow the app to access your contacts"
+    visible: "Next"
     timeout: 10000
 
 - repeat:
@@ -29,5 +29,4 @@ appId: com.infomaniak.mail
             when:
                 visible: "Next"
             commands:
-
                 - tapOn: "Next"
