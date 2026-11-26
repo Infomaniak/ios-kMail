@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import IKSnackbar
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -27,11 +28,13 @@ import Nuke
 import RealmSwift
 import SwiftSoup
 import SwiftUI
+import TipKit
 
 struct MessageBodyContentView: View {
     @LazyInjectService private var snackbarPresenter: IKSnackBarPresentable
 
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.colorScheme) private var colorScheme
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -46,6 +49,7 @@ struct MessageBodyContentView: View {
     private let presentableBody: PresentableBody?
     private let blockRemoteContent: Bool
     private let messageUid: String
+    private let messageTheme: MessageTheme
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
@@ -63,6 +67,7 @@ struct MessageBodyContentView: View {
         self.presentableBody = presentableBody
         self.blockRemoteContent = blockRemoteContent
         self.messageUid = messageUid
+        self.messageTheme = messageTheme
 
         _model = StateObject(wrappedValue: WebViewModel(theme: messageTheme, aliases: mailboxAliases))
     }
@@ -70,6 +75,14 @@ struct MessageBodyContentView: View {
     var body: some View {
         ZStack {
             VStack {
+                if #available(iOS 17.0, *),
+                   colorScheme == .dark,
+                   !model.initialContentLoading,
+                   case .auto = messageTheme {
+                    TipView(MailDarkModeTip())
+                        .padding(.bottom, IKPadding.micro)
+                }
+
                 if let presentableBody, presentableBody.body != nil {
                     WebView(
                         webView: model.webView,

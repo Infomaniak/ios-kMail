@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Nazwa folderu";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Ulepszyliśmy sposób wyświetlania wiadomości e-mail, aby zapewnić większy komfort czytania. Funkcję tę można wyłączyć w sekcji Ustawienia > Wygląd > Motyw.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Ulepszony tryb ciemny";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Wybierz datę i godzinę";
 

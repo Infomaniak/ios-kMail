@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Name of the folder";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "We’ve improved the way your emails are displayed for a more comfortable reading experience. You can turn this feature off in Settings > Appearance > Theme.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Improved Dark Mode";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Choose a date and time";
 

@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Naam van de map";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "We hebben de weergave van je e-mails verbeterd voor een prettigere leeservaring. Je kunt deze functie uitschakelen via Instellingen > Weergave > Thema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Verbeterde donkere modus";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Kies een datum en tijd";
 

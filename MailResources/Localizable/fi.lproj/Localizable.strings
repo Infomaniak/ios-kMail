@@ -653,6 +653,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Kansion nimi";
 
+/* loco:6b06b106e88701e65b074aa2 */
+"darkModeTipKitDescription" = "Olemme parantaneet sähköpostiviestien näyttötapaa, jotta lukeminen olisi entistä mukavampaa. Voit poistaa tämän ominaisuuden käytöstä kohdassa Asetukset > Ulkoasu > Teema.";
+
+/* loco:6b06b0bfb2c58e7bea0baabe */
+"darkModeTipKitTitle" = "Parannettu pimeä tila";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Valitse päivämäärä ja aika";
 
