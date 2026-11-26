@@ -33,15 +33,9 @@ struct ThreadView: View {
 
     @State private var displayNavigationTitle = false
     @State private var navigationTitleOpacity = 1.0
+    @State private var externalTag: DisplayExternalRecipientStatus.State?
 
     @ObservedRealmObject var thread: Thread
-
-    private var externalTag: DisplayExternalRecipientStatus.State {
-        thread.displayExternalRecipientState(
-            mailboxManager: mailboxManager,
-            recipientsList: thread.from
-        )
-    }
 
     var body: some View {
         ScrollView {
@@ -56,7 +50,9 @@ struct ThreadView: View {
                         }
                         .opacity(navigationTitleOpacity)
 
-                    ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
+                    if let externalTag {
+                        ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
+                    }
                 }
                 .padding(.horizontal, value: .medium)
 
@@ -80,6 +76,9 @@ struct ThreadView: View {
         .task {
             await markThreadAsReadIfNeeded(thread: thread)
         }
+        .task {
+            await computeExternalRecipientState()
+        }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
@@ -96,6 +95,14 @@ struct ThreadView: View {
             target: thread.messages.toArray(),
             action: .markAsRead,
             origin: .toolbarLarge(group: .other, thread: thread)
+        )
+    }
+
+    private func computeExternalRecipientState() async {
+        let from = thread.from.freezeIfNeeded()
+        externalTag = await Thread.displayExternalRecipientState(
+            mailboxManager: mailboxManager,
+            recipientsList: from
         )
     }
 }

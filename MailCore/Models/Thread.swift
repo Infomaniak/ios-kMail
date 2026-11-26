@@ -501,8 +501,9 @@ public extension Thread {
 
 public extension Thread {
     /// Compute if the thread has external recipients
-    func displayExternalRecipientState(mailboxManager: MailboxManager,
-                                       recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
+    @concurrent
+    static func displayExternalRecipientState(mailboxManager: MailboxManager,
+                                              recipientsList: List<Recipient>) async -> DisplayExternalRecipientStatus.State {
         let externalDisplayStatus = DisplayExternalRecipientStatus(mailboxManager: mailboxManager, recipientsList: recipientsList)
         return externalDisplayStatus.state
     }
