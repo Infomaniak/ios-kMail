@@ -16,9 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# LIST OF TESTS :
-# - testSaveMessage
-
 platform:
   ios:
     snapshotKeyHonorModalViews: false
@@ -36,4 +33,5 @@ executionOrder:
     - UITestSwitchFolder
     - UITestSearchBar
     - UITestMoveAction
+    - UITestDraftMessage
     - UITestDraftMessageWithAttachment
