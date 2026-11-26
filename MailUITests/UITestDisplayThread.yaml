@@ -20,9 +20,11 @@ appId: com.infomaniak.mail
 ---
 - launchApp:
     clearState: true
+    arguments:
+      skipLogin: "true"
+      UITEST_TOKEN: ${MAESTRO_TOKEN}
+      UITEST_USER_ID: ${MAESTRO_USER_ID}
 
-- runFlow: "subflows/onboarding.yaml"
-- runFlow: "subflows/login.yaml"
 - runFlow: "subflows/autorization.yaml"
 
 - extendedWaitUntil:
@@ -53,7 +55,6 @@ appId: com.infomaniak.mail
 - tapOn:
     id: "BackButton"
 - assertVisible: "Message display mode, Discussions"
-- tapOn: "Cancel"
 
 - stopApp
 
