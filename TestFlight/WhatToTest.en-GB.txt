@@ -1,4 +1,5 @@
-- Your draft is no longer lost or emptied when you return to the app while writing a message.
-- The message list is smoother and no longer freezes during updates.
-- Some messages that could not be displayed now open correctly.
-- Opening a message or draft from Shortcuts is more reliable.
+- Insert your saved models into a new message directly from the editor, including on Mac.
+- Emails are easier to read in Dark Mode, with better contrast and preserved text colours.
+- A message being sent is now labelled as “Sending” in the message list.
+- Spotlight search results now focus on the actual text of your messages.
+- Messages are displayed more reliably at the correct size.

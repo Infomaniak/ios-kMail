@@ -1,4 +1,5 @@
-- Votre brouillon n’est plus perdu ni vidé lorsque vous revenez dans l’app pendant la rédaction d’un message.
-- La liste des messages est plus fluide et ne se fige plus pendant les mises à jour.
-- Certains messages qui ne pouvaient pas s’afficher s’ouvrent désormais correctement.
-- L’ouverture d’un message ou d’un brouillon depuis Raccourcis est plus fiable.
+- Insérez vos modèles enregistrés directement depuis l’éditeur d’un nouveau message, y compris sur Mac.
+- Les e-mails sont plus lisibles en mode sombre, avec un meilleur contraste et des couleurs de texte préservées.
+- Un message en cours d’envoi est désormais indiqué « Envoi en cours » dans la liste des messages.
+- Les résultats de recherche Spotlight se concentrent désormais sur le texte réel de vos messages.
+- Les messages s’affichent plus fiablement à la bonne taille.
