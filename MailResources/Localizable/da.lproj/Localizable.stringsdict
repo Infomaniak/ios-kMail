@@ -130,6 +130,70 @@ Ved at rapportere dem til os fremskynder du opdagelsen af farlige beskeder for a
 Rapporterne vil blive sendt til vores sikkerhedshold til analyse og handling. E-mailene vil også automatisk blive flyttet til din spam-mappe.</string>
       </dict>
     </dict>
+    <key>scheduledAbsenceBannerOngoingMultiple</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d modtager er fraværende.</string>
+        <key>other</key>
+        <string>%d modtagere er fraværende.</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceBannerUpcomingMultiple</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d modtager er snart fraværende.</string>
+        <key>other</key>
+        <string>%d modtagere er snart fraværende.</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceRecipientsTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d fraværende modtager</string>
+        <key>other</key>
+        <string>%d fraværende modtagere</string>
+      </dict>
+    </dict>
+    <key>scheduledAbsenceUpcomingRecipientsTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d modtager snart fraværende</string>
+        <key>other</key>
+        <string>%d modtagere snart fraværende</string>
+      </dict>
+    </dict>
     <key>scheduleDeleteConfirmAlertDescription</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
