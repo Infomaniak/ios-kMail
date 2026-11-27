@@ -1,0 +1,47 @@
+#
+# Infomaniak SwissTransfer - iOS App
+# Copyright (C) 2026 Infomaniak Network SA
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+appId: com.infomaniak.mail
+---
+- tapOn: "New message"
+
+- runFlow:
+    when:
+      visible: "Later"
+    commands:
+      - tapOn: "Later"
+
+- tapOn: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
+- inputText: "${output.body}\n"
+- assertVisible: ${".*" + output.body + ".*"}
+
+- tapOn: "Add an attachment"
+- tapOn: "Photo and video gallery"
+- tapOn:
+    id: "PXGGridLayout-Info"
+- tapOn: "Done"
+- assertVisible: "image-file"
+- assertVisible: ${".*" + output.body + ".*"}
+
+- tapOn: "Close"
+
+- runFlow:
+    when:
+      visible: "Later"
+    commands:
+      - tapOn: "Later"

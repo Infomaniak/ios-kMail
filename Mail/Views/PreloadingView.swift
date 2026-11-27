@@ -22,6 +22,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import InfomaniakLogin
 import MailCore
 import MailResources
 import SwiftUI
@@ -70,6 +71,41 @@ struct PreloadingView: View {
     }
 
     func preloadAndTransitionToRootView() async {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+
+        func value(for key: String) -> String? {
+            guard let index = arguments.firstIndex(of: "-\(key)"),
+                  arguments.indices.contains(index + 1) else {
+                return nil
+            }
+            return arguments[index + 1]
+        }
+
+        if value(for: "skipLogin") == "true" {
+            guard let token = value(for: "UITEST_TOKEN"),
+                  let userIdString = value(for: "UITEST_USER_ID"),
+                  let userId = Int(userIdString) else {
+                return
+            }
+
+            tokenStore.removeAllTokens()
+            let testToken = ApiToken(accessToken: token,
+                                     expiresIn: Int.max,
+                                     refreshToken: "",
+                                     scope: "",
+                                     tokenType: "",
+                                     userId: userId,
+                                     expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
+            do {
+                let (apiFetcher, mailboxes) = try await accountManager.createAccount(token: testToken)
+                await accountManager.setCurrentAccount(token: testToken, mailboxes: mailboxes, apiFetcher: apiFetcher)
+            } catch {
+                return
+            }
+            return
+        }
+        #endif
         guard !appLaunchCounter.isFirstLaunch else {
             tokenStore.removeAllTokens()
             appLaunchCounter.increase()
