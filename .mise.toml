@@ -6,3 +6,4 @@ swiftlint = { version = '0.63.0', os = ["macos", "linux"] }
 sentry-cli = { version = "latest", os = ["macos"] }
 pipx = { version = "1.8.0", os = ["macos", "linux"] }
 "pipx:infomaniak/importloco" = { version = '2.3.0', os = ["macos", "linux"] }
+maestro = "cli-2.12.1"
