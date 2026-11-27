@@ -53,7 +53,7 @@ public extension String {
 
 public extension Collection<Message> {
     func sortedByDate() -> [Message] {
-        sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
+        sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 }
 
