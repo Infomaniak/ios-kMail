@@ -36,8 +36,20 @@ appId: com.infomaniak.mail
 - tapOn: "Password *"
 - inputText: "${MAESTRO_PASSWORD}"
 
+- hideKeyboard
+
+- waitForAnimationToEnd:
+    timeout: 3000
+
 - runFlow:
     when:
-      visible: "Sign in"
+      visible: "Password \\*"
     commands:
-      - tapOn: "Sign in"
+      - tapOn:
+          text: "Sign in"
+          below: "Stay connected.*"
+
+- extendedWaitUntil:
+    notVisible: "Password \\*"
+    timeout: 30000
+
