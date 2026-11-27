@@ -37,6 +37,6 @@ appId: com.infomaniak.mail
 
 - inputText: "${MAESTRO_USER}"
 
-- assertVisible: "John Appleseed"
+- assertVisible: "${MAESTRO_USER}"
 
 - stopApp

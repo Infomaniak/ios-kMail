@@ -35,7 +35,12 @@ appId: com.infomaniak.mail
 
 - runFlow: "subflows/newMessage.yaml"
 
-- assertVisible: ${".*" + output.subject + ".*"}
+- swipe:
+    direction: DOWN
+
+- extendedWaitUntil:
+    visible: ${output.subject}
+    timeout: 30000
 
 - swipe:
     from:

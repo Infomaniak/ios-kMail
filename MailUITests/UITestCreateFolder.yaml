@@ -38,6 +38,10 @@ appId: com.infomaniak.mail
 - tapOn: "Name of the folder"
 - inputText: ${output.folderName}
 
+- extendedWaitUntil:
+    visible: "Create"
+    timeout: 30000
+
 - tapOn: "Create"
 
 - scrollUntilVisible:

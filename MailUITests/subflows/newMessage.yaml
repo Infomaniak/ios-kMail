@@ -30,10 +30,10 @@ appId: com.infomaniak.mail
     text: "To:"
     waitToSettleTimeoutMs: 1000
 - inputText: "${MAESTRO_USER}"
-- tapOn:
-    text: ${"John Appleseed," + ".*"}
-    waitToSettleTimeoutMs: 1000
 
+- tapOn:
+    text: "Add a recipient, ${MAESTRO_USER}"
+    waitToSettleTimeoutMs: 1000
 
 - tapOn:
     text: "Subject:"
