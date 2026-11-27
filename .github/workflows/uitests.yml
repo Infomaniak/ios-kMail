@@ -27,8 +27,8 @@ jobs:
       - name: Maestro UI tests
         env:
           SIMULATOR_MODEL: ${{ vars.LATEST_IPHONE_SIMULATOR }}
-          MAESTRO_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          MAESTRO_USER_ID: ${{ secrets.USER_ID }}
+          MAESTRO_TOKEN: ${{ secrets.UITEST_ACCOUNT_ACCESS_TOKEN }}
+          MAESTRO_USER_ID: ${{ secrets.UITEST_ACCOUNT_USER_ID }}
           MAESTRO_USER: ${{ secrets.UITEST_ACCOUNT_EMAIL }}
           MAESTRO_PASSWORD: ${{ secrets.UITEST_ACCOUNT_PASSWORD }}
           MAESTRO_DRIVER_STARTUP_TIMEOUT: 180000
