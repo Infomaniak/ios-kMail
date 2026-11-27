@@ -20,16 +20,33 @@ jobs:
         uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654
         with:
           cache: false
-      - name: Create test env
-        env:
-          ENV_PATH: "MailUITests/Env.swift"
-          UITEST_ACCOUNT_EMAIL: ${{ secrets.UITEST_ACCOUNT_EMAIL }}
-          UITEST_ACCOUNT_PASSWORD: ${{ secrets.UITEST_ACCOUNT_PASSWORD }}
-        run: |
-          touch $ENV_PATH
-          echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
-      - name: Setup
+      - name: Verify Maestro installation
+        run: maestro --version
+      - name: Generate
         run: tuist install && tuist generate
-      - name: UITest
-        run: tuist test Mail-Workspace --device "${{ vars.LATEST_IPHONE_SIMULATOR }}" --test-targets "MailUITests/MailUITests" --no-selective-testing --clean
+      - name: Maestro UI tests
+        env:
+          SIMULATOR_MODEL: ${{ vars.LATEST_IPHONE_SIMULATOR }}
+          MAESTRO_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          MAESTRO_USER_ID: ${{ secrets.USER_ID }}
+          MAESTRO_USER: ${{ secrets.UITEST_ACCOUNT_EMAIL }}
+          MAESTRO_PASSWORD: ${{ secrets.UITEST_ACCOUNT_PASSWORD }}
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 180000
+        run: |
+            DEVICE_MODEL="iPhone-18-Pro"
+            DEVICE_OS="iOS-27-2"
+            MAJOR=$(echo "$DEVICE_OS" | cut -d- -f2)
+            DEVICE_NAME="Maestro_IOS_${DEVICE_MODEL}_${MAJOR}"
 
+            xcrun simctl shutdown "$DEVICE_NAME" || true
+
+            OUTPUT=$(maestro start-device --platform ios --device-model "$DEVICE_MODEL" --device-os "$DEVICE_OS" 2>&1 | tee /dev/stderr)
+            UDID=$(echo "$OUTPUT" | sed -n 's/.*\([0-9A-Fa-f-]\{36\}\).*/\1/p' | head -n1 | tr 'a-f' 'A-F')
+            [ -n "$UDID" ] || { echo "FATAL: Maestro did not report a device ID"; exit 1; }
+            echo "UDID: $UDID"
+            echo "tuist version: $(tuist version 2>/dev/null || echo 'not found')"
+
+            xcrun simctl bootstatus "$UDID" -b
+            export DEVELOPER_DIR="$(cd "$DEVELOPER_DIR" && pwd -P)"
+            tuist run --device "$DEVICE_NAME" --os 27.2 --configuration Debug "Infomaniak Mail"
+            maestro --device "$UDID" test --config MailUITests/config.yaml MailUITests/
