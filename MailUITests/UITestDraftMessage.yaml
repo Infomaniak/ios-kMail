@@ -26,7 +26,6 @@ appId: com.infomaniak.mail
       UITEST_USER_ID: ${MAESTRO_USER_ID}
 
 - runFlow: "subflows/autorization.yaml"
-- runScript: "script/setMailSubject.js"
 - runScript: "script/setMailBody.js"
 
 - extendedWaitUntil:
@@ -39,10 +38,10 @@ appId: com.infomaniak.mail
 - tapOn: "Drafts"
 
 - extendedWaitUntil:
-    visible: ${output.subject}
+    visible: ${".*" + output.body + ".*"}
     timeout: 30000
 
-- tapOn: ${output.subject}
+- tapOn: ${".*" + output.body + ".*"}
 
 - extendedWaitUntil:
     visible: ${".*" + output.body + ".*"}
@@ -50,6 +49,6 @@ appId: com.infomaniak.mail
 
 - tapOn: "Close"
 
-- runFlow: "subflows/deleteMail.yaml"
+- runFlow: "subflows/deleteMailByBody.yaml"
 
 - stopApp

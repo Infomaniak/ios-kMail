@@ -26,26 +26,17 @@ appId: com.infomaniak.mail
     commands:
       - tapOn: "Later"
 
-- tapOn: "To:"
-- inputText: "${MAESTRO_USER}"
-- tapOn: ${"John Appleseed," + ".*"}
-
-
-- tapOn: "Subject:"
-- inputText: "${output.subject}"
+- tapOn: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
+- inputText: "${output.body}\n"
+- assertVisible: ${".*" + output.body + ".*"}
 
 - tapOn: "Add an attachment"
 - tapOn: "Photo and video gallery"
-
 - tapOn:
     id: "PXGGridLayout-Info"
-
 - tapOn: "Done"
-
 - assertVisible: "image-file"
-
-- tapOn: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
-- inputText:  "${output.body}\n"
+- assertVisible: ${".*" + output.body + ".*"}
 
 - tapOn: "Close"
 

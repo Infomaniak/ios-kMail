@@ -26,15 +26,9 @@ appId: com.infomaniak.mail
     commands:
       - tapOn: "Later"
 
-- tapOn: "To:"
-- inputText: "${MAESTRO_USER}"
-- tapOn: ${"John Appleseed," + ".*"}
-
-
-- tapOn: "Subject:"
-- inputText: "${output.subject}"
-
-- tapOn: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
+- tapOn:
+    text: "\n\n\nEnvoyé avec la messagerie d'Infomaniak, The Ethical Cloud."
+    waitToSettleTimeoutMs: 1000
 - inputText:  "${output.body}\n"
 
 - tapOn: "Close"

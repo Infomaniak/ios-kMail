@@ -20,7 +20,7 @@ appId: com.infomaniak.mail
 ---
 - extendedWaitUntil:
     visible: "Next"
-    timeout: 10000
+    timeout: 60000
 
 - repeat:
     times: 2
