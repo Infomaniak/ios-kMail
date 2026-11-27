@@ -1,4 +1,5 @@
-- Dein Entwurf geht nicht mehr verloren und wird nicht mehr geleert, wenn du während des Schreibens zur App zurückkehrst.
-- Die Nachrichtenliste läuft flüssiger und friert bei Aktualisierungen nicht mehr ein.
-- Einige Nachrichten, die nicht angezeigt werden konnten, werden jetzt korrekt geöffnet.
-- Das Öffnen einer Nachricht oder eines Entwurfs über Kurzbefehle ist zuverlässiger.
+- Füge deine gespeicherten Modelle direkt im Editor einer neuen Nachricht ein, auch auf dem Mac.
+- E-Mails sind im Dunkelmodus besser lesbar, mit verbessertem Kontrast und erhaltenen Textfarben.
+- Eine Nachricht, die gerade gesendet wird, ist in der Nachrichtenliste jetzt als „Wird gesendet“ gekennzeichnet.
+- Spotlight-Suchergebnisse konzentrieren sich jetzt auf den eigentlichen Text deiner Nachrichten.
+- Nachrichten werden zuverlässiger in der richtigen Größe angezeigt.

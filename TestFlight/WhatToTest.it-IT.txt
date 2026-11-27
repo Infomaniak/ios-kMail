@@ -1,4 +1,5 @@
-- La tua bozza non viene più persa né svuotata quando torni nell’app mentre scrivi un messaggio.
-- L’elenco dei messaggi è più fluido e non si blocca più durante gli aggiornamenti.
-- Alcuni messaggi che non potevano essere visualizzati ora si aprono correttamente.
-- L’apertura di un messaggio o di una bozza da Comandi Rapidi è più affidabile.
+- Inserisci i tuoi modelli salvati direttamente dall’editor di un nuovo messaggio, anche su Mac.
+- Le e-mail sono più leggibili in modalità scura, con un contrasto migliore e i colori del testo preservati.
+- Un messaggio in fase di invio ora è indicato come «Invio in corso» nell’elenco dei messaggi.
+- I risultati di ricerca di Spotlight ora si concentrano sul testo effettivo dei tuoi messaggi.
+- I messaggi vengono visualizzati in modo più affidabile alla dimensione corretta.

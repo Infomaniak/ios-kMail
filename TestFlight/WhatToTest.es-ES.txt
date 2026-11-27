@@ -1,4 +1,5 @@
-- Tu borrador ya no se pierde ni se vacía al volver a la app mientras escribes un mensaje.
-- La lista de mensajes es más fluida y ya no se bloquea durante las actualizaciones.
-- Algunos mensajes que no se podían mostrar ahora se abren correctamente.
-- Abrir un mensaje o un borrador desde Atajos es más fiable.
+- Inserta tus modelos guardados directamente desde el editor de un nuevo mensaje, también en Mac.
+- Los correos son más fáciles de leer en modo oscuro, con mejor contraste y colores de texto conservados.
+- Un mensaje que se está enviando ahora aparece como «Enviando» en la lista de mensajes.
+- Los resultados de búsqueda de Spotlight ahora se centran en el texto real de tus mensajes.
+- Los mensajes se muestran de forma más fiable con el tamaño correcto.

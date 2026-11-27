@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "590dda76e2efc30128e6ab33cd85035d4c333940",
-        "version" : "22.0.1"
+        "revision" : "edf65e038afe67533c305374bf817131e8508b04",
+        "version" : "22.0.2"
       }
     },
     {
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matomo-org/matomo-sdk-ios",
       "state" : {
-        "revision" : "f140afcb7cedebdcbf8b8230fdd822b4b61e3685",
-        "version" : "7.8.0"
+        "revision" : "268b38cc518ca8bfedf86d4f8cdf050ec304dc00",
+        "version" : "7.9.0"
       }
     },
     {
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "485e0622e00d60d71eb6b519822188e2eb7c29e3",
-        "version" : "9.35.0"
+        "revision" : "733cff2106f706dd2df19b1cc4937ed554f8fe71",
+        "version" : "9.36.0"
       }
     },
     {
@@ -348,8 +348,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "7f76fe19415a60ce28493c5ec67b8da629f27a44",
-        "version" : "27.1.0"
+        "revision" : "a2b5e92c15dbfe009b48df15cb830e868c723ed4",
+        "version" : "27.2.0"
       }
     },
     {
